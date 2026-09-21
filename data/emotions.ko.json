@@ -1,0 +1,13 @@
+{
+  "provisional": true,
+  "note": "연구·검토 전의 UI fixture입니다. 심리학적 분류나 자동 추론에 사용하지 않습니다.",
+  "items": [
+    { "label": "서운함", "family": "social", "valence": "negative", "activation": "medium" },
+    { "label": "답답함", "family": "friction", "valence": "negative", "activation": "medium" },
+    { "label": "긴장", "family": "uncertainty", "valence": "negative", "activation": "high" },
+    { "label": "걱정", "family": "uncertainty", "valence": "negative", "activation": "medium" },
+    { "label": "안도", "family": "relief", "valence": "positive", "activation": "low" },
+    { "label": "편안함", "family": "ease", "valence": "positive", "activation": "low" },
+    { "label": "흥미", "family": "interest", "valence": "positive", "activation": "medium" }
+  ]
+}
