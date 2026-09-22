@@ -18,7 +18,8 @@ Quick Check (10~30초)        기본 진입
 감정 후보는 연구·검토 전의 임시 UI fixture이며, 앱은 사용자의 “진짜 감정”을 추론하거나 진단하지 않습니다.
 기록은 이 기기의 localStorage에만 저장되며, 암호화된 저장소가 아닙니다.
 
-설계 원칙과 데이터 모델은 [PRODUCT_SPEC.md](PRODUCT_SPEC.md), 안전 경계는 [SAFETY.md](SAFETY.md)를 참고하세요.
+**작업을 이어받는다면 [PROJECT_CONTEXT.md](PROJECT_CONTEXT.md)를 먼저 읽으세요** — 이 제품이 왜 이렇게 생겼는지, 사용자 여정, 현재 결정과 다음 순서가 정리되어 있습니다.
+화면·데이터 모델의 상세 명세는 [PRODUCT_SPEC.md](PRODUCT_SPEC.md), 안전 경계는 [SAFETY.md](SAFETY.md)를 참고하세요.
 
 ## Run
 

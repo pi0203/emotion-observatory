@@ -1,5 +1,8 @@
 # Emotion Self-Monitoring Web App — Product & Implementation Blueprint
 
+> **먼저 읽을 것: [PROJECT_CONTEXT.md](PROJECT_CONTEXT.md)** — 제품 의도, 사용자 여정, 현재 사이클의 결정.
+> 이 문서는 그 의도를 구현으로 옮긴 상세 명세이며, 구현의 source of truth다.
+>
 > Working title: **Emotion Lab / 감정 관찰실**  
 > Status: **MVP design specification**  
 > Primary use: handoff to Codex / Claude for implementation  
