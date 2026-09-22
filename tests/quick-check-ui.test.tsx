@@ -1,5 +1,5 @@
 import { afterEach, beforeEach, describe, expect, it } from "vitest";
-import { cleanup, fireEvent, render, screen } from "@testing-library/react";
+import { cleanup, fireEvent, render, screen, within } from "@testing-library/react";
 import Home from "../app/page";
 
 // jsdom reports a zero-sized box, which would make the affect tap produce NaN.
@@ -43,9 +43,13 @@ describe("quick check screens", () => {
     fireEvent.click(screen.getByRole("button", { name: "짜증" }));
     fireEvent.click(screen.getByRole("button", { name: /조금 더 정확히 살펴보기/ }));
     // the coach asks what mattered before it shows a single word
-    expect(screen.getByText(/어떤 점이 가장 중요하게 느껴졌나요/)).toBeTruthy();
+    expect(screen.getByText(/그 상황에서 어떤 것들이 있었나요/)).toBeTruthy();
     for (const word of ["짜증", "억울함", "답답함"]) expect(screen.queryByRole("button", { name: word })).toBeNull();
-    fireEvent.click(screen.getByRole("button", { name: /잘 모르겠다/ }));
+    // several observations can be true at once
+    fireEvent.click(screen.getByRole("button", { name: /같은 말을 여러 번 해야 했다/ }));
+    fireEvent.click(screen.getByRole("button", { name: /언제까지 이래야 하는지 알 수 없었다/ }));
+    expect(document.querySelectorAll('[aria-pressed="true"]')).toHaveLength(2);
+    fireEvent.click(screen.getByRole("button", { name: /다음/ }));
 
     // only now are the words offered, with escapes beside them
     expect(screen.getByRole("button", { name: "억울함" })).toBeTruthy();
@@ -172,6 +176,35 @@ describe("quick check screens", () => {
     expect(screen.getByRole("button", { name: /다음/ })).not.toBeDisabled();
   });
 
+  it("shows past records and asks about them only where something was chosen", () => {
+    // a finished session that picked a response
+    openQuickCheck();
+    tapUnpleasantActivated();
+    fireEvent.click(screen.getByRole("button", { name: "짜증" }));
+    fireEvent.click(screen.getByRole("button", { name: /여기까지/ }));
+    fireEvent.click(screen.getByRole("button", { name: /무엇이 필요할지 살펴보기/ }));
+    fireEvent.click(screen.getByRole("button", { name: "누군가에게 표현할 준비하기" }));
+    fireEvent.click(screen.getByRole("button", { name: "전하고 싶은 핵심을 한 문장으로 적기" }));
+    cleanup();
+
+    render(<Home />);
+    fireEvent.click(screen.getByRole("button", { name: "지난 기록 보기" }));
+    expect(screen.getByText("이전에 적은 것들")).toBeTruthy();
+    expect(screen.getByText(/누군가에게 표현할 준비하기/)).toBeTruthy();
+
+    fireEvent.click(document.querySelector(".record-row") as HTMLElement);
+    expect(screen.getByText(/그때 골랐던 것을 실제로 해봤나요/)).toBeTruthy();
+    // the second question waits until the first is answered
+    expect(screen.queryByText(/조금이라도 도움이 됐나요/)).toBeNull();
+    fireEvent.click(screen.getByRole("button", { name: "일부만 해봤어요" }));
+    expect(screen.getByText(/조금이라도 도움이 됐나요/)).toBeTruthy();
+    // "아니요" appears in both rows, so answer inside the second one
+    const helpedRow = document.querySelectorAll(".inline-choices")[1] as HTMLElement;
+    const no = within(helpedRow).getByRole("button", { name: "아니요" });
+    fireEvent.click(no);
+    expect(within(document.querySelectorAll(".inline-choices")[1] as HTMLElement).getByRole("button", { name: "아니요" }).getAttribute("aria-pressed")).toBe("true");
+  });
+
   it("offers a short, collapsed reason on the landing screen", () => {
     render(<Home />);
     const why = screen.getByText("왜 감정을 조금 더 자세히 살펴볼까요?");
@@ -222,6 +255,7 @@ describe("quick check screens", () => {
     expect(document.querySelectorAll('[aria-pressed="true"]')).toHaveLength(0);
     expect(screen.queryByRole("button", { name: "긴장된 곳 한 군데를 조금 움직여보기" })).toBeNull();
     expect(screen.getByRole("button", { name: "좋은 경험에 조금 더 머물기" })).toBeTruthy();
+    expect(screen.getByText("지금 이 순간에")).toBeTruthy();
     expect(screen.getByRole("button", { name: "이 좋은 상태를 만든 조건 살펴보기" })).toBeTruthy();
 
     // picking a direction opens its responses on the same screen

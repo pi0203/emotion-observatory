@@ -9,7 +9,8 @@ import type { AffectPoint, BodyObservation, DeepReflection, EmotionSelection, Em
 
 type DeepContext = NonNullable<DeepReflection["context"]>;
 type DeepOutcome = NonNullable<DeepReflection["outcome"]>;
-import { loadDraft, persistSession, removeDraft } from "../lib/storage";
+import { loadCompleted, loadDraft, persistSession, removeDraft, saveCompleted } from "../lib/storage";
+import { HELPED, TRIED, formatWhen, needLabel, responseLabels, summarise } from "../lib/records";
 import { migrateLegacyStorage } from "../lib/migrations";
 import { expandCandidates, filterQuickCandidates } from "../lib/quick-check";
 import { activationLabel, quickActivation, quickValence, scaleLabel } from "../lib/affect-labels";
@@ -31,6 +32,18 @@ export default function Home() {
   const [hydrated, setHydrated] = useState(false);
   const [draft, setDraft] = useState<EmotionSession | null>(null);
   const [stopConfirm, setStopConfirm] = useState(false);
+  const [records, setRecords] = useState<EmotionSession[] | null>(null);
+  const [openRecord, setOpenRecord] = useState<EmotionSession | null>(null);
+
+  const showRecords = () => { setRecords(loadCompleted()); setOpenRecord(null); };
+  const saveFollowUp = (session: EmotionSession, followUp: NonNullable<NonNullable<EmotionSession["support"]>["followUp"]>) => {
+    // written straight to the completed store, which upserts by id; the reducer
+    // session is on the landing screen here, so nothing can clobber it
+    const next = { ...session, support: { ...(session.support ?? { chosen: [] }), followUp: { ...session.support?.followUp, ...followUp, at: new Date().toISOString() } } };
+    saveCompleted(next);
+    setOpenRecord(next);
+    setRecords(loadCompleted());
+  };
 
   useEffect(() => {
     migrateLegacyStorage();
@@ -62,7 +75,11 @@ export default function Home() {
     if (draft) dispatch({ type: "RESUME", session: draft });
   };
 
-  if (session.stage === "landing") return <LandingScreen onQuick={() => dispatch({ type: "START_QUICK" })} onDeep={() => dispatch({ type: "START_DEEP" })} draft={draft} onResume={resume} />;
+  if (session.stage === "landing") {
+    if (openRecord) return <RecordDetail session={openRecord} onFollowUp={(followUp) => saveFollowUp(openRecord, followUp)} onBack={() => setOpenRecord(null)} />;
+    if (records) return <RecordsScreen records={records} onOpen={setOpenRecord} onBack={() => setRecords(null)} />;
+    return <LandingScreen onQuick={() => dispatch({ type: "START_QUICK" })} onDeep={() => dispatch({ type: "START_DEEP" })} draft={draft} onResume={resume} onRecords={showRecords} />;
+  }
 
   const stop = () => {
     dispatch({ type: "STOP", reason: "user" });
@@ -92,7 +109,7 @@ export default function Home() {
 
       {session.stage === "quick-affect" && <QuickAffectScreen onNext={(affect) => { dispatch({ type: "SET_QUICK_AFFECT", affect }); dispatch({ type: "SET_QUICK_CANDIDATES", candidatePool: filterQuickCandidates({ x: affect.valence ?? 0.5, y: affect.activation ?? 0.5 }) }); }} onUnknown={() => dispatch({ type: "SET_QUICK_UNKNOWN" })} />}
       {session.stage === "quick-candidates" && <QuickCandidatesScreen pool={session.quickCheck?.candidatePool ?? []} selected={session.quickCheck?.selected ?? []} response={session.quickCheck?.candidateResponse} onToggle={(label) => dispatch({ type: "TOGGLE_QUICK_CANDIDATE", label })} onRespond={(response) => dispatch({ type: "SET_QUICK_CANDIDATE_RESPONSE", response })} onAddCustom={(label) => dispatch({ type: "ADD_QUICK_CUSTOM", label })} onFinish={() => dispatch({ type: "COMPLETE_QUICK" })} onCoach={() => dispatch({ type: "OPEN_GRANULARITY" })} onDeep={() => { dispatch({ type: "COMPLETE_QUICK" }); dispatch({ type: "ENTER_DEEP" }); }} />}
-      {session.stage === "coach-appraisal" && <CoachAppraisalScreen session={session} onPick={(id) => dispatch({ type: "SET_APPRAISAL", id })} />}
+      {session.stage === "coach-appraisal" && <CoachAppraisalScreen session={session} onToggle={(id) => dispatch({ type: "TOGGLE_APPRAISAL", id })} onOwn={(label) => dispatch({ type: "SET_OWN_APPRAISAL", label })} onNext={() => dispatch({ type: "GO_TO_COACH_WORDS" })} />}
       {session.stage === "coach-words" && <CoachWordsScreen session={session} onToggle={(label) => dispatch({ type: "TOGGLE_COACH_WORD", label })} onOwnWord={(label) => dispatch({ type: "SET_COACH_OWN_WORD", label })} onNext={() => dispatch({ type: "FINISH_COACH" })} />}
       {session.stage === "coach-note" && <CoachNoteScreen session={session} onDone={() => dispatch({ type: "CLOSE_COACH" })} />}
       {session.stage === "quick-summary" && <QuickSummaryScreen session={session} onDeep={() => dispatch({ type: "ENTER_DEEP" })} onFeedback={(feedback) => dispatch({ type: "SET_SYNTHESIS_FEEDBACK", ...feedback })} onSupport={() => dispatch({ type: "OPEN_SUPPORT" })} />}
@@ -129,8 +146,8 @@ function EntryScreen({ draft, onStart, onUnsure, onStop, onResume }: { draft: Em
   </Screen>;
 }
 
-function LandingScreen({ onQuick, onDeep, draft, onResume }: { onQuick: () => void; onDeep: () => void; draft: EmotionSession | null; onResume: () => void }) {
-  return <Screen className="entry-screen"><p className="eyebrow">감정 관찰실</p><h1>지금의 경험을<br />조금 더 알아보기</h1><p className="lede">감정을 맞히는 검사가 아닙니다.<br />빠르게 살펴보거나, 천천히 구별해볼 수 있습니다.</p><WhyThis /><div className="stack-actions"><button className="primary-button" onClick={onQuick}>빠르게 살펴보기 <span>→</span></button><button className="secondary-button" onClick={onDeep}>조금 더 천천히 살펴보기</button>{draft && <button className="secondary-button" onClick={onResume}>지난 기록 이어하기</button>}</div><p className="small-note">기록은 이 기기에만 저장됩니다. 언제든 건너뛰거나 닫을 수 있습니다.</p></Screen>;
+function LandingScreen({ onQuick, onDeep, draft, onResume, onRecords }: { onQuick: () => void; onDeep: () => void; draft: EmotionSession | null; onResume: () => void; onRecords: () => void }) {
+  return <Screen className="entry-screen"><p className="eyebrow">감정 관찰실</p><h1>지금의 경험을<br />조금 더 알아보기</h1><p className="lede">감정을 맞히는 검사가 아닙니다.<br />빠르게 살펴보거나, 천천히 구별해볼 수 있습니다.</p><WhyThis /><div className="stack-actions"><button className="primary-button" onClick={onQuick}>빠르게 살펴보기 <span>→</span></button><button className="secondary-button" onClick={onDeep}>조금 더 천천히 살펴보기</button>{draft && <button className="secondary-button" onClick={onResume}>지난 기록 이어하기</button>}<button className="secondary-button" onClick={onRecords}>지난 기록 보기</button></div><p className="small-note">기록은 이 기기에만 저장됩니다. 언제든 건너뛰거나 닫을 수 있습니다.</p></Screen>;
 }
 
 /**
@@ -252,13 +269,18 @@ function QuickCandidatesScreen({ pool, selected, response, onToggle, onRespond, 
 }
 
 /** Asks what mattered before showing any word, so no list reads as a set of right answers. */
-function CoachAppraisalScreen({ session, onPick }: { session: EmotionSession; onPick: (id: string) => void }) {
+function CoachAppraisalScreen({ session, onToggle, onOwn, onNext }: { session: EmotionSession; onToggle: (id: string) => void; onOwn: (label: string) => void; onNext: () => void }) {
   const set = coachSetFor(session);
+  const [own, setOwn] = useState(session.coach?.ownAppraisal ?? "");
+  const picked = session.coach?.appraisals ?? [];
   if (!set) return <Screen><StepHeading step="조금 더 정확히" title="아직 비교해볼 세트가 없습니다." hint="고른 표현에 맞는 상황 비교가 아직 준비되지 않았습니다." /></Screen>;
   return <Screen>
-    <StepHeading step="조금 더 정확히" title={set.question} hint="단어를 먼저 고르지 않습니다. 그 순간 무엇이 중요했는지부터 봅니다." />
+    <StepHeading step="조금 더 정확히" title={set.question} hint="단어를 먼저 고르지 않습니다. 여러 개를 골라도 되고, 하나도 고르지 않아도 됩니다." />
     <div className="scenario-card">{set.event}</div>
-    <div className="choice-list">{[...set.appraisals, ...APPRAISAL_ESCAPES].map((item) => <button key={item.id} onClick={() => onPick(item.id)}>{item.text}</button>)}</div>
+    <div className="choice-list">{[...set.appraisals, ...APPRAISAL_ESCAPES].map((item) => <button className={picked.includes(item.id) ? "selected" : ""} aria-pressed={picked.includes(item.id)} key={item.id} onClick={() => onToggle(item.id)}>{item.text}</button>)}</div>
+    <label className="field-label" htmlFor="coach-own-appraisal">내 말로 적기</label>
+    <input id="coach-own-appraisal" className="text-input" value={own} onChange={(event) => { setOwn(event.target.value); onOwn(event.target.value); }} placeholder="예: 대답을 기다리는 시간이 길었다" />
+    <div className="navigation"><span /><button className="primary-button" onClick={onNext}>다음 <span>→</span></button></div>
   </Screen>;
 }
 
@@ -266,10 +288,11 @@ function CoachWordsScreen({ session, onToggle, onOwnWord, onNext }: { session: E
   const set = coachSetFor(session);
   const [own, setOwn] = useState(session.coach?.ownWord ?? "");
   const picked = session.coach?.wordsAfter ?? [];
-  const chosenAppraisal = [...(set?.appraisals ?? []), ...APPRAISAL_ESCAPES].find((item) => item.id === session.coach?.appraisal);
+  const all = [...(set?.appraisals ?? []), ...APPRAISAL_ESCAPES];
+  const chosenTexts = [...(session.coach?.appraisals ?? []).map((id) => all.find((item) => item.id === id)?.text).filter(Boolean), ...(session.coach?.ownAppraisal ? [session.coach.ownAppraisal] : [])];
   return <Screen>
     <StepHeading step="조금 더 정확히" title="이 중 지금 경험에 가까운 말이 있나요?" hint="정답은 없습니다. 여러 개를 골라도 되고, 어느 것도 고르지 않아도 됩니다." />
-    {chosenAppraisal && <div className="micro-card">방금 “{chosenAppraisal.text}”를 고르셨습니다.</div>}
+    {chosenTexts.length > 0 && <div className="micro-card">방금 이렇게 적으셨습니다. {chosenTexts.map((text) => `“${text}”`).join(" ")}</div>}
     <div className="chip-grid">{[...(set?.words ?? []), ...COACH_ESCAPES].map((label) => <button className={`chip ${picked.includes(label) ? "selected" : ""}`} key={label} onClick={() => onToggle(label)}>{label}</button>)}</div>
     <label className="field-label" htmlFor="coach-own">내 말로 표현하기</label>
     <input id="coach-own" className="text-input" value={own} onChange={(event) => { setOwn(event.target.value); onOwnWord(event.target.value); }} placeholder="예: 김이 새는 느낌" />
@@ -432,7 +455,7 @@ function SynthesisSection({ session, onFeedback }: { session: EmotionSession; on
   </section>;
 }
 
-type NeedEntry = { id: string; label: string; because?: string; route?: boolean; exit?: boolean; responses?: { id: string; label: string }[] };
+type NeedEntry = { id: string; label: string; group?: string; because?: string; route?: boolean; exit?: boolean; responses?: { id: string; label: string }[] };
 
 /**
  * One screen, two levels. Picking a direction opens the things that can be done
@@ -446,7 +469,10 @@ function NeedScreen({ session, onNeed, onResponse, onDeep, onCoach, onBack }: { 
   const route = understandRoute(session);
   return <Screen>
     <StepHeading step="지금 필요한 것" title="지금 가장 필요한 방향은 어느 쪽에 가까운가요?" hint="앱이 정해주지 않습니다. 하나를 골라보고, 다른 쪽이 궁금하면 언제든 바꿔도 됩니다." />
-    <div className="choice-list compact">{list.map((item) => <button className={need?.id === item.id ? "selected" : ""} aria-pressed={need?.id === item.id} key={item.id} onClick={() => onNeed(item.id)}>{item.label}</button>)}</div>
+    {needsData.groups.map((group) => <div key={group}>
+      <p className="tier-label">{group}</p>
+      <div className="choice-list compact">{list.filter((item) => item.group === group).map((item) => <button className={need?.id === item.id ? "selected" : ""} aria-pressed={need?.id === item.id} key={item.id} onClick={() => onNeed(item.id)}>{item.label}</button>)}</div>
+    </div>)}
 
     {need?.responses && <div className="response-block">
       <p className="tier-label">{need.label}</p>
@@ -466,6 +492,58 @@ function NeedScreen({ session, onNeed, onResponse, onDeep, onCoach, onBack }: { 
 
     <p className="small-note">같은 경험이라도 필요한 것은 그때그때 다를 수 있습니다. 편안하거나 벅찬 경험이라면 문제를 풀기보다 머물러 느끼는 쪽이 맞을 수도 있습니다.</p>
     <div className="navigation"><button className="quiet-button" onClick={onBack}>← 요약으로 돌아가기</button><a className="primary-button" href="/">여기까지 <span>→</span></a></div>
+  </Screen>;
+}
+
+/** A list of what was recorded. No scores, no patterns across records, no interpretation. */
+function RecordsScreen({ records, onOpen, onBack }: { records: EmotionSession[]; onOpen: (session: EmotionSession) => void; onBack: () => void }) {
+  return <Screen className="entry-screen">
+    <p className="eyebrow">지난 기록</p>
+    <h1>이전에 적은 것들</h1>
+    {records.length === 0
+      ? <p className="lede">아직 남긴 기록이 없습니다.</p>
+      : <div className="record-list">{records.map((session) => {
+          const item = summarise(session);
+          return <button className="record-row" key={item.id} onClick={() => onOpen(session)}>
+            <span className="record-when">{formatWhen(item.at)}<em>{item.depthLabel}</em></span>
+            <strong>{item.words.join(" · ") || "고른 표현 없음"}</strong>
+            {item.needLabel && <span className="record-need">필요했던 방향 · {item.needLabel}</span>}
+            {item.responseLabels.length > 0 && <span className="record-need">해보기로 한 것 · {item.responseLabels.join(" / ")}</span>}
+          </button>;
+        })}</div>}
+    <div className="navigation"><button className="quiet-button" onClick={onBack}>← 처음으로</button><span /></div>
+  </Screen>;
+}
+
+function RecordDetail({ session, onFollowUp, onBack }: { session: EmotionSession; onFollowUp: (followUp: { tried?: "yes" | "partly" | "no"; helped?: "yes" | "somewhat" | "no" | "unsure" }) => void; onBack: () => void }) {
+  const item = summarise(session);
+  const followUp = session.support?.followUp;
+  const deep = session.deepReflection;
+  return <Screen>
+    <p className="eyebrow">지난 기록</p>
+    <h1>{formatWhen(item.at)}</h1>
+    <div className="summary-card">
+      <SummaryRow label="살펴본 정도" value={item.depthLabel} />
+      {session.quickCheck?.affect && <SummaryRow label="빠른 확인" value={session.quickCheck.affect.unknown ? "잘 모르겠음" : `${quickValence(session.quickCheck.affect.valence)} · ${quickActivation(session.quickCheck.affect.activation)}`} />}
+      {deep?.affect && <SummaryRow label="자세히 본 뒤" value={`${scaleLabel(deep.affect.valence)} · ${activationLabel(deep.affect.activation)}`} />}
+      <SummaryRow label="가까웠던 말" value={item.words.join(" · ") || "고르지 않음"} />
+      {deep?.context?.eventText && <SummaryRow label="상황" value={deep.context.eventText} />}
+      {item.needLabel && <SummaryRow label="필요했던 방향" value={item.needLabel} />}
+      {item.responseLabels.length > 0 && <SummaryRow label="해보기로 한 것" value={item.responseLabels.join(" / ")} />}
+    </div>
+
+    {item.canFollowUp && <section className="synthesis">
+      <p className="tier-label">그 뒤에는 어땠나요</p>
+      <p className="synthesis-question">그때 골랐던 것을 실제로 해봤나요?</p>
+      <div className="inline-choices">{TRIED.map((option) => <button className={followUp?.tried === option.id ? "selected" : ""} aria-pressed={followUp?.tried === option.id} key={option.id} onClick={() => onFollowUp({ tried: option.id })}>{option.label}</button>)}</div>
+      {(followUp?.tried === "yes" || followUp?.tried === "partly") && <>
+        <p className="synthesis-question">조금이라도 도움이 됐나요?</p>
+        <div className="inline-choices">{HELPED.map((option) => <button className={followUp?.helped === option.id ? "selected" : ""} aria-pressed={followUp?.helped === option.id} key={option.id} onClick={() => onFollowUp({ helped: option.id })}>{option.label}</button>)}</div>
+      </>}
+      <p className="synthesis-caveat">평가가 아닙니다. “아니요”도 그대로 정상적인 답입니다. 이 답으로 방법을 추천하거나 점수를 매기지 않습니다.</p>
+    </section>}
+
+    <div className="navigation"><button className="quiet-button" onClick={onBack}>← 목록으로</button><a className="primary-button" href="/">처음으로 <span>→</span></a></div>
   </Screen>;
 }
 

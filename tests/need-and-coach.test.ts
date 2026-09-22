@@ -49,6 +49,18 @@ describe("needs and responses", () => {
     expect(ids).toContain("conditions");
   });
 
+  it("does not leave the pleasant directions at the bottom of the list", () => {
+    const order = needs.needs.map((need) => need.id);
+    // they were 7th and 8th, below the fold on a phone
+    expect(order.indexOf("savour")).toBeLessThan(4);
+    expect(order.indexOf("conditions")).toBeLessThan(6);
+  });
+
+  it("groups the directions without ranking them", () => {
+    for (const need of needs.needs) expect(needs.groups).toContain(need.group);
+    expect(needs.fieldNotes.group).toMatch(/추천이 아닙니다/);
+  });
+
   it("records one need at a time and several responses under it", () => {
     let state = sessionReducer(quick(), { type: "OPEN_SUPPORT" });
     state = sessionReducer(state, { type: "CHOOSE_NEED", id: "express" });
@@ -120,8 +132,9 @@ describe("granularity coach v2", () => {
 
   it("carries the appraisal through and lets the words be chosen again", () => {
     let state = sessionReducer(deep(), { type: "OPEN_COACH" });
-    state = sessionReducer(state, { type: "SET_APPRAISAL", id: "unfair" });
-    expect(state.coach?.appraisal).toBe("unfair");
+    state = sessionReducer(state, { type: "TOGGLE_APPRAISAL", id: "unfair" });
+    expect(state.coach?.appraisals).toEqual(["unfair"]);
+    state = sessionReducer(state, { type: "GO_TO_COACH_WORDS" });
     expect(state.stage).toBe("coach-words");
     state = sessionReducer(state, { type: "TOGGLE_COACH_WORD", label: "답답함" });
     state = sessionReducer(state, { type: "TOGGLE_COACH_WORD", label: "짜증" });
@@ -132,34 +145,34 @@ describe("granularity coach v2", () => {
 
   it("accepts 잘 모르겠음 without choosing a word for the user", () => {
     let state = sessionReducer(deep(), { type: "OPEN_COACH" });
-    state = sessionReducer(state, { type: "SET_APPRAISAL", id: "unsure" });
+    state = sessionReducer(state, { type: "TOGGLE_APPRAISAL", id: "unsure" });
     state = sessionReducer(state, { type: "FINISH_COACH" });
-    expect(state.coach?.appraisal).toBe("unsure");
+    expect(state.coach?.appraisals).toEqual(["unsure"]);
     expect(state.coach?.wordsAfter).toEqual([]);
   });
 
   it("takes a word the user typed instead of the offered ones", () => {
     let state = sessionReducer(deep(), { type: "OPEN_COACH" });
-    state = sessionReducer(state, { type: "SET_APPRAISAL", id: "stuck" });
+    state = sessionReducer(state, { type: "GO_TO_COACH_WORDS" });
     state = sessionReducer(state, { type: "SET_COACH_OWN_WORD", label: "  김새는 느낌 " });
     expect(state.coach?.ownWord).toBe("김새는 느낌");
   });
 
   it("returns to the summary it came from", () => {
     let fromDeep = sessionReducer(deep(), { type: "OPEN_COACH" });
-    fromDeep = sessionReducer(fromDeep, { type: "SET_APPRAISAL", id: "unfair" });
+    fromDeep = sessionReducer(fromDeep, { type: "TOGGLE_APPRAISAL", id: "unfair" });
     fromDeep = sessionReducer(fromDeep, { type: "FINISH_COACH" });
     expect(sessionReducer(fromDeep, { type: "CLOSE_COACH" }).stage).toBe("summary");
 
     let fromQuick = sessionReducer(quick(), { type: "OPEN_COACH" });
-    fromQuick = sessionReducer(fromQuick, { type: "SET_APPRAISAL", id: "unfair" });
+    fromQuick = sessionReducer(fromQuick, { type: "TOGGLE_APPRAISAL", id: "unfair" });
     fromQuick = sessionReducer(fromQuick, { type: "FINISH_COACH" });
     expect(sessionReducer(fromQuick, { type: "CLOSE_COACH" }).stage).toBe("quick-summary");
   });
 
   it("records a change without calling it an improvement", () => {
     let state = sessionReducer(deep(["억울함"]), { type: "OPEN_COACH" });
-    state = sessionReducer(state, { type: "SET_APPRAISAL", id: "stuck" });
+    state = sessionReducer(state, { type: "TOGGLE_APPRAISAL", id: "open-ended" });
     state = sessionReducer(state, { type: "TOGGLE_COACH_WORD", label: "답답함" });
     state = sessionReducer(state, { type: "FINISH_COACH" });
     expect(state.coach?.wordsBefore).toEqual(["억울함"]);

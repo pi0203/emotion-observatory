@@ -88,13 +88,14 @@ describe("quick only", () => {
     state = sessionReducer(state, { type: "TOGGLE_QUICK_CANDIDATE", label: "짜증" });
     state = sessionReducer(state, { type: "OPEN_GRANULARITY" });
     expect(state.stage).toBe("coach-appraisal");
-    state = sessionReducer(state, { type: "SET_APPRAISAL", id: "interrupted" });
+    state = sessionReducer(state, { type: "TOGGLE_APPRAISAL", id: "repeated" });
+    state = sessionReducer(state, { type: "GO_TO_COACH_WORDS" });
     expect(state.stage).toBe("coach-words");
     state = sessionReducer(state, { type: "TOGGLE_COACH_WORD", label: "답답함" });
     state = sessionReducer(state, { type: "FINISH_COACH" });
     state = sessionReducer(state, { type: "CLOSE_COACH" });
     expect(state.stage).toBe("quick-summary");
-    expect(state.coach?.appraisal).toBe("interrupted");
+    expect(state.coach?.appraisals).toEqual(["repeated"]);
     expect(state.coach?.wordsAfter).toEqual(["답답함"]);
   });
 });

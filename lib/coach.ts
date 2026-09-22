@@ -20,10 +20,17 @@ export const currentWords = (session: EmotionSession): string[] => {
   return (deep.length ? deep : quick).map((item) => item.label);
 };
 
-/** The set that shares a word with what the user chose. No set, no coach — nothing is forced. */
+/**
+ * The set that overlaps most with what the user chose. No set, no coach —
+ * nothing is forced, and a tie falls to the order the sets are written in.
+ */
 export const coachSetFor = (session: EmotionSession): CoachSet | undefined => {
   const words = currentWords(session);
-  return coachSets.find((set) => set.words.some((word) => words.includes(word)));
+  const scored = coachSets
+    .map((set) => ({ set, overlap: set.words.filter((word) => words.includes(word)).length }))
+    .filter((entry) => entry.overlap > 0)
+    .sort((a, b) => b.overlap - a.overlap);
+  return scored[0]?.set;
 };
 
 /**
@@ -33,7 +40,6 @@ export const coachSetFor = (session: EmotionSession): CoachSet | undefined => {
 export const COACH_ESCAPES = ["여러 개", "어느 것도 아님", "잘 모르겠음"];
 
 export const APPRAISAL_ESCAPES: CoachAppraisal[] = [
-  { id: "several", text: "여러 가지가 함께 있었다." },
   { id: "none", text: "어느 것도 아니다." },
   { id: "unsure", text: "잘 모르겠다." },
 ];

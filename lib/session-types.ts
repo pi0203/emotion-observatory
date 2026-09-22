@@ -112,7 +112,15 @@ export type EmotionSession = {
     followUp?: { tried?: "yes" | "partly" | "no"; helped?: "yes" | "somewhat" | "no" | "unsure"; at?: string };
   };
   /** A pass through the granularity coach. A change here is a change, not an improvement. */
-  coach?: { setId: string; wordsBefore: string[]; appraisal?: string; wordsAfter: string[]; ownWord?: string };
+  coach?: {
+    setId: string;
+    wordsBefore: string[];
+    /** Several can be true at once, which is the point: no appraisal owns a word. */
+    appraisals: string[];
+    ownAppraisal?: string;
+    wordsAfter: string[];
+    ownWord?: string;
+  };
   /** Screens already passed, so a step can be undone without losing anything. */
   history?: Stage[];
   stopReason?: "user" | "entry";
@@ -160,7 +168,9 @@ export type SessionAction =
   | { type: "CHOOSE_NEED"; id: string }
   | { type: "TOGGLE_RESPONSE"; id: string }
   | { type: "OPEN_COACH" }
-  | { type: "SET_APPRAISAL"; id: string }
+  | { type: "TOGGLE_APPRAISAL"; id: string }
+  | { type: "SET_OWN_APPRAISAL"; label: string }
+  | { type: "GO_TO_COACH_WORDS" }
   | { type: "TOGGLE_COACH_WORD"; label: string }
   | { type: "SET_COACH_OWN_WORD"; label: string }
   | { type: "FINISH_COACH" }
@@ -214,7 +224,7 @@ export const understandRoute = (session: EmotionSession): "deep" | "coach" | "no
 
 const openCoach = (state: EmotionSession): NonNullable<EmotionSession["coach"]> => {
   const set = coachSetFor(state);
-  return { setId: set?.id ?? "", wordsBefore: currentWords(state), wordsAfter: [] };
+  return { setId: set?.id ?? "", wordsBefore: currentWords(state), appraisals: [], wordsAfter: [] };
 };
 
 /** A finished session can still be revisited, but not rewound past its summary. */
@@ -224,7 +234,7 @@ export const canGoBack = (session: EmotionSession) => (session.history?.length ?
 const NOT_A_STEP = new Set<SessionAction["type"]>([
   "TOGGLE_QUICK_CANDIDATE", "SET_QUICK_CANDIDATE_RESPONSE", "ADD_QUICK_CUSTOM",
   "SET_SYNTHESIS_FEEDBACK", "CHOOSE_NEED", "TOGGLE_RESPONSE",
-  "TOGGLE_COACH_WORD", "SET_COACH_OWN_WORD", "RESUME", "BACK",
+  "TOGGLE_COACH_WORD", "SET_COACH_OWN_WORD", "TOGGLE_APPRAISAL", "SET_OWN_APPRAISAL", "RESUME", "BACK",
 ]);
 
 const reduce = (state: EmotionSession, action: SessionAction): EmotionSession => {
@@ -331,8 +341,18 @@ const reduce = (state: EmotionSession, action: SessionAction): EmotionSession =>
 
     case "OPEN_COACH":
       return { ...state, stage: "coach-appraisal", coach: openCoach(state) };
-    case "SET_APPRAISAL":
-      return state.coach ? { ...state, coach: { ...state.coach, appraisal: action.id }, stage: "coach-words" } : state;
+    case "TOGGLE_APPRAISAL": {
+      if (!state.coach) return state;
+      const picked = state.coach.appraisals;
+      return {
+        ...state,
+        coach: { ...state.coach, appraisals: picked.includes(action.id) ? picked.filter((id) => id !== action.id) : [...picked, action.id] },
+      };
+    }
+    case "SET_OWN_APPRAISAL":
+      return state.coach ? { ...state, coach: { ...state.coach, ownAppraisal: action.label.trim() || undefined } } : state;
+    case "GO_TO_COACH_WORDS":
+      return state.coach ? { ...state, stage: "coach-words" } : state;
     case "TOGGLE_COACH_WORD": {
       if (!state.coach) return state;
       const after = state.coach.wordsAfter;
