@@ -156,3 +156,19 @@ describe("narrowing over the larger vocabulary", () => {
     expect(third.every((item) => ![...first, ...second].some((seen) => seen.label === item.label))).toBe(true);
   });
 });
+
+describe("cultural humility in the wording", () => {
+  it("does not claim the list is complete or the words correct", () => {
+    const shown = [emotions.note, ...Object.values(emotions.fieldNotes)].join("\n");
+    expect(shown).not.toMatch(/정확한 감정|올바른 감정|실제 감정|정답 감정|감정 목록 전체/);
+    expect(emotions.note).toMatch(/taxonomy를 확정하지 않으며/);
+  });
+
+  it("keeps a place for what a word carries for this person", () => {
+    // the type allows it on any selection, so a brought word is an ordinary entry
+    const selection: { label: string; source: "custom"; personalMeaning?: string } = {
+      label: "김새는 느낌", source: "custom", personalMeaning: "기대가 접히는 쪽",
+    };
+    expect(selection.personalMeaning).toBeTruthy();
+  });
+});

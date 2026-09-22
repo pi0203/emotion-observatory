@@ -86,3 +86,20 @@ describe("recording a follow-up later", () => {
     expect(summarise(loadCompleted()[0]).followUpAnswered).toBe(true);
   });
 });
+
+describe("a brought word in the record list", () => {
+  it("appears like any other word, with the note the user wrote", () => {
+    let state = sessionReducer(createSession(), { type: "START_QUICK" });
+    state = sessionReducer(state, { type: "SET_QUICK_AFFECT", affect: { valence: 0.2, activation: 0.9 } });
+    state = sessionReducer(state, { type: "SET_QUICK_CANDIDATES", candidatePool: [{ label: "짜증", source: "suggested" }] });
+    state = sessionReducer(state, { type: "TOGGLE_QUICK_CANDIDATE", label: "짜증" });
+    state = sessionReducer(state, { type: "ADD_QUICK_CUSTOM", label: "김새는 느낌" });
+    state = sessionReducer(state, { type: "SET_PERSONAL_MEANING", label: "김새는 느낌", meaning: "기대가 접히는 쪽" });
+
+    const item = summarise(state);
+    expect(item.words).toEqual(["짜증", "김새는 느낌"]);
+    expect(item.personalMeanings).toEqual([{ label: "김새는 느낌", meaning: "기대가 접히는 쪽" }]);
+    // nothing about the person is derived from it
+    expect(JSON.stringify(item)).not.toMatch(/성격|유형|경향|자주 쓰는|당신은/);
+  });
+});

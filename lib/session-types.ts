@@ -41,6 +41,12 @@ export type BodyObservation = {
 export type EmotionSelection = {
   label: string;
   source: "suggested" | "custom";
+  /**
+   * What the word carries for this person. The offered vocabulary is a starting
+   * point, not a complete list, so a word the user brought is a normal entry —
+   * this is where its meaning lives rather than in a separate store.
+   */
+  personalMeaning?: string;
 };
 
 /** The fast first read of one's own state. Never overwritten by the deep pass. */
@@ -149,6 +155,7 @@ export type SessionAction =
   | { type: "TOGGLE_QUICK_CANDIDATE"; label: string }
   | { type: "SET_QUICK_CANDIDATE_RESPONSE"; response: QuickNonSelection }
   | { type: "ADD_QUICK_CUSTOM"; label: string }
+  | { type: "SET_PERSONAL_MEANING"; label: string; meaning: string }
   | { type: "OPEN_GRANULARITY" }
   | { type: "CHOOSE_GRANULARITY"; concept: string }
   | { type: "SKIP_GRANULARITY" }
@@ -234,7 +241,8 @@ export const canGoBack = (session: EmotionSession) => (session.history?.length ?
 const NOT_A_STEP = new Set<SessionAction["type"]>([
   "TOGGLE_QUICK_CANDIDATE", "SET_QUICK_CANDIDATE_RESPONSE", "ADD_QUICK_CUSTOM",
   "SET_SYNTHESIS_FEEDBACK", "CHOOSE_NEED", "TOGGLE_RESPONSE",
-  "TOGGLE_COACH_WORD", "SET_COACH_OWN_WORD", "TOGGLE_APPRAISAL", "SET_OWN_APPRAISAL", "RESUME", "BACK",
+  "TOGGLE_COACH_WORD", "SET_COACH_OWN_WORD", "TOGGLE_APPRAISAL", "SET_OWN_APPRAISAL",
+  "SET_PERSONAL_MEANING", "RESUME", "BACK",
 ]);
 
 const reduce = (state: EmotionSession, action: SessionAction): EmotionSession => {
@@ -263,6 +271,14 @@ const reduce = (state: EmotionSession, action: SessionAction): EmotionSession =>
         selected: selected.some((item) => item.label === action.label)
           ? selected.filter((item) => item.label !== action.label)
           : [...selected, { label: action.label, source: "suggested" }],
+      });
+    }
+    case "SET_PERSONAL_MEANING": {
+      const selected = state.quickCheck?.selected ?? [];
+      if (!selected.some((item) => item.label === action.label)) return state;
+      return withQuick(state, {
+        selected: selected.map((item) =>
+          item.label === action.label ? { ...item, personalMeaning: action.meaning.trim() || undefined } : item),
       });
     }
     case "SET_QUICK_CANDIDATE_RESPONSE":

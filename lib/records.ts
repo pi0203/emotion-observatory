@@ -11,6 +11,8 @@ export type RecordSummary = {
   depth: "quick" | "quick+deep" | "deep";
   depthLabel: string;
   words: string[];
+  /** Shown as the user wrote it. No inference is drawn from repeating a word. */
+  personalMeanings: { label: string; meaning: string }[];
   needLabel?: string;
   responseLabels: string[];
   /** Only a record where something was chosen has anything to follow up on. */
@@ -32,10 +34,14 @@ export const responseLabels = (session: EmotionSession): string[] => {
  * across records — only what the person put there.
  */
 export const summarise = (session: EmotionSession): RecordSummary => {
-  const words = (session.deepReflection?.emotionCandidates?.length
+  // a word the user brought is listed exactly like an offered one
+  const selections = session.deepReflection?.emotionCandidates?.length
     ? session.deepReflection.emotionCandidates
-    : session.quickCheck?.selected ?? []
-  ).map((item) => item.label);
+    : session.quickCheck?.selected ?? [];
+  const words = selections.map((item) => item.label);
+  const personalMeanings = selections
+    .filter((item) => item.personalMeaning)
+    .map((item) => ({ label: item.label, meaning: item.personalMeaning! }));
   const responses = responseLabels(session);
   const depth = sessionDepth(session);
   return {
@@ -44,6 +50,7 @@ export const summarise = (session: EmotionSession): RecordSummary => {
     depth,
     depthLabel: DEPTH_LABEL[depth],
     words,
+    personalMeanings,
     needLabel: needLabel(session.support?.need),
     responseLabels: responses,
     canFollowUp: responses.length > 0,

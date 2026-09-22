@@ -7,6 +7,7 @@
 > - [PRODUCT_SPEC.md](PRODUCT_SPEC.md): 화면·데이터 모델·state machine·copy 규칙의 상세 명세
 > - [SAFETY.md](SAFETY.md): 안전 경계와 의도적으로 구현하지 않은 것
 > - [docs/NORMS.md](docs/NORMS.md): 한국어 valence/arousal norm을 연결하기 전에 확인할 것
+> - [docs/EMOTION_CULTURE.md](docs/EMOTION_CULTURE.md): 감정 어휘와 문화 — Barrett의 관점 / cross-cultural 증거 / 아직 논쟁 중인 것을 구분해 기록
 >
 > 충돌하면 **PRODUCT_SPEC.md가 구현의 source of truth**이고, 이 문서는 그 위의 의도다.
 
@@ -43,6 +44,7 @@
 > **설명으로 가르치기보다 상황 속 차이를 사용자가 발견하게 한다.**
 > **Maximum granularity가 아니라 useful granularity.**
 > **몸은 고정된 측정값이 아니라 지금 순간의 snapshot이다.**
+> **감정 어휘는 보편적 정답표가 아니라 출발 어휘다.**
 
 네 번째 문장의 뜻: 목표는 최대한 세밀하게 분석하는 것이 아니라 **지금 무엇을 할지
 정하는 데 필요한 만큼** 구별하는 것이다. “기분이 좋다/나쁘다”로 충분한 순간이 있고,
@@ -83,6 +85,20 @@ Lisa Feldman Barrett의 constructed emotion 관점에서 많은 아이디어를 
 - **empirical norm은 후보 검색을 돕는 자료이지 개인 감정의 정답표가 아니다.**
 
 3번을 특히 주의할 것. "감정에는 어떤 생물학적 신호도 없다"고 가르치는 것도 금지다.
+
+### Cultural humility
+
+어휘는 **자연에 존재하는 감정의 완전한 목록도, 한국인의 taxonomy도, 진단 분류도 아니다.**
+탐색을 돕는 **출발 어휘**다. 두 극단을 모두 피한다 — "감정에 문화와 무관한 고정된 본질이
+있다"도, "감정에는 아무 공통 구조도 없다"도 아니다.
+
+- 넓은 공통성은 **affect의 두 축** 쪽에 있을 수 있다 (Jackson et al. 2019).
+- 그 안을 **어떤 단어로 나누는지**는 문화·언어·경험에 따라 달라질 수 있다.
+- 개인에게 어느 의미가 맞는지는 **문화적 평균으로 결정하지 않는다.**
+- **국적·민족·종교·성별을 묻지도 추론하지도 않는다.** cultural fit score를 만들지 않는다.
+- 사용자가 가져온 말은 **예외가 아니라 일반 항목**이다 (`personalMeaning`).
+
+근거와 한계: [docs/EMOTION_CULTURE.md](docs/EMOTION_CULTURE.md)
 
 ---
 

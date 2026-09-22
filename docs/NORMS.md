@@ -40,6 +40,28 @@ npx tsx scripts/audit-norms.mjs ~/Downloads/VA_KOR_annot.csv
 - 표가 스스로 **SD가 크다고 표시한** 단어
 - 매칭되지 않은 단어 목록
 
+## 의미론적 caveat — 무엇의 자료인가
+
+재배포 권리와 척도 비교가능성과 **별개로**, 이 자료가 무엇인지 분명히 해둔다.
+
+한국어 norm은:
+
+- 한국어 사용자 **표본의 평균적 평정 자료**
+- 후보 검색과 ranking을 돕는 자료
+
+**일 수 있다. 그러나 다음은 아니다.**
+
+- 한국인의 감정 의미 **정답**
+- 개인의 **올바른** 감정 좌표
+- 한국 문화 전체의 **emotion ontology**
+
+집단 평균은 개인의 좌표가 아니다. Jackson et al.(2019)이 보여준 것도 언어 간
+의미망의 차이이지 어느 언어의 분류가 옳다는 것이 아니다 ([EMOTION_CULTURE.md](EMOTION_CULTURE.md)).
+
+따라서 empirical norm이 연결되더라도 **custom word와 사용자의 직접 선택보다
+권위 있는 정답처럼 표현하지 않는다.** 사용자가 고른 것이 norm과 어긋나도 그것은
+오류가 아니며, UI에 그런 신호를 내지 않는다.
+
 ## 값을 넣기로 결정한다면
 
 1. 출처별로 결정한다. 한 출처만 쓰는 것이 여러 출처를 섞는 것보다 안전하다.
@@ -48,3 +70,5 @@ npx tsx scripts/audit-norms.mjs ~/Downloads/VA_KOR_annot.csv
 4. `normStatus`가 `"provisional"`인 단어는 좌표 없이 boundary blending으로 남는다.
    두 방식이 공존할 수 있어야 한다.
 5. 출처와 사용 조건을 확인하지 못한 값은 **넣지 않는다.**
+6. norm 좌표를 사용자에게 **보여주지 않는다.** 후보 순서에만 쓰고, "당신의 감정은
+   여기에 있습니다" 같은 표시를 만들지 않는다.

@@ -41,9 +41,11 @@ describe("quick check screens", () => {
     openQuickCheck();
     tapUnpleasantActivated();
     fireEvent.click(screen.getByRole("button", { name: "짜증" }));
-    fireEvent.click(screen.getByRole("button", { name: /조금 더 정확히 살펴보기/ }));
+    fireEvent.click(screen.getByRole("button", { name: /표현 사이의 차이 살펴보기/ }));
     // the coach asks what mattered before it shows a single word
     expect(screen.getByText(/그 상황에서 어떤 것들이 있었나요/)).toBeTruthy();
+    // the coach says this is one way of telling them apart, not the correct one
+    expect(screen.getByText(/사람마다, 또 어떤 관계와 상황인지에 따라/)).toBeTruthy();
     for (const word of ["짜증", "억울함", "답답함"]) expect(screen.queryByRole("button", { name: word })).toBeNull();
     // several observations can be true at once
     fireEvent.click(screen.getByRole("button", { name: /같은 말을 여러 번 해야 했다/ }));
@@ -87,18 +89,33 @@ describe("quick check screens", () => {
     expect(screen.queryByRole("button", { name: "비슷한 표현 더 보기" })).toBeNull();
   });
 
-  it("lets the user add their own word at the last tier", () => {
+  it("keeps writing your own word on the first screen, not behind two reveals", () => {
     openQuickCheck();
     tapUnpleasantActivated();
-    fireEvent.click(screen.getByRole("button", { name: "비슷한 표현 더 보기" }));
-    fireEvent.click(screen.getByRole("button", { name: /다른 표현 찾아보기/ }));
 
+    // no clicking through tiers first: the box is there from the start
     const input = screen.getByLabelText("내 말로 적기");
+    expect(screen.getByText(/완전한 목록이 아니라 출발점/)).toBeTruthy();
     fireEvent.change(input, { target: { value: "뒤통수 맞은 느낌" } });
     fireEvent.click(screen.getByRole("button", { name: "추가" }));
 
     expect(screen.getByText("내가 적은 말")).toBeTruthy();
     expect(screen.getByRole("button", { name: "뒤통수 맞은 느낌" })).toBeTruthy();
+  });
+
+  it("offers an optional note on what the user's own word carries", () => {
+    openQuickCheck();
+    tapUnpleasantActivated();
+    fireEvent.change(screen.getByLabelText("내 말로 적기"), { target: { value: "김새는 느낌" } });
+    fireEvent.click(screen.getByRole("button", { name: "추가" }));
+
+    const meaning = screen.getByLabelText(/‘김새는 느낌’은 지금 나에게 어떤 느낌을 담고 있나요/);
+    expect((meaning as HTMLInputElement).value).toBe("");
+    fireEvent.change(meaning, { target: { value: "기대가 접히는 쪽에 가깝다" } });
+
+    // it is stored on the word itself, not in a separate place
+    fireEvent.click(screen.getByRole("button", { name: /여기까지/ }));
+    expect(screen.getByText(/여기까지 살펴보았습니다/)).toBeTruthy();
   });
 
   it("offers a synthesis of the user's own entries on the summary, with a fit rating", () => {

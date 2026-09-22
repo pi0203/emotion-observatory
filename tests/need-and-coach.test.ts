@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { createSession, sessionReducer, understandRoute } from "../lib/session-types";
-import { coachSetFor } from "../lib/coach";
+import { coachSetFor, coachSets } from "../lib/coach";
 import needs from "../data/needs.ko.json";
 import type { EmotionSession } from "../lib/session-types";
 
@@ -178,5 +178,55 @@ describe("granularity coach v2", () => {
     expect(state.coach?.wordsBefore).toEqual(["억울함"]);
     expect(state.coach?.wordsAfter).toEqual(["답답함"]);
     expect(JSON.stringify(state.coach)).not.toMatch(/정확|개선|향상|improved/);
+  });
+});
+
+describe("a word the user brought is an ordinary entry", () => {
+  const withOwnWord = () => {
+    let state = sessionReducer(createSession(), { type: "START_QUICK" });
+    state = sessionReducer(state, { type: "SET_QUICK_AFFECT", affect: { valence: 0.2, activation: 0.9 } });
+    state = sessionReducer(state, { type: "SET_QUICK_CANDIDATES", candidatePool: [{ label: "짜증", source: "suggested" }] });
+    return sessionReducer(state, { type: "ADD_QUICK_CUSTOM", label: "김새는 느낌" });
+  };
+
+  it("stores the meaning on the word rather than in a separate place", () => {
+    let state = sessionReducer(withOwnWord(), { type: "SET_PERSONAL_MEANING", label: "김새는 느낌", meaning: "  기대가 접히는 쪽  " });
+    const word = state.quickCheck?.selected.find((item) => item.label === "김새는 느낌");
+    expect(word).toEqual({ label: "김새는 느낌", source: "custom", personalMeaning: "기대가 접히는 쪽" });
+  });
+
+  it("clears a meaning that is emptied out, and ignores an unknown word", () => {
+    let state = sessionReducer(withOwnWord(), { type: "SET_PERSONAL_MEANING", label: "김새는 느낌", meaning: "무언가" });
+    state = sessionReducer(state, { type: "SET_PERSONAL_MEANING", label: "김새는 느낌", meaning: "   " });
+    expect(state.quickCheck?.selected[0].personalMeaning).toBeUndefined();
+    expect(sessionReducer(state, { type: "SET_PERSONAL_MEANING", label: "없는말", meaning: "x" })).toEqual(state);
+  });
+
+  it("takes a meaning for an offered word too, not only a typed one", () => {
+    let state = sessionReducer(withOwnWord(), { type: "TOGGLE_QUICK_CANDIDATE", label: "짜증" });
+    state = sessionReducer(state, { type: "SET_PERSONAL_MEANING", label: "짜증", meaning: "나에게는 조금 다른 뜻" });
+    expect(state.quickCheck?.selected.find((item) => item.label === "짜증")?.personalMeaning).toBe("나에게는 조금 다른 뜻");
+  });
+
+  it("is not a step to go back through", () => {
+    const before = withOwnWord();
+    const after = sessionReducer(before, { type: "SET_PERSONAL_MEANING", label: "김새는 느낌", meaning: "무언가" });
+    expect(after.history).toEqual(before.history);
+    expect(after.stage).toBe(before.stage);
+  });
+});
+
+describe("neither universalism nor total relativism in the copy", () => {
+  it("avoids both extremes wherever the user can read", () => {
+    const blobs = [JSON.stringify(needs), JSON.stringify(coachSets)];
+    for (const blob of blobs) {
+      expect(blob).not.toMatch(/감정은 허구|실재하지 않|단지 언어일 뿐|생물학적 본질|고정된 지문|모든 문화/);
+    }
+  });
+
+  it("says the coach shows one way of telling the words apart", () => {
+    for (const set of coachSets) {
+      expect(set.note).toMatch(/사람에 따라 다르고|여러 말이 동시에/);
+    }
   });
 });
