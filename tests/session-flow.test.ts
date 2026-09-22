@@ -6,7 +6,7 @@ const startQuick = () => sessionReducer(createSession(), { type: "START_QUICK" }
 
 const quickToCandidates = () => {
   let state = startQuick();
-  state = sessionReducer(state, { type: "SET_QUICK_AFFECT", affect: { valence: 2, activation: 5 } });
+  state = sessionReducer(state, { type: "SET_QUICK_AFFECT", affect: { valence: 0.25, activation: 1 } });
   return sessionReducer(state, { type: "SET_QUICK_CANDIDATES", candidatePool: [{ label: "긴장", source: "suggested" }, { label: "짜증", source: "suggested" }] });
 };
 
@@ -18,7 +18,7 @@ const completedQuick = () => {
 
 const runDeepToSummary = (start: EmotionSession) => {
   let state = sessionReducer(start, { type: "SET_BODY", body: [{ label: "어깨가 굳음" }] });
-  state = sessionReducer(state, { type: "SET_AFFECT", affect: { valence: 3, activation: 2 } });
+  state = sessionReducer(state, { type: "SET_AFFECT", affect: { valence: 0.5, activation: 0.25 } });
   state = sessionReducer(state, { type: "SET_CONTEXT", context: { eventText: "회의에서 말을 못 했다", source: "event" } });
   state = sessionReducer(state, { type: "SET_CONCERNS", concerns: ["존중받고 싶었다"] });
   state = sessionReducer(state, { type: "SET_EMOTIONS", emotionCandidates: [{ label: "억울함", source: "suggested" }] });
@@ -161,8 +161,8 @@ describe("quick to deep", () => {
     let state = sessionReducer(quick, { type: "ENTER_DEEP" });
     state = sessionReducer(state, { type: "SET_ENTRY", decision: "observe" });
     state = runDeepToSummary(state);
-    expect(state.quickCheck?.affect).toEqual({ valence: 2, activation: 5 });
-    expect(state.deepReflection?.affect).toEqual({ valence: 3, activation: 2 });
+    expect(state.quickCheck?.affect).toEqual({ valence: 0.25, activation: 1 });
+    expect(state.deepReflection?.affect).toEqual({ valence: 0.5, activation: 0.25 });
     expect(state.quickCheck?.selected.map((item) => item.label)).toEqual(["긴장"]);
     expect(state.deepReflection?.emotionCandidates.map((item) => item.label)).toEqual(["억울함"]);
     expect(state.stage).toBe("summary");

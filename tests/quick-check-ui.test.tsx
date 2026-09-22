@@ -17,7 +17,7 @@ const openQuickCheck = () => {
 const tapUnpleasantActivated = () => {
   // jsdom drops clientX/clientY from PointerEvent, so dispatch a MouseEvent named "pointerdown".
   fireEvent(
-    screen.getByRole("button", { name: /불편함과 편안함/ }),
+    screen.getByRole("application", { name: /불편함과 편안함/ }),
     new MouseEvent("pointerdown", { bubbles: true, clientX: 40, clientY: 30 }),
   );
   fireEvent.click(screen.getByRole("button", { name: /다음/ }));
@@ -59,8 +59,11 @@ describe("quick check screens", () => {
     fireEvent.click(screen.getByRole("button", { name: /조금 살펴보고 싶어요/ }));
     fireEvent.click(screen.getByRole("button", { name: "건너뛰기" }));
 
-    expect((screen.getByLabelText("불쾌함에서 유쾌함") as HTMLInputElement).value).toBe("1");
-    expect((screen.getByLabelText("가라앉음에서 활성됨") as HTMLInputElement).value).toBe("5");
+    // the quick reading is already placed on the pad, exactly where it was tapped
+    const dot = document.querySelector(".affect-dot") as HTMLElement | null;
+    expect(dot).not.toBeNull();
+    expect(parseFloat(dot!.style.left)).toBeCloseTo(10, 5);
+    expect(parseFloat(dot!.style.top)).toBeCloseTo(10, 5);
   });
 
   it("shows a handful of words first and reveals related ones only when asked", () => {
@@ -119,17 +122,16 @@ describe("quick check screens", () => {
     expect(screen.getByText(/사실은 그냥 지쳤던 것 같다/)).toBeTruthy();
   });
 
-  it("labels the affect scale by its own poles, not by 낮음/높음", () => {
+  it("uses the same continuous pad for the deep pass, not a 1-5 scale", () => {
     render(<Home />);
     fireEvent.click(screen.getByRole("button", { name: /조금 더 천천히 살펴보기/ }));
     fireEvent.click(screen.getByRole("button", { name: /조금 살펴보고 싶어요/ }));
     fireEvent.click(screen.getByRole("button", { name: "건너뛰기" })); // body
 
-    // "불쾌함이 낮음"은 축의 뜻과 맞지 않는다
+    expect(screen.getByText(/조금 더 살펴본 지금은 어느 쪽에 가까운가요/)).toBeTruthy();
+    expect(screen.getByRole("application", { name: /불편함과 편안함/ })).toBeTruthy();
+    expect(document.querySelectorAll('input[type="range"]')).toHaveLength(0);
     expect(screen.queryByText("낮음")).toBeNull();
-    expect(screen.queryByText("높음")).toBeNull();
-    expect(screen.getAllByText("불쾌함 쪽").length).toBeGreaterThan(0);
-    expect(screen.getAllByText("활성됨 쪽").length).toBeGreaterThan(0);
   });
 
   it("does not put the whole vocabulary on the deep emotion step either", () => {

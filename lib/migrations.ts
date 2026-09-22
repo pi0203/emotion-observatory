@@ -1,8 +1,36 @@
-import type { BodyObservation, EmotionSelection, EmotionSession, EntryDecision, Stage } from "./session-types";
-import { getStorageKeys, loadCompleted } from "./storage";
+import type { AffectPoint, BodyObservation, EmotionSelection, EmotionSession, EntryDecision, Stage } from "./session-types";
+import { getStorageKeys, loadCompleted, loadDraft, saveDraft } from "./storage";
 
 const V1_DRAFT_KEY = "emotion-lab:draft:v1";
 const V1_COMPLETED_KEY = "emotion-lab:completed:v1";
+const V2_DRAFT_KEY = "emotion-lab:draft:v2";
+const V2_COMPLETED_KEY = "emotion-lab:completed:v2";
+
+/** v1 and v2 both stored affect as one of five steps. */
+type ScaleStep = 1 | 2 | 3 | 4 | 5;
+type SteppedAffect = { valence?: ScaleStep; activation?: ScaleStep; unknown?: boolean };
+
+/** v2 records are v3-shaped apart from the affect axis. */
+type V2Session = Omit<EmotionSession, "quickCheck" | "deepReflection"> & {
+  quickCheck?: Omit<NonNullable<EmotionSession["quickCheck"]>, "affect"> & { affect?: SteppedAffect };
+  deepReflection?: Omit<NonNullable<EmotionSession["deepReflection"]>, "affect"> & { affect?: SteppedAffect };
+};
+
+/** (n - 1) / 4 puts a recorded step at exactly the same place on the continuous axis. */
+const toContinuous = (step?: number) => (step === undefined ? undefined : (step - 1) / 4);
+
+const migrateAffect = (affect?: SteppedAffect): AffectPoint | undefined => {
+  if (!affect) return undefined;
+  if (affect.unknown) return { unknown: true };
+  return { valence: toContinuous(affect.valence), activation: toContinuous(affect.activation) };
+};
+
+/** v2 -> v3: only the affect axis changes. */
+export const migrateV2Session = (session: V2Session): EmotionSession => ({
+  ...session,
+  quickCheck: session.quickCheck ? { ...session.quickCheck, affect: migrateAffect(session.quickCheck.affect) } : undefined,
+  deepReflection: session.deepReflection ? { ...session.deepReflection, affect: migrateAffect(session.deepReflection.affect) } : undefined,
+});
 
 /**
  * The v1 shape kept every field on one flat object, and `quickCandidatePool`
@@ -17,12 +45,12 @@ type LegacySession = {
   stage?: Stage;
   entryDecision?: EntryDecision;
   body?: BodyObservation[];
-  affect?: { valence?: 1 | 2 | 3 | 4 | 5; activation?: 1 | 2 | 3 | 4 | 5 };
+  affect?: SteppedAffect;
   context?: { eventText?: string; source?: "event" | "memory" | "anticipation" | "thought" };
   concerns?: string[];
   emotionCandidates?: EmotionSelection[];
   quickCandidatePool?: EmotionSelection[];
-  quickAffect?: { valence?: 1 | 2 | 3 | 4 | 5; activation?: 1 | 2 | 3 | 4 | 5; unknown?: boolean };
+  quickAffect?: SteppedAffect;
   quickCandidateResponse?: "none-close" | "unsure";
   quickConcept?: string;
   quickGranularityResponse?: "unsure";
@@ -42,10 +70,10 @@ const usedDeepReflection = (legacy: LegacySession) =>
       (legacy.mode !== "quick" && legacy.emotionCandidates?.length),
   );
 
-export const migrateSession = (legacy: LegacySession): EmotionSession => {
+const migrateV1Shape = (legacy: LegacySession): V2Session => {
   const mode = legacy.mode ?? "deep";
   const wentDeep = mode !== "quick" && usedDeepReflection(legacy);
-  const session: EmotionSession = {
+  const session: V2Session = {
     id: legacy.id,
     createdAt: legacy.createdAt,
     completedAt: legacy.completedAt,
@@ -88,34 +116,59 @@ export const migrateSession = (legacy: LegacySession): EmotionSession => {
   return session;
 };
 
+/** v1 -> v3, chaining both steps so callers only ever see the current shape. */
+export const migrateSession = (legacy: LegacySession): EmotionSession => migrateV2Session(migrateV1Shape(legacy));
+
 export const hasLegacyStorage = () => {
   if (typeof window === "undefined") return false;
-  return window.localStorage.getItem(V1_COMPLETED_KEY) !== null || window.localStorage.getItem(V1_DRAFT_KEY) !== null;
+  return [V1_COMPLETED_KEY, V1_DRAFT_KEY, V2_COMPLETED_KEY, V2_DRAFT_KEY].some((key) => window.localStorage.getItem(key) !== null);
+};
+
+const readArray = <T>(key: string): T[] => {
+  const raw = window.localStorage.getItem(key);
+  if (!raw) return [];
+  try {
+    const parsed = JSON.parse(raw) as T[];
+    return Array.isArray(parsed) ? parsed : [];
+  } catch {
+    return [];
+  }
 };
 
 /**
- * Moves v1 completed records into the v2 store and discards v1 drafts, which
- * are unfinished by definition. Deleting the v1 keys makes this idempotent.
+ * Brings older stores up to the current one. v1 drafts are discarded, because a
+ * v1 draft is unfinished by definition and its shape cannot be recovered
+ * reliably; v2 drafts are carried over, because v2 -> v3 is lossless and the
+ * user may have a session open right now. Deleting the old keys makes this
+ * idempotent.
  */
 export const migrateLegacyStorage = (): number => {
   if (typeof window === "undefined" || !hasLegacyStorage()) return 0;
   const { COMPLETED_KEY } = getStorageKeys();
-  const raw = window.localStorage.getItem(V1_COMPLETED_KEY);
-  let migrated: EmotionSession[] = [];
-  if (raw) {
-    try {
-      migrated = (JSON.parse(raw) as LegacySession[]).map(migrateSession);
-    } catch {
-      migrated = [];
-    }
-  }
+
+  const fromV1 = readArray<LegacySession>(V1_COMPLETED_KEY).map(migrateSession);
+  const fromV2 = readArray<V2Session>(V2_COMPLETED_KEY).map(migrateV2Session);
+  // older records go after whatever is already here, since the list is newest-first
+  const migrated = [...fromV2, ...fromV1];
   if (migrated.length) {
-    // v1 records are older than anything already in v2, and the list is newest-first.
     window.localStorage.setItem(COMPLETED_KEY, JSON.stringify([...loadCompleted(), ...migrated]));
   }
-  window.localStorage.removeItem(V1_COMPLETED_KEY);
-  window.localStorage.removeItem(V1_DRAFT_KEY);
-  return migrated.length;
+
+  let movedDraft = 0;
+  const rawDraft = window.localStorage.getItem(V2_DRAFT_KEY);
+  if (rawDraft && !loadDraft()) {
+    try {
+      saveDraft(migrateV2Session(JSON.parse(rawDraft) as V2Session));
+      movedDraft = 1;
+    } catch {
+      movedDraft = 0;
+    }
+  }
+
+  for (const key of [V1_COMPLETED_KEY, V1_DRAFT_KEY, V2_COMPLETED_KEY, V2_DRAFT_KEY]) {
+    window.localStorage.removeItem(key);
+  }
+  return migrated.length + movedDraft;
 };
 
-export const getLegacyStorageKeys = () => ({ V1_DRAFT_KEY, V1_COMPLETED_KEY });
+export const getLegacyStorageKeys = () => ({ V1_DRAFT_KEY, V1_COMPLETED_KEY, V2_DRAFT_KEY, V2_COMPLETED_KEY });

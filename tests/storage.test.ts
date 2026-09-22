@@ -4,7 +4,7 @@ import { getStorageKeys, loadCompleted, loadDraft, persistSession } from "../lib
 
 const completedQuick = () => {
   let state = sessionReducer(createSession(), { type: "START_QUICK" });
-  state = sessionReducer(state, { type: "SET_QUICK_AFFECT", affect: { valence: 2, activation: 5 } });
+  state = sessionReducer(state, { type: "SET_QUICK_AFFECT", affect: { valence: 0.25, activation: 1 } });
   state = sessionReducer(state, { type: "SET_QUICK_CANDIDATES", candidatePool: [{ label: "긴장", source: "suggested" }] });
   state = sessionReducer(state, { type: "TOGGLE_QUICK_CANDIDATE", label: "긴장" });
   return sessionReducer(state, { type: "COMPLETE_QUICK" });

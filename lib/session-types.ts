@@ -5,7 +5,11 @@ export type SessionStatus = "draft" | "completed" | "stopped";
 export type SessionEntry = "quick" | "deep";
 /** How well the generated synthesis matched, in the user's own judgement. */
 export type SynthesisFit = "close" | "partly" | "unsure";
-export type Scale = 1 | 2 | 3 | 4 | 5;
+/**
+ * A point on the affect pad, normalised to 0..1 on each axis.
+ * Never shown to the user as a number, and never a diagnosis.
+ */
+export type AffectPoint = { valence?: number; activation?: number; unknown?: boolean };
 export type Stage =
   | "landing"
   | "quick-affect"
@@ -38,7 +42,7 @@ export type EmotionSelection = {
 
 /** The fast first read of one's own state. Never overwritten by the deep pass. */
 export type QuickCheck = {
-  affect?: { valence?: Scale; activation?: Scale; unknown?: boolean };
+  affect?: AffectPoint;
   candidatePool: EmotionSelection[];
   selected: EmotionSelection[];
   candidateResponse?: QuickNonSelection;
@@ -54,7 +58,7 @@ export type DeepReflection = {
   startedAt: string;
   entryDecision?: EntryDecision;
   body: BodyObservation[];
-  affect?: { valence?: Scale; activation?: Scale };
+  affect?: AffectPoint;
   context?: {
     eventText?: string;
     source?: "event" | "memory" | "anticipation" | "thought";

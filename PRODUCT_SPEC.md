@@ -1014,7 +1014,7 @@ type EmotionSession = {
   entry: "quick" | "deep"          // 어느 문으로 들어왔는지
 
   quickCheck?: {
-    affect?: { valence?: Scale; activation?: Scale; unknown?: boolean }
+    affect?: AffectPoint          // { valence?: 0..1, activation?: 0..1, unknown?: boolean }
     candidatePool: EmotionSelection[]   // 제시된 후보
     selected: EmotionSelection[]        // 사용자가 고른 것
     candidateResponse?: "none-close" | "unsure"
@@ -1029,7 +1029,7 @@ type EmotionSession = {
     startedAt: string
     entryDecision?: "observe" | "unsure"
     body: BodyObservation[]
-    affect?: { valence?: Scale; activation?: Scale }
+    affect?: AffectPoint          // 같은 pad로 다시 표시한 값. quickCheck.affect를 덮어쓰지 않는다
     context?: {
       eventText?: string
       source?: "event" | "memory" | "anticipation" | "thought"
@@ -1069,14 +1069,31 @@ type EmotionSession = {
 ### Persistence
 
 ```text
-emotion-lab:draft:v2       진행 중 세션 1개
-emotion-lab:completed:v2   완료·중단 세션 목록 (newest first)
+emotion-lab:draft:v3       진행 중 세션 1개
+emotion-lab:completed:v3   완료·중단 세션 목록 (newest first)
 ```
 
 - completed 저장은 **id 기준 upsert**다. reopen으로 `completed → draft → completed`를
   왕복해도 같은 id가 두 번 쌓이지 않는다.
 - draft로 저장할 때 completed 목록에서 같은 id를 제거한다. 저장 후 삭제 순서라
   두 저장소에서 동시에 사라지는 구간이 없다.
+
+### Affect coordinate
+
+`AffectPoint`는 **0..1 정규화 연속값**이다. 사용자에게 숫자를 보여주지 않는다.
+
+- Quick과 Deep은 **같은 pad**를 쓴다. 차이는 측정도구가 아니라 질문 문구뿐이다.
+- 따라서 두 값은 같은 척도 위에 있고, 비교가 성립한다. 어느 쪽이 더 정확하다고 평가하지 않는다.
+- 후보 계산은 `lib/quick-check.ts`의 **boundary blending**을 쓴다. 이것은
+  categorical band의 딱딱한 경계를 완화하는 **잠정 장치**이며, 단어에 좌표를
+  부여하지 않는다. empirical norm이 연결되면 교체한다 (PROJECT_CONTEXT Decision B).
+- third axis는 추가하지 않는다.
+
+### v2 → v3 migration
+
+`(n - 1) / 4`로 기존 1~5 값을 같은 위치의 연속값으로 옮긴다. 무손실이다.
+v1 draft는 폐기하지만 **v2 draft는 이관한다** — 변환이 무손실이고 사용자가
+진행 중인 세션을 갖고 있을 수 있기 때문이다.
 
 ### v1 → v2 migration
 

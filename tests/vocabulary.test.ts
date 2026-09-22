@@ -87,6 +87,24 @@ describe("narrowing over the larger vocabulary", () => {
     expect(middle.some((label) => valenceOf(label) === "negative")).toBe(true);
   });
 
+  it("changes the mix as the tap moves along the pleasantness axis", () => {
+    const labels = (x: number) => filterQuickCandidates({ x, y: 0.5 }).map((item) => item.label).join("|");
+    const positions = [0, 0.25, 0.4, 0.5, 0.6, 0.75, 1];
+    const results = positions.map(labels);
+    // a continuous pad has to produce more than one outcome across the axis
+    expect(new Set(results).size).toBeGreaterThanOrEqual(4);
+  });
+
+  it("shifts the balance toward the side the tap is on", () => {
+    const valenceOf = (label: string) => items.find((item) => item.label === label)?.valence;
+    const pleasantCount = (x: number) =>
+      filterQuickCandidates({ x, y: 0.5 }).filter((item) => valenceOf(item.label) === "positive").length;
+    expect(pleasantCount(0.05)).toBe(0);
+    expect(pleasantCount(0.95)).toBe(5);
+    expect(pleasantCount(0.4)).toBeGreaterThan(0);
+    expect(pleasantCount(0.4)).toBeLessThan(pleasantCount(0.6));
+  });
+
   it("reaches a wider set through neighbours than the first tier shows", () => {
     const first = filterQuickCandidates({ x: 0.1, y: 0.95 });
     const second = expandCandidates(first);

@@ -5,7 +5,7 @@ import type { EmotionSession } from "../lib/session-types";
 
 const quickOnly = (): EmotionSession => {
   let state = sessionReducer(createSession(), { type: "START_QUICK" });
-  state = sessionReducer(state, { type: "SET_QUICK_AFFECT", affect: { valence: 2, activation: 5 } });
+  state = sessionReducer(state, { type: "SET_QUICK_AFFECT", affect: { valence: 0.25, activation: 1 } });
   state = sessionReducer(state, { type: "SET_QUICK_CANDIDATES", candidatePool: [{ label: "긴장", source: "suggested" }] });
   state = sessionReducer(state, { type: "TOGGLE_QUICK_CANDIDATE", label: "긴장" });
   return sessionReducer(state, { type: "COMPLETE_QUICK" });
@@ -15,7 +15,7 @@ const deepAfterQuick = (emotion = "억울함"): EmotionSession => {
   let state = sessionReducer(quickOnly(), { type: "ENTER_DEEP" });
   state = sessionReducer(state, { type: "SET_ENTRY", decision: "observe" });
   state = sessionReducer(state, { type: "SET_BODY", body: [{ label: "어깨가 굳음" }, { label: "숨이 얕음" }] });
-  state = sessionReducer(state, { type: "SET_AFFECT", affect: { valence: 3, activation: 2 } });
+  state = sessionReducer(state, { type: "SET_AFFECT", affect: { valence: 0.5, activation: 0.25 } });
   state = sessionReducer(state, { type: "SET_CONTEXT", context: { eventText: "회의에서 말을 못 했다", source: "event" } });
   state = sessionReducer(state, { type: "SET_CONCERNS", concerns: ["존중받고 싶었다"] });
   state = sessionReducer(state, { type: "SET_EMOTIONS", emotionCandidates: [{ label: emotion, source: "suggested" }] });
@@ -71,7 +71,7 @@ describe("synthesis content", () => {
 
   it("reports a declined candidate list as an answer", () => {
     let state = sessionReducer(createSession(), { type: "START_QUICK" });
-    state = sessionReducer(state, { type: "SET_QUICK_AFFECT", affect: { valence: 2, activation: 5 } });
+    state = sessionReducer(state, { type: "SET_QUICK_AFFECT", affect: { valence: 0.25, activation: 1 } });
     state = sessionReducer(state, { type: "SET_QUICK_CANDIDATE_RESPONSE", response: "none-close" });
     expect(allText(state)).toContain("가까운 말이 없다고 표시했습니다");
   });

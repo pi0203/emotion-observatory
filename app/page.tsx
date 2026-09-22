@@ -5,9 +5,8 @@ import bodySignals from "../data/body-signals.ko.json";
 import concerns from "../data/concerns.ko.json";
 import granularity from "../data/granularity.ko.json";
 import { createSession, sessionReducer } from "../lib/session-types";
-import type { BodyObservation, DeepReflection, EmotionSelection, EmotionSession, QuickCheck, QuickNonSelection, Scale, SynthesisFit } from "../lib/session-types";
+import type { AffectPoint, BodyObservation, DeepReflection, EmotionSelection, EmotionSession, QuickNonSelection, SynthesisFit } from "../lib/session-types";
 
-type DeepAffect = NonNullable<DeepReflection["affect"]>;
 type DeepContext = NonNullable<DeepReflection["context"]>;
 type DeepOutcome = NonNullable<DeepReflection["outcome"]>;
 import { loadDraft, persistSession, removeDraft } from "../lib/storage";
@@ -73,7 +72,7 @@ export default function Home() {
         </div>
       )}
 
-      {session.stage === "quick-affect" && <QuickAffectScreen onNext={(affect) => { dispatch({ type: "SET_QUICK_AFFECT", affect }); dispatch({ type: "SET_QUICK_CANDIDATES", candidatePool: filterQuickCandidates({ x: (affect.valence! - 1) / 4, y: (affect.activation! - 1) / 4 }) }); }} onUnknown={() => dispatch({ type: "SET_QUICK_UNKNOWN" })} />}
+      {session.stage === "quick-affect" && <QuickAffectScreen onNext={(affect) => { dispatch({ type: "SET_QUICK_AFFECT", affect }); dispatch({ type: "SET_QUICK_CANDIDATES", candidatePool: filterQuickCandidates({ x: affect.valence ?? 0.5, y: affect.activation ?? 0.5 }) }); }} onUnknown={() => dispatch({ type: "SET_QUICK_UNKNOWN" })} />}
       {session.stage === "quick-candidates" && <QuickCandidatesScreen pool={session.quickCheck?.candidatePool ?? []} selected={session.quickCheck?.selected ?? []} response={session.quickCheck?.candidateResponse} onToggle={(label) => dispatch({ type: "TOGGLE_QUICK_CANDIDATE", label })} onRespond={(response) => dispatch({ type: "SET_QUICK_CANDIDATE_RESPONSE", response })} onAddCustom={(label) => dispatch({ type: "ADD_QUICK_CUSTOM", label })} onFinish={() => dispatch({ type: "COMPLETE_QUICK" })} onCoach={() => dispatch({ type: "OPEN_GRANULARITY" })} onDeep={() => { dispatch({ type: "COMPLETE_QUICK" }); dispatch({ type: "ENTER_DEEP" }); }} />}
       {session.stage === "granularity" && <GranularityScreen selected={session.quickCheck?.selected ?? []} onChoose={(concept) => dispatch({ type: "CHOOSE_GRANULARITY", concept })} onSkip={() => dispatch({ type: "SKIP_GRANULARITY" })} />}
       {session.stage === "context-contrast" && <ContextContrastScreen concept={session.quickCheck?.concept ?? ""} onAnswer={(answer) => dispatch({ type: "SET_CONTRAST", answer })} />}
@@ -115,20 +114,63 @@ function LandingScreen({ onQuick, onDeep, draft, onResume }: { onQuick: () => vo
   return <Screen className="entry-screen"><p className="eyebrow">감정 관찰실</p><h1>지금의 경험을<br />조금 더 알아보기</h1><p className="lede">감정을 맞히는 검사가 아닙니다.<br />빠르게 살펴보거나, 천천히 구별해볼 수 있습니다.</p><div className="stack-actions"><button className="primary-button" onClick={onQuick}>빠르게 살펴보기 <span>→</span></button><button className="secondary-button" onClick={onDeep}>조금 더 천천히 살펴보기</button>{draft && <button className="secondary-button" onClick={onResume}>지난 기록 이어하기</button>}</div><p className="small-note">기록은 이 기기에만 저장됩니다. 언제든 건너뛰거나 닫을 수 있습니다.</p></Screen>;
 }
 
-function QuickAffectScreen({ onNext, onUnknown }: { onNext: (affect: NonNullable<QuickCheck["affect"]>) => void; onUnknown: () => void }) {
-  const [point, setPoint] = useState<{ x: number; y: number } | null>(null);
-  const choosePoint = (event: React.PointerEvent<HTMLDivElement>) => {
-    const rect = event.currentTarget.getBoundingClientRect();
-    setPoint({ x: Math.max(0, Math.min(1, (event.clientX - rect.left) / rect.width)), y: Math.max(0, Math.min(1, 1 - (event.clientY - rect.top) / rect.height)) });
+/**
+ * One instrument for both passes. The position is continuous and is never shown
+ * as a number; Quick and Deep differ only in the question above it, so the two
+ * readings can be compared at the end.
+ */
+function AffectPad({ initial, onChange }: { initial?: AffectPoint; onChange: (point: { valence: number; activation: number }) => void }) {
+  const [point, setPoint] = useState<{ x: number; y: number } | null>(
+    initial && !initial.unknown && initial.valence !== undefined && initial.activation !== undefined
+      ? { x: initial.valence, y: initial.activation }
+      : null,
+  );
+  const clamp = (value: number) => Math.max(0, Math.min(1, value));
+  const move = (next: { x: number; y: number }) => {
+    const picked = { x: clamp(next.x), y: clamp(next.y) };
+    setPoint(picked);
+    onChange({ valence: picked.x, activation: picked.y });
   };
-  const toScale = (value: number) => Math.max(1, Math.min(5, Math.round(value * 4) + 1)) as Scale;
-  return <Screen><StepHeading step="빠른 확인" title="지금의 경험은 어느 쪽에 가까운가요?" hint="정확한 좌표를 고를 필요 없이, ‘이쯤’이라고 느껴지는 곳을 한 번 눌러보세요." /><div className="affect-grid-wrap"><div className="affect-axis-label top">에너지가 올라온 느낌</div><div className="affect-grid" role="button" tabIndex={0} aria-label="불편함과 편안함, 가라앉음과 에너지 사이에서 현재 경험에 가까운 곳 선택" onPointerDown={choosePoint} onKeyDown={(event) => { if (event.key === "Enter" || event.key === " ") setPoint({ x: .5, y: .5 }); }}>{point && <span className="affect-dot" style={{ left: `${point.x * 100}%`, top: `${(1 - point.y) * 100}%` }} />}</div><div className="affect-axis-row"><span>불편함</span><span>편안함</span></div><div className="affect-axis-label bottom">가라앉은 느낌</div></div><div className="quick-actions"><button className="quiet-button" onClick={onUnknown}>잘 모르겠음</button><button className="primary-button" disabled={!point} onClick={() => point && onNext({ valence: toScale(point.x), activation: toScale(point.y) })}>다음 <span>→</span></button></div></Screen>;
+  const fromPointer = (event: React.PointerEvent<HTMLDivElement>) => {
+    const rect = event.currentTarget.getBoundingClientRect();
+    if (!rect.width || !rect.height) return;
+    move({ x: (event.clientX - rect.left) / rect.width, y: 1 - (event.clientY - rect.top) / rect.height });
+  };
+  const nudge = (event: React.KeyboardEvent<HTMLDivElement>) => {
+    const step = 0.05;
+    const from = point ?? { x: 0.5, y: 0.5 };
+    const by: Record<string, { x: number; y: number }> = {
+      ArrowLeft: { x: -step, y: 0 }, ArrowRight: { x: step, y: 0 },
+      ArrowUp: { x: 0, y: step }, ArrowDown: { x: 0, y: -step },
+    };
+    if (event.key === "Enter" || event.key === " ") { event.preventDefault(); move(from); return; }
+    const delta = by[event.key];
+    if (!delta) return;
+    event.preventDefault();
+    move({ x: from.x + delta.x, y: from.y + delta.y });
+  };
+  return <div className="affect-grid-wrap">
+    <div className="affect-axis-label top">에너지가 올라온 느낌</div>
+    <div className="affect-grid" role="application" tabIndex={0} aria-label="불편함과 편안함, 가라앉음과 에너지 사이에서 현재 경험에 가까운 곳 선택. 방향키로도 움직일 수 있습니다." onPointerDown={fromPointer} onKeyDown={nudge}>
+      {point && <span className="affect-dot" style={{ left: `${point.x * 100}%`, top: `${(1 - point.y) * 100}%` }} />}
+    </div>
+    <div className="affect-axis-row"><span>불편함</span><span>편안함</span></div>
+    <div className="affect-axis-label bottom">가라앉은 느낌</div>
+  </div>;
 }
 
-/**
- * The vocabulary is far larger than one screen should show, so it opens in tiers:
- * a handful of words, then related ones on request, then the user's own wording.
- */
+function QuickAffectScreen({ onNext, onUnknown }: { onNext: (affect: AffectPoint) => void; onUnknown: () => void }) {
+  const [point, setPoint] = useState<{ valence: number; activation: number } | null>(null);
+  return <Screen>
+    <StepHeading step="빠른 확인" title="지금은 어느 쪽에 가까운가요?" hint="정확한 좌표를 고를 필요 없이, ‘이쯤’이라고 느껴지는 곳을 한 번 눌러보세요." />
+    <AffectPad onChange={setPoint} />
+    <div className="quick-actions">
+      <button className="quiet-button" onClick={onUnknown}>잘 모르겠음</button>
+      <button className="primary-button" disabled={!point} onClick={() => point && onNext(point)}>다음 <span>→</span></button>
+    </div>
+  </Screen>;
+}
+
 function TieredWords({ pool, selectedLabels, ownWords, onToggle, onAddCustom }: { pool: EmotionSelection[]; selectedLabels: string[]; ownWords: string[]; onToggle: (label: string) => void; onAddCustom: (label: string) => void }) {
   const [tier, setTier] = useState<1 | 2 | 3>(1);
   const [custom, setCustom] = useState("");
@@ -211,11 +253,18 @@ function BodyScreen({ initial, onNext }: { initial: BodyObservation[]; onNext: (
   return <Screen><StepHeading step="몸" title="먼저, 몸에서는 무엇이 느껴지나요?" hint="감정 이름을 찾기 전에 지금 몸에서 알아차릴 수 있는 것부터 봅니다." /><div className="chip-grid">{bodySignals.map((label) => <button className={`chip ${selected.includes(label) ? "selected" : ""}`} key={label} onClick={() => toggle(label)}>{label}</button>)}</div><label className="field-label" htmlFor="body-custom">다른 느낌이 있다면 적어도 됩니다</label><input id="body-custom" className="text-input" value={custom} onChange={(event) => setCustom(event.target.value)} placeholder="예: 손이 차가움" /><Navigation note={stepNote("body", selected.length > 0 || custom.trim().length > 0)} onNext={() => onNext([...selected.filter((label) => label !== custom).map((label) => ({ label })), ...(custom ? [{ label: custom, custom: true }] : [])])} /></Screen>;
 }
 
-function AffectScreen({ initial, onNext }: { initial?: DeepAffect; onNext: (affect: DeepAffect) => void }) {
-  const [valence, setValence] = useState<number>(initial?.valence ?? 3);
-  const [activation, setActivation] = useState<number>(initial?.activation ?? 3);
+function AffectScreen({ initial, onNext }: { initial?: AffectPoint; onNext: (affect: AffectPoint) => void }) {
+  const [point, setPoint] = useState<{ valence: number; activation: number } | null>(
+    initial && !initial.unknown && initial.valence !== undefined && initial.activation !== undefined
+      ? { valence: initial.valence, activation: initial.activation }
+      : null,
+  );
   const [touched, setTouched] = useState(false);
-  return <Screen><StepHeading step="전체적인 느낌" title="전체적으로 지금 경험은 어느 쪽에 가까운가요?" hint="정밀한 점수보다, 지금의 방향을 가볍게 살펴봅니다." /><Scale label="불쾌함" right="유쾌함" value={valence} onChange={(next) => { setTouched(true); setValence(next); }} /><Scale label="가라앉음" right="활성됨" value={activation} onChange={(next) => { setTouched(true); setActivation(next); }} /><Navigation note={stepNote("affect", touched)} onNext={() => onNext({ valence: valence as Scale, activation: activation as Scale })} /></Screen>;
+  return <Screen>
+    <StepHeading step="전체적인 느낌" title="조금 더 살펴본 지금은 어느 쪽에 가까운가요?" hint="빠른 확인에서 표시한 곳이 먼저 놓여 있습니다. 그대로 두어도 되고 옮겨도 됩니다." />
+    <AffectPad initial={initial} onChange={(next) => { setTouched(true); setPoint(next); }} />
+    <Navigation note={stepNote("affect", touched)} onNext={() => onNext(point ?? initial ?? {})} />
+  </Screen>;
 }
 
 function ContextScreen({ initial, onNext }: { initial?: DeepContext; onNext: (context: DeepContext) => void }) {
@@ -231,7 +280,7 @@ function MeaningScreen({ initial, onNext }: { initial: string[]; onNext: (select
   return <Screen><StepHeading step="중요했던 것" title="그 순간 무엇이 중요했던 것 같나요?" hint="정답을 찾는 질문이 아닙니다. 가까운 것을 골라도, 잘 모르겠다고 해도 됩니다." /><div className="choice-list compact">{concerns.map((item) => <button className={selected.includes(item) ? "selected" : ""} key={item} onClick={() => toggle(item)}>{item}</button>)}</div><input className="text-input" value={custom} onChange={(event) => setCustom(event.target.value)} placeholder="내 말로 적기" /><Navigation note={stepNote("meaning", selected.length > 0 || custom.trim().length > 0)} onNext={() => onNext([...selected, ...(custom ? [custom] : [])])} /></Screen>;
 }
 
-function EmotionScreen({ initial, affect, onNext }: { initial: EmotionSelection[]; affect?: DeepAffect; onNext: (selected: EmotionSelection[]) => void }) {
+function EmotionScreen({ initial, affect, onNext }: { initial: EmotionSelection[]; affect?: AffectPoint; onNext: (selected: EmotionSelection[]) => void }) {
   const [selected, setSelected] = useState(initial.map((item) => item.label));
   const [ownWords, setOwnWords] = useState(initial.filter((item) => item.source === "custom").map((item) => item.label));
   const toggle = (label: string) => setSelected((current) => current.includes(label) ? current.filter((item) => item !== label) : [...current, label]);
@@ -242,7 +291,7 @@ function EmotionScreen({ initial, affect, onNext }: { initial: EmotionSelection[
     setSelected((current) => current.includes(word) ? current : [...current, word]);
   };
   // the deep affect already narrowed the space once; this reuses it rather than listing everything
-  const pool = filterQuickCandidates({ x: ((affect?.valence ?? 3) - 1) / 4, y: ((affect?.activation ?? 3) - 1) / 4 });
+  const pool = filterQuickCandidates({ x: affect?.valence ?? 0.5, y: affect?.activation ?? 0.5 });
   return <Screen>
     <StepHeading step="가까운 표현" title="지금까지 적은 경험에 가까운 단어가 있나요?" hint="이 단어들은 정답이 아니라, 지금 경험을 표현해보는 임시 후보입니다." />
     <div className="provisional-note">임시 단어 모음 · 스스로 고른 표현만 기록됩니다</div>
@@ -307,12 +356,11 @@ function Navigation({ onNext, disabled = false, note }: { onNext: () => void; di
   return <><StepNote note={note} /><div className="navigation"><button className="skip-button" onClick={onNext}>건너뛰기</button><button className="primary-button" disabled={disabled} onClick={onNext}>다음 <span>→</span></button></div></>;
 }
 function StepNote({ note }: { note?: string }) { return note ? <p className="step-note" role="note">{note}</p> : null; }
-function Scale({ label, right, value, onChange }: { label: string; right: string; value: number; onChange: (value: number) => void }) { return <div className="scale"><div className="scale-labels"><span>{label}</span><span>{right}</span></div><input aria-label={`${label}에서 ${right}`} type="range" min="1" max="5" value={value} onChange={(event) => onChange(Number(event.target.value))} /><div className="scale-dots"><span>{label} 쪽</span><span>중간</span><span>{right} 쪽</span></div></div>; }
 function SummaryRow({ label, value }: { label: string; value: string }) { return <div className="summary-row"><span>{label}</span><strong>{value}</strong></div>; }
 type GranularityItem = { prompt: string; scenarios: Array<{ id: string; label: string; text: string }>; note: string };
 function getGranularityItem(concept?: string): GranularityItem | undefined { return concept ? (granularity.items as Record<string, GranularityItem>)[concept] : undefined; }
 function getGranularityNote(concept?: string) { return getGranularityItem(concept)?.note ?? "같은 몸의 느낌도 상황과 의미에 따라 다르게 경험될 수 있습니다."; }
-function quickAffectSuggestion(session: EmotionSession): DeepAffect | undefined {
+function quickAffectSuggestion(session: EmotionSession): AffectPoint | undefined {
   const affect = session.quickCheck?.affect;
   if (!affect || affect.unknown) return undefined;
   return { valence: affect.valence, activation: affect.activation };

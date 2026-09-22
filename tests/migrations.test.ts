@@ -60,7 +60,7 @@ describe("v1 record mapping", () => {
     expect(session.entry).toBe("quick");
     expect(session.quickCheck?.candidatePool.map((item) => item.label)).toEqual(["긴장", "짜증"]);
     expect(session.quickCheck?.selected.map((item) => item.label)).toEqual(["짜증"]);
-    expect(session.quickCheck?.affect).toEqual({ valence: 2, activation: 4 });
+    expect(session.quickCheck?.affect).toEqual({ valence: 0.25, activation: 0.75 });
     expect(session.quickCheck?.endedAt).toBe(v1QuickOnly.completedAt);
     expect(session.deepReflection).toBeUndefined();
     expect(sessionDepth(session)).toBe("quick");
@@ -72,9 +72,9 @@ describe("v1 record mapping", () => {
     // v1 stored the user's quick picks in this field, so the offered pool is lost.
     expect(session.quickCheck?.selected.map((item) => item.label)).toEqual(["답답함"]);
     expect(session.quickCheck?.candidatePool).toEqual([]);
-    expect(session.quickCheck?.affect).toEqual({ valence: 2, activation: 5 });
+    expect(session.quickCheck?.affect).toEqual({ valence: 0.25, activation: 1 });
     expect(session.deepReflection?.emotionCandidates.map((item) => item.label)).toEqual(["억울함"]);
-    expect(session.deepReflection?.affect).toEqual({ valence: 3, activation: 2 });
+    expect(session.deepReflection?.affect).toEqual({ valence: 0.5, activation: 0.25 });
     expect(session.deepReflection?.context?.eventText).toBe("회의에서 말을 못 했다");
     expect(session.deepReflection?.outcome?.usefulness).toBe("helpful");
     expect(sessionDepth(session)).toBe("quick+deep");
