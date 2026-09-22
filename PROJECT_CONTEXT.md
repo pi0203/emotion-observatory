@@ -146,11 +146,22 @@ Quick과 Deep은 **같은 EmotionSession**에 속하고, **두 affect를 모두 
 - step-level micro feedback
 - deterministic synthesis v1 + synthesis feedback
 - progressive vocabulary disclosure, neighbor 구조, custom word 입력
-- vocabulary 15 → 44
+- vocabulary 15 → 44 → **58** (pleasant 30 / unpleasant 28)
 - 밝은 연두 중심 theme, accessibility contrast/focus 정리
 - 조사 오류 수정 (`활성됨로` → `활성됨으로`)
+- **연속형 2D affect pad** (Quick/Deep 공용), storage v3, boundary blending
+- **`contextDependent`** — 양쪽 어디서든 제시되는 맥락 의존 표현
+- **synthesis v2** — 관찰 / 연결 / 모르는 것 / 질문, 단서 2개 미만이면 해석하지 않음
+- **norm audit 도구** — 외부 자료를 복제하지 않고 coverage만 조사
 
-Phase 1 bugfix commit: `581dd97`
+| commit | 내용 |
+|---|---|
+| `581dd97` | Phase 1 — 조사 오류, 눈금 라벨 |
+| `c1d54fe` | 이 문서 |
+| `5a53735` | Phase 2 — continuous affect pad, storage v3 |
+| `7ebd1ba` | Phase 3 — vocabulary 58, contextDependent, norm contract |
+| `1b52b4c` | Phase 4 — synthesis v2 |
+| `e6ead92` | Phase 5 — norm audit |
 
 ---
 
@@ -232,17 +243,19 @@ audit 결과를 본 뒤 실제 사용 여부를 **별도로** 결정한다.
 
 ## 8. 구현 순서
 
+**Phase 2~5 완료.** 아래는 기록으로 남긴다.
+
 | Phase | 내용 |
 |---|---|
-| 2 | Continuous 2D Affect Pad — Quick/Deep 동일 pad, storage v3, 1~5 값 migration, provisional boundary blending |
-| 3 | Vocabulary balance — positive/self-transcendent/context-dependent 보완, `contextDependent`, norm data contract |
-| 4 | Synthesis v2 — observed / meaning / unknown / questions |
-| 5 | Korean norm audit — VA-KOR local audit script, 외부 원자료 커밋 없음, coverage·source·variability만 보고 |
+| 2 ✅ | Continuous 2D Affect Pad — Quick/Deep 동일 pad, storage v3, 1~5 값 migration, provisional boundary blending |
+| 3 ✅ | Vocabulary balance — positive/self-transcendent/context-dependent 보완, `contextDependent`, norm data contract |
+| 4 ✅ | Synthesis v2 — observed / meaning / unknown / questions |
+| 5 ✅ | Korean norm audit — VA-KOR local audit script, 외부 원자료 커밋 없음, coverage·source·variability만 보고 |
 
 각 Phase는 **별도 commit**으로 남기고, 각 Phase마다 테스트 · `tsc` · `build`를 통과시킨다.
 **storage migration 전에 기존 v2 기록을 깨뜨리지 않는 테스트를 먼저 작성한다.**
 
-이후 예정: **Granularity Coach v2** — 첫 실험군 `짜증 ↔ 억울함 ↔ 답답함`,
+**다음 작업: Granularity Coach v2** — 첫 실험군 `짜증 ↔ 억울함 ↔ 답답함`,
 두 번째 후보 `서운함 ↔ 실망 ↔ 외로움`. 단어 정의보다 **appraisal contrast** 중심으로 설계한다.
 
 ---
