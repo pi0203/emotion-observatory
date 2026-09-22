@@ -2,12 +2,20 @@
   "provisional": true,
   "note": "연구·검토 전의 UI fixture입니다. 심리학적 분류나 자동 추론에 사용하지 않습니다.",
   "items": [
-    { "label": "서운함", "family": "social", "valence": "negative", "activation": "medium" },
-    { "label": "답답함", "family": "friction", "valence": "negative", "activation": "medium" },
-    { "label": "긴장", "family": "uncertainty", "valence": "negative", "activation": "high" },
-    { "label": "걱정", "family": "uncertainty", "valence": "negative", "activation": "medium" },
-    { "label": "안도", "family": "relief", "valence": "positive", "activation": "low" },
     { "label": "편안함", "family": "ease", "valence": "positive", "activation": "low" },
-    { "label": "흥미", "family": "interest", "valence": "positive", "activation": "medium" }
+    { "label": "안도", "family": "relief", "valence": "positive", "activation": "low" },
+    { "label": "흥미", "family": "interest", "valence": "positive", "activation": "medium" },
+    { "label": "즐거움", "family": "joy", "valence": "positive", "activation": "medium" },
+    { "label": "활기", "family": "energy", "valence": "positive", "activation": "high" },
+    { "label": "뿌듯함", "family": "pride", "valence": "positive", "activation": "medium" },
+    { "label": "긴장", "family": "uncertainty", "valence": "negative", "activation": "high" },
+    { "label": "초조함", "family": "uncertainty", "valence": "negative", "activation": "high" },
+    { "label": "짜증", "family": "friction", "valence": "negative", "activation": "high" },
+    { "label": "답답함", "family": "friction", "valence": "negative", "activation": "medium" },
+    { "label": "서운함", "family": "social", "valence": "negative", "activation": "medium" },
+    { "label": "실망", "family": "loss", "valence": "negative", "activation": "low" },
+    { "label": "억울함", "family": "fairness", "valence": "negative", "activation": "high" },
+    { "label": "외로움", "family": "social", "valence": "negative", "activation": "low" },
+    { "label": "걱정", "family": "uncertainty", "valence": "negative", "activation": "medium" }
   ]
 }

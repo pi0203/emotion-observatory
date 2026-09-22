@@ -2,6 +2,12 @@ export type EntryDecision = "observe" | "unsure" | "stop";
 export type SessionStatus = "draft" | "completed" | "stopped";
 export type Stage =
   | "landing"
+  | "quick-affect"
+  | "quick-candidates"
+  | "granularity"
+  | "context-contrast"
+  | "micro-learning"
+  | "quick-summary"
   | "entry"
   | "entry-mini"
   | "body"
@@ -29,6 +35,7 @@ export type EmotionSession = {
   createdAt: string;
   completedAt?: string;
   status: SessionStatus;
+  mode: "quick" | "deep" | "quick-to-deep";
   stage: Stage;
   entryDecision?: EntryDecision;
   body: BodyObservation[];
@@ -42,6 +49,15 @@ export type EmotionSession = {
   };
   concerns: string[];
   emotionCandidates: EmotionSelection[];
+  quickCandidatePool?: EmotionSelection[];
+  quickAffect?: {
+    valence?: 1 | 2 | 3 | 4 | 5;
+    activation?: 1 | 2 | 3 | 4 | 5;
+    unknown?: boolean;
+  };
+  quickConcept?: string;
+  quickContrastAnswer?: string;
+  quickMicroLearningSeen?: boolean;
   outcome?: {
     clarity: "much_clearer" | "clearer" | "same" | "more_complex" | "more_distressed";
     usefulness: "helpful" | "unsure" | "unhelpful";
@@ -52,7 +68,20 @@ export type EmotionSession = {
 
 export type SessionAction =
   | { type: "START" }
+  | { type: "START_QUICK" }
+  | { type: "START_DEEP" }
+  | { type: "ENTER_DEEP" }
   | { type: "RESUME"; session: EmotionSession }
+  | { type: "SET_QUICK_AFFECT"; affect: NonNullable<EmotionSession["quickAffect"]> }
+  | { type: "SET_QUICK_UNKNOWN" }
+  | { type: "SET_QUICK_CANDIDATES"; emotionCandidates: EmotionSelection[] }
+  | { type: "TOGGLE_QUICK_CANDIDATE"; label: string }
+  | { type: "CLEAR_QUICK_SELECTION" }
+  | { type: "OPEN_GRANULARITY"; concept: string }
+  | { type: "CHOOSE_GRANULARITY"; concept: string }
+  | { type: "SET_CONTRAST"; answer: string }
+  | { type: "DISMISS_MICRO_LEARNING" }
+  | { type: "COMPLETE_QUICK" }
   | { type: "SET_ENTRY"; decision: EntryDecision }
   | { type: "SET_ENTRY_MINI"; helpful: "yes" | "unsure" | "no" }
   | { type: "SET_BODY"; body: BodyObservation[] }
@@ -67,6 +96,7 @@ export const createSession = (): EmotionSession => ({
   id: crypto.randomUUID(),
   createdAt: new Date().toISOString(),
   status: "draft",
+  mode: "deep",
   stage: "landing",
   body: [],
   concerns: [],
@@ -76,9 +106,49 @@ export const createSession = (): EmotionSession => ({
 export const sessionReducer = (state: EmotionSession, action: SessionAction): EmotionSession => {
   switch (action.type) {
     case "START":
-      return { ...createSession(), stage: "entry" };
+      return { ...createSession(), mode: "deep", stage: "entry" };
+    case "START_DEEP":
+      return { ...createSession(), mode: "deep", stage: "entry" };
+    case "ENTER_DEEP":
+      return {
+        ...createSession(),
+        mode: "quick-to-deep",
+        stage: "entry",
+        affect: state.quickAffect?.unknown || !state.quickAffect?.valence || !state.quickAffect?.activation
+          ? undefined
+          : { valence: state.quickAffect.valence, activation: state.quickAffect.activation },
+        quickAffect: state.quickAffect,
+        quickCandidatePool: state.emotionCandidates,
+      };
+    case "START_QUICK":
+      return { ...createSession(), mode: "quick", stage: "quick-affect" };
     case "RESUME":
       return action.session;
+    case "SET_QUICK_AFFECT":
+      return { ...state, quickAffect: action.affect, stage: "quick-candidates" };
+    case "SET_QUICK_UNKNOWN":
+      return { ...state, quickAffect: { unknown: true }, emotionCandidates: [], stage: "quick-summary", status: "completed", completedAt: new Date().toISOString() };
+    case "SET_QUICK_CANDIDATES":
+      return { ...state, quickCandidatePool: action.emotionCandidates, emotionCandidates: [], stage: "quick-candidates" };
+    case "TOGGLE_QUICK_CANDIDATE":
+      return {
+        ...state,
+        emotionCandidates: state.emotionCandidates.some((item) => item.label === action.label)
+          ? state.emotionCandidates.filter((item) => item.label !== action.label)
+          : [...state.emotionCandidates, { label: action.label, source: "suggested" }],
+      };
+    case "CLEAR_QUICK_SELECTION":
+      return { ...state, emotionCandidates: [] };
+    case "OPEN_GRANULARITY":
+      return { ...state, stage: "granularity" };
+    case "CHOOSE_GRANULARITY":
+      return { ...state, quickConcept: action.concept, stage: "context-contrast" };
+    case "SET_CONTRAST":
+      return { ...state, quickContrastAnswer: action.answer, stage: "micro-learning" };
+    case "DISMISS_MICRO_LEARNING":
+      return { ...state, quickMicroLearningSeen: true, stage: "quick-summary", status: "completed", completedAt: new Date().toISOString() };
+    case "COMPLETE_QUICK":
+      return { ...state, stage: "quick-summary", status: "completed", completedAt: new Date().toISOString() };
     case "SET_ENTRY":
       return {
         ...state,

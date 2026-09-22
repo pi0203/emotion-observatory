@@ -2,6 +2,36 @@ import { describe, expect, it } from "vitest";
 import { createSession, sessionReducer } from "../lib/session-types";
 
 describe("vertical slice session machine", () => {
+  it("supports quick check, optional granularity, and deep reflection handoff", () => {
+    let state = sessionReducer(createSession(), { type: "START_QUICK" });
+    expect(state.stage).toBe("quick-affect");
+    state = sessionReducer(state, { type: "SET_QUICK_AFFECT", affect: { valence: 2, activation: 5 } });
+    state = sessionReducer(state, { type: "SET_QUICK_CANDIDATES", emotionCandidates: [{ label: "긴장", source: "suggested" }] });
+    state = sessionReducer(state, { type: "TOGGLE_QUICK_CANDIDATE", label: "긴장" });
+    state = sessionReducer(state, { type: "OPEN_GRANULARITY", concept: "긴장" });
+    expect(state.stage).toBe("granularity");
+    state = sessionReducer(state, { type: "CHOOSE_GRANULARITY", concept: "긴장" });
+    state = sessionReducer(state, { type: "SET_CONTRAST", answer: "A" });
+    state = sessionReducer(state, { type: "DISMISS_MICRO_LEARNING" });
+    expect(state.stage).toBe("quick-summary");
+    expect(state.status).toBe("completed");
+    const quickSessionId = state.id;
+    state = sessionReducer(state, { type: "ENTER_DEEP" });
+    expect(state.stage).toBe("entry");
+    expect(state.mode).toBe("quick-to-deep");
+    expect(state.id).not.toBe(quickSessionId);
+    expect(state.emotionCandidates).toEqual([]);
+    expect(state.affect).toEqual({ valence: 2, activation: 5 });
+  });
+
+  it("lets quick check end with unknown without selecting a word", () => {
+    let state = sessionReducer(createSession(), { type: "START_QUICK" });
+    state = sessionReducer(state, { type: "SET_QUICK_UNKNOWN" });
+    expect(state.stage).toBe("quick-summary");
+    expect(state.quickAffect?.unknown).toBe(true);
+    expect(state.emotionCandidates).toEqual([]);
+  });
+
   it("moves through the normal body-to-outcome flow", () => {
     let state = createSession();
     state = sessionReducer(state, { type: "SET_ENTRY", decision: "observe" });

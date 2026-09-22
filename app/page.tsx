@@ -4,9 +4,11 @@ import { useEffect, useReducer, useState } from "react";
 import bodySignals from "../data/body-signals.ko.json";
 import concerns from "../data/concerns.ko.json";
 import emotions from "../data/emotions.ko.json";
+import granularity from "../data/granularity.ko.json";
 import { createSession, sessionReducer } from "../lib/session-types";
 import type { BodyObservation, EmotionSession } from "../lib/session-types";
 import { loadDraft, persistSession, removeDraft } from "../lib/storage";
+import { filterQuickCandidates } from "../lib/quick-check";
 
 const progress: Record<string, string> = {
   body: "1 / 6",
@@ -16,6 +18,7 @@ const progress: Record<string, string> = {
   emotion: "5 / 6",
   outcome: "6 / 6",
 };
+const quickProgress: Record<string, string> = { "quick-affect": "1 / 2", "quick-candidates": "2 / 2", granularity: "1 / 2", "context-contrast": "2 / 2", "micro-learning": "2 / 2" };
 
 export default function Home() {
   const [session, dispatch] = useReducer(sessionReducer, undefined, createSession);
@@ -38,7 +41,7 @@ export default function Home() {
     if (draft) dispatch({ type: "RESUME", session: draft });
   };
 
-  if (session.stage === "landing") return <LandingScreen onStart={() => dispatch({ type: "START" })} draft={draft} onResume={resume} />;
+  if (session.stage === "landing") return <LandingScreen onQuick={() => dispatch({ type: "START_QUICK" })} onDeep={() => dispatch({ type: "START_DEEP" })} draft={draft} onResume={resume} />;
 
   const stop = () => {
     dispatch({ type: "STOP", reason: "user" });
@@ -51,18 +54,24 @@ export default function Home() {
         <a className="wordmark" href="#" onClick={() => window.location.reload()}>
           감정 관찰실
         </a>
-        {session.stage !== "entry" && session.stage !== "stopped" && session.stage !== "summary" && (
+        {session.stage !== "entry" && session.stage !== "stopped" && session.stage !== "summary" && session.stage !== "quick-summary" && (
           <button className="text-button" onClick={() => setStopConfirm(true)}>그만하기</button>
         )}
       </header>
 
-      {session.stage !== "stopped" && session.stage !== "summary" && session.stage !== "entry" && (
-        <div className="progress-row" aria-label={`진행 ${progress[session.stage]}`}>
-          <span>{progress[session.stage]}</span>
-          <div className="progress-track"><div className="progress-fill" style={{ width: `${(Object.keys(progress).indexOf(session.stage) + 1) * 16.66}%` }} /></div>
+      {session.stage !== "stopped" && session.stage !== "summary" && session.stage !== "quick-summary" && session.stage !== "entry" && (
+        <div className="progress-row" aria-label={`진행 ${quickProgress[session.stage] ?? progress[session.stage]}`}>
+          <span>{quickProgress[session.stage] ?? progress[session.stage]}</span>
+          <div className="progress-track"><div className="progress-fill" style={{ width: `${quickProgress[session.stage] ? (Object.keys(quickProgress).indexOf(session.stage) + 1) * 25 : (Object.keys(progress).indexOf(session.stage) + 1) * 16.66}%` }} /></div>
         </div>
       )}
 
+      {session.stage === "quick-affect" && <QuickAffectScreen onNext={(affect) => { dispatch({ type: "SET_QUICK_AFFECT", affect }); dispatch({ type: "SET_QUICK_CANDIDATES", emotionCandidates: filterQuickCandidates({ x: (affect.valence! - 1) / 4, y: (affect.activation! - 1) / 4 }) }); }} onUnknown={() => dispatch({ type: "SET_QUICK_UNKNOWN" })} />}
+      {session.stage === "quick-candidates" && <QuickCandidatesScreen pool={session.quickCandidatePool ?? []} selected={session.emotionCandidates} onToggle={(label) => dispatch({ type: "TOGGLE_QUICK_CANDIDATE", label })} onNone={() => dispatch({ type: "CLEAR_QUICK_SELECTION" })} onFinish={() => dispatch({ type: "COMPLETE_QUICK" })} onCoach={() => dispatch({ type: "OPEN_GRANULARITY", concept: session.emotionCandidates[0]?.label ?? "" })} />}
+      {session.stage === "granularity" && <GranularityScreen selected={session.emotionCandidates} onChoose={(concept) => dispatch({ type: "CHOOSE_GRANULARITY", concept })} />}
+      {session.stage === "context-contrast" && <ContextContrastScreen concept={session.quickConcept ?? ""} onAnswer={(answer) => dispatch({ type: "SET_CONTRAST", answer })} />}
+      {session.stage === "micro-learning" && <MicroLearningScreen concept={session.quickConcept ?? ""} note={getGranularityNote(session.quickConcept)} onDismiss={() => dispatch({ type: "DISMISS_MICRO_LEARNING" })} />}
+      {session.stage === "quick-summary" && <QuickSummaryScreen session={session} onDeep={() => dispatch({ type: "ENTER_DEEP" })} />}
       {session.stage === "entry" && (
         <EntryScreen draft={draft} onStart={() => dispatch({ type: "SET_ENTRY", decision: "observe" })} onUnsure={() => dispatch({ type: "SET_ENTRY", decision: "unsure" })} onStop={() => dispatch({ type: "SET_ENTRY", decision: "stop" })} onResume={resume} />
       )}
@@ -95,8 +104,43 @@ function EntryScreen({ draft, onStart, onUnsure, onStop, onResume }: { draft: Em
   </Screen>;
 }
 
-function LandingScreen({ onStart, draft, onResume }: { onStart: () => void; draft: EmotionSession | null; onResume: () => void }) {
-  return <Screen className="entry-screen"><p className="eyebrow">감정 관찰실</p><h1>지금의 경험을<br />조금 더 알아보기</h1><p className="lede">감정을 맞히는 검사가 아닙니다.<br />몸·상황·말을 천천히 구별해봅니다.</p><div className="stack-actions"><button className="primary-button" onClick={onStart}>지금 살펴보기 <span>→</span></button>{draft && <button className="secondary-button" onClick={onResume}>지난 기록 이어하기</button>}</div><p className="small-note">기록은 이 기기에만 저장됩니다. 언제든 건너뛰거나 닫을 수 있습니다.</p></Screen>;
+function LandingScreen({ onQuick, onDeep, draft, onResume }: { onQuick: () => void; onDeep: () => void; draft: EmotionSession | null; onResume: () => void }) {
+  return <Screen className="entry-screen"><p className="eyebrow">감정 관찰실</p><h1>지금의 경험을<br />조금 더 알아보기</h1><p className="lede">감정을 맞히는 검사가 아닙니다.<br />빠르게 살펴보거나, 천천히 구별해볼 수 있습니다.</p><div className="stack-actions"><button className="primary-button" onClick={onQuick}>빠르게 살펴보기 <span>→</span></button><button className="secondary-button" onClick={onDeep}>조금 더 천천히 살펴보기</button>{draft && <button className="secondary-button" onClick={onResume}>지난 기록 이어하기</button>}</div><p className="small-note">기록은 이 기기에만 저장됩니다. 언제든 건너뛰거나 닫을 수 있습니다.</p></Screen>;
+}
+
+function QuickAffectScreen({ onNext, onUnknown }: { onNext: (affect: NonNullable<EmotionSession["quickAffect"]>) => void; onUnknown: () => void }) {
+  const [point, setPoint] = useState<{ x: number; y: number } | null>(null);
+  const choosePoint = (event: React.PointerEvent<HTMLDivElement>) => {
+    const rect = event.currentTarget.getBoundingClientRect();
+    setPoint({ x: Math.max(0, Math.min(1, (event.clientX - rect.left) / rect.width)), y: Math.max(0, Math.min(1, 1 - (event.clientY - rect.top) / rect.height)) });
+  };
+  const toScale = (value: number) => Math.max(1, Math.min(5, Math.round(value * 4) + 1)) as 1 | 2 | 3 | 4 | 5;
+  return <Screen><StepHeading step="빠른 확인" title="지금의 경험은 어느 쪽에 가까운가요?" hint="정확한 좌표를 고를 필요 없이, ‘이쯤’이라고 느껴지는 곳을 한 번 눌러보세요." /><div className="affect-grid-wrap"><div className="affect-axis-label top">에너지가 올라온 느낌</div><div className="affect-grid" role="button" tabIndex={0} aria-label="불편함과 편안함, 가라앉음과 에너지 사이에서 현재 경험에 가까운 곳 선택" onPointerDown={choosePoint} onKeyDown={(event) => { if (event.key === "Enter" || event.key === " ") setPoint({ x: .5, y: .5 }); }}>{point && <span className="affect-dot" style={{ left: `${point.x * 100}%`, top: `${(1 - point.y) * 100}%` }} />}</div><div className="affect-axis-row"><span>불편함</span><span>편안함</span></div><div className="affect-axis-label bottom">가라앉은 느낌</div></div><div className="quick-actions"><button className="quiet-button" onClick={onUnknown}>잘 모르겠음</button><button className="primary-button" disabled={!point} onClick={() => point && onNext({ valence: toScale(point.x), activation: toScale(point.y) })}>다음 <span>→</span></button></div></Screen>;
+}
+
+function QuickCandidatesScreen({ pool, selected, onToggle, onNone, onFinish, onCoach }: { pool: EmotionSession["emotionCandidates"]; selected: EmotionSession["emotionCandidates"]; onToggle: (label: string) => void; onNone: () => void; onFinish: () => void; onCoach: () => void }) {
+  const canCoach = selected.length > 0 && selected.some((item) => Boolean(getGranularityItem(item.label)));
+  return <Screen><StepHeading step="가능한 표현" title="지금 경험을 표현할 때 가까울 수도 있는 말입니다." hint="감정을 판정하는 결과가 아닙니다. 맞지 않으면 고르지 않아도 됩니다." /><div className="provisional-note">임시 단어 모음 · 스스로 고른 표현만 기록됩니다</div><div className="chip-grid">{pool.map((item) => <button className={`chip ${selected.some((choice) => choice.label === item.label) ? "selected" : ""}`} key={item.label} onClick={() => onToggle(item.label)}>{item.label}</button>)}</div><div className="quick-option-row"><button className="secondary-button" onClick={onNone}>가까운 말이 없음</button><button className="secondary-button" onClick={onNone}>잘 모르겠음</button></div><div className="quick-bottom-actions"><button className="quiet-button" onClick={onFinish}>여기까지</button><button className="primary-button" disabled={!canCoach} onClick={onCoach}>조금 더 정확히 살펴보기 <span>→</span></button></div><p className="small-note">상황 비교 prototype은 일부 후보부터 제공됩니다.</p></Screen>;
+}
+
+function GranularityScreen({ selected, onChoose }: { selected: EmotionSession["emotionCandidates"]; onChoose: (concept: string) => void }) {
+  const available = selected.filter((item) => Boolean(getGranularityItem(item.label)));
+  return <Screen><StepHeading step="조금 더 정확히" title="어느 표현을 먼저 살펴볼까요?" hint="비슷해 보이는 말도 경험에 따라 다르게 느껴질 수 있습니다." /><div className="choice-list">{available.map((item) => <button key={item.label} onClick={() => onChoose(item.label)}>{item.label}<span className="choice-arrow">→</span></button>)}</div><button className="quiet-button" onClick={() => onChoose(available[0]?.label ?? "")}>잘 모르겠음</button></Screen>;
+}
+
+function ContextContrastScreen({ concept, onAnswer }: { concept: string; onAnswer: (answer: string) => void }) {
+  const item = getGranularityItem(concept);
+  if (!item) return <Screen><StepHeading step="상황 속 차이" title="이 표현을 꼭 고르지 않아도 됩니다." hint="아직 이 prototype에 상황 예시가 준비되지 않은 표현입니다." /><button className="primary-button" onClick={() => onAnswer("unknown")}>여기까지</button></Screen>;
+  return <Screen><StepHeading step="상황 속 차이" title="어느 쪽이 지금 경험과 조금 더 가까운가요?" hint={item.prompt} /><div className="scenario-list">{item.scenarios.map((scenario) => <button key={scenario.id} onClick={() => onAnswer(scenario.label)}><strong>{scenario.label}.</strong><span>{scenario.text}</span></button>)}</div><div className="choice-list compact"><button onClick={() => onAnswer("여러 개")}>여러 개</button><button onClick={() => onAnswer("어느 것도 아님")}>어느 것도 아님</button><button onClick={() => onAnswer("잘 모르겠음")}>잘 모르겠음</button></div></Screen>;
+}
+
+function MicroLearningScreen({ concept, note, onDismiss }: { concept: string; note: string; onDismiss: () => void }) {
+  return <Screen><p className="eyebrow">짧은 참고</p><h1>단어는 정답표가 아니라<br />살펴보는 도구입니다.</h1><p className="lede">{note || `${concept}와 같은 표현도 상황과 의미에 따라 다르게 경험될 수 있습니다.`}</p><div className="micro-card">같은 몸의 느낌도 상황에 따라 다르게 경험될 수 있습니다. 두근거림은 초조함일 수도, 기대감이나 설렘일 수도 있습니다.</div><button className="primary-button" onClick={onDismiss}>여기까지</button><button className="quiet-button" onClick={onDismiss}>나중에 읽기</button></Screen>;
+}
+
+function QuickSummaryScreen({ session, onDeep }: { session: EmotionSession; onDeep: () => void }) {
+  const affect = session.quickAffect?.unknown ? "잘 모르겠음" : `${quickValence(session.quickAffect?.valence)} · ${quickActivation(session.quickAffect?.activation)}`;
+  return <Screen><p className="eyebrow">빠른 확인</p><h1>여기까지 살펴보았습니다.</h1><div className="summary-card"><SummaryRow label="전체적인 느낌" value={affect} /><SummaryRow label="가까웠던 말" value={session.emotionCandidates.map((item) => item.label).join(" · ") || "고르지 않음"} />{session.quickContrastAnswer && <SummaryRow label="상황 속 차이" value={session.quickContrastAnswer} />}</div><p className="summary-footnote">이것은 감정의 판정이 아니라, 지금 경험을 표현해볼 수 있는 작은 단서입니다.</p><div className="stack-actions"><a className="primary-button centered" href="/">처음으로 돌아가기</a><button className="secondary-button" onClick={onDeep}>조금 더 천천히 들여다보기</button></div></Screen>;
 }
 
 function EntryMini({ onAnswer }: { onAnswer: (answer: "yes" | "unsure" | "no") => void }) {
@@ -156,5 +200,10 @@ function StepHeading({ step, title, hint }: { step: string; title: string; hint:
 function Navigation({ onNext, disabled = false }: { onNext: () => void; disabled?: boolean }) { return <div className="navigation"><button className="skip-button" onClick={onNext}>건너뛰기</button><button className="primary-button" disabled={disabled} onClick={onNext}>다음 <span>→</span></button></div>; }
 function Scale({ label, right, value, onChange }: { label: string; right: string; value: number; onChange: (value: number) => void }) { return <div className="scale"><div className="scale-labels"><span>{label}</span><span>{right}</span></div><input aria-label={`${label}에서 ${right}`} type="range" min="1" max="5" value={value} onChange={(event) => onChange(Number(event.target.value))} /><div className="scale-dots"><span>낮음</span><span>중간</span><span>높음</span></div></div>; }
 function SummaryRow({ label, value }: { label: string; value: string }) { return <div className="summary-row"><span>{label}</span><strong>{value}</strong></div>; }
+type GranularityItem = { prompt: string; scenarios: Array<{ id: string; label: string; text: string }>; note: string };
+function getGranularityItem(concept?: string): GranularityItem | undefined { return concept ? (granularity.items as Record<string, GranularityItem>)[concept] : undefined; }
+function getGranularityNote(concept?: string) { return getGranularityItem(concept)?.note ?? "같은 몸의 느낌도 상황과 의미에 따라 다르게 경험될 수 있습니다."; }
+function quickValence(value?: number) { return ["", "불편함 쪽", "조금 불편함 쪽", "중간", "조금 편안함 쪽", "편안함 쪽"][value ?? 3]; }
+function quickActivation(value?: number) { return ["", "가라앉은 느낌", "조금 가라앉은 느낌", "중간", "에너지가 올라온 느낌", "에너지가 많이 올라온 느낌"][value ?? 3]; }
 function scaleLabel(value?: number) { return ["", "매우 불쾌", "불쾌", "중간", "유쾌", "매우 유쾌"][value ?? 3]; }
 function activationLabel(value?: number) { return ["", "가라앉음", "조금 가라앉음", "중간", "활성됨", "많이 활성됨"][value ?? 3]; }
