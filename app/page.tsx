@@ -3,8 +3,8 @@
 import { useEffect, useReducer, useRef, useState } from "react";
 import bodySignals from "../data/body-signals.ko.json";
 import concerns from "../data/concerns.ko.json";
-import granularity from "../data/granularity.ko.json";
-import { canGoBack, createSession, sessionReducer } from "../lib/session-types";
+import { canGoBack, createSession, sessionReducer, understandRoute } from "../lib/session-types";
+import { APPRAISAL_ESCAPES, COACH_ESCAPES, coachSetFor, coachSets } from "../lib/coach";
 import type { AffectPoint, BodyObservation, DeepReflection, EmotionSelection, EmotionSession, QuickNonSelection, SynthesisFit } from "../lib/session-types";
 
 type DeepContext = NonNullable<DeepReflection["context"]>;
@@ -15,7 +15,7 @@ import { expandCandidates, filterQuickCandidates } from "../lib/quick-check";
 import { activationLabel, quickActivation, quickValence, scaleLabel } from "../lib/affect-labels";
 import { buildSynthesis, hasSynthesis } from "../lib/synthesis";
 import stepNotes from "../data/step-notes.ko.json";
-import supportOptions from "../data/support-options.ko.json";
+import needsData from "../data/needs.ko.json";
 
 const progress: Record<string, string> = {
   body: "1 / 6",
@@ -92,9 +92,9 @@ export default function Home() {
 
       {session.stage === "quick-affect" && <QuickAffectScreen onNext={(affect) => { dispatch({ type: "SET_QUICK_AFFECT", affect }); dispatch({ type: "SET_QUICK_CANDIDATES", candidatePool: filterQuickCandidates({ x: affect.valence ?? 0.5, y: affect.activation ?? 0.5 }) }); }} onUnknown={() => dispatch({ type: "SET_QUICK_UNKNOWN" })} />}
       {session.stage === "quick-candidates" && <QuickCandidatesScreen pool={session.quickCheck?.candidatePool ?? []} selected={session.quickCheck?.selected ?? []} response={session.quickCheck?.candidateResponse} onToggle={(label) => dispatch({ type: "TOGGLE_QUICK_CANDIDATE", label })} onRespond={(response) => dispatch({ type: "SET_QUICK_CANDIDATE_RESPONSE", response })} onAddCustom={(label) => dispatch({ type: "ADD_QUICK_CUSTOM", label })} onFinish={() => dispatch({ type: "COMPLETE_QUICK" })} onCoach={() => dispatch({ type: "OPEN_GRANULARITY" })} onDeep={() => { dispatch({ type: "COMPLETE_QUICK" }); dispatch({ type: "ENTER_DEEP" }); }} />}
-      {session.stage === "granularity" && <GranularityScreen selected={session.quickCheck?.selected ?? []} onChoose={(concept) => dispatch({ type: "CHOOSE_GRANULARITY", concept })} onSkip={() => dispatch({ type: "SKIP_GRANULARITY" })} />}
-      {session.stage === "context-contrast" && <ContextContrastScreen concept={session.quickCheck?.concept ?? ""} onAnswer={(answer) => dispatch({ type: "SET_CONTRAST", answer })} />}
-      {session.stage === "micro-learning" && <MicroLearningScreen concept={session.quickCheck?.concept ?? ""} note={getGranularityNote(session.quickCheck?.concept)} onDismiss={() => dispatch({ type: "DISMISS_MICRO_LEARNING" })} />}
+      {session.stage === "coach-appraisal" && <CoachAppraisalScreen session={session} onPick={(id) => dispatch({ type: "SET_APPRAISAL", id })} />}
+      {session.stage === "coach-words" && <CoachWordsScreen session={session} onToggle={(label) => dispatch({ type: "TOGGLE_COACH_WORD", label })} onOwnWord={(label) => dispatch({ type: "SET_COACH_OWN_WORD", label })} onNext={() => dispatch({ type: "FINISH_COACH" })} />}
+      {session.stage === "coach-note" && <CoachNoteScreen session={session} onDone={() => dispatch({ type: "CLOSE_COACH" })} />}
       {session.stage === "quick-summary" && <QuickSummaryScreen session={session} onDeep={() => dispatch({ type: "ENTER_DEEP" })} onFeedback={(feedback) => dispatch({ type: "SET_SYNTHESIS_FEEDBACK", ...feedback })} onSupport={() => dispatch({ type: "OPEN_SUPPORT" })} />}
       {session.stage === "entry" && (
         <EntryScreen draft={draft} onStart={() => dispatch({ type: "SET_ENTRY", decision: "observe" })} onUnsure={() => dispatch({ type: "SET_ENTRY", decision: "unsure" })} onStop={() => dispatch({ type: "SET_ENTRY", decision: "stop" })} onResume={resume} />
@@ -107,7 +107,7 @@ export default function Home() {
       {session.stage === "emotion" && <EmotionScreen initial={session.deepReflection?.emotionCandidates ?? []} affect={session.deepReflection?.affect} onNext={(selected) => dispatch({ type: "SET_EMOTIONS", emotionCandidates: selected })} />}
       {session.stage === "outcome" && <OutcomeScreen onNext={(outcome) => dispatch({ type: "SET_OUTCOME", outcome })} />}
       {session.stage === "summary" && <SummaryScreen session={session} onFeedback={(feedback) => dispatch({ type: "SET_SYNTHESIS_FEEDBACK", ...feedback })} onSupport={() => dispatch({ type: "OPEN_SUPPORT" })} />}
-      {session.stage === "support" && <SupportScreen chosen={session.support?.chosen ?? []} onToggle={(id) => dispatch({ type: "TOGGLE_SUPPORT", id })} onBack={() => dispatch({ type: "BACK" })} />}
+      {session.stage === "support" && <NeedScreen session={session} onNeed={(id) => dispatch({ type: "CHOOSE_NEED", id })} onResponse={(id) => dispatch({ type: "TOGGLE_RESPONSE", id })} onDeep={() => dispatch({ type: "ENTER_DEEP" })} onCoach={() => dispatch({ type: "OPEN_COACH" })} onBack={() => dispatch({ type: "BACK" })} />}
       {session.stage === "stopped" && <StoppedScreen session={session} />}
 
       {stopConfirm && <StopModal onClose={() => setStopConfirm(false)} onStop={stop} />}
@@ -234,7 +234,7 @@ function TieredWords({ pool, selectedLabels, ownWords, onToggle, onAddCustom }: 
 }
 
 function QuickCandidatesScreen({ pool, selected, response, onToggle, onRespond, onAddCustom, onFinish, onCoach, onDeep }: { pool: EmotionSelection[]; selected: EmotionSelection[]; response?: QuickNonSelection; onToggle: (label: string) => void; onRespond: (response: QuickNonSelection) => void; onAddCustom: (label: string) => void; onFinish: () => void; onCoach: () => void; onDeep: () => void }) {
-  const canCoach = selected.length > 0 && selected.some((item) => Boolean(getGranularityItem(item.label)));
+  const canCoach = coachSets.some((set) => selected.some((item) => set.words.includes(item.label)));
   return <Screen>
     <StepHeading step="가능한 표현" title="지금 경험을 표현할 때 가까울 수도 있는 말입니다." hint="감정을 판정하는 결과가 아닙니다. 여러 개를 골라도 되고, 맞지 않으면 고르지 않아도 됩니다." />
     <div className="provisional-note">임시 단어 모음 · 스스로 고른 표현만 기록됩니다</div>
@@ -251,26 +251,51 @@ function QuickCandidatesScreen({ pool, selected, response, onToggle, onRespond, 
   </Screen>;
 }
 
-function GranularityScreen({ selected, onChoose, onSkip }: { selected: EmotionSelection[]; onChoose: (concept: string) => void; onSkip: () => void }) {
-  const available = selected.filter((item) => Boolean(getGranularityItem(item.label)));
-  return <Screen><StepHeading step="조금 더 정확히" title="어느 표현을 먼저 살펴볼까요?" hint="비슷해 보이는 말도 경험에 따라 다르게 느껴질 수 있습니다." /><div className="choice-list">{available.map((item) => <button key={item.label} onClick={() => onChoose(item.label)}>{item.label}<span className="choice-arrow">→</span></button>)}</div><button className="quiet-button" onClick={onSkip}>잘 모르겠음</button></Screen>;
+/** Asks what mattered before showing any word, so no list reads as a set of right answers. */
+function CoachAppraisalScreen({ session, onPick }: { session: EmotionSession; onPick: (id: string) => void }) {
+  const set = coachSetFor(session);
+  if (!set) return <Screen><StepHeading step="조금 더 정확히" title="아직 비교해볼 세트가 없습니다." hint="고른 표현에 맞는 상황 비교가 아직 준비되지 않았습니다." /></Screen>;
+  return <Screen>
+    <StepHeading step="조금 더 정확히" title={set.question} hint="단어를 먼저 고르지 않습니다. 그 순간 무엇이 중요했는지부터 봅니다." />
+    <div className="scenario-card">{set.event}</div>
+    <div className="choice-list">{[...set.appraisals, ...APPRAISAL_ESCAPES].map((item) => <button key={item.id} onClick={() => onPick(item.id)}>{item.text}</button>)}</div>
+  </Screen>;
 }
 
-function ContextContrastScreen({ concept, onAnswer }: { concept: string; onAnswer: (answer: string) => void }) {
-  const item = getGranularityItem(concept);
-  if (!item) return <Screen><StepHeading step="상황 속 차이" title="이 표현을 꼭 고르지 않아도 됩니다." hint="아직 이 prototype에 상황 예시가 준비되지 않은 표현입니다." /><button className="primary-button" onClick={() => onAnswer("unknown")}>여기까지</button></Screen>;
-  return <Screen><StepHeading step="상황 속 차이" title="어느 쪽이 지금 경험과 조금 더 가까운가요?" hint={item.prompt} /><div className="scenario-list">{item.scenarios.map((scenario) => <button key={scenario.id} onClick={() => onAnswer(scenario.label)}><strong>{scenario.label}.</strong><span>{scenario.text}</span></button>)}</div><div className="choice-list compact"><button onClick={() => onAnswer("여러 개")}>여러 개</button><button onClick={() => onAnswer("어느 것도 아님")}>어느 것도 아님</button><button onClick={() => onAnswer("잘 모르겠음")}>잘 모르겠음</button></div></Screen>;
+function CoachWordsScreen({ session, onToggle, onOwnWord, onNext }: { session: EmotionSession; onToggle: (label: string) => void; onOwnWord: (label: string) => void; onNext: () => void }) {
+  const set = coachSetFor(session);
+  const [own, setOwn] = useState(session.coach?.ownWord ?? "");
+  const picked = session.coach?.wordsAfter ?? [];
+  const chosenAppraisal = [...(set?.appraisals ?? []), ...APPRAISAL_ESCAPES].find((item) => item.id === session.coach?.appraisal);
+  return <Screen>
+    <StepHeading step="조금 더 정확히" title="이 중 지금 경험에 가까운 말이 있나요?" hint="정답은 없습니다. 여러 개를 골라도 되고, 어느 것도 고르지 않아도 됩니다." />
+    {chosenAppraisal && <div className="micro-card">방금 “{chosenAppraisal.text}”를 고르셨습니다.</div>}
+    <div className="chip-grid">{[...(set?.words ?? []), ...COACH_ESCAPES].map((label) => <button className={`chip ${picked.includes(label) ? "selected" : ""}`} key={label} onClick={() => onToggle(label)}>{label}</button>)}</div>
+    <label className="field-label" htmlFor="coach-own">내 말로 표현하기</label>
+    <input id="coach-own" className="text-input" value={own} onChange={(event) => { setOwn(event.target.value); onOwnWord(event.target.value); }} placeholder="예: 김이 새는 느낌" />
+    <div className="navigation"><span /><button className="primary-button" onClick={onNext}>다음 <span>→</span></button></div>
+  </Screen>;
 }
 
-function MicroLearningScreen({ concept, note, onDismiss }: { concept: string; note: string; onDismiss: () => void }) {
-  return <Screen><p className="eyebrow">짧은 참고</p><h1>단어는 정답표가 아니라<br />살펴보는 도구입니다.</h1><p className="lede">{note || `${concept}와 같은 표현도 상황과 의미에 따라 다르게 경험될 수 있습니다.`}</p><div className="micro-card">같은 몸의 느낌도 상황에 따라 다르게 경험될 수 있습니다. 두근거림은 초조함일 수도, 기대감이나 설렘일 수도 있습니다.</div><button className="primary-button" onClick={onDismiss}>여기까지</button><button className="quiet-button" onClick={onDismiss}>나중에 읽기</button></Screen>;
+function CoachNoteScreen({ session, onDone }: { session: EmotionSession; onDone: () => void }) {
+  const set = coachSetFor(session);
+  const before = session.coach?.wordsBefore ?? [];
+  const after = session.coach?.wordsAfter ?? [];
+  const changed = after.length > 0 && (after.length !== before.length || before.some((word) => !after.includes(word)));
+  return <Screen>
+    <p className="eyebrow">짧은 참고</p>
+    <h1>단어는 정답표가 아니라<br />살펴보는 도구입니다.</h1>
+    <p className="lede">{set?.note}</p>
+    {changed && <div className="micro-card">살펴보기 전에는 {before.join(", ")}, 살펴본 뒤에는 {after.join(", ")}를 골랐습니다.</div>}
+    <button className="primary-button" onClick={onDone}>요약으로 돌아가기</button>
+  </Screen>;
 }
 
 function QuickSummaryScreen({ session, onDeep, onFeedback, onSupport }: { session: EmotionSession; onDeep: () => void; onFeedback: (feedback: { fit?: SynthesisFit; correction?: string }) => void; onSupport: () => void }) {
   const quick = session.quickCheck;
   const affect = quick?.affect?.unknown ? "잘 모르겠음" : `${quickValence(quick?.affect?.valence)} · ${quickActivation(quick?.affect?.activation)}`;
   const words = (quick?.selected ?? []).map((item) => item.label).join(" · ") || quickResponseLabel(quick?.candidateResponse) || "고르지 않음";
-  return <Screen><p className="eyebrow">빠른 확인</p><h1>여기까지 살펴보았습니다.</h1><div className="summary-card"><SummaryRow label="전체적인 느낌" value={affect} /><SummaryRow label="가까웠던 말" value={words} />{quick?.granularityResponse === "unsure" && <SummaryRow label="더 살펴본 표현" value="잘 모르겠음" />}{quick?.contrastAnswer && <SummaryRow label="상황 속 차이" value={quick.contrastAnswer} />}</div><p className="summary-footnote">이것은 감정의 판정이 아니라, 지금 경험을 표현해볼 수 있는 작은 단서입니다.</p><SynthesisSection session={session} onFeedback={onFeedback} /><div className="stack-actions"><button className="primary-button centered" onClick={onSupport}>지금 무엇이 도움이 될까요? <span>→</span></button><button className="secondary-button" onClick={onDeep}>조금 더 천천히 들여다보기</button><a className="secondary-button centered" href="/">처음으로 돌아가기</a></div></Screen>;
+  return <Screen><p className="eyebrow">빠른 확인</p><h1>여기까지 살펴보았습니다.</h1><div className="summary-card"><SummaryRow label="전체적인 느낌" value={affect} /><SummaryRow label="가까웠던 말" value={words} />{quick?.granularityResponse === "unsure" && <SummaryRow label="더 살펴본 표현" value="잘 모르겠음" />}{quick?.contrastAnswer && <SummaryRow label="상황 속 차이" value={quick.contrastAnswer} />}</div><p className="summary-footnote">이것은 감정의 판정이 아니라, 지금 경험을 표현해볼 수 있는 작은 단서입니다.</p><SynthesisSection session={session} onFeedback={onFeedback} /><div className="stack-actions"><button className="primary-button centered" onClick={onDeep}>조금 더 천천히 들여다보기 <span>→</span></button><button className="secondary-button" onClick={onSupport}>그래서 지금 무엇이 필요할지 살펴보기</button><a className="secondary-button centered" href="/">처음으로 돌아가기</a></div></Screen>;
 }
 
 function EntryMini({ onAnswer }: { onAnswer: (answer: "yes" | "unsure" | "no") => void }) {
@@ -290,7 +315,7 @@ function BodyScreen({ initial, onNext }: { initial: BodyObservation[]; onNext: (
     .filter((group) => group.labels.length);
 
   return <Screen>
-    <StepHeading step="몸" title="먼저, 몸에서는 무엇이 느껴지나요?" hint="감정 이름을 찾기 전에 지금 몸에서 알아차릴 수 있는 것부터 봅니다. 편안한 느낌도 그대로 고를 수 있습니다." />
+    <StepHeading step="몸" title="먼저, 몸에서는 무엇이 느껴지나요?" hint="감정 이름을 찾기 전에 지금 몸에서 알아차릴 수 있는 것부터 봅니다. 자세를 고쳐 앉을 필요는 없습니다 — 지금 이 순간 알아차린 것이면 충분합니다." />
     <div className="chip-grid">{first.map((item) => chip(item.label))}</div>
     {!showAll && <button className="reveal-button" onClick={() => setShowAll(true)}>다른 몸의 느낌 보기</button>}
     {showAll && rest.map((group) => <div key={group.region}>
@@ -364,7 +389,7 @@ function OutcomeScreen({ onNext }: { onNext: (outcome: DeepOutcome) => void }) {
 function SummaryScreen({ session, onFeedback, onSupport }: { session: EmotionSession; onFeedback: (feedback: { fit?: SynthesisFit; correction?: string }) => void; onSupport: () => void }) {
   const deep = session.deepReflection;
   const quickAffect = session.quickCheck?.affect;
-  return <Screen><p className="eyebrow">이번 기록에서</p><h1>여기까지 살펴보았습니다.</h1><div className="summary-card">{quickAffect && <SummaryRow label="처음 빠른 확인" value={quickAffect.unknown ? "잘 모르겠음" : `${quickValence(quickAffect.valence)} · ${quickActivation(quickAffect.activation)}`} />}<SummaryRow label="몸" value={(deep?.body ?? []).map((item) => item.label).join(" · ") || "기록하지 않음"} /><SummaryRow label="전체적인 느낌" value={`${scaleLabel(deep?.affect?.valence)} · ${activationLabel(deep?.affect?.activation)}`} /><SummaryRow label="상황" value={deep?.context?.eventText || "기록하지 않음"} /><SummaryRow label="중요했던 것" value={(deep?.concerns ?? []).join(" · ") || "기록하지 않음"} /><SummaryRow label="가까웠던 말" value={(deep?.emotionCandidates ?? []).map((item) => item.label).join(" · ") || "기록하지 않음"} /></div><p className="summary-footnote">감정의 정답을 찾은 것이 아니라, 지금 경험을 표현할 수 있는 몇 가지 단서를 남겼습니다.</p><SynthesisSection session={session} onFeedback={onFeedback} /><div className="stack-actions"><button className="primary-button centered" onClick={onSupport}>지금 무엇이 도움이 될까요? <span>→</span></button><a className="secondary-button centered" href="/">처음으로 돌아가기</a></div></Screen>;
+  return <Screen><p className="eyebrow">이번 기록에서</p><h1>여기까지 살펴보았습니다.</h1><div className="summary-card">{quickAffect && <SummaryRow label="처음 빠른 확인" value={quickAffect.unknown ? "잘 모르겠음" : `${quickValence(quickAffect.valence)} · ${quickActivation(quickAffect.activation)}`} />}<SummaryRow label="몸" value={(deep?.body ?? []).map((item) => item.label).join(" · ") || "기록하지 않음"} /><SummaryRow label="전체적인 느낌" value={`${scaleLabel(deep?.affect?.valence)} · ${activationLabel(deep?.affect?.activation)}`} /><SummaryRow label="상황" value={deep?.context?.eventText || "기록하지 않음"} /><SummaryRow label="중요했던 것" value={(deep?.concerns ?? []).join(" · ") || "기록하지 않음"} /><SummaryRow label="가까웠던 말" value={(deep?.emotionCandidates ?? []).map((item) => item.label).join(" · ") || "기록하지 않음"} /></div><p className="summary-footnote">감정의 정답을 찾은 것이 아니라, 지금 경험을 표현할 수 있는 몇 가지 단서를 남겼습니다.</p><SynthesisSection session={session} onFeedback={onFeedback} /><div className="stack-actions"><button className="primary-button centered" onClick={onSupport}>그래서 지금 무엇이 필요할까요? <span>→</span></button><a className="secondary-button centered" href="/">처음으로 돌아가기</a></div></Screen>;
 }
 
 function SynthesisSection({ session, onFeedback }: { session: EmotionSession; onFeedback: (feedback: { fit?: SynthesisFit; correction?: string }) => void }) {
@@ -407,10 +432,38 @@ function SynthesisSection({ session, onFeedback }: { session: EmotionSession; on
   </section>;
 }
 
-function SupportScreen({ chosen, onToggle, onBack }: { chosen: string[]; onToggle: (id: string) => void; onBack: () => void }) {
+type NeedEntry = { id: string; label: string; because?: string; route?: boolean; exit?: boolean; responses?: { id: string; label: string }[] };
+
+/**
+ * One screen, two levels. Picking a direction opens the things that can be done
+ * in it, right below. Nothing is ranked, nothing is recommended, and switching
+ * direction never discards what was picked under another one.
+ */
+function NeedScreen({ session, onNeed, onResponse, onDeep, onCoach, onBack }: { session: EmotionSession; onNeed: (id: string) => void; onResponse: (id: string) => void; onDeep: () => void; onCoach: () => void; onBack: () => void }) {
+  const list = needsData.needs as NeedEntry[];
+  const need = list.find((item) => item.id === session.support?.need);
+  const picked = session.support?.choicesByNeed?.[need?.id ?? ""] ?? [];
+  const route = understandRoute(session);
   return <Screen>
-    <StepHeading step="지금 필요한 것" title="지금 무엇이 가장 도움이 될 것 같나요?" hint="앱이 정해주지 않습니다. 여러 개를 골라도 되고, 고르지 않고 나가도 됩니다." />
-    <div className="choice-list">{supportOptions.options.map((option) => <button className={chosen.includes(option.id) ? "selected" : ""} aria-pressed={chosen.includes(option.id)} key={option.id} onClick={() => onToggle(option.id)}>{option.label}</button>)}</div>
+    <StepHeading step="지금 필요한 것" title="지금 가장 필요한 방향은 어느 쪽에 가까운가요?" hint="앱이 정해주지 않습니다. 하나를 골라보고, 다른 쪽이 궁금하면 언제든 바꿔도 됩니다." />
+    <div className="choice-list compact">{list.map((item) => <button className={need?.id === item.id ? "selected" : ""} aria-pressed={need?.id === item.id} key={item.id} onClick={() => onNeed(item.id)}>{item.label}</button>)}</div>
+
+    {need?.responses && <div className="response-block">
+      <p className="tier-label">{need.label}</p>
+      {need.because && <p className="step-note">{need.because}</p>}
+      <div className="choice-list">{need.responses.map((option) => <button className={picked.includes(option.id) ? "selected" : ""} aria-pressed={picked.includes(option.id)} key={option.id} onClick={() => onResponse(option.id)}>{option.label}</button>)}</div>
+    </div>}
+
+    {need?.route && <div className="response-block">
+      <p className="tier-label">{need.label}</p>
+      <p className="step-note">{need.because}</p>
+      {route === "deep" && <button className="primary-button centered" onClick={onDeep}>조금 더 천천히 살펴보기 <span>→</span></button>}
+      {route === "coach" && <button className="primary-button centered" onClick={onCoach}>비슷한 표현의 차이를 살펴보기 <span>→</span></button>}
+      {route === "none" && <p className="small-note">고른 표현에 맞는 상황 비교가 아직 준비되지 않았습니다. 다른 방향을 눌러보셔도 됩니다.</p>}
+    </div>}
+
+    {need?.exit && <p className="small-note">그대로 두어도 됩니다. 여기서 마쳐도 기록은 남습니다.</p>}
+
     <p className="small-note">같은 경험이라도 필요한 것은 그때그때 다를 수 있습니다. 편안하거나 벅찬 경험이라면 문제를 풀기보다 머물러 느끼는 쪽이 맞을 수도 있습니다.</p>
     <div className="navigation"><button className="quiet-button" onClick={onBack}>← 요약으로 돌아가기</button><a className="primary-button" href="/">여기까지 <span>→</span></a></div>
   </Screen>;
@@ -427,9 +480,6 @@ function Navigation({ onNext, disabled = false, note }: { onNext: () => void; di
 }
 function StepNote({ note }: { note?: string }) { return note ? <p className="step-note" role="note">{note}</p> : null; }
 function SummaryRow({ label, value }: { label: string; value: string }) { return <div className="summary-row"><span>{label}</span><strong>{value}</strong></div>; }
-type GranularityItem = { prompt: string; scenarios: Array<{ id: string; label: string; text: string }>; note: string };
-function getGranularityItem(concept?: string): GranularityItem | undefined { return concept ? (granularity.items as Record<string, GranularityItem>)[concept] : undefined; }
-function getGranularityNote(concept?: string) { return getGranularityItem(concept)?.note ?? "같은 몸의 느낌도 상황과 의미에 따라 다르게 경험될 수 있습니다."; }
 function quickAffectSuggestion(session: EmotionSession): AffectPoint | undefined {
   const affect = session.quickCheck?.affect;
   if (!affect || affect.unknown) return undefined;

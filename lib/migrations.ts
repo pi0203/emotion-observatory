@@ -5,6 +5,8 @@ const V1_DRAFT_KEY = "emotion-lab:draft:v1";
 const V1_COMPLETED_KEY = "emotion-lab:completed:v1";
 const V2_DRAFT_KEY = "emotion-lab:draft:v2";
 const V2_COMPLETED_KEY = "emotion-lab:completed:v2";
+const V3_DRAFT_KEY = "emotion-lab:draft:v3";
+const V3_COMPLETED_KEY = "emotion-lab:completed:v3";
 
 /** v1 and v2 both stored affect as one of five steps. */
 type ScaleStep = 1 | 2 | 3 | 4 | 5;
@@ -23,6 +25,33 @@ const migrateAffect = (affect?: SteppedAffect): AffectPoint | undefined => {
   if (!affect) return undefined;
   if (affect.unknown) return { unknown: true };
   return { valence: toContinuous(affect.valence), activation: toContinuous(affect.activation) };
+};
+
+/** v3 stored need ids under `chosen`, and the coach screens were renamed. */
+type V3Session = Omit<EmotionSession, "stage" | "support"> & {
+  stage?: Stage | "granularity" | "context-contrast" | "micro-learning";
+  support?: { chosen?: string[]; note?: string };
+};
+
+const RENAMED_NEEDS: Record<string, string> = { "settle-body": "pace", "put-in-words": "express" };
+const RENAMED_STAGES: Record<string, Stage> = {
+  granularity: "coach-appraisal",
+  "context-contrast": "coach-words",
+  "micro-learning": "coach-note",
+};
+
+/**
+ * v3 -> v4. `support.chosen` held the direction the user picked, which the new
+ * shape reads as responses inside a direction, so it is moved to `need` rather
+ * than left to mean the wrong thing.
+ */
+export const migrateV3Session = (session: V3Session): EmotionSession => {
+  const stage = (session.stage && RENAMED_STAGES[session.stage]) ?? (session.stage as Stage) ?? "landing";
+  const first = session.support?.chosen?.[0];
+  const support = session.support
+    ? { need: first ? RENAMED_NEEDS[first] ?? first : undefined, chosen: [], note: session.support.note }
+    : undefined;
+  return { ...session, stage, support };
 };
 
 /** v2 -> v3: only the affect axis changes. */
@@ -117,11 +146,11 @@ const migrateV1Shape = (legacy: LegacySession): V2Session => {
 };
 
 /** v1 -> v3, chaining both steps so callers only ever see the current shape. */
-export const migrateSession = (legacy: LegacySession): EmotionSession => migrateV2Session(migrateV1Shape(legacy));
+export const migrateSession = (legacy: LegacySession): EmotionSession => migrateV3Session(migrateV2Session(migrateV1Shape(legacy)));
 
 export const hasLegacyStorage = () => {
   if (typeof window === "undefined") return false;
-  return [V1_COMPLETED_KEY, V1_DRAFT_KEY, V2_COMPLETED_KEY, V2_DRAFT_KEY].some((key) => window.localStorage.getItem(key) !== null);
+  return [V1_COMPLETED_KEY, V1_DRAFT_KEY, V2_COMPLETED_KEY, V2_DRAFT_KEY, V3_COMPLETED_KEY, V3_DRAFT_KEY].some((key) => window.localStorage.getItem(key) !== null);
 };
 
 const readArray = <T>(key: string): T[] => {
@@ -147,28 +176,32 @@ export const migrateLegacyStorage = (): number => {
   const { COMPLETED_KEY } = getStorageKeys();
 
   const fromV1 = readArray<LegacySession>(V1_COMPLETED_KEY).map(migrateSession);
-  const fromV2 = readArray<V2Session>(V2_COMPLETED_KEY).map(migrateV2Session);
+  const fromV2 = readArray<V2Session>(V2_COMPLETED_KEY).map((item) => migrateV3Session(migrateV2Session(item)));
+  const fromV3 = readArray<V3Session>(V3_COMPLETED_KEY).map(migrateV3Session);
   // older records go after whatever is already here, since the list is newest-first
-  const migrated = [...fromV2, ...fromV1];
+  const migrated = [...fromV3, ...fromV2, ...fromV1];
   if (migrated.length) {
     window.localStorage.setItem(COMPLETED_KEY, JSON.stringify([...loadCompleted(), ...migrated]));
   }
 
   let movedDraft = 0;
-  const rawDraft = window.localStorage.getItem(V2_DRAFT_KEY);
-  if (rawDraft && !loadDraft()) {
+  const v2Draft = window.localStorage.getItem(V2_DRAFT_KEY);
+  const v3Draft = window.localStorage.getItem(V3_DRAFT_KEY);
+  if ((v2Draft || v3Draft) && !loadDraft()) {
     try {
-      saveDraft(migrateV2Session(JSON.parse(rawDraft) as V2Session));
+      saveDraft(v3Draft
+        ? migrateV3Session(JSON.parse(v3Draft) as V3Session)
+        : migrateV3Session(migrateV2Session(JSON.parse(v2Draft!) as V2Session)));
       movedDraft = 1;
     } catch {
       movedDraft = 0;
     }
   }
 
-  for (const key of [V1_COMPLETED_KEY, V1_DRAFT_KEY, V2_COMPLETED_KEY, V2_DRAFT_KEY]) {
+  for (const key of [V1_COMPLETED_KEY, V1_DRAFT_KEY, V2_COMPLETED_KEY, V2_DRAFT_KEY, V3_COMPLETED_KEY, V3_DRAFT_KEY]) {
     window.localStorage.removeItem(key);
   }
   return migrated.length + movedDraft;
 };
 
-export const getLegacyStorageKeys = () => ({ V1_DRAFT_KEY, V1_COMPLETED_KEY, V2_DRAFT_KEY, V2_COMPLETED_KEY });
+export const getLegacyStorageKeys = () => ({ V1_DRAFT_KEY, V1_COMPLETED_KEY, V2_DRAFT_KEY, V2_COMPLETED_KEY, V3_DRAFT_KEY, V3_COMPLETED_KEY });

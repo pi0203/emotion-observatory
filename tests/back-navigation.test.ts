@@ -106,19 +106,18 @@ describe("choosing what would help", () => {
     expect(sessionReducer(support, { type: "BACK" }).stage).toBe("quick-summary");
   });
 
-  it("stores several directions at once and lets them be unpicked", () => {
+  it("explores one direction at a time", () => {
     let state = sessionReducer(finished(), { type: "OPEN_SUPPORT" });
-    state = sessionReducer(state, { type: "TOGGLE_SUPPORT", id: "settle-body" });
-    state = sessionReducer(state, { type: "TOGGLE_SUPPORT", id: "boundary" });
-    expect(state.support?.chosen).toEqual(["settle-body", "boundary"]);
-    state = sessionReducer(state, { type: "TOGGLE_SUPPORT", id: "settle-body" });
-    expect(state.support?.chosen).toEqual(["boundary"]);
+    state = sessionReducer(state, { type: "CHOOSE_NEED", id: "pace" });
+    expect(state.support?.need).toBe("pace");
+    state = sessionReducer(state, { type: "CHOOSE_NEED", id: "boundary" });
+    expect(state.support?.need).toBe("boundary");
   });
 
   it("does not end or reopen the session", () => {
     const summary = finished();
     let state = sessionReducer(summary, { type: "OPEN_SUPPORT" });
-    state = sessionReducer(state, { type: "TOGGLE_SUPPORT", id: "nothing" });
+    state = sessionReducer(state, { type: "CHOOSE_NEED", id: "nothing" });
     expect(state.status).toBe("completed");
     expect(state.completedAt).toBe(summary.completedAt);
     expect(state.id).toBe(summary.id);

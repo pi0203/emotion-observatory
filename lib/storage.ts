@@ -1,7 +1,7 @@
 import type { EmotionSession } from "./session-types";
 
-const DRAFT_KEY = "emotion-lab:draft:v3";
-const COMPLETED_KEY = "emotion-lab:completed:v3";
+const DRAFT_KEY = "emotion-lab:draft:v4";
+const COMPLETED_KEY = "emotion-lab:completed:v4";
 
 const readJson = <T>(key: string, fallback: T): T => {
   if (typeof window === "undefined") return fallback;

@@ -1,3 +1,5 @@
+import { coachSetFor, currentWords } from "./coach";
+
 export type EntryDecision = "observe" | "unsure" | "stop";
 // The user declining to pick a word is a normal answer, not missing data.
 export type QuickNonSelection = "none-close" | "unsure";
@@ -14,9 +16,9 @@ export type Stage =
   | "landing"
   | "quick-affect"
   | "quick-candidates"
-  | "granularity"
-  | "context-contrast"
-  | "micro-learning"
+  | "coach-appraisal"
+  | "coach-words"
+  | "coach-note"
   | "quick-summary"
   | "entry"
   | "entry-mini"
@@ -59,6 +61,12 @@ export type DeepReflection = {
   startedAt: string;
   entryDecision?: EntryDecision;
   body: BodyObservation[];
+  /**
+   * A second reading after moving, if the user ever takes one. Kept beside the
+   * first rather than replacing it: a body that feels different later is part of
+   * the experience changing, not a correction. No flow writes this yet.
+   */
+  bodyRecheck?: { at: string; body: BodyObservation[]; prompt?: string };
   affect?: AffectPoint;
   context?: {
     eventText?: string;
@@ -89,8 +97,22 @@ export type EmotionSession = {
   deepReflection?: DeepReflection;
   /** Reserved for checking whether the summary is useful; never shown back as a score. */
   synthesisFeedback?: { fit?: SynthesisFit; correction?: string };
-  /** Directions the user picked at the end. The app never picks one for them. */
-  support?: { chosen: string[]; note?: string };
+  /**
+   * The direction the user is exploring and what they picked inside it. One need
+   * at a time, kept per need so stepping between them loses nothing. The app
+   * never tells the user what their need is.
+   */
+  support?: {
+    need?: string;
+    /** Every response picked, across needs. */
+    chosen: string[];
+    choicesByNeed?: Record<string, string[]>;
+    note?: string;
+    /** A place to ask later; nothing asks on its own yet. */
+    followUp?: { tried?: "yes" | "partly" | "no"; helped?: "yes" | "somewhat" | "no" | "unsure"; at?: string };
+  };
+  /** A pass through the granularity coach. A change here is a change, not an improvement. */
+  coach?: { setId: string; wordsBefore: string[]; appraisal?: string; wordsAfter: string[]; ownWord?: string };
   /** Screens already passed, so a step can be undone without losing anything. */
   history?: Stage[];
   stopReason?: "user" | "entry";
@@ -135,7 +157,14 @@ export type SessionAction =
   | { type: "SET_OUTCOME"; outcome: NonNullable<DeepReflection["outcome"]> }
   | { type: "SET_SYNTHESIS_FEEDBACK"; fit?: SynthesisFit; correction?: string }
   | { type: "OPEN_SUPPORT" }
-  | { type: "TOGGLE_SUPPORT"; id: string }
+  | { type: "CHOOSE_NEED"; id: string }
+  | { type: "TOGGLE_RESPONSE"; id: string }
+  | { type: "OPEN_COACH" }
+  | { type: "SET_APPRAISAL"; id: string }
+  | { type: "TOGGLE_COACH_WORD"; label: string }
+  | { type: "SET_COACH_OWN_WORD"; label: string }
+  | { type: "FINISH_COACH" }
+  | { type: "CLOSE_COACH" }
   | { type: "BACK" }
   | { type: "STOP"; reason: "user" | "entry" };
 
@@ -177,13 +206,25 @@ const completeQuick = (state: EmotionSession, patch: Partial<QuickCheck> = {}): 
   };
 };
 
+/** Where 더 이해하기 can lead, given how far the user already went. */
+export const understandRoute = (session: EmotionSession): "deep" | "coach" | "none" => {
+  if (!session.deepReflection) return "deep";
+  return coachSetFor(session) ? "coach" : "none";
+};
+
+const openCoach = (state: EmotionSession): NonNullable<EmotionSession["coach"]> => {
+  const set = coachSetFor(state);
+  return { setId: set?.id ?? "", wordsBefore: currentWords(state), wordsAfter: [] };
+};
+
 /** A finished session can still be revisited, but not rewound past its summary. */
 export const canGoBack = (session: EmotionSession) => (session.history?.length ?? 0) > 0;
 
 /** Actions that do not move the user to another screen, so they are not steps to undo. */
 const NOT_A_STEP = new Set<SessionAction["type"]>([
   "TOGGLE_QUICK_CANDIDATE", "SET_QUICK_CANDIDATE_RESPONSE", "ADD_QUICK_CUSTOM",
-  "SET_SYNTHESIS_FEEDBACK", "TOGGLE_SUPPORT", "RESUME", "BACK",
+  "SET_SYNTHESIS_FEEDBACK", "CHOOSE_NEED", "TOGGLE_RESPONSE",
+  "TOGGLE_COACH_WORD", "SET_COACH_OWN_WORD", "RESUME", "BACK",
 ]);
 
 const reduce = (state: EmotionSession, action: SessionAction): EmotionSession => {
@@ -224,16 +265,11 @@ const reduce = (state: EmotionSession, action: SessionAction): EmotionSession =>
       return withQuick(state, { candidateResponse: undefined, selected: [...selected, { label, source: "custom" }] });
     }
     case "OPEN_GRANULARITY":
-      return { ...state, stage: "granularity" };
-    case "CHOOSE_GRANULARITY":
-      return { ...withQuick(state, { concept: action.concept }), stage: "context-contrast" };
+      // from the quick candidate step; the coach asks what mattered before showing words
+      return { ...state, stage: "coach-appraisal", coach: openCoach(state) };
     case "SKIP_GRANULARITY":
       // Never pick a concept on the user's behalf; record the answer and move on.
       return completeQuick(state, { granularityResponse: "unsure", concept: undefined });
-    case "SET_CONTRAST":
-      return { ...withQuick(state, { contrastAnswer: action.answer }), stage: "micro-learning" };
-    case "DISMISS_MICRO_LEARNING":
-      return completeQuick(state, { microLearningSeen: true });
     case "COMPLETE_QUICK":
       return completeQuick(state);
 
@@ -279,17 +315,41 @@ const reduce = (state: EmotionSession, action: SessionAction): EmotionSession =>
     }
     case "OPEN_SUPPORT":
       // reached from a finished summary; it must not reopen or end the session
-      return { ...state, stage: "support" };
-    case "TOGGLE_SUPPORT": {
-      const chosen = state.support?.chosen ?? [];
+      return { ...state, stage: "support", support: state.support ?? { chosen: [] } };
+    case "CHOOSE_NEED":
+      // one direction at a time, but switching never discards what was picked elsewhere
+      return { ...state, support: { ...(state.support ?? { chosen: [] }), need: action.id } };
+    case "TOGGLE_RESPONSE": {
+      const support = state.support ?? { chosen: [] };
+      const need = support.need;
+      if (!need) return state;
+      const byNeed = { ...(support.choicesByNeed ?? {}) };
+      const current = byNeed[need] ?? [];
+      byNeed[need] = current.includes(action.id) ? current.filter((id) => id !== action.id) : [...current, action.id];
+      return { ...state, support: { ...support, choicesByNeed: byNeed, chosen: Object.values(byNeed).flat() } };
+    }
+
+    case "OPEN_COACH":
+      return { ...state, stage: "coach-appraisal", coach: openCoach(state) };
+    case "SET_APPRAISAL":
+      return state.coach ? { ...state, coach: { ...state.coach, appraisal: action.id }, stage: "coach-words" } : state;
+    case "TOGGLE_COACH_WORD": {
+      if (!state.coach) return state;
+      const after = state.coach.wordsAfter;
       return {
         ...state,
-        support: {
-          ...state.support,
-          chosen: chosen.includes(action.id) ? chosen.filter((id) => id !== action.id) : [...chosen, action.id],
+        coach: {
+          ...state.coach,
+          wordsAfter: after.includes(action.label) ? after.filter((word) => word !== action.label) : [...after, action.label],
         },
       };
     }
+    case "SET_COACH_OWN_WORD":
+      return state.coach ? { ...state, coach: { ...state.coach, ownWord: action.label.trim() || undefined } } : state;
+    case "FINISH_COACH":
+      return { ...state, stage: "coach-note" };
+    case "CLOSE_COACH":
+      return { ...state, stage: state.deepReflection ? "summary" : "quick-summary" };
     case "BACK": {
       const history = state.history ?? [];
       if (!history.length) return state;
@@ -297,6 +357,8 @@ const reduce = (state: EmotionSession, action: SessionAction): EmotionSession =>
     }
     case "STOP":
       return { ...state, stage: "stopped", status: "stopped", stopReason: action.reason };
+    default:
+      return state;
   }
 };
 
@@ -309,6 +371,7 @@ export const sessionReducer = (state: EmotionSession, action: SessionAction): Em
   if (NOT_A_STEP.has(action.type) || next.stage === state.stage) return next;
   // a fresh session starts its own trail; a finished one is not rewound past its summary
   if (action.type === "START_QUICK" || action.type === "START_DEEP") return { ...next, history: [] };
+  if (action.type === "CLOSE_COACH") return next;
   if (next.stage === "summary" || next.stage === "quick-summary" || next.stage === "stopped") {
     return { ...next, history: [] };
   }

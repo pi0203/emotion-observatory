@@ -7,7 +7,7 @@ const startQuick = () => sessionReducer(createSession(), { type: "START_QUICK" }
 const quickToCandidates = () => {
   let state = startQuick();
   state = sessionReducer(state, { type: "SET_QUICK_AFFECT", affect: { valence: 0.25, activation: 1 } });
-  return sessionReducer(state, { type: "SET_QUICK_CANDIDATES", candidatePool: [{ label: "긴장", source: "suggested" }, { label: "짜증", source: "suggested" }] });
+  return sessionReducer(state, { type: "SET_QUICK_CANDIDATES", candidatePool: [{ label: "긴장", source: "suggested" }, { label: "짜증", source: "suggested" }, { label: "답답함", source: "suggested" }] });
 };
 
 const completedQuick = () => {
@@ -75,7 +75,7 @@ describe("quick only", () => {
     let state = quickToCandidates();
     state = sessionReducer(state, { type: "TOGGLE_QUICK_CANDIDATE", label: "긴장" });
     state = sessionReducer(state, { type: "OPEN_GRANULARITY" });
-    expect(state.stage).toBe("granularity");
+    expect(state.stage).toBe("coach-appraisal");
     state = sessionReducer(state, { type: "SKIP_GRANULARITY" });
     expect(state.quickCheck?.concept).toBeUndefined();
     expect(state.quickCheck?.granularityResponse).toBe("unsure");
@@ -83,18 +83,19 @@ describe("quick only", () => {
     expect(state.quickCheck?.selected.map((item) => item.label)).toEqual(["긴장"]);
   });
 
-  it("walks the granularity coach through to a completed quick record", () => {
+  it("walks the granularity coach through and comes back to the quick summary", () => {
     let state = quickToCandidates();
-    state = sessionReducer(state, { type: "TOGGLE_QUICK_CANDIDATE", label: "긴장" });
+    state = sessionReducer(state, { type: "TOGGLE_QUICK_CANDIDATE", label: "짜증" });
     state = sessionReducer(state, { type: "OPEN_GRANULARITY" });
-    state = sessionReducer(state, { type: "CHOOSE_GRANULARITY", concept: "긴장" });
-    expect(state.stage).toBe("context-contrast");
-    state = sessionReducer(state, { type: "SET_CONTRAST", answer: "A" });
-    expect(state.stage).toBe("micro-learning");
-    state = sessionReducer(state, { type: "DISMISS_MICRO_LEARNING" });
-    expect(state.quickCheck?.contrastAnswer).toBe("A");
-    expect(state.quickCheck?.microLearningSeen).toBe(true);
-    expect(state.status).toBe("completed");
+    expect(state.stage).toBe("coach-appraisal");
+    state = sessionReducer(state, { type: "SET_APPRAISAL", id: "interrupted" });
+    expect(state.stage).toBe("coach-words");
+    state = sessionReducer(state, { type: "TOGGLE_COACH_WORD", label: "답답함" });
+    state = sessionReducer(state, { type: "FINISH_COACH" });
+    state = sessionReducer(state, { type: "CLOSE_COACH" });
+    expect(state.stage).toBe("quick-summary");
+    expect(state.coach?.appraisal).toBe("interrupted");
+    expect(state.coach?.wordsAfter).toEqual(["답답함"]);
   });
 });
 

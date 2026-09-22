@@ -37,15 +37,20 @@ describe("quick check screens", () => {
     expect(screen.queryByLabelText(/진행/)).toBeNull();
   });
 
-  it("does not choose a word for the user who answers 잘 모르겠음 in the coach", () => {
+  it("asks what mattered before showing any word", () => {
     openQuickCheck();
     tapUnpleasantActivated();
-    fireEvent.click(screen.getByRole("button", { name: "긴장" }));
+    fireEvent.click(screen.getByRole("button", { name: "짜증" }));
     fireEvent.click(screen.getByRole("button", { name: /조금 더 정확히 살펴보기/ }));
-    fireEvent.click(screen.getByRole("button", { name: "잘 모르겠음" }));
+    // the coach asks what mattered before it shows a single word
+    expect(screen.getByText(/어떤 점이 가장 중요하게 느껴졌나요/)).toBeTruthy();
+    for (const word of ["짜증", "억울함", "답답함"]) expect(screen.queryByRole("button", { name: word })).toBeNull();
+    fireEvent.click(screen.getByRole("button", { name: /잘 모르겠다/ }));
 
-    expect(screen.queryByRole("heading", { name: /어느 쪽이 지금 경험과 조금 더 가까운가요/ })).toBeNull();
-    expect(screen.getByText(/여기까지 살펴보았습니다/)).toBeTruthy();
+    // only now are the words offered, with escapes beside them
+    expect(screen.getByRole("button", { name: "억울함" })).toBeTruthy();
+    expect(screen.getByRole("button", { name: "어느 것도 아님" })).toBeTruthy();
+    expect(screen.getByLabelText("내 말로 표현하기")).toBeTruthy();
   });
 
   it("carries the quick reading into the deep affect step as an editable suggestion", () => {
@@ -159,7 +164,7 @@ describe("quick check screens", () => {
     fireEvent.click(screen.getByRole("button", { name: /조금 더 천천히 살펴보기/ }));
     fireEvent.click(screen.getByRole("button", { name: /조금 살펴보고 싶어요/ }));
 
-    const note = "몸의 느낌은 감정의 정답은 아니지만, 지금 경험을 이해하는 하나의 단서가 될 수 있어요.";
+    const note = "몸의 느낌은 고정된 정답이 아니라 지금 순간의 snapshot입니다. 움직임, 자세, 호흡, 시간, 상황이 달라지면 다르게 느껴질 수 있어요.";
     expect(screen.queryByText(note)).toBeNull();
     fireEvent.click(screen.getByRole("button", { name: "몸이 무거움" }));
     expect(screen.getByText(note)).toBeTruthy();
@@ -210,17 +215,28 @@ describe("quick check screens", () => {
     tapUnpleasantActivated();
     fireEvent.click(screen.getByRole("button", { name: "긴장" }));
     fireEvent.click(screen.getByRole("button", { name: /여기까지/ }));
-    fireEvent.click(screen.getByRole("button", { name: /지금 무엇이 도움이 될까요/ }));
+    fireEvent.click(screen.getByRole("button", { name: /무엇이 필요할지 살펴보기/ }));
 
-    expect(screen.getByText(/지금 무엇이 가장 도움이 될 것 같나요/)).toBeTruthy();
-    const settle = screen.getByRole("button", { name: "먼저 몸을 조금 안정시키기" });
-    expect(settle.getAttribute("aria-pressed")).toBe("false");
-    // nothing is preselected and nothing is marked as recommended
+    expect(screen.getByText(/지금 가장 필요한 방향은 어느 쪽에 가까운가요/)).toBeTruthy();
+    // nothing is preselected, nothing recommended, and no response is shown yet
     expect(document.querySelectorAll('[aria-pressed="true"]')).toHaveLength(0);
-    expect(screen.getByRole("button", { name: "좋은 경험을 조금 더 머물러 느끼기" })).toBeTruthy();
+    expect(screen.queryByRole("button", { name: "긴장된 곳 한 군데를 조금 움직여보기" })).toBeNull();
+    expect(screen.getByRole("button", { name: "좋은 경험에 조금 더 머물기" })).toBeTruthy();
+    expect(screen.getByRole("button", { name: "이 좋은 상태를 만든 조건 살펴보기" })).toBeTruthy();
 
-    fireEvent.click(settle);
-    expect(screen.getByRole("button", { name: "먼저 몸을 조금 안정시키기" }).getAttribute("aria-pressed")).toBe("true");
+    // picking a direction opens its responses on the same screen
+    fireEvent.click(screen.getByRole("button", { name: "몸과 마음의 속도를 조금 조절하기" }));
+    expect(screen.getByText(/고르셨기 때문에/)).toBeTruthy();
+    const loosen = screen.getByRole("button", { name: "긴장된 곳 한 군데를 조금 움직여보기" });
+    fireEvent.click(loosen);
+    expect(screen.getByRole("button", { name: "긴장된 곳 한 군데를 조금 움직여보기" }).getAttribute("aria-pressed")).toBe("true");
+
+    // switching direction keeps the earlier choice
+    fireEvent.click(screen.getByRole("button", { name: "경계나 거리를 정하기" }));
+    expect(screen.queryByRole("button", { name: "긴장된 곳 한 군데를 조금 움직여보기" })).toBeNull();
+    fireEvent.click(screen.getByRole("button", { name: "몸과 마음의 속도를 조금 조절하기" }));
+    expect(screen.getByRole("button", { name: "긴장된 곳 한 군데를 조금 움직여보기" }).getAttribute("aria-pressed")).toBe("true");
+
     fireEvent.click(screen.getByRole("button", { name: /요약으로 돌아가기/ }));
     expect(screen.getByText(/여기까지 살펴보았습니다/)).toBeTruthy();
   });
