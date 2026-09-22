@@ -3,6 +3,8 @@ export type EntryDecision = "observe" | "unsure" | "stop";
 export type QuickNonSelection = "none-close" | "unsure";
 export type SessionStatus = "draft" | "completed" | "stopped";
 export type SessionEntry = "quick" | "deep";
+/** How well the generated synthesis matched, in the user's own judgement. */
+export type SynthesisFit = "close" | "partly" | "unsure";
 export type Scale = 1 | 2 | 3 | 4 | 5;
 export type Stage =
   | "landing"
@@ -80,6 +82,8 @@ export type EmotionSession = {
   entry: SessionEntry;
   quickCheck?: QuickCheck;
   deepReflection?: DeepReflection;
+  /** Reserved for checking whether the summary is useful; never shown back as a score. */
+  synthesisFeedback?: { fit?: SynthesisFit; correction?: string };
   stopReason?: "user" | "entry";
   /** Carried over from the v1 storage shape, where some fields were unrecoverable. */
   migratedFromV1?: true;
@@ -105,6 +109,7 @@ export type SessionAction =
   | { type: "SET_QUICK_CANDIDATES"; candidatePool: EmotionSelection[] }
   | { type: "TOGGLE_QUICK_CANDIDATE"; label: string }
   | { type: "SET_QUICK_CANDIDATE_RESPONSE"; response: QuickNonSelection }
+  | { type: "ADD_QUICK_CUSTOM"; label: string }
   | { type: "OPEN_GRANULARITY" }
   | { type: "CHOOSE_GRANULARITY"; concept: string }
   | { type: "SKIP_GRANULARITY" }
@@ -119,6 +124,7 @@ export type SessionAction =
   | { type: "SET_CONCERNS"; concerns: string[] }
   | { type: "SET_EMOTIONS"; emotionCandidates: EmotionSelection[] }
   | { type: "SET_OUTCOME"; outcome: NonNullable<DeepReflection["outcome"]> }
+  | { type: "SET_SYNTHESIS_FEEDBACK"; fit?: SynthesisFit; correction?: string }
   | { type: "STOP"; reason: "user" | "entry" };
 
 export const createSession = (entry: SessionEntry = "quick"): EmotionSession => ({
@@ -190,6 +196,12 @@ export const sessionReducer = (state: EmotionSession, action: SessionAction): Em
     case "SET_QUICK_CANDIDATE_RESPONSE":
       // Stays on the candidate step so the user can still end here or go deeper.
       return withQuick(state, { candidateResponse: action.response, selected: [] });
+    case "ADD_QUICK_CUSTOM": {
+      const label = action.label.trim();
+      const selected = state.quickCheck?.selected ?? [];
+      if (!label || selected.some((item) => item.label === label)) return state;
+      return withQuick(state, { candidateResponse: undefined, selected: [...selected, { label, source: "custom" }] });
+    }
     case "OPEN_GRANULARITY":
       return { ...state, stage: "granularity" };
     case "CHOOSE_GRANULARITY":
@@ -235,6 +247,14 @@ export const sessionReducer = (state: EmotionSession, action: SessionAction): Em
         status: "completed",
         completedAt: now,
       };
+    }
+    case "SET_SYNTHESIS_FEEDBACK": {
+      // Merged onto a finished session: rating the summary must not erase a rewrite,
+      // and rewriting it must not answer the rating. Stage and status stay as they are.
+      const feedback = { ...state.synthesisFeedback };
+      if (action.fit) feedback.fit = action.fit;
+      if (action.correction !== undefined) feedback.correction = action.correction.trim() || undefined;
+      return { ...state, synthesisFeedback: feedback };
     }
     case "STOP":
       return { ...state, stage: "stopped", status: "stopped", stopReason: action.reason };

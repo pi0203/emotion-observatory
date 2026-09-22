@@ -63,6 +63,75 @@ describe("quick check screens", () => {
     expect((screen.getByLabelText("가라앉음에서 활성됨") as HTMLInputElement).value).toBe("5");
   });
 
+  it("shows a handful of words first and reveals related ones only when asked", () => {
+    openQuickCheck();
+    tapUnpleasantActivated();
+    const firstTier = screen.getAllByRole("button", { name: /^(긴장|초조함|짜증|억울함|답답함)$/ });
+    expect(firstTier.length).toBeLessThanOrEqual(5);
+    expect(screen.queryByText("비슷한 표현")).toBeNull();
+
+    fireEvent.click(screen.getByRole("button", { name: "비슷한 표현 더 보기" }));
+    expect(screen.getByText("비슷한 표현")).toBeTruthy();
+    expect(screen.queryByRole("button", { name: "비슷한 표현 더 보기" })).toBeNull();
+  });
+
+  it("lets the user add their own word at the last tier", () => {
+    openQuickCheck();
+    tapUnpleasantActivated();
+    fireEvent.click(screen.getByRole("button", { name: "비슷한 표현 더 보기" }));
+    fireEvent.click(screen.getByRole("button", { name: /다른 표현 찾아보기/ }));
+
+    const input = screen.getByLabelText("내 말로 적기");
+    fireEvent.change(input, { target: { value: "뒤통수 맞은 느낌" } });
+    fireEvent.click(screen.getByRole("button", { name: "추가" }));
+
+    expect(screen.getByText("내가 적은 말")).toBeTruthy();
+    expect(screen.getByRole("button", { name: "뒤통수 맞은 느낌" })).toBeTruthy();
+  });
+
+  it("offers a synthesis of the user's own entries on the summary, with a fit rating", () => {
+    openQuickCheck();
+    tapUnpleasantActivated();
+    fireEvent.click(screen.getByRole("button", { name: "긴장" }));
+    fireEvent.click(screen.getByRole("button", { name: /여기까지/ }));
+
+    expect(screen.getByText(/지금까지의 경험을/)).toBeTruthy();
+    expect(screen.getByText(/당신이 고른 내용을 연결하면/)).toBeTruthy();
+    expect(screen.getByText(/이 설명이 지금 경험과 얼마나 맞나요/)).toBeTruthy();
+
+    const partly = screen.getByRole("button", { name: "일부만 맞아요" });
+    expect(partly.getAttribute("aria-pressed")).toBe("false");
+    fireEvent.click(partly);
+    expect(screen.getByRole("button", { name: "일부만 맞아요" }).getAttribute("aria-pressed")).toBe("true");
+  });
+
+  it("keeps the rewrite box out of the way until it is asked for", () => {
+    openQuickCheck();
+    tapUnpleasantActivated();
+    fireEvent.click(screen.getByRole("button", { name: "긴장" }));
+    fireEvent.click(screen.getByRole("button", { name: /여기까지/ }));
+
+    expect(screen.queryByLabelText("내 말로 고쳐보기")).toBeNull();
+    fireEvent.click(screen.getByRole("button", { name: "내 말로 고쳐보기" }));
+    fireEvent.change(screen.getByLabelText("내 말로 고쳐보기"), { target: { value: "사실은 그냥 지쳤던 것 같다" } });
+    fireEvent.click(screen.getByRole("button", { name: "이 기록에 남기기" }));
+
+    expect(screen.getByText(/사실은 그냥 지쳤던 것 같다/)).toBeTruthy();
+  });
+
+  it("holds the step rationale back until the user has chosen something", () => {
+    render(<Home />);
+    fireEvent.click(screen.getByRole("button", { name: /조금 더 천천히 살펴보기/ }));
+    fireEvent.click(screen.getByRole("button", { name: /조금 살펴보고 싶어요/ }));
+
+    const note = "몸의 느낌은 감정의 정답은 아니지만, 지금 경험을 이해하는 하나의 단서가 될 수 있어요.";
+    expect(screen.queryByText(note)).toBeNull();
+    fireEvent.click(screen.getByRole("button", { name: "몸이 무거움" }));
+    expect(screen.getByText(note)).toBeTruthy();
+    // it must never block moving on
+    expect(screen.getByRole("button", { name: /다음/ })).not.toBeDisabled();
+  });
+
   it("keeps 가까운 말이 없음 and 잘 모르겠음 as separate recorded answers on the summary", () => {
     openQuickCheck();
     tapUnpleasantActivated();

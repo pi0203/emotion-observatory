@@ -98,6 +98,56 @@ describe("quick only", () => {
   });
 });
 
+describe("own words and synthesis feedback", () => {
+  it("adds a word the user typed, marked as their own", () => {
+    const state = sessionReducer(quickToCandidates(), { type: "ADD_QUICK_CUSTOM", label: "  뒤통수 맞은 느낌  " });
+    expect(state.quickCheck?.selected).toEqual([{ label: "뒤통수 맞은 느낌", source: "custom" }]);
+  });
+
+  it("ignores an empty entry and a duplicate", () => {
+    let state = sessionReducer(quickToCandidates(), { type: "ADD_QUICK_CUSTOM", label: "   " });
+    expect(state.quickCheck?.selected).toEqual([]);
+    state = sessionReducer(state, { type: "ADD_QUICK_CUSTOM", label: "서운함" });
+    state = sessionReducer(state, { type: "ADD_QUICK_CUSTOM", label: "서운함" });
+    expect(state.quickCheck?.selected).toHaveLength(1);
+  });
+
+  it("clears a declined-candidates answer once the user writes their own word", () => {
+    let state = sessionReducer(quickToCandidates(), { type: "SET_QUICK_CANDIDATE_RESPONSE", response: "none-close" });
+    state = sessionReducer(state, { type: "ADD_QUICK_CUSTOM", label: "멍함" });
+    expect(state.quickCheck?.candidateResponse).toBeUndefined();
+  });
+
+  it("records how well the synthesis fit without ending or reopening the session", () => {
+    const completed = completedQuick();
+    const rated = sessionReducer(completed, { type: "SET_SYNTHESIS_FEEDBACK", fit: "partly" });
+    expect(rated.synthesisFeedback).toEqual({ fit: "partly" });
+    expect(rated.stage).toBe(completed.stage);
+    expect(rated.status).toBe("completed");
+    expect(rated.completedAt).toBe(completed.completedAt);
+  });
+
+  it("keeps the rating and the rewrite independent of each other", () => {
+    let state = sessionReducer(completedQuick(), { type: "SET_SYNTHESIS_FEEDBACK", fit: "close" });
+    state = sessionReducer(state, { type: "SET_SYNTHESIS_FEEDBACK", correction: "사실은 그냥 지쳤던 것 같다" });
+    expect(state.synthesisFeedback).toEqual({ fit: "close", correction: "사실은 그냥 지쳤던 것 같다" });
+    state = sessionReducer(state, { type: "SET_SYNTHESIS_FEEDBACK", fit: "partly" });
+    expect(state.synthesisFeedback?.correction).toBe("사실은 그냥 지쳤던 것 같다");
+  });
+
+  it("does not answer the rating when only a rewrite is saved", () => {
+    const state = sessionReducer(completedQuick(), { type: "SET_SYNTHESIS_FEEDBACK", correction: "내 말로 적은 설명" });
+    expect(state.synthesisFeedback?.fit).toBeUndefined();
+    expect(state.synthesisFeedback?.correction).toBe("내 말로 적은 설명");
+  });
+
+  it("clears a rewrite that is emptied out", () => {
+    let state = sessionReducer(completedQuick(), { type: "SET_SYNTHESIS_FEEDBACK", correction: "처음 적은 것" });
+    state = sessionReducer(state, { type: "SET_SYNTHESIS_FEEDBACK", correction: "   " });
+    expect(state.synthesisFeedback?.correction).toBeUndefined();
+  });
+});
+
 describe("quick to deep", () => {
   it("keeps one session id across the handoff", () => {
     const quick = completedQuick();

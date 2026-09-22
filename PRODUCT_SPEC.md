@@ -334,6 +334,20 @@ Buttons:
 사용자가 `조금 더 천천히 들여다보기`를 선택할 때만 열린다.
 기본 경로는 §0의 Quick Check이고, P0이 적용된다.
 
+## Step-level micro feedback
+
+각 단계에서 **선택을 실제로 한 직후**, 왜 이 질문을 했는지를 한 문장으로 보여준다.
+문구는 `data/step-notes.ko.json`에 두고 코드 밖에서 검토한다.
+
+규칙:
+
+- 한 문장 이하. 선택 **전**의 `hint`와 역할이 다르다(hint는 무엇을 묻는지, note는 왜 묻는지).
+- `다음`·`건너뛰기`를 막지 않는다. 모달이나 확인 절차가 아니다.
+- 아무것도 고르지 않았으면 나타나지 않는다. Affect처럼 기본값이 있는 단계는
+  사용자가 실제로 값을 움직인 뒤에만 보여준다.
+- **P7의 네 전제를 벗어나지 않는다.** 특정 감정이론을 정답으로 가르치지 않으며,
+  판정·진단·행동 권고를 하지 않는다.
+
 ---
 
 ## Step 1 — Body
@@ -640,6 +654,66 @@ Second question:
 
 Optional:
 > “왜 그렇게 느꼈나요?” — 1 line
+
+---
+
+## 8.1 Synthesis summary v1
+
+입력값 나열과 **별도로**, 전체 과정에서 무엇이 드러났는지를 이어주는 섹션을 둔다.
+
+> **지금까지의 경험을 이렇게 정리해볼 수 있어요**
+
+### 생성 방식
+
+- **AI를 사용하지 않는다.** 사용자가 직접 입력·선택한 데이터만 쓰는 deterministic template이다.
+- 같은 입력이면 항상 같은 문장이 나온다.
+- 사용 가능한 정보: Quick affect, Deep affect, body, context, meaning, 선택한 감정어,
+  후보를 고르지 않았다는 응답.
+
+### 표현 원칙 (테스트로 고정)
+
+금지:
+
+- `당신은 X입니다` 같은 단정
+- 인과관계 확정 (`때문에`, `그래서`, `이유는`)
+- 타인의 의도 추론 (`상대는`, `그 사람은`, `의도`)
+- 사용자가 제공하지 않은 심리 특성 추가 (`경향이 있`, `유형입니다`)
+- 해석을 감춘 완곡어법 (`것으로 보입니다`, `듯합니다`, `분석`) — 가능하면 최소화
+
+사용:
+
+> **당신이 고른 내용을 연결하면 이렇게 정리해볼 수 있습니다.**
+
+그리고 끝에 명시한다.
+
+> 이것은 해석이나 진단이 아니라, 당신이 고른 내용을 그대로 이어 붙인 것입니다.
+
+사용자가 적은 항목은 인용부호로 감싼 뒤 조사를 붙인다. 입력이 절인 경우가 많아
+(`존중받고 싶었다`) 조사를 직접 붙이면 문장이 깨진다.
+
+### Before / After (Quick → Deep)
+
+두 affect가 모두 있으면 나란히 보여주되 **평가하지 않는다.**
+
+> 처음 빠른 확인에서는 ___ 쪽이었고, 조금 더 살펴본 뒤에는 ___로 표시했습니다.
+
+감정어가 달라졌다면:
+
+> 살펴보면서 가까운 표현이 조금 달라졌습니다.
+
+같은 표현을 유지했다면 그것도 그대로 적는다. `더 정확해졌다`, `개선됐다` 같은
+효과 주장은 하지 않는다. 어느 쪽이 맞는지 판정하지 않는다.
+
+### 사용자의 평가
+
+> **이 설명이 지금 경험과 얼마나 맞나요?**
+> `꽤 맞아요` · `일부만 맞아요` · `잘 모르겠어요`
+> `내 말로 고쳐보기`
+
+- `synthesisFeedback`으로 저장한다(§13). 향후 앱 자체의 usefulness 검증용이며,
+  **사용자에게 점수로 되돌려주지 않는다.**
+- 평가와 고쳐쓰기는 서로 독립이다. 고쳐쓰기를 저장해도 평가를 대신 고르지 않는다.
+- 완료된 세션에 기록되며 stage·status를 바꾸지 않는다.
 
 ---
 
@@ -966,6 +1040,11 @@ type EmotionSession = {
     }
   }
 
+  synthesisFeedback?: {
+    fit?: "close" | "partly" | "unsure"    // 선택은 optional: 고쳐쓰기가 평가를 대신하지 않는다
+    correction?: string
+  }
+
   stopReason?: "user" | "entry"
   migratedFromV1?: true
 }
@@ -1075,6 +1154,24 @@ Important:
 
 Future:
 allow user-created vocabulary.
+
+## Progressive disclosure
+
+한 번에 많은 단어를 보여주지 않는다. 후보 화면은 사용자가 요청할 때만 넓어진다.
+
+```text
+기본 후보 3~5개            valence × activation으로 좁힌 1차 후보
+   ↓  비슷한 표현 더 보기
+additional neighbors       1차 후보의 neighbors 중 아직 보이지 않은 것
+   ↓  다른 표현 찾아보기 · 내 말로 적기
+사용자가 직접 입력          source: "custom"으로 저장
+```
+
+- 여러 개를 동시에 고를 수 있다는 기존 원칙을 유지한다.
+- `가까운 말이 없음` / `잘 모르겠음` / 내 표현은 **모든 단계에서 항상 정상 경로**다.
+- `neighbors`는 "비교해볼 만한 단어"를 기록한 탐색 metadata이며, 심리적 근접성을
+  주장하지 않는다. 사용자가 적은 말에는 neighbors가 없어도 된다.
+- vocabulary 자체의 대규모 확장은 별도 단계다. 이 구조는 그것을 담기 위한 그릇이다.
 
 ---
 
@@ -1412,6 +1509,12 @@ The MVP is acceptable when:
 17. `가까운 말이 없음` and `잘 모르겠음` both leave the user on a path forward — never on a dead-end screen.
 18. No screen selects an emotion word on the user's behalf, including when the user answers “잘 모르겠음.”
 19. No product copy claims that the app improves emotional granularity.
+20. Every step's rationale appears only after a choice is made, and never blocks 다음.
+21. The candidate screen opens with at most 5 words; related words and the user's own
+    wording appear only when the user asks for them.
+22. The synthesis contains no sentence the user did not supply the content for, and no
+    claim about cause, trait or anyone else's intent.
+23. Rating the synthesis and rewriting it are independent; neither answers the other.
 
 ---
 

@@ -2,20 +2,163 @@
   "provisional": true,
   "note": "연구·검토 전의 UI fixture입니다. 심리학적 분류나 자동 추론에 사용하지 않습니다.",
   "items": [
-    { "label": "편안함", "family": "ease", "valence": "positive", "activation": "low" },
-    { "label": "안도", "family": "relief", "valence": "positive", "activation": "low" },
-    { "label": "흥미", "family": "interest", "valence": "positive", "activation": "medium" },
-    { "label": "즐거움", "family": "joy", "valence": "positive", "activation": "medium" },
-    { "label": "활기", "family": "energy", "valence": "positive", "activation": "high" },
-    { "label": "뿌듯함", "family": "pride", "valence": "positive", "activation": "medium" },
-    { "label": "긴장", "family": "uncertainty", "valence": "negative", "activation": "high" },
-    { "label": "초조함", "family": "uncertainty", "valence": "negative", "activation": "high" },
-    { "label": "짜증", "family": "friction", "valence": "negative", "activation": "high" },
-    { "label": "답답함", "family": "friction", "valence": "negative", "activation": "medium" },
-    { "label": "서운함", "family": "social", "valence": "negative", "activation": "medium" },
-    { "label": "실망", "family": "loss", "valence": "negative", "activation": "low" },
-    { "label": "억울함", "family": "fairness", "valence": "negative", "activation": "high" },
-    { "label": "외로움", "family": "social", "valence": "negative", "activation": "low" },
-    { "label": "걱정", "family": "uncertainty", "valence": "negative", "activation": "medium" }
-  ]
+    {
+      "label": "편안함",
+      "family": "ease",
+      "valence": "positive",
+      "activation": "low",
+      "neighbors": [
+        "안도",
+        "즐거움"
+      ]
+    },
+    {
+      "label": "안도",
+      "family": "relief",
+      "valence": "positive",
+      "activation": "low",
+      "neighbors": [
+        "편안함",
+        "뿌듯함"
+      ]
+    },
+    {
+      "label": "흥미",
+      "family": "interest",
+      "valence": "positive",
+      "activation": "medium",
+      "neighbors": [
+        "즐거움",
+        "활기"
+      ]
+    },
+    {
+      "label": "즐거움",
+      "family": "joy",
+      "valence": "positive",
+      "activation": "medium",
+      "neighbors": [
+        "흥미",
+        "활기",
+        "뿌듯함"
+      ]
+    },
+    {
+      "label": "활기",
+      "family": "energy",
+      "valence": "positive",
+      "activation": "high",
+      "neighbors": [
+        "즐거움",
+        "흥미"
+      ]
+    },
+    {
+      "label": "뿌듯함",
+      "family": "pride",
+      "valence": "positive",
+      "activation": "medium",
+      "neighbors": [
+        "즐거움",
+        "안도"
+      ]
+    },
+    {
+      "label": "긴장",
+      "family": "uncertainty",
+      "valence": "negative",
+      "activation": "high",
+      "neighbors": [
+        "초조함",
+        "걱정"
+      ]
+    },
+    {
+      "label": "초조함",
+      "family": "uncertainty",
+      "valence": "negative",
+      "activation": "high",
+      "neighbors": [
+        "긴장",
+        "걱정",
+        "짜증"
+      ]
+    },
+    {
+      "label": "짜증",
+      "family": "friction",
+      "valence": "negative",
+      "activation": "high",
+      "neighbors": [
+        "답답함",
+        "억울함",
+        "초조함"
+      ]
+    },
+    {
+      "label": "답답함",
+      "family": "friction",
+      "valence": "negative",
+      "activation": "medium",
+      "neighbors": [
+        "짜증",
+        "억울함",
+        "실망"
+      ]
+    },
+    {
+      "label": "서운함",
+      "family": "social",
+      "valence": "negative",
+      "activation": "medium",
+      "neighbors": [
+        "실망",
+        "외로움",
+        "억울함"
+      ]
+    },
+    {
+      "label": "실망",
+      "family": "loss",
+      "valence": "negative",
+      "activation": "low",
+      "neighbors": [
+        "서운함",
+        "답답함",
+        "외로움"
+      ]
+    },
+    {
+      "label": "억울함",
+      "family": "fairness",
+      "valence": "negative",
+      "activation": "high",
+      "neighbors": [
+        "짜증",
+        "서운함",
+        "답답함"
+      ]
+    },
+    {
+      "label": "외로움",
+      "family": "social",
+      "valence": "negative",
+      "activation": "low",
+      "neighbors": [
+        "서운함",
+        "실망"
+      ]
+    },
+    {
+      "label": "걱정",
+      "family": "uncertainty",
+      "valence": "negative",
+      "activation": "medium",
+      "neighbors": [
+        "긴장",
+        "초조함"
+      ]
+    }
+  ],
+  "neighborsNote": "neighbors는 탐색용 navigation metadata입니다. 단어 사이의 심리학적 근접성을 주장하지 않으며, 사용자는 언제든 벗어날 수 있습니다."
 }
