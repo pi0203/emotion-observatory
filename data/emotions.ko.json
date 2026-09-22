@@ -1,68 +1,14 @@
 {
   "provisional": true,
-  "note": "연구·검토 전의 UI fixture입니다. 심리학적 분류나 자동 추론에 사용하지 않습니다.",
+  "note": "연구·검토 전의 UI fixture입니다. 감정 taxonomy를 확정하지 않으며, 심리학적 분류나 자동 추론에 사용하지 않습니다. 검증척도(mDES, PANAS 등) 문항을 복제하지 않고 독립적으로 작성했습니다.",
+  "fieldNotes": {
+    "family": "탐색용 묶음일 뿐, 감정의 존재론적 분류가 아닙니다.",
+    "valence/activation": "후보를 좁히는 좌표이며, 감정을 산출하는 lookup table이 아닙니다.",
+    "neighbors": "비교해볼 만한 단어를 기록한 탐색 metadata입니다. 심리적 근접성을 주장하지 않습니다.",
+    "appraisalHints": "이 감정의 정의가 아닙니다. 비슷한 단어 사이의 차이를 탐색할 때 써볼 수 있는 가설적 힌트입니다.",
+    "contextTags": "어떤 상황에서 이 말을 써볼 수 있는지에 대한 느슨한 단서입니다."
+  },
   "items": [
-    {
-      "label": "편안함",
-      "family": "ease",
-      "valence": "positive",
-      "activation": "low",
-      "neighbors": [
-        "안도",
-        "즐거움"
-      ]
-    },
-    {
-      "label": "안도",
-      "family": "relief",
-      "valence": "positive",
-      "activation": "low",
-      "neighbors": [
-        "편안함",
-        "뿌듯함"
-      ]
-    },
-    {
-      "label": "흥미",
-      "family": "interest",
-      "valence": "positive",
-      "activation": "medium",
-      "neighbors": [
-        "즐거움",
-        "활기"
-      ]
-    },
-    {
-      "label": "즐거움",
-      "family": "joy",
-      "valence": "positive",
-      "activation": "medium",
-      "neighbors": [
-        "흥미",
-        "활기",
-        "뿌듯함"
-      ]
-    },
-    {
-      "label": "활기",
-      "family": "energy",
-      "valence": "positive",
-      "activation": "high",
-      "neighbors": [
-        "즐거움",
-        "흥미"
-      ]
-    },
-    {
-      "label": "뿌듯함",
-      "family": "pride",
-      "valence": "positive",
-      "activation": "medium",
-      "neighbors": [
-        "즐거움",
-        "안도"
-      ]
-    },
     {
       "label": "긴장",
       "family": "uncertainty",
@@ -70,30 +16,219 @@
       "activation": "high",
       "neighbors": [
         "초조함",
-        "걱정"
-      ]
+        "불안",
+        "걱정",
+        "조급함"
+      ],
+      "appraisalHints": [
+        "무슨 일이 생길지 몰라 몸이 준비된 느낌",
+        "잘 해내야 한다는 부담"
+      ],
+      "contextTags": [
+        "기다림",
+        "평가",
+        "일·과제"
+      ],
+      "provisional": true
     },
     {
       "label": "초조함",
+      "aliases": [
+        "안절부절"
+      ],
       "family": "uncertainty",
       "valence": "negative",
       "activation": "high",
       "neighbors": [
         "긴장",
-        "걱정",
-        "짜증"
-      ]
+        "불안",
+        "조급함"
+      ],
+      "appraisalHints": [
+        "결과를 기다리는 동안 가만히 있기 어려움"
+      ],
+      "contextTags": [
+        "기다림",
+        "불확실"
+      ],
+      "provisional": true
     },
     {
       "label": "짜증",
+      "aliases": [
+        "짜증남"
+      ],
       "family": "friction",
       "valence": "negative",
       "activation": "high",
       "neighbors": [
+        "화남",
         "답답함",
         "억울함",
-        "초조함"
-      ]
+        "조급함"
+      ],
+      "appraisalHints": [
+        "하려던 일이 자꾸 방해받음",
+        "사소한 것이 거슬림"
+      ],
+      "contextTags": [
+        "일·과제",
+        "반복"
+      ],
+      "provisional": true
+    },
+    {
+      "label": "화남",
+      "aliases": [
+        "화",
+        "화가 남"
+      ],
+      "family": "friction",
+      "valence": "negative",
+      "activation": "high",
+      "neighbors": [
+        "짜증",
+        "분개",
+        "억울함"
+      ],
+      "appraisalHints": [
+        "선을 넘었다고 느낌",
+        "막아야 한다고 느낌"
+      ],
+      "contextTags": [
+        "관계",
+        "경계"
+      ],
+      "provisional": true
+    },
+    {
+      "label": "불안",
+      "family": "uncertainty",
+      "valence": "negative",
+      "activation": "high",
+      "neighbors": [
+        "걱정",
+        "두려움",
+        "긴장"
+      ],
+      "appraisalHints": [
+        "나쁜 일이 일어날 것 같은 느낌",
+        "무엇을 해야 할지 확실하지 않음"
+      ],
+      "contextTags": [
+        "불확실",
+        "미래"
+      ],
+      "provisional": true
+    },
+    {
+      "label": "억울함",
+      "family": "fairness",
+      "valence": "negative",
+      "activation": "high",
+      "neighbors": [
+        "화남",
+        "서운함",
+        "답답함",
+        "분개"
+      ],
+      "appraisalHints": [
+        "부당하게 대우받았다고 느낌",
+        "내 잘못이 아니라고 느낌"
+      ],
+      "contextTags": [
+        "공정",
+        "관계",
+        "평가"
+      ],
+      "provisional": true
+    },
+    {
+      "label": "조급함",
+      "aliases": [
+        "서두름"
+      ],
+      "family": "urgency",
+      "valence": "negative",
+      "activation": "high",
+      "neighbors": [
+        "초조함",
+        "짜증",
+        "긴장"
+      ],
+      "appraisalHints": [
+        "시간이 부족하다고 느낌"
+      ],
+      "contextTags": [
+        "마감",
+        "기다림"
+      ],
+      "provisional": true
+    },
+    {
+      "label": "두려움",
+      "aliases": [
+        "무서움"
+      ],
+      "family": "threat",
+      "valence": "negative",
+      "activation": "high",
+      "neighbors": [
+        "불안",
+        "당황"
+      ],
+      "appraisalHints": [
+        "위험이 가깝다고 느낌"
+      ],
+      "contextTags": [
+        "안전",
+        "불확실"
+      ],
+      "provisional": true
+    },
+    {
+      "label": "당황",
+      "aliases": [
+        "당혹"
+      ],
+      "family": "threat",
+      "valence": "negative",
+      "activation": "high",
+      "neighbors": [
+        "두려움",
+        "민망함",
+        "막막함"
+      ],
+      "appraisalHints": [
+        "예상하지 못한 일이 갑자기 일어남"
+      ],
+      "contextTags": [
+        "예상 밖",
+        "사람들 앞"
+      ],
+      "provisional": true
+    },
+    {
+      "label": "분개",
+      "aliases": [
+        "분노"
+      ],
+      "family": "friction",
+      "valence": "negative",
+      "activation": "high",
+      "neighbors": [
+        "화남",
+        "억울함",
+        "못마땅함"
+      ],
+      "appraisalHints": [
+        "옳지 않은 일이 벌어졌다고 느낌"
+      ],
+      "contextTags": [
+        "공정",
+        "가치"
+      ],
+      "provisional": true
     },
     {
       "label": "답답함",
@@ -102,20 +237,217 @@
       "activation": "medium",
       "neighbors": [
         "짜증",
-        "억울함",
-        "실망"
-      ]
+        "좌절",
+        "막막함",
+        "억울함"
+      ],
+      "appraisalHints": [
+        "말이 통하지 않는다고 느낌",
+        "움직일 수 없다고 느낌"
+      ],
+      "contextTags": [
+        "관계",
+        "일·과제"
+      ],
+      "provisional": true
+    },
+    {
+      "label": "걱정",
+      "family": "uncertainty",
+      "valence": "negative",
+      "activation": "medium",
+      "neighbors": [
+        "불안",
+        "긴장",
+        "막막함"
+      ],
+      "appraisalHints": [
+        "앞으로 생길 일을 계속 떠올림"
+      ],
+      "contextTags": [
+        "미래",
+        "책임"
+      ],
+      "provisional": true
     },
     {
       "label": "서운함",
+      "aliases": [
+        "섭섭함"
+      ],
       "family": "social",
       "valence": "negative",
       "activation": "medium",
       "neighbors": [
         "실망",
         "외로움",
-        "억울함"
-      ]
+        "억울함",
+        "아쉬움"
+      ],
+      "appraisalHints": [
+        "기대했던 반응이 오지 않음",
+        "관계에서 덜 중요하게 느껴짐"
+      ],
+      "contextTags": [
+        "관계",
+        "기대"
+      ],
+      "provisional": true
+    },
+    {
+      "label": "좌절",
+      "family": "blocked",
+      "valence": "negative",
+      "activation": "medium",
+      "neighbors": [
+        "답답함",
+        "실망",
+        "막막함"
+      ],
+      "appraisalHints": [
+        "애쓴 만큼 되지 않음",
+        "길이 막혔다고 느낌"
+      ],
+      "contextTags": [
+        "일·과제",
+        "노력"
+      ],
+      "provisional": true
+    },
+    {
+      "label": "부끄러움",
+      "family": "self-evaluation",
+      "valence": "negative",
+      "activation": "medium",
+      "neighbors": [
+        "민망함",
+        "수치심"
+      ],
+      "appraisalHints": [
+        "보이고 싶지 않은 모습이 드러남"
+      ],
+      "contextTags": [
+        "사람들 앞",
+        "자기평가"
+      ],
+      "provisional": true
+    },
+    {
+      "label": "민망함",
+      "aliases": [
+        "쑥스러움"
+      ],
+      "family": "self-evaluation",
+      "valence": "negative",
+      "activation": "medium",
+      "neighbors": [
+        "부끄러움",
+        "당황"
+      ],
+      "appraisalHints": [
+        "어색한 상황에 놓임"
+      ],
+      "contextTags": [
+        "사람들 앞"
+      ],
+      "provisional": true
+    },
+    {
+      "label": "죄책감",
+      "family": "self-evaluation",
+      "valence": "negative",
+      "activation": "medium",
+      "neighbors": [
+        "후회",
+        "자책",
+        "수치심"
+      ],
+      "appraisalHints": [
+        "내 행동이 누군가에게 영향을 줬다고 느낌"
+      ],
+      "contextTags": [
+        "관계",
+        "책임"
+      ],
+      "provisional": true
+    },
+    {
+      "label": "수치심",
+      "family": "self-evaluation",
+      "valence": "negative",
+      "activation": "medium",
+      "neighbors": [
+        "부끄러움",
+        "자책",
+        "죄책감"
+      ],
+      "appraisalHints": [
+        "나라는 사람 자체가 문제처럼 느껴짐"
+      ],
+      "contextTags": [
+        "자기평가",
+        "사람들 앞"
+      ],
+      "provisional": true
+    },
+    {
+      "label": "자책",
+      "family": "self-evaluation",
+      "valence": "negative",
+      "activation": "medium",
+      "neighbors": [
+        "죄책감",
+        "후회",
+        "수치심"
+      ],
+      "appraisalHints": [
+        "원인을 자신에게서 찾음"
+      ],
+      "contextTags": [
+        "자기평가",
+        "책임"
+      ],
+      "provisional": true
+    },
+    {
+      "label": "혐오",
+      "aliases": [
+        "역겨움"
+      ],
+      "family": "friction",
+      "valence": "negative",
+      "activation": "medium",
+      "neighbors": [
+        "못마땅함",
+        "짜증"
+      ],
+      "appraisalHints": [
+        "가까이하고 싶지 않다고 느낌"
+      ],
+      "contextTags": [
+        "가치",
+        "거리두기"
+      ],
+      "provisional": true
+    },
+    {
+      "label": "못마땅함",
+      "family": "friction",
+      "valence": "negative",
+      "activation": "medium",
+      "neighbors": [
+        "혐오",
+        "분개",
+        "짜증"
+      ],
+      "appraisalHints": [
+        "기준에 맞지 않는다고 느낌"
+      ],
+      "contextTags": [
+        "가치",
+        "평가"
+      ],
+      "provisional": true
     },
     {
       "label": "실망",
@@ -124,20 +456,17 @@
       "activation": "low",
       "neighbors": [
         "서운함",
-        "답답함",
-        "외로움"
-      ]
-    },
-    {
-      "label": "억울함",
-      "family": "fairness",
-      "valence": "negative",
-      "activation": "high",
-      "neighbors": [
-        "짜증",
-        "서운함",
-        "답답함"
-      ]
+        "아쉬움",
+        "좌절"
+      ],
+      "appraisalHints": [
+        "기대했던 결과가 오지 않음"
+      ],
+      "contextTags": [
+        "기대",
+        "결과"
+      ],
+      "provisional": true
     },
     {
       "label": "외로움",
@@ -145,20 +474,454 @@
       "valence": "negative",
       "activation": "low",
       "neighbors": [
-        "서운함",
-        "실망"
-      ]
+        "슬픔",
+        "허전함",
+        "서운함"
+      ],
+      "appraisalHints": [
+        "연결이 끊겼다고 느낌",
+        "혼자라고 느낌"
+      ],
+      "contextTags": [
+        "관계",
+        "거리"
+      ],
+      "provisional": true
     },
     {
-      "label": "걱정",
-      "family": "uncertainty",
+      "label": "슬픔",
+      "family": "loss",
       "valence": "negative",
+      "activation": "low",
+      "neighbors": [
+        "외로움",
+        "허전함",
+        "실망"
+      ],
+      "appraisalHints": [
+        "소중한 것이 사라졌다고 느낌"
+      ],
+      "contextTags": [
+        "상실",
+        "관계"
+      ],
+      "provisional": true
+    },
+    {
+      "label": "허전함",
+      "aliases": [
+        "공허함"
+      ],
+      "family": "loss",
+      "valence": "negative",
+      "activation": "low",
+      "neighbors": [
+        "외로움",
+        "슬픔",
+        "아쉬움"
+      ],
+      "appraisalHints": [
+        "있던 것이 빠져나간 느낌"
+      ],
+      "contextTags": [
+        "상실",
+        "변화"
+      ],
+      "provisional": true
+    },
+    {
+      "label": "아쉬움",
+      "family": "loss",
+      "valence": "negative",
+      "activation": "low",
+      "neighbors": [
+        "실망",
+        "후회",
+        "허전함"
+      ],
+      "appraisalHints": [
+        "조금만 달랐으면 하는 마음"
+      ],
+      "contextTags": [
+        "기회",
+        "마무리"
+      ],
+      "provisional": true
+    },
+    {
+      "label": "후회",
+      "family": "self-evaluation",
+      "valence": "negative",
+      "activation": "low",
+      "neighbors": [
+        "죄책감",
+        "아쉬움",
+        "자책"
+      ],
+      "appraisalHints": [
+        "다르게 했으면 하는 마음"
+      ],
+      "contextTags": [
+        "선택",
+        "과거"
+      ],
+      "provisional": true
+    },
+    {
+      "label": "막막함",
+      "family": "blocked",
+      "valence": "negative",
+      "activation": "low",
+      "neighbors": [
+        "걱정",
+        "좌절",
+        "답답함"
+      ],
+      "appraisalHints": [
+        "어디서부터 해야 할지 모르겠음"
+      ],
+      "contextTags": [
+        "시작",
+        "규모"
+      ],
+      "provisional": true
+    },
+    {
+      "label": "기쁨",
+      "family": "joy",
+      "valence": "positive",
+      "activation": "high",
+      "neighbors": [
+        "신남",
+        "즐거움",
+        "감동"
+      ],
+      "appraisalHints": [
+        "바라던 일이 일어남"
+      ],
+      "contextTags": [
+        "성취",
+        "관계"
+      ],
+      "provisional": true
+    },
+    {
+      "label": "신남",
+      "aliases": [
+        "들뜸"
+      ],
+      "family": "joy",
+      "valence": "positive",
+      "activation": "high",
+      "neighbors": [
+        "기쁨",
+        "활기",
+        "기대"
+      ],
+      "appraisalHints": [
+        "곧 좋은 일이 있을 것 같음"
+      ],
+      "contextTags": [
+        "기대",
+        "놀이"
+      ],
+      "provisional": true
+    },
+    {
+      "label": "활기",
+      "aliases": [
+        "생기"
+      ],
+      "family": "energy",
+      "valence": "positive",
+      "activation": "high",
+      "neighbors": [
+        "신남",
+        "흥미",
+        "기쁨"
+      ],
+      "appraisalHints": [
+        "몸이 움직이고 싶은 느낌"
+      ],
+      "contextTags": [
+        "회복",
+        "시작"
+      ],
+      "provisional": true
+    },
+    {
+      "label": "흥미",
+      "aliases": [
+        "호기심"
+      ],
+      "family": "interest",
+      "valence": "positive",
       "activation": "medium",
       "neighbors": [
-        "긴장",
-        "초조함"
-      ]
+        "기대",
+        "활기",
+        "즐거움"
+      ],
+      "appraisalHints": [
+        "더 알고 싶은 느낌"
+      ],
+      "contextTags": [
+        "배움",
+        "새로움"
+      ],
+      "provisional": true
+    },
+    {
+      "label": "즐거움",
+      "aliases": [
+        "재미"
+      ],
+      "family": "joy",
+      "valence": "positive",
+      "activation": "medium",
+      "neighbors": [
+        "기쁨",
+        "흥미",
+        "신남"
+      ],
+      "appraisalHints": [
+        "지금 하는 것이 좋음"
+      ],
+      "contextTags": [
+        "놀이",
+        "관계"
+      ],
+      "provisional": true
+    },
+    {
+      "label": "기대",
+      "aliases": [
+        "설렘"
+      ],
+      "family": "interest",
+      "valence": "positive",
+      "activation": "high",
+      "neighbors": [
+        "흥미",
+        "신남",
+        "기쁨"
+      ],
+      "appraisalHints": [
+        "앞으로의 일이 기다려짐"
+      ],
+      "contextTags": [
+        "미래",
+        "약속"
+      ],
+      "provisional": true
+    },
+    {
+      "label": "뿌듯함",
+      "aliases": [
+        "자랑스러움"
+      ],
+      "family": "pride",
+      "valence": "positive",
+      "activation": "medium",
+      "neighbors": [
+        "만족",
+        "기쁨",
+        "감동"
+      ],
+      "appraisalHints": [
+        "해낸 것이 있다고 느낌"
+      ],
+      "contextTags": [
+        "성취",
+        "자기평가"
+      ],
+      "provisional": true
+    },
+    {
+      "label": "감동",
+      "aliases": [
+        "뭉클함"
+      ],
+      "family": "connection",
+      "valence": "positive",
+      "activation": "medium",
+      "neighbors": [
+        "기쁨",
+        "감사",
+        "뿌듯함"
+      ],
+      "appraisalHints": [
+        "마음이 움직였다고 느낌"
+      ],
+      "contextTags": [
+        "관계",
+        "이야기"
+      ],
+      "provisional": true
+    },
+    {
+      "label": "감사",
+      "aliases": [
+        "고마움"
+      ],
+      "family": "connection",
+      "valence": "positive",
+      "activation": "medium",
+      "neighbors": [
+        "감동",
+        "만족",
+        "친밀감"
+      ],
+      "appraisalHints": [
+        "받은 것이 있다고 느낌"
+      ],
+      "contextTags": [
+        "관계",
+        "도움"
+      ],
+      "provisional": true
+    },
+    {
+      "label": "친밀감",
+      "aliases": [
+        "가까움"
+      ],
+      "family": "connection",
+      "valence": "positive",
+      "activation": "medium",
+      "neighbors": [
+        "사랑",
+        "신뢰",
+        "감사"
+      ],
+      "appraisalHints": [
+        "거리가 가깝다고 느낌"
+      ],
+      "contextTags": [
+        "관계"
+      ],
+      "provisional": true
+    },
+    {
+      "label": "사랑",
+      "family": "connection",
+      "valence": "positive",
+      "activation": "medium",
+      "neighbors": [
+        "친밀감",
+        "감동",
+        "신뢰"
+      ],
+      "appraisalHints": [
+        "아끼는 마음"
+      ],
+      "contextTags": [
+        "관계"
+      ],
+      "provisional": true
+    },
+    {
+      "label": "편안함",
+      "family": "ease",
+      "valence": "positive",
+      "activation": "low",
+      "neighbors": [
+        "평온",
+        "안도",
+        "신뢰"
+      ],
+      "appraisalHints": [
+        "긴장을 놓아도 되는 느낌"
+      ],
+      "contextTags": [
+        "휴식",
+        "안전"
+      ],
+      "provisional": true
+    },
+    {
+      "label": "평온",
+      "aliases": [
+        "고요함"
+      ],
+      "family": "ease",
+      "valence": "positive",
+      "activation": "low",
+      "neighbors": [
+        "편안함",
+        "안도",
+        "만족"
+      ],
+      "appraisalHints": [
+        "서두르지 않아도 되는 느낌"
+      ],
+      "contextTags": [
+        "휴식"
+      ],
+      "provisional": true
+    },
+    {
+      "label": "안도",
+      "aliases": [
+        "한숨 돌림"
+      ],
+      "family": "relief",
+      "valence": "positive",
+      "activation": "low",
+      "neighbors": [
+        "평온",
+        "편안함",
+        "만족"
+      ],
+      "appraisalHints": [
+        "걱정하던 일이 지나감"
+      ],
+      "contextTags": [
+        "해소",
+        "안전"
+      ],
+      "provisional": true
+    },
+    {
+      "label": "만족",
+      "family": "pride",
+      "valence": "positive",
+      "activation": "low",
+      "neighbors": [
+        "뿌듯함",
+        "평온",
+        "감사"
+      ],
+      "appraisalHints": [
+        "이만하면 됐다고 느낌"
+      ],
+      "contextTags": [
+        "결과",
+        "일상"
+      ],
+      "provisional": true
+    },
+    {
+      "label": "신뢰",
+      "aliases": [
+        "믿음"
+      ],
+      "family": "connection",
+      "valence": "positive",
+      "activation": "low",
+      "neighbors": [
+        "친밀감",
+        "편안함",
+        "사랑"
+      ],
+      "appraisalHints": [
+        "기댈 수 있다고 느낌"
+      ],
+      "contextTags": [
+        "관계",
+        "안전"
+      ],
+      "provisional": true
     }
-  ],
-  "neighborsNote": "neighbors는 탐색용 navigation metadata입니다. 단어 사이의 심리학적 근접성을 주장하지 않으며, 사용자는 언제든 벗어날 수 있습니다."
+  ]
 }

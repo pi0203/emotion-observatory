@@ -1152,6 +1152,25 @@ Important:
 - user may always override
 - culturally natural Korean words preferred over translated taxonomy
 
+## Item contract (v1 expansion)
+
+```ts
+{
+  label, aliases?, family, valence, activation,
+  neighbors, appraisalHints?, contextTags?, provisional: true
+}
+```
+
+- `appraisalHints`는 **그 감정의 정의가 아니다.** 비슷한 단어 사이의 차이를 탐색할 때
+  써볼 수 있는 가설적 힌트이며, 사용자는 언제든 "아니다"를 선택할 수 있다.
+- `contextTags`는 어떤 상황에서 이 말을 써볼 수 있는지에 대한 느슨한 단서다.
+- `aliases`는 같은 경험을 부르는 다른 말이며, label과 겹치지 않는다.
+- 검증척도(mDES, PANAS 등)의 문항을 복제하지 않는다. 연구에서 아이디어를 얻되
+  문구와 예시는 독립적으로 작성한다.
+- 규모는 36~48개를 유지한다. 이것은 taxonomy 확정이 아니라 **탐색공간**이다.
+  불쾌·고활성 / 불안 / 상실·관계 / 자기평가 / 긍정·고활성 / 긍정·저활성·관계를
+  균형 있게 포함하고, 혐오 계열은 소수만 둔다.
+
 Future:
 allow user-created vocabulary.
 
@@ -1166,6 +1185,9 @@ additional neighbors       1차 후보의 neighbors 중 아직 보이지 않은 
    ↓  다른 표현 찾아보기 · 내 말로 적기
 사용자가 직접 입력          source: "custom"으로 저장
 ```
+
+이 구조는 **Quick Check의 후보 화면과 Deep Reflection의 감정어 화면 양쪽에 동일하게**
+적용한다. vocabulary가 커진 뒤로는 어느 화면에서도 전체 목록을 한 번에 깔지 않는다.
 
 - 여러 개를 동시에 고를 수 있다는 기존 원칙을 유지한다.
 - `가까운 말이 없음` / `잘 모르겠음` / 내 표현은 **모든 단계에서 항상 정상 경로**다.
@@ -1300,6 +1322,43 @@ Apply as:
 - no dashboard density on landing
 - generous whitespace
 - text hierarchy more important than decorative components
+
+## Palette
+
+```text
+--accent        #B4FF00   채움 전용
+--accent-hover  #A6EE00
+--accent-press  #96D900
+--accent-soft   #E8FFB8   선택 상태
+--accent-subtle #F5FFE6   micro-feedback
+--accent-ink    #4E7A00   대비가 필요한 자리의 accent
+--ink           #24302A   본문
+--muted         #67756C   보조 텍스트
+--line          #DCE7DF   구분선·카드 경계
+--line-strong   #7E9487   입력·버튼 등 조작 요소 경계
+--paper         #FCFDFB   배경
+```
+
+규칙:
+
+- **`#B4FF00`은 채움에만 쓴다.** 배경 위 대비가 1.19:1이라 얇은 테두리, focus ring,
+  작은 글자에 쓰면 사실상 보이지 않는다. 그 자리에는 `--accent-ink`를 쓴다.
+- 페이지 전체 배경을 형광 연두로 채우지 않는다. accent는 버튼·선택·focus에만.
+- 본문과 긴 텍스트는 `--ink`를 유지한다.
+- hover / focus / pressed를 모두 구분한다. focus는 `:focus-visible` 2px outline.
+- 선택 상태는 색만으로 표시하지 않는다. `--accent-soft` 배경에 `--accent-ink`
+  테두리를 함께 써서 색 지각에 의존하지 않게 한다.
+
+### Contrast floor
+
+본문·보조 텍스트는 4.5:1, 조작 요소의 경계와 focus ring은 3:1을 지킨다.
+이 기준 때문에 원래 제안된 값에서 조정한 것:
+
+| 값 | 변경 | 이유 |
+|---|---|---|
+| text-secondary | `#6F7D75` → `#67756C` | 4.23:1로 AA 미달 → 4.74:1 |
+| 조작 요소 경계 | `--line` → `--line-strong` 신설 | `#DCE7DF`는 배경 대비 1.24:1 |
+| accent 테두리·링 | `--accent-ink` 신설 | `#B4FF00`은 배경 대비 1.19:1 |
 
 But unlike the personal archive site:
 

@@ -3,7 +3,6 @@
 import { useEffect, useReducer, useState } from "react";
 import bodySignals from "../data/body-signals.ko.json";
 import concerns from "../data/concerns.ko.json";
-import emotions from "../data/emotions.ko.json";
 import granularity from "../data/granularity.ko.json";
 import { createSession, sessionReducer } from "../lib/session-types";
 import type { BodyObservation, DeepReflection, EmotionSelection, EmotionSession, QuickCheck, QuickNonSelection, Scale, SynthesisFit } from "../lib/session-types";
@@ -88,7 +87,7 @@ export default function Home() {
       {session.stage === "affect" && <AffectScreen initial={session.deepReflection?.affect ?? quickAffectSuggestion(session)} onNext={(affect) => dispatch({ type: "SET_AFFECT", affect })} />}
       {session.stage === "context" && <ContextScreen initial={session.deepReflection?.context} onNext={(context) => dispatch({ type: "SET_CONTEXT", context })} />}
       {session.stage === "meaning" && <MeaningScreen initial={session.deepReflection?.concerns ?? []} onNext={(selected) => dispatch({ type: "SET_CONCERNS", concerns: selected })} />}
-      {session.stage === "emotion" && <EmotionScreen initial={session.deepReflection?.emotionCandidates ?? []} onNext={(selected) => dispatch({ type: "SET_EMOTIONS", emotionCandidates: selected })} />}
+      {session.stage === "emotion" && <EmotionScreen initial={session.deepReflection?.emotionCandidates ?? []} affect={session.deepReflection?.affect} onNext={(selected) => dispatch({ type: "SET_EMOTIONS", emotionCandidates: selected })} />}
       {session.stage === "outcome" && <OutcomeScreen onNext={(outcome) => dispatch({ type: "SET_OUTCOME", outcome })} />}
       {session.stage === "summary" && <SummaryScreen session={session} onFeedback={(feedback) => dispatch({ type: "SET_SYNTHESIS_FEEDBACK", ...feedback })} />}
       {session.stage === "stopped" && <StoppedScreen session={session} />}
@@ -126,31 +125,31 @@ function QuickAffectScreen({ onNext, onUnknown }: { onNext: (affect: NonNullable
   return <Screen><StepHeading step="빠른 확인" title="지금의 경험은 어느 쪽에 가까운가요?" hint="정확한 좌표를 고를 필요 없이, ‘이쯤’이라고 느껴지는 곳을 한 번 눌러보세요." /><div className="affect-grid-wrap"><div className="affect-axis-label top">에너지가 올라온 느낌</div><div className="affect-grid" role="button" tabIndex={0} aria-label="불편함과 편안함, 가라앉음과 에너지 사이에서 현재 경험에 가까운 곳 선택" onPointerDown={choosePoint} onKeyDown={(event) => { if (event.key === "Enter" || event.key === " ") setPoint({ x: .5, y: .5 }); }}>{point && <span className="affect-dot" style={{ left: `${point.x * 100}%`, top: `${(1 - point.y) * 100}%` }} />}</div><div className="affect-axis-row"><span>불편함</span><span>편안함</span></div><div className="affect-axis-label bottom">가라앉은 느낌</div></div><div className="quick-actions"><button className="quiet-button" onClick={onUnknown}>잘 모르겠음</button><button className="primary-button" disabled={!point} onClick={() => point && onNext({ valence: toScale(point.x), activation: toScale(point.y) })}>다음 <span>→</span></button></div></Screen>;
 }
 
-function QuickCandidatesScreen({ pool, selected, response, onToggle, onRespond, onAddCustom, onFinish, onCoach, onDeep }: { pool: EmotionSelection[]; selected: EmotionSelection[]; response?: QuickNonSelection; onToggle: (label: string) => void; onRespond: (response: QuickNonSelection) => void; onAddCustom: (label: string) => void; onFinish: () => void; onCoach: () => void; onDeep: () => void }) {
-  // One tier at a time: a handful of words first, related ones only if asked for.
+/**
+ * The vocabulary is far larger than one screen should show, so it opens in tiers:
+ * a handful of words, then related ones on request, then the user's own wording.
+ */
+function TieredWords({ pool, selectedLabels, ownWords, onToggle, onAddCustom }: { pool: EmotionSelection[]; selectedLabels: string[]; ownWords: string[]; onToggle: (label: string) => void; onAddCustom: (label: string) => void }) {
   const [tier, setTier] = useState<1 | 2 | 3>(1);
   const [custom, setCustom] = useState("");
-  const canCoach = selected.length > 0 && selected.some((item) => Boolean(getGranularityItem(item.label)));
   const poolLabels = pool.map((item) => item.label);
-  const expanded = expandCandidates([...pool, ...selected]).filter((item) => !poolLabels.includes(item.label));
-  const ownWords = selected.filter((item) => item.source === "custom");
-  const isSelected = (label: string) => selected.some((choice) => choice.label === label);
+  const selectedAsItems = selectedLabels.map((label) => ({ label, source: "suggested" as const }));
+  const expanded = expandCandidates([...pool, ...selectedAsItems]).filter((item) => !poolLabels.includes(item.label));
+  const chip = (label: string) => <button className={`chip ${selectedLabels.includes(label) ? "selected" : ""}`} key={label} onClick={() => onToggle(label)}>{label}</button>;
   const addCustom = () => { onAddCustom(custom); setCustom(""); };
 
-  return <Screen>
-    <StepHeading step="가능한 표현" title="지금 경험을 표현할 때 가까울 수도 있는 말입니다." hint="감정을 판정하는 결과가 아닙니다. 여러 개를 골라도 되고, 맞지 않으면 고르지 않아도 됩니다." />
-    <div className="provisional-note">임시 단어 모음 · 스스로 고른 표현만 기록됩니다</div>
-    <div className="chip-grid">{pool.map((item) => <button className={`chip ${isSelected(item.label) ? "selected" : ""}`} key={item.label} onClick={() => onToggle(item.label)}>{item.label}</button>)}</div>
+  return <>
+    <div className="chip-grid">{pool.map((item) => chip(item.label))}</div>
 
     {tier === 1 && expanded.length > 0 && <button className="reveal-button" onClick={() => setTier(2)}>비슷한 표현 더 보기</button>}
     {tier >= 2 && expanded.length > 0 && <>
       <p className="tier-label">비슷한 표현</p>
-      <div className="chip-grid">{expanded.map((item) => <button className={`chip ${isSelected(item.label) ? "selected" : ""}`} key={item.label} onClick={() => onToggle(item.label)}>{item.label}</button>)}</div>
+      <div className="chip-grid">{expanded.map((item) => chip(item.label))}</div>
     </>}
 
     {ownWords.length > 0 && <>
       <p className="tier-label">내가 적은 말</p>
-      <div className="chip-grid">{ownWords.map((item) => <button className="chip selected" key={item.label} onClick={() => onToggle(item.label)}>{item.label}</button>)}</div>
+      <div className="chip-grid">{ownWords.map((label) => chip(label))}</div>
     </>}
 
     {tier === 2 && <button className="reveal-button" onClick={() => setTier(3)}>다른 표현 찾아보기 · 내 말로 적기</button>}
@@ -158,6 +157,15 @@ function QuickCandidatesScreen({ pool, selected, response, onToggle, onRespond, 
       <input className="text-input" value={custom} onChange={(event) => setCustom(event.target.value)} onKeyDown={(event) => { if (event.key === "Enter") addCustom(); }} placeholder="내 말로 적기" aria-label="내 말로 적기" />
       <button className="small-button" disabled={!custom.trim()} onClick={addCustom}>추가</button>
     </div>}
+  </>;
+}
+
+function QuickCandidatesScreen({ pool, selected, response, onToggle, onRespond, onAddCustom, onFinish, onCoach, onDeep }: { pool: EmotionSelection[]; selected: EmotionSelection[]; response?: QuickNonSelection; onToggle: (label: string) => void; onRespond: (response: QuickNonSelection) => void; onAddCustom: (label: string) => void; onFinish: () => void; onCoach: () => void; onDeep: () => void }) {
+  const canCoach = selected.length > 0 && selected.some((item) => Boolean(getGranularityItem(item.label)));
+  return <Screen>
+    <StepHeading step="가능한 표현" title="지금 경험을 표현할 때 가까울 수도 있는 말입니다." hint="감정을 판정하는 결과가 아닙니다. 여러 개를 골라도 되고, 맞지 않으면 고르지 않아도 됩니다." />
+    <div className="provisional-note">임시 단어 모음 · 스스로 고른 표현만 기록됩니다</div>
+    <TieredWords pool={pool} selectedLabels={selected.map((item) => item.label)} ownWords={selected.filter((item) => item.source === "custom").map((item) => item.label)} onToggle={onToggle} onAddCustom={onAddCustom} />
 
     <div className="quick-option-row">{([["none-close", "가까운 말이 없음"], ["unsure", "잘 모르겠음"]] as const).map(([value, label]) => <button className={`secondary-button ${response === value ? "selected" : ""}`} aria-pressed={response === value} key={value} onClick={() => onRespond(value)}>{label}</button>)}</div>
     {response && <p className="small-note">{response === "none-close" ? "가까운 말이 없다고" : "잘 모르겠다고"} 기록했습니다. 이대로 끝내도 되고, 천천히 더 살펴봐도 됩니다.</p>}
@@ -223,11 +231,25 @@ function MeaningScreen({ initial, onNext }: { initial: string[]; onNext: (select
   return <Screen><StepHeading step="중요했던 것" title="그 순간 무엇이 중요했던 것 같나요?" hint="정답을 찾는 질문이 아닙니다. 가까운 것을 골라도, 잘 모르겠다고 해도 됩니다." /><div className="choice-list compact">{concerns.map((item) => <button className={selected.includes(item) ? "selected" : ""} key={item} onClick={() => toggle(item)}>{item}</button>)}</div><input className="text-input" value={custom} onChange={(event) => setCustom(event.target.value)} placeholder="내 말로 적기" /><Navigation note={stepNote("meaning", selected.length > 0 || custom.trim().length > 0)} onNext={() => onNext([...selected, ...(custom ? [custom] : [])])} /></Screen>;
 }
 
-function EmotionScreen({ initial, onNext }: { initial: EmotionSelection[]; onNext: (selected: EmotionSelection[]) => void }) {
+function EmotionScreen({ initial, affect, onNext }: { initial: EmotionSelection[]; affect?: DeepAffect; onNext: (selected: EmotionSelection[]) => void }) {
   const [selected, setSelected] = useState(initial.map((item) => item.label));
-  const [custom, setCustom] = useState("");
+  const [ownWords, setOwnWords] = useState(initial.filter((item) => item.source === "custom").map((item) => item.label));
   const toggle = (label: string) => setSelected((current) => current.includes(label) ? current.filter((item) => item !== label) : [...current, label]);
-  return <Screen><StepHeading step="가까운 표현" title="지금까지 적은 경험에 가까운 단어가 있나요?" hint="이 단어들은 정답이 아니라, 지금 경험을 표현해보는 임시 후보입니다." /><div className="provisional-note">임시 단어 모음 · 스스로 고른 표현만 기록됩니다</div><div className="chip-grid">{emotions.items.map((item) => <button className={`chip ${selected.includes(item.label) ? "selected" : ""}`} key={item.label} onClick={() => toggle(item.label)}>{item.label}</button>)}<button className={`chip ${selected.includes("여러 개") ? "selected" : ""}`} onClick={() => toggle("여러 개")}>여러 개</button><button className={`chip ${selected.includes("잘 모르겠음") ? "selected" : ""}`} onClick={() => toggle("잘 모르겠음")}>잘 모르겠음</button></div><input className="text-input" value={custom} onChange={(event) => setCustom(event.target.value)} placeholder="내 단어로 적기" /><Navigation note={stepNote("emotion", selected.length > 0 || custom.trim().length > 0)} onNext={() => onNext([...selected.map((label) => ({ label, source: "suggested" as const })), ...(custom ? [{ label: custom, source: "custom" as const }] : [])])} /></Screen>;
+  const addOwnWord = (label: string) => {
+    const word = label.trim();
+    if (!word || ownWords.includes(word)) return;
+    setOwnWords((current) => [...current, word]);
+    setSelected((current) => current.includes(word) ? current : [...current, word]);
+  };
+  // the deep affect already narrowed the space once; this reuses it rather than listing everything
+  const pool = filterQuickCandidates({ x: ((affect?.valence ?? 3) - 1) / 4, y: ((affect?.activation ?? 3) - 1) / 4 });
+  return <Screen>
+    <StepHeading step="가까운 표현" title="지금까지 적은 경험에 가까운 단어가 있나요?" hint="이 단어들은 정답이 아니라, 지금 경험을 표현해보는 임시 후보입니다." />
+    <div className="provisional-note">임시 단어 모음 · 스스로 고른 표현만 기록됩니다</div>
+    <TieredWords pool={pool} selectedLabels={selected} ownWords={ownWords} onToggle={toggle} onAddCustom={addOwnWord} />
+    <div className="quick-option-row">{["여러 개", "잘 모르겠음"].map((label) => <button className={`secondary-button ${selected.includes(label) ? "selected" : ""}`} aria-pressed={selected.includes(label)} key={label} onClick={() => toggle(label)}>{label}</button>)}</div>
+    <Navigation note={stepNote("emotion", selected.length > 0)} onNext={() => onNext(selected.map((label) => ({ label, source: ownWords.includes(label) ? "custom" as const : "suggested" as const })))} />
+  </Screen>;
 }
 
 function OutcomeScreen({ onNext }: { onNext: (outcome: DeepOutcome) => void }) {

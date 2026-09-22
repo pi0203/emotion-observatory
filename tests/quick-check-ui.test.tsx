@@ -119,6 +119,21 @@ describe("quick check screens", () => {
     expect(screen.getByText(/사실은 그냥 지쳤던 것 같다/)).toBeTruthy();
   });
 
+  it("does not put the whole vocabulary on the deep emotion step either", () => {
+    render(<Home />);
+    fireEvent.click(screen.getByRole("button", { name: /조금 더 천천히 살펴보기/ }));
+    fireEvent.click(screen.getByRole("button", { name: /조금 살펴보고 싶어요/ }));
+    fireEvent.click(screen.getByRole("button", { name: "건너뛰기" })); // body
+    fireEvent.click(screen.getByRole("button", { name: /다음/ }));     // affect
+    fireEvent.click(screen.getByRole("button", { name: "건너뛰기" })); // context
+    fireEvent.click(screen.getByRole("button", { name: "건너뛰기" })); // meaning
+
+    expect(screen.getByText(/가까운 단어가 있나요/)).toBeTruthy();
+    const chips = document.querySelectorAll(".chip");
+    expect(chips.length).toBeLessThanOrEqual(5);
+    expect(screen.getByRole("button", { name: "비슷한 표현 더 보기" })).toBeTruthy();
+  });
+
   it("holds the step rationale back until the user has chosen something", () => {
     render(<Home />);
     fireEvent.click(screen.getByRole("button", { name: /조금 더 천천히 살펴보기/ }));

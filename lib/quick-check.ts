@@ -10,13 +10,26 @@ const items: VocabularyItem[] = emotions.items;
 const asSelections = (labels: string[]): EmotionSelection[] =>
   labels.map((label) => ({ label, source: "suggested" as const }));
 
+/** Alternates unpleasant and pleasant words so a tap in the middle does not lean either way. */
+const alternateByValence = <T extends { valence: string }>(list: T[]): T[] => {
+  const unpleasant = list.filter((item) => item.valence === "negative");
+  const pleasant = list.filter((item) => item.valence === "positive");
+  const mixed: T[] = [];
+  for (let index = 0; index < Math.max(unpleasant.length, pleasant.length); index += 1) {
+    if (unpleasant[index]) mixed.push(unpleasant[index]);
+    if (pleasant[index]) mixed.push(pleasant[index]);
+  }
+  return [...mixed, ...list.filter((item) => !mixed.includes(item))];
+};
+
 // This is navigation metadata for a provisional UX fixture, not an emotion model.
 export const filterQuickCandidates = (point: QuickPoint): EmotionSelection[] => {
   const valence = point.x < 0.42 ? "negative" : point.x > 0.58 ? "positive" : "neutral";
   const activation = point.y < 0.42 ? "low" : point.y > 0.58 ? "high" : "medium";
   const matching = emotions.items.filter((item) => item.valence === valence && item.activation === activation);
   const nearby = emotions.items.filter((item) => item.valence === valence || item.activation === activation);
-  const labels = [...matching, ...nearby, ...emotions.items].filter((item, index, all) => all.findIndex((candidate) => candidate.label === item.label) === index).slice(0, 5);
+  const ranked = [...matching, ...nearby, ...emotions.items].filter((item, index, all) => all.findIndex((candidate) => candidate.label === item.label) === index);
+  const labels = (valence === "neutral" ? alternateByValence(ranked) : ranked).slice(0, 5);
   return labels.map((item) => ({ label: item.label, source: "suggested" as const }));
 };
 
