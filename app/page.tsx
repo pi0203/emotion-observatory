@@ -1,10 +1,10 @@
 "use client";
 
-import { useEffect, useReducer, useState } from "react";
+import { useEffect, useReducer, useRef, useState } from "react";
 import bodySignals from "../data/body-signals.ko.json";
 import concerns from "../data/concerns.ko.json";
 import granularity from "../data/granularity.ko.json";
-import { createSession, sessionReducer } from "../lib/session-types";
+import { canGoBack, createSession, sessionReducer } from "../lib/session-types";
 import type { AffectPoint, BodyObservation, DeepReflection, EmotionSelection, EmotionSession, QuickNonSelection, SynthesisFit } from "../lib/session-types";
 
 type DeepContext = NonNullable<DeepReflection["context"]>;
@@ -15,6 +15,7 @@ import { expandCandidates, filterQuickCandidates } from "../lib/quick-check";
 import { activationLabel, quickActivation, quickValence, scaleLabel } from "../lib/affect-labels";
 import { buildSynthesis, hasSynthesis } from "../lib/synthesis";
 import stepNotes from "../data/step-notes.ko.json";
+import supportOptions from "../data/support-options.ko.json";
 
 const progress: Record<string, string> = {
   body: "1 / 6",
@@ -43,6 +44,20 @@ export default function Home() {
     persistSession(session);
   }, [hydrated, session]);
 
+  // keep the browser's back button in step with the app's, so neither surprises the other
+  const depth = session.history?.length ?? 0;
+  const lastDepth = useRef(0);
+  useEffect(() => {
+    if (!hydrated) return;
+    if (depth > lastDepth.current) window.history.pushState({ depth }, "");
+    lastDepth.current = depth;
+  }, [hydrated, depth]);
+  useEffect(() => {
+    const onPop = () => dispatch({ type: "BACK" });
+    window.addEventListener("popstate", onPop);
+    return () => window.removeEventListener("popstate", onPop);
+  }, []);
+
   const resume = () => {
     if (draft) dispatch({ type: "RESUME", session: draft });
   };
@@ -60,9 +75,12 @@ export default function Home() {
         <a className="wordmark" href="#" onClick={() => window.location.reload()}>
           감정 관찰실
         </a>
-        {session.stage !== "entry" && session.stage !== "stopped" && session.stage !== "summary" && session.stage !== "quick-summary" && (
-          <button className="text-button" onClick={() => setStopConfirm(true)}>그만하기</button>
-        )}
+        <div className="topbar-actions">
+          {canGoBack(session) && <button className="text-button" onClick={() => dispatch({ type: "BACK" })}>← 한 단계 뒤로</button>}
+          {session.stage !== "entry" && session.stage !== "stopped" && session.stage !== "summary" && session.stage !== "quick-summary" && session.stage !== "support" && (
+            <button className="text-button" onClick={() => setStopConfirm(true)}>그만하기</button>
+          )}
+        </div>
       </header>
 
       {progress[session.stage] && (
@@ -77,7 +95,7 @@ export default function Home() {
       {session.stage === "granularity" && <GranularityScreen selected={session.quickCheck?.selected ?? []} onChoose={(concept) => dispatch({ type: "CHOOSE_GRANULARITY", concept })} onSkip={() => dispatch({ type: "SKIP_GRANULARITY" })} />}
       {session.stage === "context-contrast" && <ContextContrastScreen concept={session.quickCheck?.concept ?? ""} onAnswer={(answer) => dispatch({ type: "SET_CONTRAST", answer })} />}
       {session.stage === "micro-learning" && <MicroLearningScreen concept={session.quickCheck?.concept ?? ""} note={getGranularityNote(session.quickCheck?.concept)} onDismiss={() => dispatch({ type: "DISMISS_MICRO_LEARNING" })} />}
-      {session.stage === "quick-summary" && <QuickSummaryScreen session={session} onDeep={() => dispatch({ type: "ENTER_DEEP" })} onFeedback={(feedback) => dispatch({ type: "SET_SYNTHESIS_FEEDBACK", ...feedback })} />}
+      {session.stage === "quick-summary" && <QuickSummaryScreen session={session} onDeep={() => dispatch({ type: "ENTER_DEEP" })} onFeedback={(feedback) => dispatch({ type: "SET_SYNTHESIS_FEEDBACK", ...feedback })} onSupport={() => dispatch({ type: "OPEN_SUPPORT" })} />}
       {session.stage === "entry" && (
         <EntryScreen draft={draft} onStart={() => dispatch({ type: "SET_ENTRY", decision: "observe" })} onUnsure={() => dispatch({ type: "SET_ENTRY", decision: "unsure" })} onStop={() => dispatch({ type: "SET_ENTRY", decision: "stop" })} onResume={resume} />
       )}
@@ -88,7 +106,8 @@ export default function Home() {
       {session.stage === "meaning" && <MeaningScreen initial={session.deepReflection?.concerns ?? []} onNext={(selected) => dispatch({ type: "SET_CONCERNS", concerns: selected })} />}
       {session.stage === "emotion" && <EmotionScreen initial={session.deepReflection?.emotionCandidates ?? []} affect={session.deepReflection?.affect} onNext={(selected) => dispatch({ type: "SET_EMOTIONS", emotionCandidates: selected })} />}
       {session.stage === "outcome" && <OutcomeScreen onNext={(outcome) => dispatch({ type: "SET_OUTCOME", outcome })} />}
-      {session.stage === "summary" && <SummaryScreen session={session} onFeedback={(feedback) => dispatch({ type: "SET_SYNTHESIS_FEEDBACK", ...feedback })} />}
+      {session.stage === "summary" && <SummaryScreen session={session} onFeedback={(feedback) => dispatch({ type: "SET_SYNTHESIS_FEEDBACK", ...feedback })} onSupport={() => dispatch({ type: "OPEN_SUPPORT" })} />}
+      {session.stage === "support" && <SupportScreen chosen={session.support?.chosen ?? []} onToggle={(id) => dispatch({ type: "TOGGLE_SUPPORT", id })} onBack={() => dispatch({ type: "BACK" })} />}
       {session.stage === "stopped" && <StoppedScreen session={session} />}
 
       {stopConfirm && <StopModal onClose={() => setStopConfirm(false)} onStop={stop} />}
@@ -111,7 +130,7 @@ function EntryScreen({ draft, onStart, onUnsure, onStop, onResume }: { draft: Em
 }
 
 function LandingScreen({ onQuick, onDeep, draft, onResume }: { onQuick: () => void; onDeep: () => void; draft: EmotionSession | null; onResume: () => void }) {
-  return <Screen className="entry-screen"><p className="eyebrow">감정 관찰실</p><h1>지금의 경험을<br />조금 더 알아보기</h1><p className="lede">감정을 맞히는 검사가 아닙니다.<br />빠르게 살펴보거나, 천천히 구별해볼 수 있습니다.</p><div className="stack-actions"><button className="primary-button" onClick={onQuick}>빠르게 살펴보기 <span>→</span></button><button className="secondary-button" onClick={onDeep}>조금 더 천천히 살펴보기</button>{draft && <button className="secondary-button" onClick={onResume}>지난 기록 이어하기</button>}</div><p className="small-note">기록은 이 기기에만 저장됩니다. 언제든 건너뛰거나 닫을 수 있습니다.</p></Screen>;
+  return <Screen className="entry-screen"><p className="eyebrow">감정 관찰실</p><h1>지금의 경험을<br />조금 더 알아보기</h1><p className="lede">감정을 맞히는 검사가 아닙니다.<br />빠르게 살펴보거나, 천천히 구별해볼 수 있습니다.</p><WhyThis /><div className="stack-actions"><button className="primary-button" onClick={onQuick}>빠르게 살펴보기 <span>→</span></button><button className="secondary-button" onClick={onDeep}>조금 더 천천히 살펴보기</button>{draft && <button className="secondary-button" onClick={onResume}>지난 기록 이어하기</button>}</div><p className="small-note">기록은 이 기기에만 저장됩니다. 언제든 건너뛰거나 닫을 수 있습니다.</p></Screen>;
 }
 
 /**
@@ -157,6 +176,18 @@ function AffectPad({ initial, onChange }: { initial?: AffectPoint; onChange: (po
     <div className="affect-axis-row"><span>불편함</span><span>편안함</span></div>
     <div className="affect-axis-label bottom">가라앉은 느낌</div>
   </div>;
+}
+
+function WhyThis() {
+  return <details className="why">
+    <summary>왜 감정을 조금 더 자세히 살펴볼까요?</summary>
+    <div className="why-body">
+      <p>“기분이 좋다 / 나쁘다” 정도로 충분한 순간도 많습니다. 늘 자세히 볼 필요는 없습니다.</p>
+      <p>다만 때로는 비슷해 보이는 경험을 조금 더 구별해보면, 지금 무엇이 필요한지 고르는 데 도움이 되기도 합니다. 같은 답답함이라도 쉬는 것이 필요할 때와, 하고 싶은 말을 정리하는 것이 필요할 때가 다르기 때문입니다.</p>
+      <p>감정을 세밀하게 구별하는 정도(emotional granularity)는 여러 연구에서 정서조절이나 일상 기능과 관련되어 있다고 보고되었습니다. 다만 <strong>granularity 자체가 건강을 보장하지도, 정신건강을 재는 지표도 아닙니다.</strong> 대부분 상관 연구이고, 이 앱의 효과를 검증한 것도 아닙니다.</p>
+      <p className="why-principle">목표는 최대한 세밀하게 분석하는 것이 아니라, <strong>지금 무엇을 할지 정하는 데 필요한 만큼만</strong> 구별하는 것입니다.</p>
+    </div>
+  </details>;
 }
 
 function QuickAffectScreen({ onNext, onUnknown }: { onNext: (affect: AffectPoint) => void; onUnknown: () => void }) {
@@ -235,11 +266,11 @@ function MicroLearningScreen({ concept, note, onDismiss }: { concept: string; no
   return <Screen><p className="eyebrow">짧은 참고</p><h1>단어는 정답표가 아니라<br />살펴보는 도구입니다.</h1><p className="lede">{note || `${concept}와 같은 표현도 상황과 의미에 따라 다르게 경험될 수 있습니다.`}</p><div className="micro-card">같은 몸의 느낌도 상황에 따라 다르게 경험될 수 있습니다. 두근거림은 초조함일 수도, 기대감이나 설렘일 수도 있습니다.</div><button className="primary-button" onClick={onDismiss}>여기까지</button><button className="quiet-button" onClick={onDismiss}>나중에 읽기</button></Screen>;
 }
 
-function QuickSummaryScreen({ session, onDeep, onFeedback }: { session: EmotionSession; onDeep: () => void; onFeedback: (feedback: { fit?: SynthesisFit; correction?: string }) => void }) {
+function QuickSummaryScreen({ session, onDeep, onFeedback, onSupport }: { session: EmotionSession; onDeep: () => void; onFeedback: (feedback: { fit?: SynthesisFit; correction?: string }) => void; onSupport: () => void }) {
   const quick = session.quickCheck;
   const affect = quick?.affect?.unknown ? "잘 모르겠음" : `${quickValence(quick?.affect?.valence)} · ${quickActivation(quick?.affect?.activation)}`;
   const words = (quick?.selected ?? []).map((item) => item.label).join(" · ") || quickResponseLabel(quick?.candidateResponse) || "고르지 않음";
-  return <Screen><p className="eyebrow">빠른 확인</p><h1>여기까지 살펴보았습니다.</h1><div className="summary-card"><SummaryRow label="전체적인 느낌" value={affect} /><SummaryRow label="가까웠던 말" value={words} />{quick?.granularityResponse === "unsure" && <SummaryRow label="더 살펴본 표현" value="잘 모르겠음" />}{quick?.contrastAnswer && <SummaryRow label="상황 속 차이" value={quick.contrastAnswer} />}</div><p className="summary-footnote">이것은 감정의 판정이 아니라, 지금 경험을 표현해볼 수 있는 작은 단서입니다.</p><SynthesisSection session={session} onFeedback={onFeedback} /><div className="stack-actions"><a className="primary-button centered" href="/">처음으로 돌아가기</a><button className="secondary-button" onClick={onDeep}>조금 더 천천히 들여다보기</button></div></Screen>;
+  return <Screen><p className="eyebrow">빠른 확인</p><h1>여기까지 살펴보았습니다.</h1><div className="summary-card"><SummaryRow label="전체적인 느낌" value={affect} /><SummaryRow label="가까웠던 말" value={words} />{quick?.granularityResponse === "unsure" && <SummaryRow label="더 살펴본 표현" value="잘 모르겠음" />}{quick?.contrastAnswer && <SummaryRow label="상황 속 차이" value={quick.contrastAnswer} />}</div><p className="summary-footnote">이것은 감정의 판정이 아니라, 지금 경험을 표현해볼 수 있는 작은 단서입니다.</p><SynthesisSection session={session} onFeedback={onFeedback} /><div className="stack-actions"><button className="primary-button centered" onClick={onSupport}>지금 무엇이 도움이 될까요? <span>→</span></button><button className="secondary-button" onClick={onDeep}>조금 더 천천히 들여다보기</button><a className="secondary-button centered" href="/">처음으로 돌아가기</a></div></Screen>;
 }
 
 function EntryMini({ onAnswer }: { onAnswer: (answer: "yes" | "unsure" | "no") => void }) {
@@ -249,8 +280,30 @@ function EntryMini({ onAnswer }: { onAnswer: (answer: "yes" | "unsure" | "no") =
 function BodyScreen({ initial, onNext }: { initial: BodyObservation[]; onNext: (body: BodyObservation[]) => void }) {
   const [selected, setSelected] = useState(initial.map((item) => item.label));
   const [custom, setCustom] = useState(initial.find((item) => item.custom)?.label ?? "");
+  const [showAll, setShowAll] = useState(false);
   const toggle = (label: string) => setSelected((current) => current.includes(label) ? current.filter((item) => item !== label) : [...current, label]);
-  return <Screen><StepHeading step="몸" title="먼저, 몸에서는 무엇이 느껴지나요?" hint="감정 이름을 찾기 전에 지금 몸에서 알아차릴 수 있는 것부터 봅니다." /><div className="chip-grid">{bodySignals.map((label) => <button className={`chip ${selected.includes(label) ? "selected" : ""}`} key={label} onClick={() => toggle(label)}>{label}</button>)}</div><label className="field-label" htmlFor="body-custom">다른 느낌이 있다면 적어도 됩니다</label><input id="body-custom" className="text-input" value={custom} onChange={(event) => setCustom(event.target.value)} placeholder="예: 손이 차가움" /><Navigation note={stepNote("body", selected.length > 0 || custom.trim().length > 0)} onNext={() => onNext([...selected.filter((label) => label !== custom).map((label) => ({ label })), ...(custom ? [{ label: custom, custom: true }] : [])])} /></Screen>;
+  const chip = (label: string) => <button className={`chip ${selected.includes(label) ? "selected" : ""}`} key={label} onClick={() => toggle(label)}>{label}</button>;
+  const items = bodySignals.items as { label: string; region: string; firstTier?: boolean }[];
+  const first = items.filter((item) => item.firstTier);
+  const rest = bodySignals.regions
+    .map((region) => ({ region, labels: items.filter((item) => item.region === region && !item.firstTier).map((item) => item.label) }))
+    .filter((group) => group.labels.length);
+
+  return <Screen>
+    <StepHeading step="몸" title="먼저, 몸에서는 무엇이 느껴지나요?" hint="감정 이름을 찾기 전에 지금 몸에서 알아차릴 수 있는 것부터 봅니다. 편안한 느낌도 그대로 고를 수 있습니다." />
+    <div className="chip-grid">{first.map((item) => chip(item.label))}</div>
+    {!showAll && <button className="reveal-button" onClick={() => setShowAll(true)}>다른 몸의 느낌 보기</button>}
+    {showAll && rest.map((group) => <div key={group.region}>
+      <p className="tier-label">{group.region}</p>
+      <div className="chip-grid">{group.labels.map((label) => chip(label))}</div>
+    </div>)}
+    <label className="field-label" htmlFor="body-custom">다른 느낌이 있다면 적어도 됩니다</label>
+    <input id="body-custom" className="text-input" value={custom} onChange={(event) => setCustom(event.target.value)} placeholder="예: 손이 차가움" />
+    <Navigation
+      note={stepNote("body", selected.length > 0 || custom.trim().length > 0)}
+      onNext={() => onNext([...selected.filter((label) => label !== custom).map((label) => ({ label })), ...(custom.trim() ? [{ label: custom.trim(), custom: true }] : [])])}
+    />
+  </Screen>;
 }
 
 function AffectScreen({ initial, onNext }: { initial?: AffectPoint; onNext: (affect: AffectPoint) => void }) {
@@ -308,10 +361,10 @@ function OutcomeScreen({ onNext }: { onNext: (outcome: DeepOutcome) => void }) {
   return <Screen><StepHeading step="도움 여부" title="처음보다 지금 경험이 조금 더 분명해졌나요?" hint="더 복잡해지거나 불편해졌다면 그렇게 알려주어도 됩니다." /><div className="choice-list compact">{([['much_clearer','많이 더 분명해짐'],['clearer','조금 더 분명해짐'],['same','비슷함'],['more_complex','더 복잡해짐'],['more_distressed','더 불편해짐']] as const).map(([value, label]) => <button className={clarity === value ? "selected" : ""} key={value} onClick={() => setClarity(value)}>{label}</button>)}</div><h2 className="subquestion">이 기록은 지금 도움이 되었나요?</h2><div className="inline-choices">{([['helpful','도움됨'],['unsure','잘 모르겠음'],['unhelpful','도움되지 않음']] as const).map(([value, label]) => <button className={usefulness === value ? "selected" : ""} key={value} onClick={() => setUsefulness(value)}>{label}</button>)}</div><input className="text-input" value={note} onChange={(event) => setNote(event.target.value)} placeholder="덧붙이고 싶은 한 줄 (선택)" /><Navigation disabled={!clarity || !usefulness} onNext={() => onNext({ clarity: clarity!, usefulness: usefulness!, note })} /></Screen>;
 }
 
-function SummaryScreen({ session, onFeedback }: { session: EmotionSession; onFeedback: (feedback: { fit?: SynthesisFit; correction?: string }) => void }) {
+function SummaryScreen({ session, onFeedback, onSupport }: { session: EmotionSession; onFeedback: (feedback: { fit?: SynthesisFit; correction?: string }) => void; onSupport: () => void }) {
   const deep = session.deepReflection;
   const quickAffect = session.quickCheck?.affect;
-  return <Screen><p className="eyebrow">이번 기록에서</p><h1>여기까지 살펴보았습니다.</h1><div className="summary-card">{quickAffect && <SummaryRow label="처음 빠른 확인" value={quickAffect.unknown ? "잘 모르겠음" : `${quickValence(quickAffect.valence)} · ${quickActivation(quickAffect.activation)}`} />}<SummaryRow label="몸" value={(deep?.body ?? []).map((item) => item.label).join(" · ") || "기록하지 않음"} /><SummaryRow label="전체적인 느낌" value={`${scaleLabel(deep?.affect?.valence)} · ${activationLabel(deep?.affect?.activation)}`} /><SummaryRow label="상황" value={deep?.context?.eventText || "기록하지 않음"} /><SummaryRow label="중요했던 것" value={(deep?.concerns ?? []).join(" · ") || "기록하지 않음"} /><SummaryRow label="가까웠던 말" value={(deep?.emotionCandidates ?? []).map((item) => item.label).join(" · ") || "기록하지 않음"} /></div><p className="summary-footnote">감정의 정답을 찾은 것이 아니라, 지금 경험을 표현할 수 있는 몇 가지 단서를 남겼습니다.</p><SynthesisSection session={session} onFeedback={onFeedback} /><a className="secondary-button centered" href="/">처음으로 돌아가기</a></Screen>;
+  return <Screen><p className="eyebrow">이번 기록에서</p><h1>여기까지 살펴보았습니다.</h1><div className="summary-card">{quickAffect && <SummaryRow label="처음 빠른 확인" value={quickAffect.unknown ? "잘 모르겠음" : `${quickValence(quickAffect.valence)} · ${quickActivation(quickAffect.activation)}`} />}<SummaryRow label="몸" value={(deep?.body ?? []).map((item) => item.label).join(" · ") || "기록하지 않음"} /><SummaryRow label="전체적인 느낌" value={`${scaleLabel(deep?.affect?.valence)} · ${activationLabel(deep?.affect?.activation)}`} /><SummaryRow label="상황" value={deep?.context?.eventText || "기록하지 않음"} /><SummaryRow label="중요했던 것" value={(deep?.concerns ?? []).join(" · ") || "기록하지 않음"} /><SummaryRow label="가까웠던 말" value={(deep?.emotionCandidates ?? []).map((item) => item.label).join(" · ") || "기록하지 않음"} /></div><p className="summary-footnote">감정의 정답을 찾은 것이 아니라, 지금 경험을 표현할 수 있는 몇 가지 단서를 남겼습니다.</p><SynthesisSection session={session} onFeedback={onFeedback} /><div className="stack-actions"><button className="primary-button centered" onClick={onSupport}>지금 무엇이 도움이 될까요? <span>→</span></button><a className="secondary-button centered" href="/">처음으로 돌아가기</a></div></Screen>;
 }
 
 function SynthesisSection({ session, onFeedback }: { session: EmotionSession; onFeedback: (feedback: { fit?: SynthesisFit; correction?: string }) => void }) {
@@ -352,6 +405,15 @@ function SynthesisSection({ session, onFeedback }: { session: EmotionSession; on
       : <button className="quiet-button" onClick={() => setEditing(true)}>내 말로 고쳐보기</button>}
     {!editing && session.synthesisFeedback?.correction && <p className="synthesis-correction">“{session.synthesisFeedback.correction}”</p>}
   </section>;
+}
+
+function SupportScreen({ chosen, onToggle, onBack }: { chosen: string[]; onToggle: (id: string) => void; onBack: () => void }) {
+  return <Screen>
+    <StepHeading step="지금 필요한 것" title="지금 무엇이 가장 도움이 될 것 같나요?" hint="앱이 정해주지 않습니다. 여러 개를 골라도 되고, 고르지 않고 나가도 됩니다." />
+    <div className="choice-list">{supportOptions.options.map((option) => <button className={chosen.includes(option.id) ? "selected" : ""} aria-pressed={chosen.includes(option.id)} key={option.id} onClick={() => onToggle(option.id)}>{option.label}</button>)}</div>
+    <p className="small-note">같은 경험이라도 필요한 것은 그때그때 다를 수 있습니다. 편안하거나 벅찬 경험이라면 문제를 풀기보다 머물러 느끼는 쪽이 맞을 수도 있습니다.</p>
+    <div className="navigation"><button className="quiet-button" onClick={onBack}>← 요약으로 돌아가기</button><a className="primary-button" href="/">여기까지 <span>→</span></a></div>
+  </Screen>;
 }
 
 function StoppedScreen({ session }: { session: EmotionSession }) { return <Screen className="entry-screen"><p className="eyebrow">여기까지</p><h1>지금은 더 살펴보지<br />않아도 됩니다.</h1><p className="lede">경험에서 조금 거리를 두는 것도 선택입니다. 이 기록은 완료된 기록이 아니라, 중단한 기록으로 이 기기에 남습니다.</p><div className="stack-actions"><a className="primary-button centered" href="/">기록실로 돌아가기</a><button className="quiet-button" onClick={() => { removeDraft(); window.location.reload(); }}>이 기록을 지우기</button></div>{session.stopReason === "entry" && <p className="small-note">물 한 잔, 잠깐 걷기, 다른 일로 주의를 옮기기처럼 지금 가능한 것을 선택해보세요.</p>}</Screen>; }

@@ -167,6 +167,64 @@ describe("quick check screens", () => {
     expect(screen.getByRole("button", { name: /다음/ })).not.toBeDisabled();
   });
 
+  it("offers a short, collapsed reason on the landing screen", () => {
+    render(<Home />);
+    const why = screen.getByText("왜 감정을 조금 더 자세히 살펴볼까요?");
+    expect(why.closest("details")?.hasAttribute("open")).toBe(false);
+    // the claim is hedged wherever it appears
+    expect(screen.getByText(/건강을 보장하지도, 정신건강을 재는 지표도 아닙니다/)).toBeTruthy();
+    expect(screen.getByText(/필요한 만큼만/)).toBeTruthy();
+  });
+
+  it("opens the body step with a dozen sensations covering comfort as well as strain", () => {
+    render(<Home />);
+    fireEvent.click(screen.getByRole("button", { name: /조금 더 천천히 살펴보기/ }));
+    fireEvent.click(screen.getByRole("button", { name: /조금 살펴보고 싶어요/ }));
+
+    expect(document.querySelectorAll(".chip").length).toBeLessThanOrEqual(12);
+    for (const label of ["어깨가 풀림", "몸에 온기가 돎", "에너지가 차오름"]) {
+      expect(screen.getByRole("button", { name: label })).toBeTruthy();
+    }
+    fireEvent.click(screen.getByRole("button", { name: "다른 몸의 느낌 보기" }));
+    expect(screen.getByText("호흡·가슴")).toBeTruthy();
+    expect(screen.getByRole("button", { name: "숨쉬기 편함" })).toBeTruthy();
+  });
+
+  it("lets a step be undone without losing what was already entered", () => {
+    render(<Home />);
+    fireEvent.click(screen.getByRole("button", { name: /조금 더 천천히 살펴보기/ }));
+    expect(screen.queryByRole("button", { name: /한 단계 뒤로/ })).toBeNull();
+
+    fireEvent.click(screen.getByRole("button", { name: /조금 살펴보고 싶어요/ }));
+    fireEvent.click(screen.getByRole("button", { name: "몸이 무거움" }));
+    fireEvent.click(screen.getByRole("button", { name: /다음/ }));
+    expect(screen.getByText(/조금 더 살펴본 지금은/)).toBeTruthy();
+
+    fireEvent.click(screen.getByRole("button", { name: /한 단계 뒤로/ }));
+    expect(screen.getByText(/몸에서는 무엇이 느껴지나요/)).toBeTruthy();
+    expect(screen.getByRole("button", { name: "몸이 무거움" }).className).toContain("selected");
+  });
+
+  it("offers directions to choose from at the end, and picks none of them", () => {
+    openQuickCheck();
+    tapUnpleasantActivated();
+    fireEvent.click(screen.getByRole("button", { name: "긴장" }));
+    fireEvent.click(screen.getByRole("button", { name: /여기까지/ }));
+    fireEvent.click(screen.getByRole("button", { name: /지금 무엇이 도움이 될까요/ }));
+
+    expect(screen.getByText(/지금 무엇이 가장 도움이 될 것 같나요/)).toBeTruthy();
+    const settle = screen.getByRole("button", { name: "먼저 몸을 조금 안정시키기" });
+    expect(settle.getAttribute("aria-pressed")).toBe("false");
+    // nothing is preselected and nothing is marked as recommended
+    expect(document.querySelectorAll('[aria-pressed="true"]')).toHaveLength(0);
+    expect(screen.getByRole("button", { name: "좋은 경험을 조금 더 머물러 느끼기" })).toBeTruthy();
+
+    fireEvent.click(settle);
+    expect(screen.getByRole("button", { name: "먼저 몸을 조금 안정시키기" }).getAttribute("aria-pressed")).toBe("true");
+    fireEvent.click(screen.getByRole("button", { name: /요약으로 돌아가기/ }));
+    expect(screen.getByText(/여기까지 살펴보았습니다/)).toBeTruthy();
+  });
+
   it("keeps 가까운 말이 없음 and 잘 모르겠음 as separate recorded answers on the summary", () => {
     openQuickCheck();
     tapUnpleasantActivated();

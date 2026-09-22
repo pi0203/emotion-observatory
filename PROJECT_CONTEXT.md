@@ -41,6 +41,11 @@
 > **빠르게 시작하고, 필요할 때만 깊어진다.**
 > **감정을 판정하지 않고, 구별할 수 있는 선택지를 넓힌다.**
 > **설명으로 가르치기보다 상황 속 차이를 사용자가 발견하게 한다.**
+> **Maximum granularity가 아니라 useful granularity.**
+
+네 번째 문장의 뜻: 목표는 최대한 세밀하게 분석하는 것이 아니라 **지금 무엇을 할지
+정하는 데 필요한 만큼** 구별하는 것이다. “기분이 좋다/나쁘다”로 충분한 순간이 있고,
+구별이 유용한 이유는 정확도가 아니라 **선택**이다.
 
 추가 원칙:
 
@@ -103,7 +108,14 @@ Lisa Feldman Barrett의 constructed emotion 관점에서 많은 아이디어를 
       ↓
 06 SYNTHESIS            관찰한 것 → 연결해서 생각해볼 수 있는 것
                         → 아직 알기 어려운 것 → 다음에 생각해볼 질문
+      ↓  (선택)
+07 CHOOSE SUPPORT       “지금 무엇이 가장 도움이 될 것 같나요?”
 ```
+
+**OBSERVE → FORMULATE → CHOOSE SUPPORT.** 앱은 하나의 대응을 처방하지 않는다.
+감정 단어 하나만 보고 solution을 추천하지 않으며(`화남 → 진정하세요` 금지),
+같은 화남도 휴식·경계설정·문제해결·의사표현 중 필요한 것이 다를 수 있다.
+편안하거나 벅찬 경험에서는 문제를 풀기보다 **음미·공유·기억·가치 연결**이 맞을 수 있다.
 
 **Quick Check만 해도 하나의 완결된 세션이다.**
 Granularity와 Deep Reflection은 더 정확한 답을 찾기 위한 필수단계가 아니라 **선택적 depth**다.
@@ -282,5 +294,10 @@ audit 결과를 본 뒤 실제 사용 여부를 **별도로** 결정한다.
 - personality / attachment 해석
 - mDES 요인구조를 taxonomy로 고정
 - Pattern view
+- **clinical layer** — 반복되는 고통·기능저하를 다루고 싶다면
+  `self-monitoring → optional validated screening → professional assessment`로
+  **별도 설계**한다. EmotionSession의 결과를 우울증·불안장애·성격 진단으로
+  변환하지 않는다. 이번 범위가 아니다.
+- validated screening scale, AI recommendation, 자동 처방
 - 위기·자해 위험 판별기 ([SAFETY.md](SAFETY.md) 참조 — keyword matching으로 위험도를 추정하지 않는다)
 - streak / 알림 / gamification

@@ -27,6 +27,7 @@ export type Stage =
   | "emotion"
   | "outcome"
   | "summary"
+  | "support"
   | "stopped";
 
 export type BodyObservation = {
@@ -88,6 +89,10 @@ export type EmotionSession = {
   deepReflection?: DeepReflection;
   /** Reserved for checking whether the summary is useful; never shown back as a score. */
   synthesisFeedback?: { fit?: SynthesisFit; correction?: string };
+  /** Directions the user picked at the end. The app never picks one for them. */
+  support?: { chosen: string[]; note?: string };
+  /** Screens already passed, so a step can be undone without losing anything. */
+  history?: Stage[];
   stopReason?: "user" | "entry";
   /** Carried over from the v1 storage shape, where some fields were unrecoverable. */
   migratedFromV1?: true;
@@ -129,6 +134,9 @@ export type SessionAction =
   | { type: "SET_EMOTIONS"; emotionCandidates: EmotionSelection[] }
   | { type: "SET_OUTCOME"; outcome: NonNullable<DeepReflection["outcome"]> }
   | { type: "SET_SYNTHESIS_FEEDBACK"; fit?: SynthesisFit; correction?: string }
+  | { type: "OPEN_SUPPORT" }
+  | { type: "TOGGLE_SUPPORT"; id: string }
+  | { type: "BACK" }
   | { type: "STOP"; reason: "user" | "entry" };
 
 export const createSession = (entry: SessionEntry = "quick"): EmotionSession => ({
@@ -169,7 +177,16 @@ const completeQuick = (state: EmotionSession, patch: Partial<QuickCheck> = {}): 
   };
 };
 
-export const sessionReducer = (state: EmotionSession, action: SessionAction): EmotionSession => {
+/** A finished session can still be revisited, but not rewound past its summary. */
+export const canGoBack = (session: EmotionSession) => (session.history?.length ?? 0) > 0;
+
+/** Actions that do not move the user to another screen, so they are not steps to undo. */
+const NOT_A_STEP = new Set<SessionAction["type"]>([
+  "TOGGLE_QUICK_CANDIDATE", "SET_QUICK_CANDIDATE_RESPONSE", "ADD_QUICK_CUSTOM",
+  "SET_SYNTHESIS_FEEDBACK", "TOGGLE_SUPPORT", "RESUME", "BACK",
+]);
+
+const reduce = (state: EmotionSession, action: SessionAction): EmotionSession => {
   switch (action.type) {
     case "START_QUICK":
       return { ...createSession("quick"), stage: "quick-affect", quickCheck: emptyQuickCheck() };
@@ -260,7 +277,40 @@ export const sessionReducer = (state: EmotionSession, action: SessionAction): Em
       if (action.correction !== undefined) feedback.correction = action.correction.trim() || undefined;
       return { ...state, synthesisFeedback: feedback };
     }
+    case "OPEN_SUPPORT":
+      // reached from a finished summary; it must not reopen or end the session
+      return { ...state, stage: "support" };
+    case "TOGGLE_SUPPORT": {
+      const chosen = state.support?.chosen ?? [];
+      return {
+        ...state,
+        support: {
+          ...state.support,
+          chosen: chosen.includes(action.id) ? chosen.filter((id) => id !== action.id) : [...chosen, action.id],
+        },
+      };
+    }
+    case "BACK": {
+      const history = state.history ?? [];
+      if (!history.length) return state;
+      return { ...state, stage: history[history.length - 1], history: history.slice(0, -1) };
+    }
     case "STOP":
       return { ...state, stage: "stopped", status: "stopped", stopReason: action.reason };
   }
+};
+
+/**
+ * Records where the user came from, in one place rather than in every case, so
+ * a step can be undone without any transition having to remember to do it.
+ */
+export const sessionReducer = (state: EmotionSession, action: SessionAction): EmotionSession => {
+  const next = reduce(state, action);
+  if (NOT_A_STEP.has(action.type) || next.stage === state.stage) return next;
+  // a fresh session starts its own trail; a finished one is not rewound past its summary
+  if (action.type === "START_QUICK" || action.type === "START_DEEP") return { ...next, history: [] };
+  if (next.stage === "summary" || next.stage === "quick-summary" || next.stage === "stopped") {
+    return { ...next, history: [] };
+  }
+  return { ...next, history: [...(state.history ?? []), state.stage] };
 };
