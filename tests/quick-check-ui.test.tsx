@@ -48,6 +48,21 @@ describe("quick check screens", () => {
     expect(screen.getByText(/여기까지 살펴보았습니다/)).toBeTruthy();
   });
 
+  it("carries the quick reading into the deep affect step as an editable suggestion", () => {
+    openQuickCheck();
+    tapUnpleasantActivated();
+    fireEvent.click(screen.getByRole("button", { name: "긴장" }));
+    fireEvent.click(screen.getByRole("button", { name: /여기까지/ }));
+    fireEvent.click(screen.getByRole("button", { name: /조금 더 천천히 들여다보기/ }));
+
+    // the reopened session lands on the entry gate, then the deep flow
+    fireEvent.click(screen.getByRole("button", { name: /조금 살펴보고 싶어요/ }));
+    fireEvent.click(screen.getByRole("button", { name: "건너뛰기" }));
+
+    expect((screen.getByLabelText("불쾌함에서 유쾌함") as HTMLInputElement).value).toBe("1");
+    expect((screen.getByLabelText("가라앉음에서 활성됨") as HTMLInputElement).value).toBe("5");
+  });
+
   it("keeps 가까운 말이 없음 and 잘 모르겠음 as separate recorded answers on the summary", () => {
     openQuickCheck();
     tapUnpleasantActivated();

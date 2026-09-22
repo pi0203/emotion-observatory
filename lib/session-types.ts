@@ -2,6 +2,8 @@ export type EntryDecision = "observe" | "unsure" | "stop";
 // The user declining to pick a word is a normal answer, not missing data.
 export type QuickNonSelection = "none-close" | "unsure";
 export type SessionStatus = "draft" | "completed" | "stopped";
+export type SessionEntry = "quick" | "deep";
+export type Scale = 1 | 2 | 3 | 4 | 5;
 export type Stage =
   | "landing"
   | "quick-affect"
@@ -32,56 +34,78 @@ export type EmotionSelection = {
   source: "suggested" | "custom";
 };
 
-export type EmotionSession = {
-  id: string;
-  createdAt: string;
-  completedAt?: string;
-  status: SessionStatus;
-  mode: "quick" | "deep" | "quick-to-deep";
-  stage: Stage;
+/** The fast first read of one's own state. Never overwritten by the deep pass. */
+export type QuickCheck = {
+  affect?: { valence?: Scale; activation?: Scale; unknown?: boolean };
+  candidatePool: EmotionSelection[];
+  selected: EmotionSelection[];
+  candidateResponse?: QuickNonSelection;
+  concept?: string;
+  granularityResponse?: "unsure";
+  contrastAnswer?: string;
+  microLearningSeen?: boolean;
+  endedAt?: string;
+};
+
+/** The slower pass. Created only once the user is past the entry gate. */
+export type DeepReflection = {
+  startedAt: string;
   entryDecision?: EntryDecision;
   body: BodyObservation[];
-  affect?: {
-    valence?: 1 | 2 | 3 | 4 | 5;
-    activation?: 1 | 2 | 3 | 4 | 5;
-  };
+  affect?: { valence?: Scale; activation?: Scale };
   context?: {
     eventText?: string;
     source?: "event" | "memory" | "anticipation" | "thought";
   };
   concerns: string[];
   emotionCandidates: EmotionSelection[];
-  quickCandidatePool?: EmotionSelection[];
-  quickAffect?: {
-    valence?: 1 | 2 | 3 | 4 | 5;
-    activation?: 1 | 2 | 3 | 4 | 5;
-    unknown?: boolean;
-  };
-  quickCandidateResponse?: QuickNonSelection;
-  quickConcept?: string;
-  quickGranularityResponse?: "unsure";
-  quickContrastAnswer?: string;
-  quickMicroLearningSeen?: boolean;
   outcome?: {
     clarity: "much_clearer" | "clearer" | "same" | "more_complex" | "more_distressed";
     usefulness: "helpful" | "unsure" | "unhelpful";
     note?: string;
   };
+};
+
+/**
+ * One moment of self-observation is one session, however deep the user went.
+ * A completed Quick Check can be reopened to add a Deep Reflection under the
+ * same id, so the two never split into separate records.
+ */
+export type EmotionSession = {
+  id: string;
+  createdAt: string;
+  completedAt?: string;
+  status: SessionStatus;
+  stage: Stage;
+  entry: SessionEntry;
+  quickCheck?: QuickCheck;
+  deepReflection?: DeepReflection;
   stopReason?: "user" | "entry";
+  /** Carried over from the v1 storage shape, where some fields were unrecoverable. */
+  migratedFromV1?: true;
+};
+
+export type SessionDepth = "quick" | "quick+deep" | "deep";
+
+/** Derived, never stored: what the record actually holds decides its depth. */
+export const sessionDepth = (session: EmotionSession): SessionDepth => {
+  if (session.quickCheck && session.deepReflection) return "quick+deep";
+  if (session.deepReflection) return "deep";
+  if (session.quickCheck) return "quick";
+  return session.entry;
 };
 
 export type SessionAction =
-  | { type: "START" }
   | { type: "START_QUICK" }
   | { type: "START_DEEP" }
   | { type: "ENTER_DEEP" }
   | { type: "RESUME"; session: EmotionSession }
-  | { type: "SET_QUICK_AFFECT"; affect: NonNullable<EmotionSession["quickAffect"]> }
+  | { type: "SET_QUICK_AFFECT"; affect: NonNullable<QuickCheck["affect"]> }
   | { type: "SET_QUICK_UNKNOWN" }
-  | { type: "SET_QUICK_CANDIDATES"; emotionCandidates: EmotionSelection[] }
+  | { type: "SET_QUICK_CANDIDATES"; candidatePool: EmotionSelection[] }
   | { type: "TOGGLE_QUICK_CANDIDATE"; label: string }
   | { type: "SET_QUICK_CANDIDATE_RESPONSE"; response: QuickNonSelection }
-  | { type: "OPEN_GRANULARITY"; concept: string }
+  | { type: "OPEN_GRANULARITY" }
   | { type: "CHOOSE_GRANULARITY"; concept: string }
   | { type: "SKIP_GRANULARITY" }
   | { type: "SET_CONTRAST"; answer: string }
@@ -90,112 +114,128 @@ export type SessionAction =
   | { type: "SET_ENTRY"; decision: EntryDecision }
   | { type: "SET_ENTRY_MINI"; helpful: "yes" | "unsure" | "no" }
   | { type: "SET_BODY"; body: BodyObservation[] }
-  | { type: "SET_AFFECT"; affect: NonNullable<EmotionSession["affect"]> }
-  | { type: "SET_CONTEXT"; context: NonNullable<EmotionSession["context"]> }
+  | { type: "SET_AFFECT"; affect: NonNullable<DeepReflection["affect"]> }
+  | { type: "SET_CONTEXT"; context: NonNullable<DeepReflection["context"]> }
   | { type: "SET_CONCERNS"; concerns: string[] }
   | { type: "SET_EMOTIONS"; emotionCandidates: EmotionSelection[] }
-  | { type: "SET_OUTCOME"; outcome: NonNullable<EmotionSession["outcome"]> }
+  | { type: "SET_OUTCOME"; outcome: NonNullable<DeepReflection["outcome"]> }
   | { type: "STOP"; reason: "user" | "entry" };
 
-export const createSession = (): EmotionSession => ({
+export const createSession = (entry: SessionEntry = "quick"): EmotionSession => ({
   id: crypto.randomUUID(),
   createdAt: new Date().toISOString(),
   status: "draft",
-  mode: "deep",
   stage: "landing",
+  entry,
+});
+
+const emptyQuickCheck = (): QuickCheck => ({ candidatePool: [], selected: [] });
+
+const emptyDeepReflection = (): DeepReflection => ({
+  startedAt: new Date().toISOString(),
   body: [],
   concerns: [],
   emotionCandidates: [],
 });
 
+const withQuick = (state: EmotionSession, patch: Partial<QuickCheck>): EmotionSession => ({
+  ...state,
+  quickCheck: { ...(state.quickCheck ?? emptyQuickCheck()), ...patch },
+});
+
+const withDeep = (state: EmotionSession, patch: Partial<DeepReflection>): EmotionSession => ({
+  ...state,
+  deepReflection: { ...(state.deepReflection ?? emptyDeepReflection()), ...patch },
+});
+
+/** Quick Check ends here: the session is finished unless the user reopens it. */
+const completeQuick = (state: EmotionSession, patch: Partial<QuickCheck> = {}): EmotionSession => {
+  const now = new Date().toISOString();
+  return {
+    ...withQuick(state, { endedAt: now, ...patch }),
+    stage: "quick-summary",
+    status: "completed",
+    completedAt: now,
+  };
+};
+
 export const sessionReducer = (state: EmotionSession, action: SessionAction): EmotionSession => {
   switch (action.type) {
-    case "START":
-      return { ...createSession(), mode: "deep", stage: "entry" };
-    case "START_DEEP":
-      return { ...createSession(), mode: "deep", stage: "entry" };
-    case "ENTER_DEEP":
-      return {
-        ...createSession(),
-        mode: "quick-to-deep",
-        stage: "entry",
-        affect: state.quickAffect?.unknown || !state.quickAffect?.valence || !state.quickAffect?.activation
-          ? undefined
-          : { valence: state.quickAffect.valence, activation: state.quickAffect.activation },
-        quickAffect: state.quickAffect,
-        quickCandidatePool: state.emotionCandidates,
-      };
     case "START_QUICK":
-      return { ...createSession(), mode: "quick", stage: "quick-affect" };
+      return { ...createSession("quick"), stage: "quick-affect", quickCheck: emptyQuickCheck() };
+    case "START_DEEP":
+      // deepReflection waits until the user is past the gate, so refusing it leaves no empty record.
+      return { ...createSession("deep"), stage: "entry" };
+    case "ENTER_DEEP":
+      // Reopen: same id, same quickCheck, no longer completed.
+      return { ...state, stage: "entry", status: "draft", completedAt: undefined };
     case "RESUME":
       return action.session;
+
     case "SET_QUICK_AFFECT":
-      return { ...state, quickAffect: action.affect, stage: "quick-candidates" };
+      return { ...withQuick(state, { affect: action.affect }), stage: "quick-candidates" };
     case "SET_QUICK_UNKNOWN":
-      return { ...state, quickAffect: { unknown: true }, emotionCandidates: [], stage: "quick-summary", status: "completed", completedAt: new Date().toISOString() };
+      return completeQuick(state, { affect: { unknown: true }, selected: [] });
     case "SET_QUICK_CANDIDATES":
-      return { ...state, quickCandidatePool: action.emotionCandidates, emotionCandidates: [], stage: "quick-candidates" };
-    case "TOGGLE_QUICK_CANDIDATE":
-      return {
-        ...state,
-        quickCandidateResponse: undefined,
-        emotionCandidates: state.emotionCandidates.some((item) => item.label === action.label)
-          ? state.emotionCandidates.filter((item) => item.label !== action.label)
-          : [...state.emotionCandidates, { label: action.label, source: "suggested" }],
-      };
+      return { ...withQuick(state, { candidatePool: action.candidatePool, selected: [] }), stage: "quick-candidates" };
+    case "TOGGLE_QUICK_CANDIDATE": {
+      const selected = state.quickCheck?.selected ?? [];
+      return withQuick(state, {
+        candidateResponse: undefined,
+        selected: selected.some((item) => item.label === action.label)
+          ? selected.filter((item) => item.label !== action.label)
+          : [...selected, { label: action.label, source: "suggested" }],
+      });
+    }
     case "SET_QUICK_CANDIDATE_RESPONSE":
       // Stays on the candidate step so the user can still end here or go deeper.
-      return { ...state, quickCandidateResponse: action.response, emotionCandidates: [] };
+      return withQuick(state, { candidateResponse: action.response, selected: [] });
     case "OPEN_GRANULARITY":
       return { ...state, stage: "granularity" };
     case "CHOOSE_GRANULARITY":
-      return { ...state, quickConcept: action.concept, stage: "context-contrast" };
+      return { ...withQuick(state, { concept: action.concept }), stage: "context-contrast" };
     case "SKIP_GRANULARITY":
       // Never pick a concept on the user's behalf; record the answer and move on.
-      return {
-        ...state,
-        quickGranularityResponse: "unsure",
-        quickConcept: undefined,
-        stage: "quick-summary",
-        status: "completed",
-        completedAt: new Date().toISOString(),
-      };
+      return completeQuick(state, { granularityResponse: "unsure", concept: undefined });
     case "SET_CONTRAST":
-      return { ...state, quickContrastAnswer: action.answer, stage: "micro-learning" };
+      return { ...withQuick(state, { contrastAnswer: action.answer }), stage: "micro-learning" };
     case "DISMISS_MICRO_LEARNING":
-      return { ...state, quickMicroLearningSeen: true, stage: "quick-summary", status: "completed", completedAt: new Date().toISOString() };
+      return completeQuick(state, { microLearningSeen: true });
     case "COMPLETE_QUICK":
-      return { ...state, stage: "quick-summary", status: "completed", completedAt: new Date().toISOString() };
+      return completeQuick(state);
+
     case "SET_ENTRY":
-      return {
-        ...state,
-        entryDecision: action.decision,
-        stage: action.decision === "unsure" ? "entry-mini" : action.decision === "stop" ? "stopped" : "body",
-        status: action.decision === "stop" ? "stopped" : "draft",
-        stopReason: action.decision === "stop" ? "entry" : undefined,
-      };
+      if (action.decision === "stop") {
+        return { ...state, stage: "stopped", status: "stopped", stopReason: "entry" };
+      }
+      if (action.decision === "unsure") {
+        return { ...state, stage: "entry-mini" };
+      }
+      return { ...withDeep(state, { entryDecision: "observe" }), stage: "body", status: "draft" };
     case "SET_ENTRY_MINI":
       return action.helpful === "yes"
-        ? { ...state, stage: "body" }
+        ? { ...withDeep(state, { entryDecision: "unsure" }), stage: "body", status: "draft" }
         : { ...state, stage: "stopped", status: "stopped", stopReason: "entry" };
     case "SET_BODY":
-      return { ...state, body: action.body, stage: "affect" };
+      return { ...withDeep(state, { body: action.body }), stage: "affect" };
     case "SET_AFFECT":
-      return { ...state, affect: action.affect, stage: "context" };
+      // Kept beside quickCheck.affect, never overwriting the first quick read.
+      return { ...withDeep(state, { affect: action.affect }), stage: "context" };
     case "SET_CONTEXT":
-      return { ...state, context: action.context, stage: "meaning" };
+      return { ...withDeep(state, { context: action.context }), stage: "meaning" };
     case "SET_CONCERNS":
-      return { ...state, concerns: action.concerns, stage: "emotion" };
+      return { ...withDeep(state, { concerns: action.concerns }), stage: "emotion" };
     case "SET_EMOTIONS":
-      return { ...state, emotionCandidates: action.emotionCandidates, stage: "outcome" };
-    case "SET_OUTCOME":
+      return { ...withDeep(state, { emotionCandidates: action.emotionCandidates }), stage: "outcome" };
+    case "SET_OUTCOME": {
+      const now = new Date().toISOString();
       return {
-        ...state,
-        outcome: action.outcome,
+        ...withDeep(state, { outcome: action.outcome }),
         stage: "summary",
         status: "completed",
-        completedAt: new Date().toISOString(),
+        completedAt: now,
       };
+    }
     case "STOP":
       return { ...state, stage: "stopped", status: "stopped", stopReason: action.reason };
   }

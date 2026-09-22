@@ -921,73 +921,96 @@ Rules:
 
 Prefer local-first for MVP.
 
-## Session
+## Session (storage schema v2)
+
+**한 순간의 자기관찰은 깊이와 무관하게 하나의 세션이다.** Quick Check만 한 기록과
+Quick Check 뒤 Deep Reflection까지 간 기록이 별개의 레코드로 쪼개지지 않는다.
+완료된 Quick Check는 **같은 id로 reopen**되어 Deep Reflection을 이어 붙인다.
 
 ```ts
 type EmotionSession = {
   id: string
   createdAt: string
   completedAt?: string
+  status: "draft" | "completed" | "stopped"
+  stage: Stage
+  entry: "quick" | "deep"          // 어느 문으로 들어왔는지
 
-  entryDecision:
-    | "observe"
-    | "unsure"
-    | "stop"
-
-  body: BodyObservation[]
-
-  affect?: {
-    valence?: 1 | 2 | 3 | 4 | 5
-    activation?: 1 | 2 | 3 | 4 | 5
-    overwhelmed?: 1 | 2 | 3 | 4 | 5
+  quickCheck?: {
+    affect?: { valence?: Scale; activation?: Scale; unknown?: boolean }
+    candidatePool: EmotionSelection[]   // 제시된 후보
+    selected: EmotionSelection[]        // 사용자가 고른 것
+    candidateResponse?: "none-close" | "unsure"
+    concept?: string
+    granularityResponse?: "unsure"
+    contrastAnswer?: string
+    microLearningSeen?: boolean
+    endedAt?: string
   }
 
-  context?: {
-    eventText?: string
-    timeFrame?: "now" | "today" | "recent" | "past" | "future"
-    source?: "event" | "memory" | "anticipation" | "thought"
+  deepReflection?: {
+    startedAt: string
+    entryDecision?: "observe" | "unsure"
+    body: BodyObservation[]
+    affect?: { valence?: Scale; activation?: Scale }
+    context?: {
+      eventText?: string
+      source?: "event" | "memory" | "anticipation" | "thought"
+    }
+    concerns: string[]
+    emotionCandidates: EmotionSelection[]
+    outcome?: {
+      clarity: "much_clearer" | "clearer" | "same" | "more_complex" | "more_distressed"
+      usefulness: "helpful" | "unsure" | "unhelpful"
+      note?: string
+    }
   }
 
-  concerns?: ConcernTag[]
-
-  emotionCandidates?: EmotionSelection[]
-
-  differentiation?: {
-    selectedConcepts: string[]
-    whyText?: string
-    comparisonAnswers?: Record<string, string>
-  }
-
-  nextNeed?: string[]
-  nextActionText?: string
-
-  expression?: string
-
-  outcome?: {
-    clarity:
-      | "much_clearer"
-      | "clearer"
-      | "same"
-      | "more_complex"
-      | "more_distressed"
-
-    usefulness:
-      | "helpful"
-      | "unsure"
-      | "unhelpful"
-
-    note?: string
-  }
-
-  safety?: {
-    ruminationRiskLevel: 0 | 1 | 2 | 3
-    stopTriggered: boolean
-    triggerCodes: string[]
-  }
+  stopReason?: "user" | "entry"
+  migratedFromV1?: true
 }
 ```
 
----
+### 규칙
+
+- **두 affect는 덮어쓰지 않는다.** `quickCheck.affect`는 최초의 빠른 자기평가,
+  `deepReflection.affect`는 더 자세히 살펴본 뒤의 평가다. Deep의 slider는 Quick 값을
+  초기값으로 제안하지만, 저장은 각자의 자리에 한다.
+- **`deepReflection`은 entry gate를 통과한 뒤에 생성한다.** gate에서 종료하면 빈
+  deep 기록이 남지 않으며, history에서 "깊게 살펴본 기록"으로 오인되지 않는다.
+- **depth는 저장하지 않고 파생한다.** `sessionDepth()`가 두 하위 객체의 존재로
+  `quick` / `quick+deep` / `deep`을 계산한다. 별도 `mode` 필드는 두지 않는다
+  (상태 불일치 원인이 된다).
+- `status`는 세션 전체의 상태다. Quick이 완료된 뒤 reopen해서 중단하면 `stopped`가
+  되지만, `quickCheck.endedAt`이 남아 있으므로 "빠른 확인은 끝냈다"는 사실은 보존된다.
+
+### Persistence
+
+```text
+emotion-lab:draft:v2       진행 중 세션 1개
+emotion-lab:completed:v2   완료·중단 세션 목록 (newest first)
+```
+
+- completed 저장은 **id 기준 upsert**다. reopen으로 `completed → draft → completed`를
+  왕복해도 같은 id가 두 번 쌓이지 않는다.
+- draft로 저장할 때 completed 목록에서 같은 id를 제거한다. 저장 후 삭제 순서라
+  두 저장소에서 동시에 사라지는 구간이 없다.
+
+### v1 → v2 migration
+
+v1은 모든 필드를 한 객체에 평평하게 두었고, `quickCandidatePool`이 `mode`에 따라
+다른 것을 의미했다 (이것이 v2에서 중첩하는 이유다).
+
+| v1 `mode` | `quickCandidatePool` | `emotionCandidates` |
+|---|---|---|
+| `quick` | 제시된 후보 pool | Quick에서 고른 단어 |
+| `quick-to-deep` | Quick에서 고른 단어 | Deep에서 고른 단어 |
+| `deep` | — | Deep에서 고른 단어 |
+
+- `quick-to-deep` 레코드의 **원래 후보 pool은 복원 불가**다(새 세션에 저장되지 않았음).
+  빈 배열로 두고 `migratedFromV1: true`로 표시한다.
+- v1 draft는 폐기한다(미완 기록).
+- v1 키의 존재가 트리거이며, 이관 후 키를 삭제하므로 idempotent하다.
 
 ## BodyObservation
 
@@ -1311,7 +1334,7 @@ LANDING
  │         MICRO_LEARNING ─────────────────────→ QUICK_SUMMARY
  │
  │   QUICK_SUMMARY
- │     └── 조금 더 천천히 들여다보기 ──→ ENTRY (Deep Reflection)
+ │     └── 조금 더 천천히 들여다보기 ──→ ENTRY (같은 id를 reopen)
  │
  └── [조금 더 천천히 살펴보기]
        ↓
@@ -1327,6 +1350,9 @@ LANDING
 ```text
 ANY ACTIVE STATE → STOPPED
 ```
+
+`QUICK_SUMMARY → ENTRY`는 새 세션을 만들지 않는다. 완료된 세션을 draft로 되돌리고
+(`completedAt`을 지우고) 같은 id에 `deepReflection`을 이어 붙인다. §13을 따른다.
 
 ## 22.2 Not yet implemented
 
