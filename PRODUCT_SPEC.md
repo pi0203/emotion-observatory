@@ -8,17 +8,70 @@
 
 ---
 
-## 0. One-sentence product definition
+## 0. Product definition
 
 이 웹앱은 사용자의 감정을 맞혀주거나 진단하는 도구가 아니라, 사용자가 **몸의 상태·상황·의미·감정 개념을 구별해 보고, 자신에게 더 정확하고 유용한 언어로 표현하도록 돕는 짧은 자기관찰 도구**다.
 
-핵심은 “무슨 감정이지?”를 맞히는 것이 아니라 다음 질문의 흐름을 만드는 것이다.
+### 제품 구조: 세 개의 층
+
+제품은 하나의 긴 flow가 아니라 **깊이가 다른 세 층**으로 이루어진다.
+기본 진입은 Quick Check이며, 아래 두 층은 사용자가 필요하다고 선택할 때만 열린다.
+
+| 층 | 목표 시간 | 사용자가 하는 일 | 앱이 제공하는 것 |
+|---|---:|---|---|
+| **Quick Check** (기본) | 10~20초 | affect 공간을 한 번 탭 → 가까운 말 선택 | 수십 개 단어 중 탐색 범위를 3~5개로 줄인다 |
+| **Granularity Coach** (선택) | +10~30초 | 비슷한 표현을 상황 예시로 비교 | “그냥 기분 나쁨”을 조금 더 구별해본다 |
+| **Deep Reflection** (선택) | 2~5분 | 몸·맥락·중요했던 것·표현을 탐색 | 왜 그런 경험이 되었는지 살펴본다 |
+
+세 층은 순차적 단계가 아니다. Quick Check만으로도 세션은 완결된다.
+
+### Deep Reflection의 질문 흐름
+
+깊은 층에서의 핵심은 “무슨 감정이지?”를 맞히는 것이 아니라 다음 질문의 흐름을 만드는 것이다.
 
 > **지금 관찰하는 것이 도움이 되는가? → 몸에서는 무엇이 일어나는가? → 어떤 일이 있었는가? → 무엇이 중요했는가? → 어떤 감정 개념이 가장 가까운가? → 그래서 지금 무엇이 필요한가? → 표현한다면 어떻게 말할 수 있는가?**
+
+### 왜 감정카드가 아니라 웹앱인가
+
+아날로그 감정카드는 “어떤 단어들이 있는가”를 보여주는 데 이미 충분히 좋다.
+정적인 감정 목록을 디지털로 옮기는 것은 이 제품의 목적이 아니다.
+
+> 사용자의 현재 상태에 따라 **탐색할 감정 개념의 범위를 줄이고**, 필요하면 **비슷한 개념을 구별하도록 돕고**, 시간이 흐르며 **자신의 경험에 나타나는 패턴을 스스로 발견**할 수 있게 하는 것이 디지털 도구의 가치다.
+
+기술의 역할은 정답을 맞히는 것이 아니라 **탐색공간을 줄이는 것**이다.
 
 ---
 
 # 1. Product principles
+
+제품의 철학은 다음 세 문장으로 고정한다.
+
+> **1. 빠르게 시작하고, 필요할 때만 깊어진다.**
+> **2. 감정을 판정하지 않고, 구별할 수 있는 선택지를 넓힌다.**
+> **3. 설명으로 가르치기보다 상황 속 차이를 발견하게 한다.**
+
+아래 원칙들은 이 세 문장을 구체화한 것이다.
+
+---
+
+## P0. 최소한의 상호작용만 요구한다
+
+사용자가 감정을 더 오래, 더 많이 기록하게 만드는 것이 목적이 아니다.
+**자신의 상태를 이해하는 데 필요한 최소한의 상호작용만 요구한다.**
+
+- 기본 경험(Quick Check)은 **10~30초 안에 완결**될 수 있어야 한다.
+- 기본 경로에서 free-text 입력을 요구하지 않는다. tap/click만으로 끝낼 수 있다.
+- 깊은 자기성찰은 사용자가 필요하다고 **선택할 때만** 열린다.
+- 입력 단계를 늘려 “정확도”를 높이는 방향으로 설계하지 않는다.
+
+금지:
+- 기본 경로에 필수 free-text
+- 완주를 전제하는 progress 표시 (짧은 흐름에 진행률을 붙이면 “끝내야 하는 코스”가 된다)
+- 더 많은 단계를 거친 세션을 더 좋은 세션처럼 보이게 하는 UI
+
+P1과의 관계: P1은 “기록하지 않을 자유”를, P0은 “적게 기록할 자유”를 보장한다.
+
+---
 
 ## P1. 사용하지 않는 선택도 성공이다
 
@@ -37,11 +90,11 @@
 
 ---
 
-## P2. 감정 이름보다 경험에서 시작한다
+## P2. 감정 이름보다 경험에서 시작한다 (Quick Check는 명시적 예외)
 
-첫 화면부터 emotion wheel이나 감정 단어 목록을 제시하지 않는다.
+첫 화면부터 emotion wheel이나 전체 감정 단어 목록을 제시하지 않는다.
 
-기본 순서:
+**Deep Reflection의 순서**는 다음을 유지한다.
 
 1. 관찰 여부
 2. 신체/전반적 느낌
@@ -63,6 +116,24 @@
 `body/affect → context → meaning → emotion concept → action/expression`
 
 이다.
+
+### 명시적 예외 — Quick Check
+
+Quick Check는 body와 context 없이 **affect 한 번의 탭 직후 감정 후보를 보여준다.**
+이것은 실수나 표류가 아니라 P0을 위해 **의도적으로 승인된 P2의 예외**다.
+
+예외는 다음 조건을 **모두** 지킬 때만 유효하다.
+
+- 후보는 3~5개로 제한한다. 전체 vocabulary를 노출하지 않는다.
+- 후보는 판정이 아니라 “지금 경험을 표현할 때 **가까울 수도 있는 말**”로만 제시한다.
+- `가까운 말이 없음`과 `잘 모르겠음`이 항상 정상 선택지로 존재한다.
+- affect 좌표는 **후보 축소에만** 사용한다. 감정을 산출하는 lookup table로 문서화하거나 구현하지 않는다.
+- Quick Check에서 고른 단어는 Deep Reflection에서 정답이나 고정값으로 이어지지 않는다.
+- 첫 화면(Landing)에는 여전히 감정 단어를 두지 않는다.
+
+즉 순서 원칙 자체는 유지되지만, “감정 단어는 body/context 이후에만 나올 수 있다”는 **더 강한 형태는 Quick Check에 적용되지 않는다.**
+
+이 예외를 되돌리려는 변경은 제품 결정 사항이며, 구현 판단으로 처리하지 않는다.
 
 ---
 
@@ -130,10 +201,18 @@
 
 ---
 
-## P7. 이론은 사용자에게 교리가 되지 않는다
+## P7. 특정 감정이론을 과학적 최종 정답으로 가르치지 않는다
 
-Barrett의 구성주의적 감정 관점을 설계 원리로 사용하되,
-“감정에 대한 과학적 진실은 이것 하나다”라는 식으로 제시하지 않는다.
+앱은 **어떤 감정이론도 확정된 진리로 제시하지 않는다.**
+설계는 특정 연구자의 이론이 아니라, 다음 **네 가지 이론 중립적 전제** 위에서만 이루어진다.
+
+1. **정서 경험은 valence/arousal만으로 충분히 설명되지 않을 수 있다.**
+2. **맥락과 의미평가(appraisal)는 정서 경험을 이해하는 데 중요하다.**
+3. **생리·뇌·표정에는 정서 관련 정보와 일정한 규칙성이 있을 수 있다.**
+4. **그러나 현재 단일 지표나 고정 패턴으로 개인의 특정 감정을 확정적으로 판정하는 것은 정당화하지 않는다.**
+
+이 네 전제는 서로 경쟁하는 이론들 사이에서 **어느 한쪽이 수정되어도 살아남도록** 선택된 것이다.
+특정 이론에 기대어 설계를 정당화하지 않으며, 이론이 바뀌어도 제품 원칙은 유지된다.
 
 권장 설명:
 
@@ -142,6 +221,13 @@ Barrett의 구성주의적 감정 관점을 설계 원리로 사용하되,
 금지:
 
 > “뇌는 감정을 이렇게 만들어냅니다. 이것이 과학적으로 밝혀졌습니다.”
+
+> “감정에는 어떤 생물학적 신호도 없습니다.” — 위 3번 전제와 충돌한다.
+
+> 특정 연구자의 이론을 앱의 교육 콘텐츠로 정답처럼 제시하는 것.
+
+micro-learning 문구는 위 네 전제를 벗어나지 않아야 한다.
+별도의 이론 강의 화면은 만들지 않는다.
 
 ---
 
@@ -157,6 +243,17 @@ Barrett의 구성주의적 감정 관점을 설계 원리로 사용하되,
 
 DAU / 세션 수 / 평균 체류시간은 제품 운영 지표일 뿐,
 심리적 효과 지표로 해석하지 않는다.
+
+### 주장의 범위 (설계 가설)
+
+**emotional granularity 개선은 현재 이 제품에서 입증된 효과가 아니다.**
+
+제품은 “granularity를 향상시킨다”고 주장하지 않는다.
+대신 **“더 세밀하게 구별하고 표현하는 연습을 돕는다”**는 **설계 가설**로만 기술한다.
+
+- 앱 내부 copy, README, 외부 소개문 어디에서도 치료 효과나 능력 향상을 주장하지 않는다.
+- 참고한 연구들은 대부분 상관 연구이며, 이 앱의 효과를 검증한 것이 아니다.
+- 반복 사용 전후의 변화는 향후 별도 연구로 평가할 대상이다.
 
 ---
 
@@ -231,7 +328,11 @@ Buttons:
 
 ---
 
-# 4. Core session flow
+# 4. Core session flow (Deep Reflection)
+
+이 절은 **Deep Reflection 층**을 기술한다. 기본 진입 경로가 아니며,
+사용자가 `조금 더 천천히 들여다보기`를 선택할 때만 열린다.
+기본 경로는 §0의 Quick Check이고, P0이 적용된다.
 
 ---
 
@@ -415,6 +516,13 @@ Always include:
 
 감정어를 많이 보여주는 것 자체가 목표가 아니다.
 “비슷한 단어 사이의 차이”를 사용자 경험과 연결해야 한다.
+
+이 메커니즘은 두 곳에 나타난다.
+
+- **Granularity Coach** (Quick Check 뒤, 선택) — 상황 예시를 비교해 차이를 **발견**하게 한다. 철학 3번이 여기에 적용된다.
+- **Step 6 Differentiate** (Deep Reflection 안, 아래) — 이미 적은 맥락을 근거로 인접 개념을 비교한다.
+
+어느 쪽도 사전식 정의를 가르치지 않으며, 상황 → 감정의 1:1 정답표를 만들지 않는다.
 
 ## Step 6 — Differentiate
 
@@ -1184,29 +1292,51 @@ emotion-self-monitor/
 
 Use an explicit state machine rather than scattered page logic.
 
+## 22.1 Implemented (current)
+
 ```text
-ENTRY
- ↓
-BODY
- ↓
-AFFECT
- ↓
-CONTEXT
- ↓
-MEANING
- ↓
-EMOTION
- ↓
-DIFFERENTIATE
- ↓
-NEED
- ↓
-EXPRESSION
- ↓
-OUTCOME
- ↓
-SUMMARY
+LANDING
+ ├── [빠르게 살펴보기]  ← 기본 진입
+ │     ↓
+ │   QUICK_AFFECT ──────────────── 잘 모르겠음 ──→ QUICK_SUMMARY
+ │     ↓
+ │   QUICK_CANDIDATES
+ │     ├── 여기까지 ───────────────────────────→ QUICK_SUMMARY
+ │     └── 조금 더 정확히 살펴보기
+ │           ↓
+ │         GRANULARITY
+ │           ↓
+ │         CONTEXT_CONTRAST
+ │           ↓
+ │         MICRO_LEARNING ─────────────────────→ QUICK_SUMMARY
+ │
+ │   QUICK_SUMMARY
+ │     └── 조금 더 천천히 들여다보기 ──→ ENTRY (Deep Reflection)
+ │
+ └── [조금 더 천천히 살펴보기]
+       ↓
+     ENTRY
+       ├── 잘 모르겠어요 → ENTRY_MINI → BODY | STOPPED
+       ├── 지금은 그만 생각하고 싶어요 → STOPPED
+       ↓
+     BODY → AFFECT → CONTEXT → MEANING → EMOTION → OUTCOME → SUMMARY
 ```
+
+활성 상태 어디에서든:
+
+```text
+ANY ACTIVE STATE → STOPPED
+```
+
+## 22.2 Not yet implemented
+
+다음 상태는 아직 없다. 구현 전 별도 제품 판단이 필요하다.
+
+- `DIFFERENTIATE`, `NEED`, `EXPRESSION` (Deep Reflection 후반)
+- `RUMINATION_CHECK` (§9)
+- `SAFETY_TRIGGER`, `SAFETY_SCREEN` — SAFETY.md에 따라 **의도적으로 미구현**
+
+## 22.3 Target routes
 
 Interrupt route:
 
@@ -1237,11 +1367,11 @@ Do not implement this as ad-hoc conditional UI spread across components.
 
 The MVP is acceptable when:
 
-1. A user can finish a normal session in ~3–5 minutes.
+1. A user can finish a Quick Check in ~10–30 seconds, and a Deep Reflection session in ~3–5 minutes.
 2. Every non-essential step can be skipped.
-3. User can choose “잘 모르겠음” without penalty.
+3. User can choose “잘 모르겠음” without penalty, and that choice is stored as a normal state rather than as missing data.
 4. No screen tells the user what they “really feel.”
-5. Emotion selection occurs after body/context.
+5. In Deep Reflection, emotion selection occurs after body/context. In Quick Check, every condition of the P2 exception is satisfied.
 6. The session ends with usefulness feedback.
 7. A user who reports worsening is not pushed deeper.
 8. Repeated reflection triggers a stop check.
@@ -1252,6 +1382,10 @@ The MVP is acceptable when:
 13. The UI contains no streak/gamification.
 14. Positive/pleasant experiences are equally recordable.
 15. Pattern summaries remain descriptive, not diagnostic.
+16. Quick Check can be completed with no free-text input at all.
+17. `가까운 말이 없음` and `잘 모르겠음` both leave the user on a path forward — never on a dead-end screen.
+18. No screen selects an emotion word on the user's behalf, including when the user answers “잘 모르겠음.”
+19. No product copy claims that the app improves emotional granularity.
 
 ---
 
