@@ -6,7 +6,7 @@ import concerns from "../data/concerns.ko.json";
 import emotions from "../data/emotions.ko.json";
 import granularity from "../data/granularity.ko.json";
 import { createSession, sessionReducer } from "../lib/session-types";
-import type { BodyObservation, EmotionSession } from "../lib/session-types";
+import type { BodyObservation, EmotionSession, QuickNonSelection } from "../lib/session-types";
 import { loadDraft, persistSession, removeDraft } from "../lib/storage";
 import { filterQuickCandidates } from "../lib/quick-check";
 
@@ -18,7 +18,6 @@ const progress: Record<string, string> = {
   emotion: "5 / 6",
   outcome: "6 / 6",
 };
-const quickProgress: Record<string, string> = { "quick-affect": "1 / 2", "quick-candidates": "2 / 2", granularity: "1 / 2", "context-contrast": "2 / 2", "micro-learning": "2 / 2" };
 
 export default function Home() {
   const [session, dispatch] = useReducer(sessionReducer, undefined, createSession);
@@ -59,16 +58,16 @@ export default function Home() {
         )}
       </header>
 
-      {session.stage !== "stopped" && session.stage !== "summary" && session.stage !== "quick-summary" && session.stage !== "entry" && (
-        <div className="progress-row" aria-label={`진행 ${quickProgress[session.stage] ?? progress[session.stage]}`}>
-          <span>{quickProgress[session.stage] ?? progress[session.stage]}</span>
-          <div className="progress-track"><div className="progress-fill" style={{ width: `${quickProgress[session.stage] ? (Object.keys(quickProgress).indexOf(session.stage) + 1) * 25 : (Object.keys(progress).indexOf(session.stage) + 1) * 16.66}%` }} /></div>
+      {progress[session.stage] && (
+        <div className="progress-row" aria-label={`진행 ${progress[session.stage]}`}>
+          <span>{progress[session.stage]}</span>
+          <div className="progress-track"><div className="progress-fill" style={{ width: `${(Object.keys(progress).indexOf(session.stage) + 1) * 16.66}%` }} /></div>
         </div>
       )}
 
       {session.stage === "quick-affect" && <QuickAffectScreen onNext={(affect) => { dispatch({ type: "SET_QUICK_AFFECT", affect }); dispatch({ type: "SET_QUICK_CANDIDATES", emotionCandidates: filterQuickCandidates({ x: (affect.valence! - 1) / 4, y: (affect.activation! - 1) / 4 }) }); }} onUnknown={() => dispatch({ type: "SET_QUICK_UNKNOWN" })} />}
-      {session.stage === "quick-candidates" && <QuickCandidatesScreen pool={session.quickCandidatePool ?? []} selected={session.emotionCandidates} onToggle={(label) => dispatch({ type: "TOGGLE_QUICK_CANDIDATE", label })} onNone={() => dispatch({ type: "CLEAR_QUICK_SELECTION" })} onFinish={() => dispatch({ type: "COMPLETE_QUICK" })} onCoach={() => dispatch({ type: "OPEN_GRANULARITY", concept: session.emotionCandidates[0]?.label ?? "" })} />}
-      {session.stage === "granularity" && <GranularityScreen selected={session.emotionCandidates} onChoose={(concept) => dispatch({ type: "CHOOSE_GRANULARITY", concept })} />}
+      {session.stage === "quick-candidates" && <QuickCandidatesScreen pool={session.quickCandidatePool ?? []} selected={session.emotionCandidates} response={session.quickCandidateResponse} onToggle={(label) => dispatch({ type: "TOGGLE_QUICK_CANDIDATE", label })} onRespond={(response) => dispatch({ type: "SET_QUICK_CANDIDATE_RESPONSE", response })} onFinish={() => dispatch({ type: "COMPLETE_QUICK" })} onCoach={() => dispatch({ type: "OPEN_GRANULARITY", concept: session.emotionCandidates[0]?.label ?? "" })} onDeep={() => { dispatch({ type: "COMPLETE_QUICK" }); dispatch({ type: "ENTER_DEEP" }); }} />}
+      {session.stage === "granularity" && <GranularityScreen selected={session.emotionCandidates} onChoose={(concept) => dispatch({ type: "CHOOSE_GRANULARITY", concept })} onSkip={() => dispatch({ type: "SKIP_GRANULARITY" })} />}
       {session.stage === "context-contrast" && <ContextContrastScreen concept={session.quickConcept ?? ""} onAnswer={(answer) => dispatch({ type: "SET_CONTRAST", answer })} />}
       {session.stage === "micro-learning" && <MicroLearningScreen concept={session.quickConcept ?? ""} note={getGranularityNote(session.quickConcept)} onDismiss={() => dispatch({ type: "DISMISS_MICRO_LEARNING" })} />}
       {session.stage === "quick-summary" && <QuickSummaryScreen session={session} onDeep={() => dispatch({ type: "ENTER_DEEP" })} />}
@@ -118,14 +117,14 @@ function QuickAffectScreen({ onNext, onUnknown }: { onNext: (affect: NonNullable
   return <Screen><StepHeading step="빠른 확인" title="지금의 경험은 어느 쪽에 가까운가요?" hint="정확한 좌표를 고를 필요 없이, ‘이쯤’이라고 느껴지는 곳을 한 번 눌러보세요." /><div className="affect-grid-wrap"><div className="affect-axis-label top">에너지가 올라온 느낌</div><div className="affect-grid" role="button" tabIndex={0} aria-label="불편함과 편안함, 가라앉음과 에너지 사이에서 현재 경험에 가까운 곳 선택" onPointerDown={choosePoint} onKeyDown={(event) => { if (event.key === "Enter" || event.key === " ") setPoint({ x: .5, y: .5 }); }}>{point && <span className="affect-dot" style={{ left: `${point.x * 100}%`, top: `${(1 - point.y) * 100}%` }} />}</div><div className="affect-axis-row"><span>불편함</span><span>편안함</span></div><div className="affect-axis-label bottom">가라앉은 느낌</div></div><div className="quick-actions"><button className="quiet-button" onClick={onUnknown}>잘 모르겠음</button><button className="primary-button" disabled={!point} onClick={() => point && onNext({ valence: toScale(point.x), activation: toScale(point.y) })}>다음 <span>→</span></button></div></Screen>;
 }
 
-function QuickCandidatesScreen({ pool, selected, onToggle, onNone, onFinish, onCoach }: { pool: EmotionSession["emotionCandidates"]; selected: EmotionSession["emotionCandidates"]; onToggle: (label: string) => void; onNone: () => void; onFinish: () => void; onCoach: () => void }) {
+function QuickCandidatesScreen({ pool, selected, response, onToggle, onRespond, onFinish, onCoach, onDeep }: { pool: EmotionSession["emotionCandidates"]; selected: EmotionSession["emotionCandidates"]; response?: QuickNonSelection; onToggle: (label: string) => void; onRespond: (response: QuickNonSelection) => void; onFinish: () => void; onCoach: () => void; onDeep: () => void }) {
   const canCoach = selected.length > 0 && selected.some((item) => Boolean(getGranularityItem(item.label)));
-  return <Screen><StepHeading step="가능한 표현" title="지금 경험을 표현할 때 가까울 수도 있는 말입니다." hint="감정을 판정하는 결과가 아닙니다. 맞지 않으면 고르지 않아도 됩니다." /><div className="provisional-note">임시 단어 모음 · 스스로 고른 표현만 기록됩니다</div><div className="chip-grid">{pool.map((item) => <button className={`chip ${selected.some((choice) => choice.label === item.label) ? "selected" : ""}`} key={item.label} onClick={() => onToggle(item.label)}>{item.label}</button>)}</div><div className="quick-option-row"><button className="secondary-button" onClick={onNone}>가까운 말이 없음</button><button className="secondary-button" onClick={onNone}>잘 모르겠음</button></div><div className="quick-bottom-actions"><button className="quiet-button" onClick={onFinish}>여기까지</button><button className="primary-button" disabled={!canCoach} onClick={onCoach}>조금 더 정확히 살펴보기 <span>→</span></button></div><p className="small-note">상황 비교 prototype은 일부 후보부터 제공됩니다.</p></Screen>;
+  return <Screen><StepHeading step="가능한 표현" title="지금 경험을 표현할 때 가까울 수도 있는 말입니다." hint="감정을 판정하는 결과가 아닙니다. 맞지 않으면 고르지 않아도 됩니다." /><div className="provisional-note">임시 단어 모음 · 스스로 고른 표현만 기록됩니다</div><div className="chip-grid">{pool.map((item) => <button className={`chip ${selected.some((choice) => choice.label === item.label) ? "selected" : ""}`} key={item.label} onClick={() => onToggle(item.label)}>{item.label}</button>)}</div><div className="quick-option-row">{([["none-close", "가까운 말이 없음"], ["unsure", "잘 모르겠음"]] as const).map(([value, label]) => <button className={`secondary-button ${response === value ? "selected" : ""}`} aria-pressed={response === value} key={value} onClick={() => onRespond(value)}>{label}</button>)}</div>{response && <p className="small-note">{response === "none-close" ? "가까운 말이 없다고" : "잘 모르겠다고"} 기록했습니다. 이대로 끝내도 되고, 천천히 더 살펴봐도 됩니다.</p>}<div className="quick-bottom-actions"><button className="quiet-button" onClick={onFinish}>여기까지</button>{canCoach ? <button className="primary-button" onClick={onCoach}>조금 더 정확히 살펴보기 <span>→</span></button> : <button className="secondary-button" onClick={onDeep}>조금 더 천천히 들여다보기</button>}</div>{canCoach && <p className="small-note">상황 비교 prototype은 일부 후보부터 제공됩니다.</p>}</Screen>;
 }
 
-function GranularityScreen({ selected, onChoose }: { selected: EmotionSession["emotionCandidates"]; onChoose: (concept: string) => void }) {
+function GranularityScreen({ selected, onChoose, onSkip }: { selected: EmotionSession["emotionCandidates"]; onChoose: (concept: string) => void; onSkip: () => void }) {
   const available = selected.filter((item) => Boolean(getGranularityItem(item.label)));
-  return <Screen><StepHeading step="조금 더 정확히" title="어느 표현을 먼저 살펴볼까요?" hint="비슷해 보이는 말도 경험에 따라 다르게 느껴질 수 있습니다." /><div className="choice-list">{available.map((item) => <button key={item.label} onClick={() => onChoose(item.label)}>{item.label}<span className="choice-arrow">→</span></button>)}</div><button className="quiet-button" onClick={() => onChoose(available[0]?.label ?? "")}>잘 모르겠음</button></Screen>;
+  return <Screen><StepHeading step="조금 더 정확히" title="어느 표현을 먼저 살펴볼까요?" hint="비슷해 보이는 말도 경험에 따라 다르게 느껴질 수 있습니다." /><div className="choice-list">{available.map((item) => <button key={item.label} onClick={() => onChoose(item.label)}>{item.label}<span className="choice-arrow">→</span></button>)}</div><button className="quiet-button" onClick={onSkip}>잘 모르겠음</button></Screen>;
 }
 
 function ContextContrastScreen({ concept, onAnswer }: { concept: string; onAnswer: (answer: string) => void }) {
@@ -140,7 +139,8 @@ function MicroLearningScreen({ concept, note, onDismiss }: { concept: string; no
 
 function QuickSummaryScreen({ session, onDeep }: { session: EmotionSession; onDeep: () => void }) {
   const affect = session.quickAffect?.unknown ? "잘 모르겠음" : `${quickValence(session.quickAffect?.valence)} · ${quickActivation(session.quickAffect?.activation)}`;
-  return <Screen><p className="eyebrow">빠른 확인</p><h1>여기까지 살펴보았습니다.</h1><div className="summary-card"><SummaryRow label="전체적인 느낌" value={affect} /><SummaryRow label="가까웠던 말" value={session.emotionCandidates.map((item) => item.label).join(" · ") || "고르지 않음"} />{session.quickContrastAnswer && <SummaryRow label="상황 속 차이" value={session.quickContrastAnswer} />}</div><p className="summary-footnote">이것은 감정의 판정이 아니라, 지금 경험을 표현해볼 수 있는 작은 단서입니다.</p><div className="stack-actions"><a className="primary-button centered" href="/">처음으로 돌아가기</a><button className="secondary-button" onClick={onDeep}>조금 더 천천히 들여다보기</button></div></Screen>;
+  const words = session.emotionCandidates.map((item) => item.label).join(" · ") || quickResponseLabel(session.quickCandidateResponse) || "고르지 않음";
+  return <Screen><p className="eyebrow">빠른 확인</p><h1>여기까지 살펴보았습니다.</h1><div className="summary-card"><SummaryRow label="전체적인 느낌" value={affect} /><SummaryRow label="가까웠던 말" value={words} />{session.quickGranularityResponse === "unsure" && <SummaryRow label="더 살펴본 표현" value="잘 모르겠음" />}{session.quickContrastAnswer && <SummaryRow label="상황 속 차이" value={session.quickContrastAnswer} />}</div><p className="summary-footnote">이것은 감정의 판정이 아니라, 지금 경험을 표현해볼 수 있는 작은 단서입니다.</p><div className="stack-actions"><a className="primary-button centered" href="/">처음으로 돌아가기</a><button className="secondary-button" onClick={onDeep}>조금 더 천천히 들여다보기</button></div></Screen>;
 }
 
 function EntryMini({ onAnswer }: { onAnswer: (answer: "yes" | "unsure" | "no") => void }) {
@@ -203,6 +203,7 @@ function SummaryRow({ label, value }: { label: string; value: string }) { return
 type GranularityItem = { prompt: string; scenarios: Array<{ id: string; label: string; text: string }>; note: string };
 function getGranularityItem(concept?: string): GranularityItem | undefined { return concept ? (granularity.items as Record<string, GranularityItem>)[concept] : undefined; }
 function getGranularityNote(concept?: string) { return getGranularityItem(concept)?.note ?? "같은 몸의 느낌도 상황과 의미에 따라 다르게 경험될 수 있습니다."; }
+function quickResponseLabel(response?: QuickNonSelection) { return response === "none-close" ? "가까운 말이 없음" : response === "unsure" ? "잘 모르겠음" : ""; }
 function quickValence(value?: number) { return ["", "불편함 쪽", "조금 불편함 쪽", "중간", "조금 편안함 쪽", "편안함 쪽"][value ?? 3]; }
 function quickActivation(value?: number) { return ["", "가라앉은 느낌", "조금 가라앉은 느낌", "중간", "에너지가 올라온 느낌", "에너지가 많이 올라온 느낌"][value ?? 3]; }
 function scaleLabel(value?: number) { return ["", "매우 불쾌", "불쾌", "중간", "유쾌", "매우 유쾌"][value ?? 3]; }

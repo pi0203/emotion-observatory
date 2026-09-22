@@ -1,4 +1,6 @@
 export type EntryDecision = "observe" | "unsure" | "stop";
+// The user declining to pick a word is a normal answer, not missing data.
+export type QuickNonSelection = "none-close" | "unsure";
 export type SessionStatus = "draft" | "completed" | "stopped";
 export type Stage =
   | "landing"
@@ -55,7 +57,9 @@ export type EmotionSession = {
     activation?: 1 | 2 | 3 | 4 | 5;
     unknown?: boolean;
   };
+  quickCandidateResponse?: QuickNonSelection;
   quickConcept?: string;
+  quickGranularityResponse?: "unsure";
   quickContrastAnswer?: string;
   quickMicroLearningSeen?: boolean;
   outcome?: {
@@ -76,9 +80,10 @@ export type SessionAction =
   | { type: "SET_QUICK_UNKNOWN" }
   | { type: "SET_QUICK_CANDIDATES"; emotionCandidates: EmotionSelection[] }
   | { type: "TOGGLE_QUICK_CANDIDATE"; label: string }
-  | { type: "CLEAR_QUICK_SELECTION" }
+  | { type: "SET_QUICK_CANDIDATE_RESPONSE"; response: QuickNonSelection }
   | { type: "OPEN_GRANULARITY"; concept: string }
   | { type: "CHOOSE_GRANULARITY"; concept: string }
+  | { type: "SKIP_GRANULARITY" }
   | { type: "SET_CONTRAST"; answer: string }
   | { type: "DISMISS_MICRO_LEARNING" }
   | { type: "COMPLETE_QUICK" }
@@ -133,16 +138,28 @@ export const sessionReducer = (state: EmotionSession, action: SessionAction): Em
     case "TOGGLE_QUICK_CANDIDATE":
       return {
         ...state,
+        quickCandidateResponse: undefined,
         emotionCandidates: state.emotionCandidates.some((item) => item.label === action.label)
           ? state.emotionCandidates.filter((item) => item.label !== action.label)
           : [...state.emotionCandidates, { label: action.label, source: "suggested" }],
       };
-    case "CLEAR_QUICK_SELECTION":
-      return { ...state, emotionCandidates: [] };
+    case "SET_QUICK_CANDIDATE_RESPONSE":
+      // Stays on the candidate step so the user can still end here or go deeper.
+      return { ...state, quickCandidateResponse: action.response, emotionCandidates: [] };
     case "OPEN_GRANULARITY":
       return { ...state, stage: "granularity" };
     case "CHOOSE_GRANULARITY":
       return { ...state, quickConcept: action.concept, stage: "context-contrast" };
+    case "SKIP_GRANULARITY":
+      // Never pick a concept on the user's behalf; record the answer and move on.
+      return {
+        ...state,
+        quickGranularityResponse: "unsure",
+        quickConcept: undefined,
+        stage: "quick-summary",
+        status: "completed",
+        completedAt: new Date().toISOString(),
+      };
     case "SET_CONTRAST":
       return { ...state, quickContrastAnswer: action.answer, stage: "micro-learning" };
     case "DISMISS_MICRO_LEARNING":

@@ -56,6 +56,56 @@ describe("vertical slice session machine", () => {
     expect(state.stage).toBe("affect");
   });
 
+  it("records “가까운 말이 없음” as its own normal state", () => {
+    let state = sessionReducer(createSession(), { type: "START_QUICK" });
+    state = sessionReducer(state, { type: "SET_QUICK_AFFECT", affect: { valence: 2, activation: 5 } });
+    state = sessionReducer(state, { type: "SET_QUICK_CANDIDATES", emotionCandidates: [{ label: "긴장", source: "suggested" }] });
+    state = sessionReducer(state, { type: "SET_QUICK_CANDIDATE_RESPONSE", response: "none-close" });
+    expect(state.quickCandidateResponse).toBe("none-close");
+    expect(state.emotionCandidates).toEqual([]);
+    expect(state.stage).toBe("quick-candidates");
+  });
+
+  it("distinguishes “잘 모르겠음” from “가까운 말이 없음” at the candidate step", () => {
+    let state = sessionReducer(createSession(), { type: "START_QUICK" });
+    state = sessionReducer(state, { type: "SET_QUICK_AFFECT", affect: { valence: 2, activation: 5 } });
+    state = sessionReducer(state, { type: "SET_QUICK_CANDIDATE_RESPONSE", response: "unsure" });
+    expect(state.quickCandidateResponse).toBe("unsure");
+  });
+
+  it("lets the user finish after answering neither candidate option", () => {
+    let state = sessionReducer(createSession(), { type: "START_QUICK" });
+    state = sessionReducer(state, { type: "SET_QUICK_AFFECT", affect: { valence: 2, activation: 5 } });
+    state = sessionReducer(state, { type: "SET_QUICK_CANDIDATE_RESPONSE", response: "none-close" });
+    state = sessionReducer(state, { type: "COMPLETE_QUICK" });
+    expect(state.stage).toBe("quick-summary");
+    expect(state.status).toBe("completed");
+    expect(state.quickCandidateResponse).toBe("none-close");
+  });
+
+  it("drops the non-selection answer when the user picks a word after all", () => {
+    let state = sessionReducer(createSession(), { type: "START_QUICK" });
+    state = sessionReducer(state, { type: "SET_QUICK_AFFECT", affect: { valence: 2, activation: 5 } });
+    state = sessionReducer(state, { type: "SET_QUICK_CANDIDATE_RESPONSE", response: "unsure" });
+    state = sessionReducer(state, { type: "TOGGLE_QUICK_CANDIDATE", label: "긴장" });
+    expect(state.quickCandidateResponse).toBeUndefined();
+    expect(state.emotionCandidates.map((item) => item.label)).toEqual(["긴장"]);
+  });
+
+  it("never picks a concept for the user who answers “잘 모르겠음” in the coach", () => {
+    let state = sessionReducer(createSession(), { type: "START_QUICK" });
+    state = sessionReducer(state, { type: "SET_QUICK_AFFECT", affect: { valence: 2, activation: 5 } });
+    state = sessionReducer(state, { type: "SET_QUICK_CANDIDATES", emotionCandidates: [{ label: "긴장", source: "suggested" }] });
+    state = sessionReducer(state, { type: "TOGGLE_QUICK_CANDIDATE", label: "긴장" });
+    state = sessionReducer(state, { type: "OPEN_GRANULARITY", concept: "긴장" });
+    state = sessionReducer(state, { type: "SKIP_GRANULARITY" });
+    expect(state.quickConcept).toBeUndefined();
+    expect(state.quickGranularityResponse).toBe("unsure");
+    expect(state.stage).toBe("quick-summary");
+    expect(state.status).toBe("completed");
+    expect(state.emotionCandidates.map((item) => item.label)).toEqual(["긴장"]);
+  });
+
   it("supports the stop path without turning it into a risk classifier", () => {
     let state = createSession();
     state = sessionReducer(state, { type: "SET_ENTRY", decision: "observe" });
