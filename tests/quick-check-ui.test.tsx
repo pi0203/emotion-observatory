@@ -100,6 +100,11 @@ describe("quick check screens", () => {
 
     expect(screen.getByText(/지금까지의 경험을/)).toBeTruthy();
     expect(screen.getByText(/당신이 고른 내용을 연결하면/)).toBeTruthy();
+    // the four-part structure, with interpretation withheld on a thin record
+    expect(screen.getByText("관찰한 것")).toBeTruthy();
+    expect(screen.queryByText("연결해서 생각해볼 수 있는 것")).toBeNull();
+    expect(screen.getByText(/연결해볼 만한 정보가 충분하지 않습니다/)).toBeTruthy();
+    expect(screen.getByText("다음에 생각해볼 질문")).toBeTruthy();
     expect(screen.getByText(/이 설명이 지금 경험과 얼마나 맞나요/)).toBeTruthy();
 
     const partly = screen.getByRole("button", { name: "일부만 맞아요" });

@@ -320,14 +320,22 @@ function SynthesisSection({ session, onFeedback }: { session: EmotionSession; on
   const [correction, setCorrection] = useState(session.synthesisFeedback?.correction ?? "");
   const fit = session.synthesisFeedback?.fit;
   if (!hasSynthesis(synthesis)) return null;
+  const block = (title: string, lines: { id: string; text: string }[]) =>
+    lines.length ? <><p className="tier-label">{title}</p><ul className="synthesis-lines">{lines.map((line) => <li key={line.id}>{line.text}</li>)}</ul></> : null;
+
   return <section className="synthesis">
     <h2 className="synthesis-title">지금까지의 경험을<br />이렇게 정리해볼 수 있어요</h2>
     <p className="synthesis-lead">{synthesis.lead}</p>
-    <ul className="synthesis-lines">{synthesis.lines.map((line) => <li key={line.id}>{line.text}</li>)}</ul>
-    {synthesis.comparison.length > 0 && <>
-      <p className="tier-label">처음과 지금</p>
-      <ul className="synthesis-lines">{synthesis.comparison.map((line) => <li key={line.id}>{line.text}</li>)}</ul>
+
+    {block("관찰한 것", synthesis.observed)}
+    {block("연결해서 생각해볼 수 있는 것", synthesis.meaning)}
+    {block("아직 알기 어려운 것", synthesis.unknown)}
+
+    {synthesis.questions.length > 0 && <>
+      <p className="tier-label">다음에 생각해볼 질문</p>
+      <ul className="synthesis-questions">{synthesis.questions.map((question) => <li key={question}>{question}</li>)}</ul>
     </>}
+
     <p className="synthesis-caveat">{synthesis.caveat}</p>
 
     <p className="synthesis-question">이 설명이 지금 경험과 얼마나 맞나요?</p>
