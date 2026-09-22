@@ -137,8 +137,12 @@ P1과의 관계: P1은 “기록하지 않을 자유”를, P0은 “적게 기�
 제품의 입장은 더 제한적이다.
 
 1. affective structure에는 **일부 넓은 공통성**이 있을 수 있다
-   (Jackson et al. 2019: 어족 전반에서 valence·activation이 의미망을 조직).
-   → affect pad의 두 축이 어휘 목록보다 넓게 통한다는 뜻이다.
+   (Jackson et al. 2019: 2,474개 언어에서 hedonic valence와 physiological activation이
+   감정 의미망을 조직하는 중요한 차원으로 나타남).
+   이 결과는 valence × activation을 **넓은 탐색의 출발점**으로 쓰는 현재 구조와
+   **양립하며 경험적 배경을 제공한다.** 다만 이 연구가 **affect pad 자체의
+   측정타당도를 검증한 것은 아니다** ([EMOTION_CULTURE.md](docs/EMOTION_CULTURE.md)의
+   근거 강도 구분 참고).
 2. emotion category와 vocabulary의 **의미와 경계는 문화·언어·경험에 따라 달라질 수 있다.**
 3. 개인 사용자에게 어느 의미가 맞는지는 **앱이 문화적 평균만으로 결정하지 않는다.**
 
@@ -1305,6 +1309,18 @@ emotion-lab:completed:v3   완료·중단 세션 목록 (newest first)
   왕복해도 같은 id가 두 번 쌓이지 않는다.
 - draft로 저장할 때 completed 목록에서 같은 id를 제거한다. 저장 후 삭제 순서라
   두 저장소에서 동시에 사라지는 구간이 없다.
+
+### 축의 표현
+
+| 축 | 쓰는 말 | 원어 |
+|---|---|---|
+| valence | `불쾌함 ↔ 유쾌함` | hedonic valence |
+| activation | `가라앉음 ↔ 활성됨` | physiological activation |
+
+**`편안함`을 valence 축 표현으로 쓰지 않는다.** 저활성 의미를 함께 품어 activation 축과
+개념적으로 겹친다. 앱의 한국어는 원어를 쉬운 말로 옮긴 것이지 같은 구성개념을 측정한다는
+주장이 아니다. 이 표현은 pad, Quick 요약, Deep 요약, synthesis에서 **모두 같아야 한다** —
+Quick과 Deep이 같은 pad를 쓰므로 같은 좌표가 화면마다 다르게 읽히면 안 된다.
 
 ### Affect coordinate
 

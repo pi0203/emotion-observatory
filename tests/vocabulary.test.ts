@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 import emotions from "../data/emotions.ko.json";
 import { expandCandidates, filterQuickCandidates } from "../lib/quick-check";
+import { quickValence, scaleLabel } from "../lib/affect-labels";
 
 type Item = {
   label: string;
@@ -170,5 +171,17 @@ describe("cultural humility in the wording", () => {
       label: "김새는 느낌", source: "custom", personalMeaning: "기대가 접히는 쪽",
     };
     expect(selection.personalMeaning).toBeTruthy();
+  });
+});
+
+describe("the pleasantness axis is named one way", () => {
+  it("does not use 편안함, which also carries low activation", () => {
+    // quickValence and scaleLabel describe the same axis; both must stay 불쾌-유쾌
+    for (const value of [0, 0.25, 0.5, 0.75, 1]) {
+      expect(quickValence(value)).not.toContain("편안함");
+      expect(scaleLabel(value)).not.toContain("편안함");
+    }
+    expect(quickValence(0)).toContain("불쾌함");
+    expect(quickValence(1)).toContain("유쾌함");
   });
 });

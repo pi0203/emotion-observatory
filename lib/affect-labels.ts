@@ -1,5 +1,7 @@
 /**
- * Wording for the affect readings. Shared so the summary and the synthesis never
+ * Wording for the affect readings. The pleasantness axis stays 불쾌–유쾌
+ * everywhere: 편안함 also carries low activation, so using it here would blur
+ * the two axes together. Shared so the summary and the synthesis never
  * drift apart. Input is the stored 0..1 coordinate; the words are a coarse read
  * of a finer value, and the number itself is never shown.
  */
@@ -10,7 +12,7 @@ const band = (value: number | undefined, words: string[]) => {
 };
 
 export const quickValence = (value?: number) =>
-  band(value, ["불편함 쪽", "조금 불편함 쪽", "중간", "조금 편안함 쪽", "편안함 쪽"]);
+  band(value, ["불쾌함 쪽", "조금 불쾌함 쪽", "중간", "조금 유쾌함 쪽", "유쾌함 쪽"]);
 
 export const quickActivation = (value?: number) =>
   band(value, ["가라앉은 느낌", "조금 가라앉은 느낌", "중간", "에너지가 올라온 느낌", "에너지가 많이 올라온 느낌"]);

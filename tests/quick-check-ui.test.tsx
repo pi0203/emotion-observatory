@@ -17,7 +17,7 @@ const openQuickCheck = () => {
 const tapUnpleasantActivated = () => {
   // jsdom drops clientX/clientY from PointerEvent, so dispatch a MouseEvent named "pointerdown".
   fireEvent(
-    screen.getByRole("application", { name: /불편함과 편안함/ }),
+    screen.getByRole("application", { name: /불쾌함과 유쾌함/ }),
     new MouseEvent("pointerdown", { bubbles: true, clientX: 40, clientY: 30 }),
   );
   fireEvent.click(screen.getByRole("button", { name: /다음/ }));
@@ -160,7 +160,7 @@ describe("quick check screens", () => {
     fireEvent.click(screen.getByRole("button", { name: "건너뛰기" })); // body
 
     expect(screen.getByText(/조금 더 살펴본 지금은 어느 쪽에 가까운가요/)).toBeTruthy();
-    expect(screen.getByRole("application", { name: /불편함과 편안함/ })).toBeTruthy();
+    expect(screen.getByRole("application", { name: /불쾌함과 유쾌함/ })).toBeTruthy();
     expect(document.querySelectorAll('input[type="range"]')).toHaveLength(0);
     expect(screen.queryByText("낮음")).toBeNull();
   });

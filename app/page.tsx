@@ -187,10 +187,10 @@ function AffectPad({ initial, onChange }: { initial?: AffectPoint; onChange: (po
   };
   return <div className="affect-grid-wrap">
     <div className="affect-axis-label top">에너지가 올라온 느낌</div>
-    <div className="affect-grid" role="application" tabIndex={0} aria-label="불편함과 편안함, 가라앉음과 에너지 사이에서 현재 경험에 가까운 곳 선택. 방향키로도 움직일 수 있습니다." onPointerDown={fromPointer} onKeyDown={nudge}>
+    <div className="affect-grid" role="application" tabIndex={0} aria-label="불쾌함과 유쾌함, 가라앉음과 활성됨 사이에서 현재 경험에 가까운 곳 선택. 방향키로도 움직일 수 있습니다." onPointerDown={fromPointer} onKeyDown={nudge}>
       {point && <span className="affect-dot" style={{ left: `${point.x * 100}%`, top: `${(1 - point.y) * 100}%` }} />}
     </div>
-    <div className="affect-axis-row"><span>불편함</span><span>편안함</span></div>
+    <div className="affect-axis-row"><span>불쾌함</span><span>유쾌함</span></div>
     <div className="affect-axis-label bottom">가라앉은 느낌</div>
   </div>;
 }
@@ -287,7 +287,7 @@ function WhyWords() {
     <div className="why-body">
       <p>우리가 감정을 표현하는 방식은 몸의 느낌과 상황뿐 아니라, 살아온 경험과 언어, 관계와 문화의 영향을 받습니다. 같은 경험도 사람이나 공동체에 따라 조금 다르게 나누고 부를 수 있어요.</p>
       <p>그래서 이 앱은 당신의 ‘진짜 감정’을 찾아내려 하지 않습니다. 대신 지금 경험을 이해하는 데 도움이 되는 말을 함께 찾아봅니다. 여기 있는 단어들은 완전한 목록이 아니라 <strong>출발점</strong>이고, <strong>내 말로 적는 것이 예외가 아니라 정상적인 길</strong>입니다.</p>
-      <p className="why-principle">언어를 가로질러 비교적 널리 통하는 것은 <strong>편안함–불편함</strong>과 <strong>가라앉음–활성됨</strong> 같은 넓은 방향입니다. 반면 그 안을 어떤 단어로 나누는지는 언어와 문화에 따라 달라질 수 있습니다. 그래서 이 앱은 방향은 함께 짚어보고, <strong>이름은 당신이 고릅니다.</strong></p>
+      <p className="why-principle">언어를 가로질러 비교적 널리 통하는 것은 <strong>불쾌함–유쾌함</strong>과 <strong>가라앉음–활성됨</strong> 같은 넓은 방향입니다. 반면 그 안을 어떤 단어로 나누는지는 언어와 문화에 따라 달라질 수 있습니다. 그래서 이 앱은 방향은 함께 짚어보고, <strong>이름은 당신이 고릅니다.</strong></p>
       <details className="why-deeper">
         <summary>조금 더 — 감정이 사회적으로 만들어진다는 말</summary>
         <p>감정이 사회적으로 구성된다는 것은 감정이 가짜라는 뜻이 아닙니다. 한 과학적 관점에서는 몸과 뇌의 변화가 실제로 존재하면서도, 사람들이 공유하고 배운 감정 개념이 그 경험에 의미와 기능을 부여한다고 봅니다.</p>

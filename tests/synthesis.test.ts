@@ -30,7 +30,7 @@ const allText = (session: EmotionSession) => {
 describe("synthesis content", () => {
   it("restates only what a quick-only session recorded", () => {
     const text = allText(quickOnly());
-    expect(text).toContain("불편함 쪽");
+    expect(text).toContain("불쾌함 쪽");
     expect(text).toContain("긴장");
     expect(text).not.toContain("몸에서는");
     expect(text).not.toContain("상황으로는");

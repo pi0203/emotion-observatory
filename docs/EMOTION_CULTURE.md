@@ -14,12 +14,44 @@
 | 층 | 무엇인가 | 제품에서의 취급 |
 |---|---|---|
 | **Barrett의 관점** | 하나의 이론적 입장 | 아이디어를 얻되 **정답으로 구현하지 않는다** |
-| **Cross-cultural 증거** | 여러 팀이 수렴하는 관찰 | 설계를 정당화하는 데 쓴다 |
+| **Cross-cultural 증거** | 여러 팀이 수렴하는 관찰 | 설계와 **양립하는지** 확인하는 데 쓴다 |
 | **논쟁 중** | 아직 정해지지 않은 것 | UI와 문서에서 **불확실성을 표시한다** |
+
+### 근거의 강도를 뭉개지 않는다
+
+이 문서에서 두 수준을 구별해 쓴다.
+
+| 수준 | 쓰는 표현 | 뜻 |
+|---|---|---|
+| 약함 | **양립한다 / 경험적 배경을 제공한다** (supports, is consistent with) | 우리 설계와 어긋나지 않고 그 방향을 뒷받침하는 관찰이 있다 |
+| 강함 | **검증했다 / 입증했다 / 정당화한다** (validates, proves, justifies) | 그 연구가 **바로 그 대상**을 직접 검증했다 |
+
+**이 앱의 어떤 설계 요소도 강한 수준으로 뒷받침되지 않는다.** affect pad, 어휘 58개,
+boundary blending, synthesis 규칙 중 그 자체의 측정타당도가 검증된 것은 없다.
+문헌은 **방향이 어긋나지 않는지** 확인하는 데만 쓴다.
+
+### source type을 섞지 않는다
+
+같은 강도의 근거처럼 나란히 묶지 않는다.
+
+| 출처 | 종류 |
+|---|---|
+| Barrett 2012 / 2017 | **constructionist theoretical account** — 이론적 입장 |
+| Jackson et al. 2019 | **large cross-linguistic empirical study** — 대규모 언어 간 경험 연구 |
+| Gendron et al. 2014 | **specific cross-cultural perception experiment** — 특정 지각 실험 |
+| Elfenbein & Ambady 2002 | **meta-analysis** — 기존 연구들의 메타분석 |
+| Tsai 2007 | **theory / review** — ideal affect 이론과 개관 |
+| De Leersnyder et al. | **cultural-fit empirical studies** — 경험 연구들 |
+| Lindquist et al. 2022 | **Perspective / cultural evolutionary framework** — 관점 논문·틀 |
+
+이론적 입장(Barrett, Tsai)과 경험 연구(Jackson, Gendron, De Leersnyder), 메타분석
+(Elfenbein & Ambady), 관점 논문(Lindquist)은 **말할 수 있는 것의 범위가 서로 다르다.**
 
 ---
 
 ## 1. Barrett — social reality
+
+> **source type: constructionist theoretical account (이론적 입장)**
 
 **Barrett, L. F. (2012). Emotions are real. *Emotion*, 12(3), 413–429.**
 https://doi.org/10.1037/a0027555
@@ -42,11 +74,14 @@ account of interoception and categorization.**
 - "감정에는 생물학적 신호가 없다"를 뜻하지 **않는다.**
 - 개인에게 어떤 감정 개념이 맞는지를 결정해주지 **않는다.**
 
-### 제품에 정당화하는 것
+### 제품 결정과 양립하는 것
 - 감정 단어를 **정답이 아니라 탐색 도구**로 제시하는 것.
 - 사용자가 고른 것을 앱이 뒤집지 않는 것.
 
-### 정당화하지 않는 것
+이것은 **이론적 입장과 어긋나지 않는다**는 뜻이지, 이 관점이 그 설계를 입증한다는
+뜻이 아니다. 이론은 설계를 검증하지 않는다.
+
+### 이 관점이 말하지 않는 것
 - 이 관점을 앱의 교육 콘텐츠로 **가르치는 것.** micro-learning은 P7의 네 전제를 넘지 않는다.
 
 ---
@@ -56,49 +91,73 @@ account of interoception and categorization.**
 ### Jackson et al. (2019). Emotion semantics show both cultural variation and universal structure. *Science*, 366, 1517–1522.
 https://doi.org/10.1126/science.aaw8160
 
+> **source type: large cross-linguistic empirical study**
+
 **보여주는 것** — 2,474개 언어의 감정 의미망에 **상당한 문화·언어적 차이**가 있었다.
 동시에 완전한 상대주의도 아니었고, 어족 전반에서 **valence와 activation이 의미망을
 조직하는 중요한 공통 구조**로 나타났다.
 
-**보여주지 않는 것** — 어느 언어의 감정 분류가 옳은지. 개인이 자기 언어의 평균대로 느끼는지.
+**보여주지 않는 것** — 어느 언어의 감정 분류가 옳은지. 개인이 자기 언어의 평균대로
+느끼는지. **그리고 어떤 2차원 self-report 도구의 측정타당도도 검증하지 않았다.**
 
-**제품에 정당화하는 것** — **affect pad의 두 축**이 어휘 목록보다 문화 간에 더 넓게 통한다는 것.
-그래서 *좁히기는 축으로, 이름 붙이기는 사용자에게* 맡기는 현재 구조가 이 증거와 맞는다.
-어휘 58개가 잠정적이어야 하는 이유이기도 하다.
+**제품 결정과 양립하는 것** —
 
-**정당화하지 않는 것** — 축이 감정을 결정한다는 것. 축은 후보를 좁힐 뿐이다.
+> Jackson et al.(2019)의 결과는 valence × activation을 **넓은 탐색의 출발점으로 사용하는
+> 현재 구조와 양립하며 이에 경험적 배경을 제공한다. 다만 이 연구가 현재 affect pad 자체의
+> 측정타당도를 검증한 것은 아니다.**
+
+*좁히기는 축으로, 이름 붙이기는 사용자에게* 맡기는 구조가 이 관찰과 어긋나지 않는다는
+뜻이다. 어휘 58개를 잠정적으로 두는 이유이기도 하다.
+
+**용어** — 이 연구가 쓰는 말은 **hedonic valence**와 **physiological activation**이다.
+앱의 `불쾌함 ↔ 유쾌함` · `가라앉음 ↔ 활성됨`은 이를 **쉬운 한국어로 옮긴 것**이지
+같은 구성개념을 측정한다는 주장이 아니다. `편안함`은 저활성 의미를 함께 품어 두 축이
+개념적으로 겹치므로 valence 축 표현으로 쓰지 않는다.
+
+**말하지 않는 것** — 축이 감정을 결정한다는 것. 축은 후보를 좁힐 뿐이다.
 
 ### Gendron et al. (2014). Perceptions of emotion from facial expressions are not culturally universal.
 
+> **source type: specific cross-cultural perception experiment** — 특정 표본·과제의 결과이며 일반화 범위가 넓지 않다
+
 **보여주는 것** — 감정 개념 라벨이 표정 범주화에 영향을 줄 수 있다.
-**정당화하는 것** — 얼굴·신체 신호를 감정 판정에 쓰지 않는다는 결정(P7-4).
+**양립하는 것** — 얼굴·신체 신호를 감정 판정에 쓰지 않는다는 결정(P7-4). 이 결정은
+이 실험 하나가 아니라 P7의 네 전제에서 나온다.
 
 ### Elfenbein & Ambady (2002). On the universality and cultural specificity of emotion recognition: A meta-analysis.
+
+> **source type: meta-analysis** — 개별 실험보다 넓지만, 포함된 연구들의 한계를 함께 물려받는다
 
 **보여주는 것** — cross-cultural 인식은 우연 이상이지만, 같은 문화권에서 더 높은
 **in-group advantage**가 있다.
 **보여주지 않는 것** — 어느 쪽이 "진짜" 감정인지.
-**정당화하는 것** — 보편주의와 완전 상대주의 **양쪽 모두를 피하는** 중간 입장.
+**양립하는 것** — 보편주의와 완전 상대주의 **양쪽 모두를 피하는** 중간 입장.
 
 ### Tsai (2007). Ideal affect: Cultural causes and behavioral consequences.
 
+> **source type: theory / review** — 경험 연구들을 묶은 이론적 개관
+
 **보여주는 것** — 문화마다 **이상적으로 가치 있게 여기는 정서 상태**가 다를 수 있다
 (고각성 긍정 vs 저각성 긍정).
-**정당화하는 것** — 긍정 어휘에서 `신남·활기`(고각성)와 `평온·여유·충만함`(저각성)을
+**양립하는 것** — 긍정 어휘에서 `신남·활기`(고각성)와 `평온·여유·충만함`(저각성)을
 **둘 다** 갖추는 것. 한쪽만 두면 특정 이상을 기본값으로 삼는 셈이 된다.
-**정당화하지 않는 것** — 개인에게 어느 쪽을 권하는 것.
+**말하지 않는 것** — 개인에게 어느 쪽을 권하는 것.
 
 ### De Leersnyder, Kim, & Mesquita — emotional fit
 
+> **source type: cultural-fit empirical studies**
+
 **보여주는 것** — 한국을 포함한 연구에서 emotional fit이 문화적·상황적 맥락에 따라
 well-being과 관련되었다.
-**정당화하지 않는 것** — **fit score.** 개인이 평균에 얼마나 맞는지를 재지 않는다.
+**하지 않는 것** — **fit score.** 개인이 평균에 얼마나 맞는지를 재지 않는다.
 "당신은 주변과 다르게 느낍니다" 같은 표현을 만들지 않는다.
 
 ### Lindquist et al. (2022). The cultural evolution of emotion. *Nature Reviews Psychology*.
 
+> **source type: Perspective / cultural evolutionary framework** — 새 데이터가 아니라 틀을 제시하는 글이다
+
 **보여주는 것** — 감정 개념이 문화적으로 전달되고 변해왔다는 관점의 정리.
-**정당화하는 것** — 어휘를 **고정된 taxonomy가 아니라 바뀔 수 있는 목록**으로 두는 것.
+**양립하는 것** — 어휘를 **고정된 taxonomy가 아니라 바뀔 수 있는 목록**으로 두는 것.
 
 ---
 
