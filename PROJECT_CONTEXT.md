@@ -6,6 +6,7 @@
 > - 여기: **왜 이렇게 만들고 있는가**, 사용자 여정, 현재 결정, 다음 순서
 > - [PRODUCT_SPEC.md](PRODUCT_SPEC.md): 화면·데이터 모델·state machine·copy 규칙의 상세 명세
 > - [SAFETY.md](SAFETY.md): 안전 경계와 의도적으로 구현하지 않은 것
+> - [docs/NORMS.md](docs/NORMS.md): 한국어 valence/arousal norm을 연결하기 전에 확인할 것
 >
 > 충돌하면 **PRODUCT_SPEC.md가 구현의 source of truth**이고, 이 문서는 그 위의 의도다.
 
