@@ -6,7 +6,9 @@
     "valence/activation": "후보를 좁히는 좌표이며, 감정을 산출하는 lookup table이 아닙니다.",
     "neighbors": "비교해볼 만한 단어를 기록한 탐색 metadata입니다. 심리적 근접성을 주장하지 않습니다.",
     "appraisalHints": "이 감정의 정의가 아닙니다. 비슷한 단어 사이의 차이를 탐색할 때 써볼 수 있는 가설적 힌트입니다.",
-    "contextTags": "어떤 상황에서 이 말을 써볼 수 있는지에 대한 느슨한 단서입니다."
+    "contextTags": "어떤 상황에서 이 말을 써볼 수 있는지에 대한 느슨한 단서입니다.",
+    "contextDependent": "맥락에 따라 valence 경험이 달라질 수 있으니 고정된 positive/negative로 판정하지 말라는 UI metadata입니다. 'mixed emotion이라는 본질적 분류'가 아닙니다. 후보 탐색에서는 양쪽 어느 방향에서도 제시될 수 있습니다.",
+    "norms": "valencePrototype / arousalPrototype / valenceSD / arousalSD / normSource는 검증된 외부 norm 자료를 연결할 때만 채웁니다. normStatus가 'provisional'인 동안에는 좌표가 없으며, 출처와 사용 조건을 확인하지 못한 값은 넣지 않습니다."
   },
   "items": [
     {
@@ -29,7 +31,8 @@
         "평가",
         "일·과제"
       ],
-      "provisional": true
+      "provisional": true,
+      "normStatus": "provisional"
     },
     {
       "label": "초조함",
@@ -51,7 +54,8 @@
         "기다림",
         "불확실"
       ],
-      "provisional": true
+      "provisional": true,
+      "normStatus": "provisional"
     },
     {
       "label": "짜증",
@@ -75,7 +79,8 @@
         "일·과제",
         "반복"
       ],
-      "provisional": true
+      "provisional": true,
+      "normStatus": "provisional"
     },
     {
       "label": "화남",
@@ -99,7 +104,8 @@
         "관계",
         "경계"
       ],
-      "provisional": true
+      "provisional": true,
+      "normStatus": "provisional"
     },
     {
       "label": "불안",
@@ -119,7 +125,8 @@
         "불확실",
         "미래"
       ],
-      "provisional": true
+      "provisional": true,
+      "normStatus": "provisional"
     },
     {
       "label": "억울함",
@@ -141,7 +148,8 @@
         "관계",
         "평가"
       ],
-      "provisional": true
+      "provisional": true,
+      "normStatus": "provisional"
     },
     {
       "label": "조급함",
@@ -163,7 +171,8 @@
         "마감",
         "기다림"
       ],
-      "provisional": true
+      "provisional": true,
+      "normStatus": "provisional"
     },
     {
       "label": "두려움",
@@ -184,7 +193,8 @@
         "안전",
         "불확실"
       ],
-      "provisional": true
+      "provisional": true,
+      "normStatus": "provisional"
     },
     {
       "label": "당황",
@@ -197,7 +207,8 @@
       "neighbors": [
         "두려움",
         "민망함",
-        "막막함"
+        "막막함",
+        "놀라움"
       ],
       "appraisalHints": [
         "예상하지 못한 일이 갑자기 일어남"
@@ -206,7 +217,8 @@
         "예상 밖",
         "사람들 앞"
       ],
-      "provisional": true
+      "provisional": true,
+      "normStatus": "provisional"
     },
     {
       "label": "분개",
@@ -228,7 +240,8 @@
         "공정",
         "가치"
       ],
-      "provisional": true
+      "provisional": true,
+      "normStatus": "provisional"
     },
     {
       "label": "답답함",
@@ -249,7 +262,8 @@
         "관계",
         "일·과제"
       ],
-      "provisional": true
+      "provisional": true,
+      "normStatus": "provisional"
     },
     {
       "label": "걱정",
@@ -268,7 +282,8 @@
         "미래",
         "책임"
       ],
-      "provisional": true
+      "provisional": true,
+      "normStatus": "provisional"
     },
     {
       "label": "서운함",
@@ -292,7 +307,8 @@
         "관계",
         "기대"
       ],
-      "provisional": true
+      "provisional": true,
+      "normStatus": "provisional"
     },
     {
       "label": "좌절",
@@ -312,7 +328,8 @@
         "일·과제",
         "노력"
       ],
-      "provisional": true
+      "provisional": true,
+      "normStatus": "provisional"
     },
     {
       "label": "부끄러움",
@@ -330,7 +347,8 @@
         "사람들 앞",
         "자기평가"
       ],
-      "provisional": true
+      "provisional": true,
+      "normStatus": "provisional"
     },
     {
       "label": "민망함",
@@ -350,7 +368,8 @@
       "contextTags": [
         "사람들 앞"
       ],
-      "provisional": true
+      "provisional": true,
+      "normStatus": "provisional"
     },
     {
       "label": "죄책감",
@@ -369,7 +388,8 @@
         "관계",
         "책임"
       ],
-      "provisional": true
+      "provisional": true,
+      "normStatus": "provisional"
     },
     {
       "label": "수치심",
@@ -388,7 +408,8 @@
         "자기평가",
         "사람들 앞"
       ],
-      "provisional": true
+      "provisional": true,
+      "normStatus": "provisional"
     },
     {
       "label": "자책",
@@ -407,7 +428,8 @@
         "자기평가",
         "책임"
       ],
-      "provisional": true
+      "provisional": true,
+      "normStatus": "provisional"
     },
     {
       "label": "혐오",
@@ -428,7 +450,8 @@
         "가치",
         "거리두기"
       ],
-      "provisional": true
+      "provisional": true,
+      "normStatus": "provisional"
     },
     {
       "label": "못마땅함",
@@ -447,7 +470,8 @@
         "가치",
         "평가"
       ],
-      "provisional": true
+      "provisional": true,
+      "normStatus": "provisional"
     },
     {
       "label": "실망",
@@ -466,7 +490,8 @@
         "기대",
         "결과"
       ],
-      "provisional": true
+      "provisional": true,
+      "normStatus": "provisional"
     },
     {
       "label": "외로움",
@@ -486,7 +511,8 @@
         "관계",
         "거리"
       ],
-      "provisional": true
+      "provisional": true,
+      "normStatus": "provisional"
     },
     {
       "label": "슬픔",
@@ -496,7 +522,8 @@
       "neighbors": [
         "외로움",
         "허전함",
-        "실망"
+        "실망",
+        "연민"
       ],
       "appraisalHints": [
         "소중한 것이 사라졌다고 느낌"
@@ -505,7 +532,8 @@
         "상실",
         "관계"
       ],
-      "provisional": true
+      "provisional": true,
+      "normStatus": "provisional"
     },
     {
       "label": "허전함",
@@ -527,7 +555,8 @@
         "상실",
         "변화"
       ],
-      "provisional": true
+      "provisional": true,
+      "normStatus": "provisional"
     },
     {
       "label": "아쉬움",
@@ -546,7 +575,8 @@
         "기회",
         "마무리"
       ],
-      "provisional": true
+      "provisional": true,
+      "normStatus": "provisional"
     },
     {
       "label": "후회",
@@ -565,7 +595,8 @@
         "선택",
         "과거"
       ],
-      "provisional": true
+      "provisional": true,
+      "normStatus": "provisional"
     },
     {
       "label": "막막함",
@@ -584,7 +615,8 @@
         "시작",
         "규모"
       ],
-      "provisional": true
+      "provisional": true,
+      "normStatus": "provisional"
     },
     {
       "label": "기쁨",
@@ -603,7 +635,8 @@
         "성취",
         "관계"
       ],
-      "provisional": true
+      "provisional": true,
+      "normStatus": "provisional"
     },
     {
       "label": "신남",
@@ -625,7 +658,8 @@
         "기대",
         "놀이"
       ],
-      "provisional": true
+      "provisional": true,
+      "normStatus": "provisional"
     },
     {
       "label": "활기",
@@ -647,12 +681,13 @@
         "회복",
         "시작"
       ],
-      "provisional": true
+      "provisional": true,
+      "normStatus": "provisional"
     },
     {
       "label": "흥미",
       "aliases": [
-        "호기심"
+        "궁금함"
       ],
       "family": "interest",
       "valence": "positive",
@@ -660,7 +695,8 @@
       "neighbors": [
         "기대",
         "활기",
-        "즐거움"
+        "즐거움",
+        "호기심"
       ],
       "appraisalHints": [
         "더 알고 싶은 느낌"
@@ -669,7 +705,8 @@
         "배움",
         "새로움"
       ],
-      "provisional": true
+      "provisional": true,
+      "normStatus": "provisional"
     },
     {
       "label": "즐거움",
@@ -691,20 +728,20 @@
         "놀이",
         "관계"
       ],
-      "provisional": true
+      "provisional": true,
+      "normStatus": "provisional"
     },
     {
       "label": "기대",
-      "aliases": [
-        "설렘"
-      ],
+      "aliases": [],
       "family": "interest",
       "valence": "positive",
       "activation": "high",
       "neighbors": [
         "흥미",
         "신남",
-        "기쁨"
+        "기쁨",
+        "설렘"
       ],
       "appraisalHints": [
         "앞으로의 일이 기다려짐"
@@ -713,12 +750,14 @@
         "미래",
         "약속"
       ],
-      "provisional": true
+      "provisional": true,
+      "normStatus": "provisional"
     },
     {
       "label": "뿌듯함",
       "aliases": [
-        "자랑스러움"
+        "자랑스러움",
+        "성취감"
       ],
       "family": "pride",
       "valence": "positive",
@@ -726,7 +765,8 @@
       "neighbors": [
         "만족",
         "기쁨",
-        "감동"
+        "감동",
+        "자신감"
       ],
       "appraisalHints": [
         "해낸 것이 있다고 느낌"
@@ -735,7 +775,8 @@
         "성취",
         "자기평가"
       ],
-      "provisional": true
+      "provisional": true,
+      "normStatus": "provisional"
     },
     {
       "label": "감동",
@@ -748,7 +789,8 @@
       "neighbors": [
         "기쁨",
         "감사",
-        "뿌듯함"
+        "뿌듯함",
+        "경외감"
       ],
       "appraisalHints": [
         "마음이 움직였다고 느낌"
@@ -757,7 +799,9 @@
         "관계",
         "이야기"
       ],
-      "provisional": true
+      "provisional": true,
+      "contextDependent": true,
+      "normStatus": "provisional"
     },
     {
       "label": "감사",
@@ -779,7 +823,8 @@
         "관계",
         "도움"
       ],
-      "provisional": true
+      "provisional": true,
+      "normStatus": "provisional"
     },
     {
       "label": "친밀감",
@@ -792,7 +837,8 @@
       "neighbors": [
         "사랑",
         "신뢰",
-        "감사"
+        "감사",
+        "연결감"
       ],
       "appraisalHints": [
         "거리가 가깝다고 느낌"
@@ -800,7 +846,8 @@
       "contextTags": [
         "관계"
       ],
-      "provisional": true
+      "provisional": true,
+      "normStatus": "provisional"
     },
     {
       "label": "사랑",
@@ -810,7 +857,8 @@
       "neighbors": [
         "친밀감",
         "감동",
-        "신뢰"
+        "신뢰",
+        "다정함"
       ],
       "appraisalHints": [
         "아끼는 마음"
@@ -818,7 +866,8 @@
       "contextTags": [
         "관계"
       ],
-      "provisional": true
+      "provisional": true,
+      "normStatus": "provisional"
     },
     {
       "label": "편안함",
@@ -837,7 +886,8 @@
         "휴식",
         "안전"
       ],
-      "provisional": true
+      "provisional": true,
+      "normStatus": "provisional"
     },
     {
       "label": "평온",
@@ -850,7 +900,8 @@
       "neighbors": [
         "편안함",
         "안도",
-        "만족"
+        "만족",
+        "여유"
       ],
       "appraisalHints": [
         "서두르지 않아도 되는 느낌"
@@ -858,7 +909,8 @@
       "contextTags": [
         "휴식"
       ],
-      "provisional": true
+      "provisional": true,
+      "normStatus": "provisional"
     },
     {
       "label": "안도",
@@ -880,7 +932,8 @@
         "해소",
         "안전"
       ],
-      "provisional": true
+      "provisional": true,
+      "normStatus": "provisional"
     },
     {
       "label": "만족",
@@ -890,7 +943,8 @@
       "neighbors": [
         "뿌듯함",
         "평온",
-        "감사"
+        "감사",
+        "충만함"
       ],
       "appraisalHints": [
         "이만하면 됐다고 느낌"
@@ -899,7 +953,8 @@
         "결과",
         "일상"
       ],
-      "provisional": true
+      "provisional": true,
+      "normStatus": "provisional"
     },
     {
       "label": "신뢰",
@@ -912,7 +967,8 @@
       "neighbors": [
         "친밀감",
         "편안함",
-        "사랑"
+        "사랑",
+        "존경"
       ],
       "appraisalHints": [
         "기댈 수 있다고 느낌"
@@ -921,7 +977,296 @@
         "관계",
         "안전"
       ],
-      "provisional": true
+      "provisional": true,
+      "normStatus": "provisional"
+    },
+    {
+      "label": "설렘",
+      "family": "interest",
+      "valence": "positive",
+      "activation": "high",
+      "neighbors": [
+        "기대",
+        "신남",
+        "희망"
+      ],
+      "appraisalHints": [
+        "곧 있을 일에 몸이 먼저 반응함"
+      ],
+      "contextTags": [
+        "기다림",
+        "약속",
+        "관계"
+      ],
+      "provisional": true,
+      "normStatus": "provisional"
+    },
+    {
+      "label": "호기심",
+      "family": "interest",
+      "valence": "positive",
+      "activation": "medium",
+      "neighbors": [
+        "흥미",
+        "영감",
+        "놀라움"
+      ],
+      "appraisalHints": [
+        "더 알고 싶어짐"
+      ],
+      "contextTags": [
+        "배움",
+        "새로움"
+      ],
+      "provisional": true,
+      "normStatus": "provisional"
+    },
+    {
+      "label": "희망",
+      "family": "interest",
+      "valence": "positive",
+      "activation": "medium",
+      "neighbors": [
+        "기대",
+        "자신감",
+        "설렘"
+      ],
+      "appraisalHints": [
+        "좋아질 수 있다고 느낌"
+      ],
+      "contextTags": [
+        "미래",
+        "불확실"
+      ],
+      "provisional": true,
+      "normStatus": "provisional"
+    },
+    {
+      "label": "자신감",
+      "family": "pride",
+      "valence": "positive",
+      "activation": "medium",
+      "neighbors": [
+        "뿌듯함",
+        "희망",
+        "활기"
+      ],
+      "appraisalHints": [
+        "해볼 만하다고 느낌"
+      ],
+      "contextTags": [
+        "성취",
+        "시작"
+      ],
+      "provisional": true,
+      "normStatus": "provisional"
+    },
+    {
+      "label": "영감",
+      "family": "self-transcendent",
+      "valence": "positive",
+      "activation": "high",
+      "neighbors": [
+        "감탄",
+        "호기심",
+        "희망"
+      ],
+      "appraisalHints": [
+        "무언가 하고 싶어지는 느낌"
+      ],
+      "contextTags": [
+        "배움",
+        "창작"
+      ],
+      "provisional": true,
+      "normStatus": "provisional"
+    },
+    {
+      "label": "감탄",
+      "family": "self-transcendent",
+      "valence": "positive",
+      "activation": "medium",
+      "neighbors": [
+        "경외감",
+        "존경",
+        "감동"
+      ],
+      "appraisalHints": [
+        "대단하다고 느낌"
+      ],
+      "contextTags": [
+        "예술",
+        "솜씨"
+      ],
+      "provisional": true,
+      "normStatus": "provisional"
+    },
+    {
+      "label": "경외감",
+      "family": "self-transcendent",
+      "valence": "positive",
+      "activation": "medium",
+      "neighbors": [
+        "감탄",
+        "존경",
+        "감동"
+      ],
+      "appraisalHints": [
+        "나보다 큰 것을 마주한 느낌"
+      ],
+      "contextTags": [
+        "자연",
+        "규모",
+        "예술"
+      ],
+      "provisional": true,
+      "contextDependent": true,
+      "normStatus": "provisional"
+    },
+    {
+      "label": "존경",
+      "family": "self-transcendent",
+      "valence": "positive",
+      "activation": "low",
+      "neighbors": [
+        "감탄",
+        "경외감",
+        "신뢰"
+      ],
+      "appraisalHints": [
+        "그 사람의 방식을 높이 봄"
+      ],
+      "contextTags": [
+        "관계",
+        "가치"
+      ],
+      "provisional": true,
+      "normStatus": "provisional"
+    },
+    {
+      "label": "놀라움",
+      "family": "self-transcendent",
+      "valence": "positive",
+      "activation": "high",
+      "neighbors": [
+        "호기심",
+        "감탄",
+        "당황"
+      ],
+      "appraisalHints": [
+        "예상하지 못한 것을 마주함"
+      ],
+      "contextTags": [
+        "예상 밖",
+        "새로움"
+      ],
+      "provisional": true,
+      "contextDependent": true,
+      "normStatus": "provisional"
+    },
+    {
+      "label": "연민",
+      "family": "connection",
+      "valence": "positive",
+      "activation": "medium",
+      "neighbors": [
+        "다정함",
+        "슬픔",
+        "사랑"
+      ],
+      "appraisalHints": [
+        "다른 사람의 고통이 가깝게 느껴짐"
+      ],
+      "contextTags": [
+        "관계",
+        "고통"
+      ],
+      "provisional": true,
+      "contextDependent": true,
+      "normStatus": "provisional"
+    },
+    {
+      "label": "다정함",
+      "aliases": [
+        "따뜻한 마음"
+      ],
+      "family": "connection",
+      "valence": "positive",
+      "activation": "medium",
+      "neighbors": [
+        "사랑",
+        "친밀감",
+        "연민"
+      ],
+      "appraisalHints": [
+        "부드럽게 대하고 싶어짐"
+      ],
+      "contextTags": [
+        "관계",
+        "돌봄"
+      ],
+      "provisional": true,
+      "normStatus": "provisional"
+    },
+    {
+      "label": "연결감",
+      "family": "connection",
+      "valence": "positive",
+      "activation": "medium",
+      "neighbors": [
+        "친밀감",
+        "신뢰",
+        "감사"
+      ],
+      "appraisalHints": [
+        "혼자가 아니라고 느낌"
+      ],
+      "contextTags": [
+        "관계",
+        "거리"
+      ],
+      "provisional": true,
+      "normStatus": "provisional"
+    },
+    {
+      "label": "충만함",
+      "family": "ease",
+      "valence": "positive",
+      "activation": "low",
+      "neighbors": [
+        "만족",
+        "평온",
+        "감사"
+      ],
+      "appraisalHints": [
+        "비어 있지 않다고 느낌"
+      ],
+      "contextTags": [
+        "일상",
+        "회복"
+      ],
+      "provisional": true,
+      "normStatus": "provisional"
+    },
+    {
+      "label": "여유",
+      "family": "ease",
+      "valence": "positive",
+      "activation": "low",
+      "neighbors": [
+        "평온",
+        "편안함",
+        "만족"
+      ],
+      "appraisalHints": [
+        "서두르지 않아도 되는 상태"
+      ],
+      "contextTags": [
+        "휴식",
+        "시간"
+      ],
+      "provisional": true,
+      "normStatus": "provisional"
     }
   ]
 }

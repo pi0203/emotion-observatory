@@ -11,6 +11,11 @@ type Item = {
   neighbors: string[];
   appraisalHints?: string[];
   contextTags?: string[];
+  contextDependent?: boolean;
+  normStatus: "provisional" | "empirical";
+  valencePrototype?: number;
+  arousalPrototype?: number;
+  normSource?: string;
   provisional: boolean;
 };
 
@@ -19,10 +24,41 @@ const labels = items.map((item) => item.label);
 
 describe("vocabulary contract", () => {
   it("is large enough to explore but still marked provisional", () => {
-    expect(items.length).toBeGreaterThanOrEqual(36);
-    expect(items.length).toBeLessThanOrEqual(48);
+    // no hard cap: the practical range is what covers the gaps, not a target number
+    expect(items.length).toBeGreaterThanOrEqual(50);
     expect(emotions.provisional).toBe(true);
     expect(items.every((item) => item.provisional)).toBe(true);
+  });
+
+  it("no longer leans unpleasant", () => {
+    const pleasant = items.filter((item) => item.valence === "positive").length;
+    const unpleasant = items.filter((item) => item.valence === "negative").length;
+    expect(pleasant).toBeGreaterThanOrEqual(unpleasant);
+  });
+
+  it("covers the self-transcendent range that was almost empty", () => {
+    const labels = items.map((item) => item.label);
+    for (const word of ["경외감", "영감", "감탄", "존경", "연민"]) expect(labels).toContain(word);
+  });
+
+  it("leaves the norm fields empty until a source is verified", () => {
+    for (const item of items) {
+      expect(item.normStatus).toBe("provisional");
+      expect(item.valencePrototype).toBeUndefined();
+      expect(item.arousalPrototype).toBeUndefined();
+      expect(item.normSource).toBeUndefined();
+    }
+    expect(emotions.fieldNotes.norms).toMatch(/확인하지 못한 값은 넣지 않습니다/);
+  });
+
+  it("does not pin a context-dependent word to one side", () => {
+    const flagged = items.filter((item) => item.contextDependent).map((item) => item.label);
+    expect(flagged).toEqual(expect.arrayContaining(["경외감", "놀라움", "감동", "연민"]));
+
+    const fromUnpleasant = filterQuickCandidates({ x: 0.05, y: 0.5 }, 30).map((item) => item.label);
+    const fromPleasant = filterQuickCandidates({ x: 0.95, y: 0.5 }, 30).map((item) => item.label);
+    expect(fromUnpleasant).toContain("연민");
+    expect(fromPleasant).toContain("연민");
   });
 
   it("has unique labels and aliases that do not collide with labels", () => {

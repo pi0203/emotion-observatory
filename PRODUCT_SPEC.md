@@ -1187,9 +1187,16 @@ Important:
 - `aliases`는 같은 경험을 부르는 다른 말이며, label과 겹치지 않는다.
 - 검증척도(mDES, PANAS 등)의 문항을 복제하지 않는다. 연구에서 아이디어를 얻되
   문구와 예시는 독립적으로 작성한다.
-- 규모는 36~48개를 유지한다. 이것은 taxonomy 확정이 아니라 **탐색공간**이다.
-  불쾌·고활성 / 불안 / 상실·관계 / 자기평가 / 긍정·고활성 / 긍정·저활성·관계를
-  균형 있게 포함하고, 혐오 계열은 소수만 둔다.
+- **개수 제한을 두지 않는다.** 현재 실용 범위는 55~60개 정도이지만, 숫자를 채우는
+  것이 목적이 아니라 **빈 정서 영역을 보완**하는 것이 목적이다.
+  불쾌·고활성 / 불안 / 상실·관계 / 자기평가 / 긍정·고활성 / 긍정·저활성·관계 /
+  self-transcendent를 균형 있게 포함하고, 혐오 계열은 소수만 둔다.
+- `contextDependent: true`는 맥락에 따라 valence 경험이 달라질 수 있는 표현에 쓴다
+  (경외감·놀라움·감동·연민). "mixed emotion이라는 본질적 분류"가 아니라 **고정
+  판정을 피하라는 UI metadata**이며, 후보 탐색에서 양쪽 어느 방향에서도 제시된다.
+- norm 필드(`valencePrototype`, `arousalPrototype`, `valenceSD`, `arousalSD`,
+  `normSource`, `normStatus`)는 계약만 존재한다. **출처와 사용 조건을 확인하지 못한
+  값은 넣지 않는다.** `normStatus: "provisional"`인 동안에는 좌표가 없다.
 
 Future:
 allow user-created vocabulary.

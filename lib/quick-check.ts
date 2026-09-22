@@ -3,7 +3,7 @@ import type { EmotionSelection } from "./session-types";
 
 export type QuickPoint = { x: number; y: number };
 
-type VocabularyItem = { label: string; valence: string; activation: string; neighbors?: string[] };
+type VocabularyItem = { label: string; valence: string; activation: string; neighbors?: string[]; contextDependent?: boolean };
 
 const items: VocabularyItem[] = emotions.items;
 
@@ -31,10 +31,14 @@ const BAND_REACH = 0.5;
 const bandWeight = (position: number, band: keyof typeof BAND_CENTRE) =>
   Math.max(0, 1 - Math.abs(position - BAND_CENTRE[band]) / BAND_REACH);
 
+/**
+ * A word flagged `contextDependent` is offered from either side, because its
+ * valence depends on the situation and the app should not fix it to one.
+ */
 const rankWithin = (valence: string, y: number) =>
   items
     .map((item, index) => ({ item, index, fit: bandWeight(y, item.activation as keyof typeof BAND_CENTRE) }))
-    .filter((entry) => entry.item.valence === valence)
+    .filter((entry) => entry.item.valence === valence || entry.item.contextDependent)
     .sort((a, b) => b.fit - a.fit || a.index - b.index)
     .map((entry) => entry.item);
 
