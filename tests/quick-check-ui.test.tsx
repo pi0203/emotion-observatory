@@ -119,6 +119,19 @@ describe("quick check screens", () => {
     expect(screen.getByText(/사실은 그냥 지쳤던 것 같다/)).toBeTruthy();
   });
 
+  it("labels the affect scale by its own poles, not by 낮음/높음", () => {
+    render(<Home />);
+    fireEvent.click(screen.getByRole("button", { name: /조금 더 천천히 살펴보기/ }));
+    fireEvent.click(screen.getByRole("button", { name: /조금 살펴보고 싶어요/ }));
+    fireEvent.click(screen.getByRole("button", { name: "건너뛰기" })); // body
+
+    // "불쾌함이 낮음"은 축의 뜻과 맞지 않는다
+    expect(screen.queryByText("낮음")).toBeNull();
+    expect(screen.queryByText("높음")).toBeNull();
+    expect(screen.getAllByText("불쾌함 쪽").length).toBeGreaterThan(0);
+    expect(screen.getAllByText("활성됨 쪽").length).toBeGreaterThan(0);
+  });
+
   it("does not put the whole vocabulary on the deep emotion step either", () => {
     render(<Home />);
     fireEvent.click(screen.getByRole("button", { name: /조금 더 천천히 살펴보기/ }));

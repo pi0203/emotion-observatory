@@ -60,7 +60,8 @@ export const buildSynthesis = (session: EmotionSession): Synthesis => {
   const bothAffects = Boolean(quick?.affect && !quick.affect.unknown && deep?.affect);
 
   if (quick?.affect && !bothAffects) {
-    lines.push({ id: "quick-affect", text: `빠른 확인에서 전체적인 느낌을 ${quickAffectText(quick.affect)}로 표시했습니다.` });
+    const text = quickAffectText(quick.affect);
+    lines.push({ id: "quick-affect", text: `빠른 확인에서 전체적인 느낌을 ${text}${particleFor(text, "으로", "로")} 표시했습니다.` });
   }
 
   if (deep?.body?.length) {
@@ -93,7 +94,7 @@ export const buildSynthesis = (session: EmotionSession): Synthesis => {
   if (bothAffects) {
     comparison.push({
       id: "affect-before-after",
-      text: `처음 빠른 확인에서는 ${quickAffectText(quick!.affect)} 쪽이었고, 조금 더 살펴본 뒤에는 ${deepAffectText(deep!.affect)}로 표시했습니다.`,
+      text: `처음 빠른 확인에서는 ${quickAffectText(quick!.affect)} 쪽이었고, 조금 더 살펴본 뒤에는 ${deepAffectText(deep!.affect)}${particleFor(deepAffectText(deep!.affect), "으로", "로")} 표시했습니다.`,
     });
   }
 

@@ -96,6 +96,16 @@ describe("synthesis content", () => {
     expect(text).not.toContain("억울함를");
   });
 
+  it("uses 으로 after the affect labels, which all end in a consonant", () => {
+    const deep = allText(deepAfterQuick());
+    expect(deep).toContain("가라앉음으로 표시했습니다");
+    expect(deep).not.toContain("가라앉음로");
+
+    const quick = allText(quickOnly());
+    expect(quick).toContain("느낌으로 표시했습니다");
+    expect(quick).not.toContain("느낌로");
+  });
+
   it("produces nothing to show for an empty session", () => {
     expect(hasSynthesis(buildSynthesis(createSession()))).toBe(false);
   });
