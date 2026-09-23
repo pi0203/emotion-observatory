@@ -1228,7 +1228,7 @@ Rules:
 
 Prefer local-first for MVP.
 
-## Session (storage schema v2)
+## Session (storage schema v4)
 
 **한 순간의 자기관찰은 깊이와 무관하게 하나의 세션이다.** Quick Check만 한 기록과
 Quick Check 뒤 Deep Reflection까지 간 기록이 별개의 레코드로 쪼개지지 않는다.
@@ -1301,8 +1301,8 @@ type EmotionSession = {
 ### Persistence
 
 ```text
-emotion-lab:draft:v3       진행 중 세션 1개
-emotion-lab:completed:v3   완료·중단 세션 목록 (newest first)
+emotion-lab:draft:v4       진행 중 세션 1개
+emotion-lab:completed:v4   완료·중단 세션 목록 (newest first)
 ```
 
 - completed 저장은 **id 기준 upsert**다. reopen으로 `completed → draft → completed`를
@@ -1332,6 +1332,13 @@ Quick과 Deep이 같은 pad를 쓰므로 같은 좌표가 화면마다 다르게
   categorical band의 딱딱한 경계를 완화하는 **잠정 장치**이며, 단어에 좌표를
   부여하지 않는다. empirical norm이 연결되면 교체한다 (PROJECT_CONTEXT Decision B).
 - third axis는 추가하지 않는다.
+
+### v3 → v4 migration
+
+`support.chosen`이 v3에서는 **고른 방향**을 담았는데, v4의 구조는 같은 자리를
+**방향 안에서 고른 대응**으로 읽는다. 그대로 두면 값의 의미가 바뀌므로 `need`로
+옮기고 `chosen`은 비운다. stage 이름 변경(`micro-learning` → `coach-note` 등)도
+같은 단계에서 처리한다.
 
 ### v2 → v3 migration
 
