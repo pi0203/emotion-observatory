@@ -1716,7 +1716,7 @@ Mental-health adjacent tooling should not depend on “discoverability” for sa
 
 ## Explicitly NOT MVP
 
-- login
+- login (MVP 이후 방향은 [PROJECT_CONTEXT §11](PROJECT_CONTEXT.md))
 - social sharing
 - therapist dashboard
 - LLM dependency
