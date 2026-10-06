@@ -5,3 +5,6 @@ out/
 .DS_Store
 .vercel
 .env*
+
+# papers kept locally for evidence review, never committed
+papers/
