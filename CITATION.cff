@@ -1,0 +1,11 @@
+# 이 저장소를 인용할 때 쓰는 정보입니다. 저자 표시는 개인이 아니라 기여자 전체를 가리킵니다.
+# 아직 정해지지 않은 값(DOI, 공개 저장소 주소, 배포 날짜)은 만들어 넣지 않았습니다. 정해지면 추가합니다.
+cff-version: 1.2.0
+message: "이 소프트웨어를 인용할 때는 아래 정보를 사용해 주세요."
+type: software
+title: "감정 관찰실"
+abstract: "몸의 상태, 상황, 의미, 감정 개념을 구별해 보는 local-first 자기관찰 웹앱. 감정을 판정하지 않고, 구별할 수 있는 선택지를 넓히는 것을 목적으로 한다. 의료 도구가 아니며 효과는 검증되지 않았다."
+authors:
+  - name: "감정 관찰실 contributors"
+license: MIT
+url: "https://emotion-observatory.vercel.app"
