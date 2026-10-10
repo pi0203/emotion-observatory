@@ -314,6 +314,19 @@ function CoachNavigation({ onNext, onLeave }: { onNext: () => void; onLeave: () 
   return <div className="navigation"><button className="quiet-button coach-leave" onClick={onLeave}>예시 연습 그만하고 요약으로</button><button className="primary-button" onClick={onNext}>다음 <span>→</span></button></div>;
 }
 
+/**
+ * The coach's three kinds of area — the example, what the user picks, and the
+ * note about it — each look different. The role is carried by a real text
+ * label and a different edge, never by colour alone. Coach screens only.
+ */
+function ExampleZone({ label, id, children }: { label: string; id: string; children: React.ReactNode }) {
+  return <section className="zone zone-example" aria-labelledby={id}><span className="zone-label" id={id}>{label}</span>{children}</section>;
+}
+
+function MineZone({ children }: { children: React.ReactNode }) {
+  return <div className="zone zone-mine" role="group" aria-label="내 선택">{children}</div>;
+}
+
 /** A selected choice carries a visible mark, so the state never rests on colour alone. */
 function Mark({ on }: { on: boolean }) {
   return on ? <span className="choice-mark" aria-hidden="true">✓ </span> : null;
@@ -328,11 +341,13 @@ function CoachAppraisalScreen({ session, onToggle, onOwn, onNext, onLeave }: { s
   return <Screen>
     <StepHeading step="예시로 연습하기" title={set.question} hint="같은 예시라도 사람마다, 또 어떤 관계와 상황인지에 따라 눈에 들어오는 것이 다를 수 있어요. 정답을 맞히는 문제가 아닙니다." />
     <ExampleNotice />
-    <div className="scenario-card"><span className="scenario-label">예시 상황</span>{set.event}</div>
+    <ExampleZone label="예시 상황" id="coach-example-appraisal">{set.event}</ExampleZone>
+    <MineZone>
     <p className="small-note">여러 개를 골라도 되고, 하나도 고르지 않아도 됩니다.</p>
     <div className="choice-list">{[...set.appraisals, ...APPRAISAL_ESCAPES].map((item) => <button className={picked.includes(item.id) ? "selected" : ""} aria-pressed={picked.includes(item.id)} key={item.id} onClick={() => onToggle(item.id)}><Mark on={picked.includes(item.id)} />{item.text}</button>)}</div>
     <label className="field-label" htmlFor="coach-own-appraisal">이 예시에서 눈에 띈 다른 것을 내 말로 적기</label>
     <input id="coach-own-appraisal" className="text-input" value={own} onChange={(event) => { setOwn(event.target.value); onOwn(event.target.value); }} placeholder="예: 대답을 기다리는 시간이 길었다" />
+    </MineZone>
     <CoachNavigation onNext={onNext} onLeave={onLeave} />
   </Screen>;
 }
@@ -348,11 +363,14 @@ function CoachWordsScreen({ session, onToggle, onOwnWord, onNext, onLeave }: { s
   const observations = coachResult(session)?.observations ?? [];
   return <Screen>
     <StepHeading step="예시로 연습하기" title="이 예시에서 가까울 수 있는 표현이 있나요?" hint="아래 표현에는 순서나 정답이 없습니다. 이 세 가지가 이 예시를 나누는 유일한 방법도 아니어서, 다른 말을 직접 적는 것도 똑같은 선택입니다." />
-    {set && <div className="scenario-card compact"><span className="scenario-label">예시 상황</span>{set.event}{observations.length > 0 && <span className="scenario-picked">눈에 띈 것 · {observations.join(" ")}</span>}</div>}
+    {set && <ExampleZone label="예시 상황" id="coach-example-words">{set.event}</ExampleZone>}
+    <MineZone>
+    {observations.length > 0 && <p className="zone-recap">눈에 띈 것 · {observations.join(" ")}</p>}
     <div className="chip-grid" role="group" aria-label="이 예시에서 가까울 수 있는 표현">{[...(set?.words ?? []), ...COACH_ESCAPES].map((label) => <button className={`chip ${picked.includes(label) ? "selected" : ""}`} aria-pressed={picked.includes(label)} key={label} onClick={() => onToggle(label)}><Mark on={picked.includes(label)} />{label}</button>)}</div>
     <label className="field-label" htmlFor="coach-own">내 말로 표현하기</label>
     <input id="coach-own" className="text-input" value={own} onChange={(event) => { setOwn(event.target.value); onOwnWord(event.target.value); }} placeholder="예: 김이 새는 느낌" />
     <p className="small-note">여러 개를 골라도, 하나도 고르지 않아도 됩니다.</p>
+    </MineZone>
     <CoachNavigation onNext={onNext} onLeave={onLeave} />
   </Screen>;
 }
@@ -369,11 +387,15 @@ function CoachNoteScreen({ session, onDone }: { session: EmotionSession; onDone:
   return <Screen>
     <p className="eyebrow">예시로 연습하기 · 짧은 참고</p>
     <h1>단어는 정답표가 아니라<br />살펴보는 도구입니다.</h1>
-    <p className="lede">{set?.note}</p>
-    {result && <div className="summary-card">
-      <SummaryRow label={fromExample ? "예시에서 눈에 띈 것" : "이 단계에서 고른 관찰"} value={result.observations.join(" ") || "고르지 않음"} />
-      <SummaryRow label={fromExample ? "예시에 가까울 수 있는 표현" : "이 단계에서 고른 표현"} value={result.expressions.join(" · ") || "고르지 않음"} />
-    </div>}
+    <aside className="zone zone-note" aria-label="참고 설명"><p>{set?.note}</p></aside>
+    {result && (() => {
+      const rows = <>
+        <SummaryRow label={fromExample ? "예시에서 눈에 띈 것" : "이 단계에서 고른 관찰"} value={result.observations.join(" ") || "고르지 않음"} />
+        <SummaryRow label={fromExample ? "예시에 가까울 수 있는 표현" : "이 단계에서 고른 표현"} value={result.expressions.join(" · ") || "고르지 않음"} />
+      </>;
+      // a record of unknown origin is not labelled an example after the fact
+      return fromExample ? <ExampleZone label="예시 연습 결과" id="coach-example-result">{rows}</ExampleZone> : <div className="summary-card">{rows}</div>;
+    })()}
     <p className="summary-footnote">{fromExample ? "예시 연습의 결과입니다. 앞에서 고른 내 표현을 바꾸지 않고, 요약에도 쓰이지 않습니다." : "이 기록이 예시 연습으로 저장되었는지는 확인할 수 없습니다. 앞에서 고른 내 표현을 바꾸지 않고, 요약에도 쓰이지 않습니다."}</p>
     <button className="primary-button" onClick={onDone}>요약으로 돌아가기</button>
   </Screen>;

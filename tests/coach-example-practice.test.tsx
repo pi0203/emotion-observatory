@@ -49,6 +49,9 @@ const openCoachFor = (set: CoachSet) => {
   fireEvent.click(screen.getByRole("button", { name: /표현 사이의 차이 살펴보기/ }));
 };
 
+/** The example's results, found by the role a screen reader announces. */
+const exampleResult = () => screen.getByRole("region", { name: "예시 연습 결과" });
+
 const next = () => fireEvent.click(screen.getByRole("button", { name: /다음/ }));
 
 const offeredWordLabels = () =>
@@ -126,7 +129,7 @@ describe("the coach as practice on an example", () => {
     expect(screen.getByRole("button", { name: "억울함" }).textContent).toBe("✓ 억울함");
     fireEvent.change(screen.getByLabelText("내 말로 표현하기"), { target: { value: "김이 새는 느낌" } });
     next();
-    const card = document.querySelector(".summary-card")!.textContent ?? "";
+    const card = exampleResult().textContent ?? "";
     expect(card).toContain("억울함 · 답답함 · “김이 새는 느낌”");
   });
 
@@ -139,7 +142,7 @@ describe("the coach as practice on an example", () => {
     next();
     for (const label of picks) fireEvent.click(screen.getByRole("button", { name: label }));
     next();
-    const rows = Array.from(document.querySelectorAll(".summary-card .summary-row strong")).map((row) => row.textContent);
+    const rows = Array.from(exampleResult().querySelectorAll(".summary-row strong")).map((row) => row.textContent);
     expect(rows).toEqual(["고르지 않음", shown]);
     fireEvent.click(screen.getByRole("button", { name: "요약으로 돌아가기" }));
     expect(screen.getByText("여기까지 살펴보았습니다.")).toBeTruthy();
@@ -154,7 +157,7 @@ describe("the coach as practice on an example", () => {
     next();
     const shown = document.querySelector(".screen")!.textContent ?? "";
     expect(shown).not.toMatch(/살펴보기 전|살펴본 뒤|전에는|뒤에는|달라졌|바뀌었/);
-    expect(document.querySelector(".summary-card")!.textContent).not.toContain("짜증");
+    expect(exampleResult().textContent).not.toContain("짜증");
     expect(shown).toContain("예시 연습의 결과입니다");
   });
 
