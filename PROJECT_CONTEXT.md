@@ -9,6 +9,7 @@
 > - [docs/NORMS.md](docs/NORMS.md): 한국어 valence/arousal norm을 연결하기 전에 확인할 것
 > - [docs/EMOTION_CULTURE.md](docs/EMOTION_CULTURE.md): 감정 어휘와 문화 — Barrett의 관점 / cross-cultural 증거 / 아직 논쟁 중인 것을 구분해 기록
 > - [docs/EVIDENCE_CHAIN.md](docs/EVIDENCE_CHAIN.md): 이 앱이 필요한가 — 근거 사슬 A~E와 원문 검토 결과
+> - [docs/AESTHETIC_SOURCES.md](docs/AESTHETIC_SOURCES.md): 설계 영감과 가설의 출처(영화 미학 등). 효과의 근거가 아니다
 >
 > 충돌하면 **PRODUCT_SPEC.md가 구현의 source of truth**이고, 이 문서는 그 위의 의도다.
 
