@@ -9,7 +9,7 @@ import type { AffectPoint, BodyObservation, DeepReflection, EmotionSelection, Em
 
 type DeepContext = NonNullable<DeepReflection["context"]>;
 type DeepOutcome = NonNullable<DeepReflection["outcome"]>;
-import { dropCompleted, loadCompleted, loadDraft, persistSession, removeDraft, saveCompleted } from "../lib/storage";
+import { getStorageAdapter } from "../lib/storage-adapter";
 import { HELPED, TRIED, formatWhen, needLabel, responseLabels, summarise } from "../lib/records";
 import { migrateLegacyStorage } from "../lib/migrations";
 import { expandCandidates, filterQuickCandidates } from "../lib/quick-check";
@@ -17,6 +17,10 @@ import { activationLabel, quickActivation, quickValence, scaleLabel } from "../l
 import { buildSynthesis, hasSynthesis } from "../lib/synthesis";
 import stepNotes from "../data/step-notes.ko.json";
 import needsData from "../data/needs.ko.json";
+
+// Every read and write of a record goes through the one storage seam. It is
+// synchronous, like the localStorage calls it wraps, so no call site changes.
+const { dropCompleted, loadCompleted, loadDraft, persistSession, removeDraft, saveCompleted } = getStorageAdapter();
 
 const progress: Record<string, string> = {
   body: "1 / 6",
