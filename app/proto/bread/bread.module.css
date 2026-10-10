@@ -398,3 +398,42 @@
 .footerNotes strong {
   color: var(--ink, #24302A);
 }
+
+/* Example label and the words that could be close. The label matches the
+   Coach's example zone: a visible word, dark ink on warm (12.35:1). */
+.exampleLabel {
+  display: inline-block;
+  margin-bottom: 10px;
+  padding: 2px 8px;
+  color: var(--ink, #24302A);
+  background: var(--warm, #F6F3E9);
+  border: 1px solid var(--line, #DCE7DF);
+  border-radius: 3px;
+  font: 600 13px system-ui, sans-serif;
+}
+
+.wordList {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 14px 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+/* square and thin-edged so these read as text, not as the pill buttons above */
+.wordItem {
+  padding: 6px 12px;
+  color: var(--ink, #24302A);
+  background: var(--card, #ffffff);
+  border: 1px solid var(--line, #DCE7DF);
+  border-radius: 3px;
+  font-size: 15px;
+}
+
+.wordNote {
+  margin: 10px 0 16px;
+  color: var(--muted, #67756C);
+  font-size: 14px;
+  line-height: 1.7;
+}
