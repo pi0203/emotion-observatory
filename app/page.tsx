@@ -4,12 +4,12 @@ import { useEffect, useReducer, useRef, useState } from "react";
 import bodySignals from "../data/body-signals.ko.json";
 import concerns from "../data/concerns.ko.json";
 import { canGoBack, createSession, sessionReducer, understandRoute } from "../lib/session-types";
-import { APPRAISAL_ESCAPES, COACH_ESCAPES, coachSetFor, coachSets } from "../lib/coach";
+import { APPRAISAL_ESCAPES, COACH_ESCAPES, coachResult, coachSetFor, coachSets } from "../lib/coach";
 import type { AffectPoint, BodyObservation, DeepReflection, EmotionSelection, EmotionSession, QuickNonSelection, SynthesisFit } from "../lib/session-types";
 
 type DeepContext = NonNullable<DeepReflection["context"]>;
 type DeepOutcome = NonNullable<DeepReflection["outcome"]>;
-import { loadCompleted, loadDraft, persistSession, removeDraft, saveCompleted } from "../lib/storage";
+import { dropCompleted, loadCompleted, loadDraft, persistSession, removeDraft, saveCompleted } from "../lib/storage";
 import { HELPED, TRIED, formatWhen, needLabel, responseLabels, summarise } from "../lib/records";
 import { migrateLegacyStorage } from "../lib/migrations";
 import { expandCandidates, filterQuickCandidates } from "../lib/quick-check";
@@ -109,8 +109,8 @@ export default function Home() {
 
       {session.stage === "quick-affect" && <QuickAffectScreen onNext={(affect) => { dispatch({ type: "SET_QUICK_AFFECT", affect }); dispatch({ type: "SET_QUICK_CANDIDATES", candidatePool: filterQuickCandidates({ x: affect.valence ?? 0.5, y: affect.activation ?? 0.5 }) }); }} onUnknown={() => dispatch({ type: "SET_QUICK_UNKNOWN" })} />}
       {session.stage === "quick-candidates" && <QuickCandidatesScreen pool={session.quickCheck?.candidatePool ?? []} selected={session.quickCheck?.selected ?? []} response={session.quickCheck?.candidateResponse} onToggle={(label) => dispatch({ type: "TOGGLE_QUICK_CANDIDATE", label })} onRespond={(response) => dispatch({ type: "SET_QUICK_CANDIDATE_RESPONSE", response })} onAddCustom={(label) => dispatch({ type: "ADD_QUICK_CUSTOM", label })} onMeaning={(label, meaning) => dispatch({ type: "SET_PERSONAL_MEANING", label, meaning })} onFinish={() => dispatch({ type: "COMPLETE_QUICK" })} onCoach={() => dispatch({ type: "OPEN_GRANULARITY" })} onDeep={() => { dispatch({ type: "COMPLETE_QUICK" }); dispatch({ type: "ENTER_DEEP" }); }} />}
-      {session.stage === "coach-appraisal" && <CoachAppraisalScreen session={session} onToggle={(id) => dispatch({ type: "TOGGLE_APPRAISAL", id })} onOwn={(label) => dispatch({ type: "SET_OWN_APPRAISAL", label })} onNext={() => dispatch({ type: "GO_TO_COACH_WORDS" })} />}
-      {session.stage === "coach-words" && <CoachWordsScreen session={session} onToggle={(label) => dispatch({ type: "TOGGLE_COACH_WORD", label })} onOwnWord={(label) => dispatch({ type: "SET_COACH_OWN_WORD", label })} onNext={() => dispatch({ type: "FINISH_COACH" })} />}
+      {session.stage === "coach-appraisal" && <CoachAppraisalScreen session={session} onToggle={(id) => dispatch({ type: "TOGGLE_APPRAISAL", id })} onOwn={(label) => dispatch({ type: "SET_OWN_APPRAISAL", label })} onNext={() => dispatch({ type: "GO_TO_COACH_WORDS" })} onLeave={() => dispatch({ type: "CLOSE_COACH" })} />}
+      {session.stage === "coach-words" && <CoachWordsScreen session={session} onToggle={(label) => dispatch({ type: "TOGGLE_COACH_WORD", label })} onOwnWord={(label) => dispatch({ type: "SET_COACH_OWN_WORD", label })} onNext={() => dispatch({ type: "FINISH_COACH" })} onLeave={() => dispatch({ type: "CLOSE_COACH" })} />}
       {session.stage === "coach-note" && <CoachNoteScreen session={session} onDone={() => dispatch({ type: "CLOSE_COACH" })} />}
       {session.stage === "quick-summary" && <QuickSummaryScreen session={session} onDeep={() => dispatch({ type: "ENTER_DEEP" })} onFeedback={(feedback) => dispatch({ type: "SET_SYNTHESIS_FEEDBACK", ...feedback })} onSupport={() => dispatch({ type: "OPEN_SUPPORT" })} />}
       {session.stage === "entry" && (
@@ -271,7 +271,7 @@ function QuickCandidatesScreen({ pool, selected, response, onToggle, onRespond, 
       <button className="quiet-button" onClick={onFinish}>여기까지</button>
       {canCoach ? <button className="primary-button" onClick={onCoach}>표현 사이의 차이 살펴보기 <span>→</span></button> : <button className="secondary-button" onClick={onDeep}>조금 더 천천히 들여다보기</button>}
     </div>
-    {canCoach && <p className="small-note">상황 비교 prototype은 일부 후보부터 제공됩니다.</p>}
+    {canCoach && <p className="small-note">예시 상황으로 해보는 짧은 연습입니다. 지금 고른 표현은 그대로 남습니다. 예시는 일부 후보에만 준비되어 있습니다.</p>}
   </Screen>;
 }
 
@@ -298,48 +298,83 @@ function WhyWords() {
   </details>;
 }
 
-function CoachAppraisalScreen({ session, onToggle, onOwn, onNext }: { session: EmotionSession; onToggle: (id: string) => void; onOwn: (label: string) => void; onNext: () => void }) {
+/**
+ * The coach is practice on a written example, so every screen says so up front,
+ * outside any disclosure: the user's own moment is not what is being recorded.
+ */
+function ExampleNotice() {
+  return <p className="example-notice" role="note"><strong>예시 상황으로 해보는 표현 연습입니다.</strong> 당신의 실제 일이나 지금 감정을 기록하는 단계가 아니고, 앞에서 고른 내 표현은 바뀌지 않습니다.</p>;
+}
+
+/**
+ * Putting the example down is not stopping the record: it returns to the
+ * summary the user came from, and 그만하기 in the top bar stays for stopping.
+ */
+function CoachNavigation({ onNext, onLeave }: { onNext: () => void; onLeave: () => void }) {
+  return <div className="navigation"><button className="quiet-button coach-leave" onClick={onLeave}>예시 연습 그만하고 요약으로</button><button className="primary-button" onClick={onNext}>다음 <span>→</span></button></div>;
+}
+
+/** A selected choice carries a visible mark, so the state never rests on colour alone. */
+function Mark({ on }: { on: boolean }) {
+  return on ? <span className="choice-mark" aria-hidden="true">✓ </span> : null;
+}
+
+/** Asks what stands out in the example before showing any word, so no list reads as a set of right answers. */
+function CoachAppraisalScreen({ session, onToggle, onOwn, onNext, onLeave }: { session: EmotionSession; onToggle: (id: string) => void; onOwn: (label: string) => void; onNext: () => void; onLeave: () => void }) {
   const set = coachSetFor(session);
   const [own, setOwn] = useState(session.coach?.ownAppraisal ?? "");
   const picked = session.coach?.appraisals ?? [];
-  if (!set) return <Screen><StepHeading step="표현 사이의 차이" title="아직 비교해볼 세트가 없습니다." hint="고른 표현에 맞는 상황 비교가 아직 준비되지 않았습니다." /></Screen>;
+  if (!set) return <Screen><StepHeading step="예시로 연습하기" title="아직 비교해볼 세트가 없습니다." hint="고른 표현에 맞는 예시가 아직 준비되지 않았습니다." /></Screen>;
   return <Screen>
-    <StepHeading step="표현 사이의 차이" title={set.question} hint="사람마다, 또 어떤 관계와 상황인지에 따라 이 표현들을 조금 다르게 사용할 수 있어요. 아래 질문은 정답을 찾기보다 지금 경험에서 어떤 차이가 중요했는지 살펴보기 위한 것입니다." />
-    <div className="scenario-card">{set.event}</div>
+    <StepHeading step="예시로 연습하기" title={set.question} hint="같은 예시라도 사람마다, 또 어떤 관계와 상황인지에 따라 눈에 들어오는 것이 다를 수 있어요. 정답을 맞히는 문제가 아닙니다." />
+    <ExampleNotice />
+    <div className="scenario-card"><span className="scenario-label">예시 상황</span>{set.event}</div>
     <p className="small-note">여러 개를 골라도 되고, 하나도 고르지 않아도 됩니다.</p>
-    <div className="choice-list">{[...set.appraisals, ...APPRAISAL_ESCAPES].map((item) => <button className={picked.includes(item.id) ? "selected" : ""} aria-pressed={picked.includes(item.id)} key={item.id} onClick={() => onToggle(item.id)}>{item.text}</button>)}</div>
-    <label className="field-label" htmlFor="coach-own-appraisal">내 말로 적기</label>
+    <div className="choice-list">{[...set.appraisals, ...APPRAISAL_ESCAPES].map((item) => <button className={picked.includes(item.id) ? "selected" : ""} aria-pressed={picked.includes(item.id)} key={item.id} onClick={() => onToggle(item.id)}><Mark on={picked.includes(item.id)} />{item.text}</button>)}</div>
+    <label className="field-label" htmlFor="coach-own-appraisal">이 예시에서 눈에 띈 다른 것을 내 말로 적기</label>
     <input id="coach-own-appraisal" className="text-input" value={own} onChange={(event) => { setOwn(event.target.value); onOwn(event.target.value); }} placeholder="예: 대답을 기다리는 시간이 길었다" />
-    <div className="navigation"><span /><button className="primary-button" onClick={onNext}>다음 <span>→</span></button></div>
+    <CoachNavigation onNext={onNext} onLeave={onLeave} />
   </Screen>;
 }
 
-function CoachWordsScreen({ session, onToggle, onOwnWord, onNext }: { session: EmotionSession; onToggle: (label: string) => void; onOwnWord: (label: string) => void; onNext: () => void }) {
+/**
+ * Every offered word looks the same and sits in the same order whatever was
+ * picked on the previous screen; nothing is pre-selected or suggested.
+ */
+function CoachWordsScreen({ session, onToggle, onOwnWord, onNext, onLeave }: { session: EmotionSession; onToggle: (label: string) => void; onOwnWord: (label: string) => void; onNext: () => void; onLeave: () => void }) {
   const set = coachSetFor(session);
   const [own, setOwn] = useState(session.coach?.ownWord ?? "");
   const picked = session.coach?.wordsAfter ?? [];
-  const all = [...(set?.appraisals ?? []), ...APPRAISAL_ESCAPES];
-  const chosenTexts = [...(session.coach?.appraisals ?? []).map((id) => all.find((item) => item.id === id)?.text).filter(Boolean), ...(session.coach?.ownAppraisal ? [session.coach.ownAppraisal] : [])];
+  const observations = coachResult(session)?.observations ?? [];
   return <Screen>
-    <StepHeading step="표현 사이의 차이" title="이 중 지금 경험에 가까운 말이 있나요?" hint="이 세 가지가 이 상황을 나누는 유일한 방법은 아닙니다. 다른 말이 더 가깝다면 아래에 적어도 됩니다." />
-    {chosenTexts.length > 0 && <div className="micro-card">방금 이렇게 적으셨습니다. {chosenTexts.map((text) => `“${text}”`).join(" ")}</div>}
-    <div className="chip-grid">{[...(set?.words ?? []), ...COACH_ESCAPES].map((label) => <button className={`chip ${picked.includes(label) ? "selected" : ""}`} key={label} onClick={() => onToggle(label)}>{label}</button>)}</div>
+    <StepHeading step="예시로 연습하기" title="이 예시에서 가까울 수 있는 표현이 있나요?" hint="아래 표현에는 순서나 정답이 없습니다. 이 세 가지가 이 예시를 나누는 유일한 방법도 아니어서, 다른 말을 직접 적는 것도 똑같은 선택입니다." />
+    {set && <div className="scenario-card compact"><span className="scenario-label">예시 상황</span>{set.event}{observations.length > 0 && <span className="scenario-picked">눈에 띈 것 · {observations.join(" ")}</span>}</div>}
+    <div className="chip-grid" role="group" aria-label="이 예시에서 가까울 수 있는 표현">{[...(set?.words ?? []), ...COACH_ESCAPES].map((label) => <button className={`chip ${picked.includes(label) ? "selected" : ""}`} aria-pressed={picked.includes(label)} key={label} onClick={() => onToggle(label)}><Mark on={picked.includes(label)} />{label}</button>)}</div>
     <label className="field-label" htmlFor="coach-own">내 말로 표현하기</label>
     <input id="coach-own" className="text-input" value={own} onChange={(event) => { setOwn(event.target.value); onOwnWord(event.target.value); }} placeholder="예: 김이 새는 느낌" />
-    <div className="navigation"><span /><button className="primary-button" onClick={onNext}>다음 <span>→</span></button></div>
+    <p className="small-note">여러 개를 골라도, 하나도 고르지 않아도 됩니다.</p>
+    <CoachNavigation onNext={onNext} onLeave={onLeave} />
   </Screen>;
 }
 
+/**
+ * Shows what was explored in the example, and only that. The user's own words
+ * from before the coach are deliberately not put beside it: the two answer
+ * different questions, so side by side they would read as a change in feeling.
+ */
 function CoachNoteScreen({ session, onDone }: { session: EmotionSession; onDone: () => void }) {
   const set = coachSetFor(session);
-  const before = session.coach?.wordsBefore ?? [];
-  const after = session.coach?.wordsAfter ?? [];
-  const changed = after.length > 0 && (after.length !== before.length || before.some((word) => !after.includes(word)));
+  const result = coachResult(session);
+  const fromExample = result?.origin === "example-practice";
   return <Screen>
-    <p className="eyebrow">짧은 참고</p>
+    <p className="eyebrow">예시로 연습하기 · 짧은 참고</p>
     <h1>단어는 정답표가 아니라<br />살펴보는 도구입니다.</h1>
     <p className="lede">{set?.note}</p>
-    {changed && <div className="micro-card">살펴보기 전에는 {before.join(", ")}, 살펴본 뒤에는 {after.join(", ")}를 골랐습니다.</div>}
+    {result && <div className="summary-card">
+      <SummaryRow label={fromExample ? "예시에서 눈에 띈 것" : "이 단계에서 고른 관찰"} value={result.observations.join(" ") || "고르지 않음"} />
+      <SummaryRow label={fromExample ? "예시에 가까울 수 있는 표현" : "이 단계에서 고른 표현"} value={result.expressions.join(" · ") || "고르지 않음"} />
+    </div>}
+    <p className="summary-footnote">{fromExample ? "예시 연습의 결과입니다. 앞에서 고른 내 표현을 바꾸지 않고, 요약에도 쓰이지 않습니다." : "이 기록이 예시 연습으로 저장되었는지는 확인할 수 없습니다. 앞에서 고른 내 표현을 바꾸지 않고, 요약에도 쓰이지 않습니다."}</p>
     <button className="primary-button" onClick={onDone}>요약으로 돌아가기</button>
   </Screen>;
 }
@@ -578,7 +613,7 @@ function RecordDetail({ session, onFollowUp, onBack }: { session: EmotionSession
   </Screen>;
 }
 
-function StoppedScreen({ session }: { session: EmotionSession }) { return <Screen className="entry-screen"><p className="eyebrow">여기까지</p><h1>지금은 더 살펴보지<br />않아도 됩니다.</h1><p className="lede">경험에서 조금 거리를 두는 것도 선택입니다. 이 기록은 완료된 기록이 아니라, 중단한 기록으로 이 기기에 남습니다.</p><div className="stack-actions"><a className="primary-button centered" href="/">기록실로 돌아가기</a><button className="quiet-button" onClick={() => { removeDraft(); window.location.reload(); }}>이 기록을 지우기</button></div>{session.stopReason === "entry" && <p className="small-note">물 한 잔, 잠깐 걷기, 다른 일로 주의를 옮기기처럼 지금 가능한 것을 선택해보세요.</p>}</Screen>; }
+function StoppedScreen({ session }: { session: EmotionSession }) { return <Screen className="entry-screen"><p className="eyebrow">여기까지</p><h1>지금은 더 살펴보지<br />않아도 됩니다.</h1><p className="lede">경험에서 조금 거리를 두는 것도 선택입니다. 이 기록은 완료된 기록이 아니라, 중단한 기록으로 이 기기에 남습니다.</p><div className="stack-actions"><a className="primary-button centered" href="/">기록실로 돌아가기</a><button className="quiet-button" onClick={() => { removeDraft(); dropCompleted(session.id); window.location.reload(); }}>이 기록을 지우기</button></div>{session.stopReason === "entry" && <p className="small-note">물 한 잔, 잠깐 걷기, 다른 일로 주의를 옮기기처럼 지금 가능한 것을 선택해보세요.</p>}</Screen>; }
 
 function StopModal({ onClose, onStop }: { onClose: () => void; onStop: () => void }) { return <div className="modal-backdrop"><div className="modal" role="dialog" aria-modal="true"><p className="eyebrow">잠깐 확인할게요</p><h2>지금 더 생각하는 것이<br />도움이 되고 있나요?</h2><p>여기까지 알아차린 것으로 충분할 수 있습니다.</p><div className="modal-actions"><button className="secondary-button" onClick={onClose}>계속 살펴보기</button><button className="primary-button" onClick={onStop}>여기서 그만하기</button></div></div></div>; }
 

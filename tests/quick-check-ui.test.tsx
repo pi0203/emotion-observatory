@@ -43,7 +43,7 @@ describe("quick check screens", () => {
     fireEvent.click(screen.getByRole("button", { name: "짜증" }));
     fireEvent.click(screen.getByRole("button", { name: /표현 사이의 차이 살펴보기/ }));
     // the coach asks what mattered before it shows a single word
-    expect(screen.getByText(/그 상황에서 어떤 것들이 있었나요/)).toBeTruthy();
+    expect(screen.getByText(/이 예시 상황에는 어떤 것들이 있었을 수 있을까요/)).toBeTruthy();
     // the coach says this is one way of telling them apart, not the correct one
     expect(screen.getByText(/사람마다, 또 어떤 관계와 상황인지에 따라/)).toBeTruthy();
     for (const word of ["짜증", "억울함", "답답함"]) expect(screen.queryByRole("button", { name: word })).toBeNull();

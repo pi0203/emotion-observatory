@@ -117,14 +117,28 @@ export type EmotionSession = {
     /** A place to ask later; nothing asks on its own yet. */
     followUp?: { tried?: "yes" | "partly" | "no"; helped?: "yes" | "somewhat" | "no" | "unsure"; at?: string };
   };
-  /** A pass through the granularity coach. A change here is a change, not an improvement. */
+  /**
+   * A pass through the granularity coach: practice on a written example, not a
+   * record of the user's own moment. Nothing here is merged into quickCheck,
+   * deepReflection or the synthesis.
+   */
   coach?: {
+    /**
+     * Where the answers came from. Written by every coach opened from now on;
+     * records saved before it existed have none and read as unknown
+     * (`coachOrigin`), because back then the words screen asked about the
+     * user's own experience and we cannot tell which way they read it.
+     */
+    origin?: "example-practice";
     setId: string;
+    /** The user's own words at the moment the coach opened. A snapshot, never edited by the coach. */
     wordsBefore: string[];
-    /** Several can be true at once, which is the point: no appraisal owns a word. */
+    /** Observations picked about the example. Several can be true at once: no appraisal owns a word. */
     appraisals: string[];
     ownAppraisal?: string;
+    /** Expressions picked for the example, escapes included. Not the user's own words. */
     wordsAfter: string[];
+    /** An expression typed for the example. Not the user's own words. */
     ownWord?: string;
   };
   /** Screens already passed, so a step can be undone without losing anything. */
@@ -231,7 +245,7 @@ export const understandRoute = (session: EmotionSession): "deep" | "coach" | "no
 
 const openCoach = (state: EmotionSession): NonNullable<EmotionSession["coach"]> => {
   const set = coachSetFor(state);
-  return { setId: set?.id ?? "", wordsBefore: currentWords(state), appraisals: [], wordsAfter: [] };
+  return { origin: "example-practice", setId: set?.id ?? "", wordsBefore: currentWords(state), appraisals: [], wordsAfter: [] };
 };
 
 /** A finished session can still be revisited, but not rewound past its summary. */
@@ -385,7 +399,10 @@ const reduce = (state: EmotionSession, action: SessionAction): EmotionSession =>
     case "FINISH_COACH":
       return { ...state, stage: "coach-note" };
     case "CLOSE_COACH":
-      return { ...state, stage: state.deepReflection ? "summary" : "quick-summary" };
+      if (state.deepReflection) return { ...state, stage: "summary" };
+      // Opened straight from the candidate step, the quick check was never ended;
+      // landing on its summary without ending it would leave a draft behind.
+      return state.status === "draft" && !state.quickCheck?.endedAt ? completeQuick(state) : { ...state, stage: "quick-summary" };
     case "BACK": {
       const history = state.history ?? [];
       if (!history.length) return state;

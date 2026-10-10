@@ -123,7 +123,7 @@ Lisa Feldman Barrett의 constructed emotion 관점에서 많은 아이디어를 
    │ 여기까지 │  ← Quick Check만으로도 완결된 세션
    └──────────┘
       또는
-04 GRANULARITY COACH    비슷한 개념을 상황·appraisal 차이로 구별
+04 GRANULARITY COACH    예시 상황으로 비슷한 표현 사이의 차이를 연습 (내 기록에 합치지 않음)
       또는
 05 DEEP REFLECTION      몸 → affect → context → 무엇이 중요했는지 → emotion language
       ↓
@@ -177,6 +177,9 @@ Granularity와 Deep Reflection은 더 정확한 답을 찾기 위한 필수단�
 **Granularity Coach** — 단어 정의를 암기시키는 기능이 **아니다.**
 `짜증 ↔ 억울함 ↔ 답답함` 사이에서 "어떤 단어가 정답인가?"보다 **"그 상황에서 무엇이 중요했는가?"** 를 탐색하게 한다.
 같은 사건도 appraisal에 따라 여러 표현이 가능해야 한다.
+지금은 **적어 둔 예시 상황으로 하는 연습**이다. 사용자의 실제 사건이나 지금 감정을 기록하지 않고,
+예시에서 고른 표현은 개인 기록·요약에 합치지 않는다 (2026-10-10, [PRODUCT_SPEC §5.0](PRODUCT_SPEC.md)).
+자기 경험으로 하는 Coach는 설계 제안으로만 남겨 두었다.
 
 **Deep Reflection** — 빠른 affect 위치만으로 충분하지 않을 때 몸·상황·의미를 추가로 살펴본다.
 Quick과 Deep은 **같은 EmotionSession**에 속하고, **두 affect를 모두 보존한다.**
