@@ -294,7 +294,7 @@ function QuickCandidatesScreen({ pool, selected, response, onToggle, onRespond, 
     <div className="provisional-note">{t("common.provisionalNote")}</div>
     <TieredWords pool={pool} selectedLabels={selected.map((item) => item.label)} ownWords={selected.filter((item) => item.source === "custom").map((item) => item.label)} onToggle={onToggle} onAddCustom={onAddCustom} meanings={Object.fromEntries(selected.filter((item) => item.personalMeaning).map((item) => [item.label, item.personalMeaning!]))} onMeaning={onMeaning} />
 
-    <div className="quick-option-row">{(["none-close", "unsure"] as const).map((value) => <button className={`secondary-button ${response === value ? "selected" : ""}`} aria-pressed={response === value} key={value} onClick={() => onRespond(value)}>{t(`quickCandidates.decline.${value}`)}</button>)}</div>
+    <div className="quick-option-row">{(["none-close", "unsure"] as const).map((value) => <button className={`secondary-button ${response === value ? "selected" : ""}`} aria-pressed={response === value} key={value} onClick={() => onRespond(value)}><Mark on={response === value} />{t(`quickCandidates.decline.${value}`)}</button>)}</div>
     {response && <p className="small-note">{t(`quickCandidates.declined.${response}`)}</p>}
 
     <div className="quick-bottom-actions">
@@ -533,7 +533,7 @@ function EmotionScreen({ initial, affect, onNext }: { initial: EmotionSelection[
     <StepHeading step={t("emotion.step")} title={t("emotion.title")} hint={t("emotion.hint")} />
     <div className="provisional-note">{t("common.provisionalNote")}</div>
     <TieredWords pool={pool} selectedLabels={selected} ownWords={ownWords} onToggle={toggle} onAddCustom={addOwnWord} />
-    <div className="quick-option-row">{[t("emotion.escapes.several"), t("emotion.escapes.unsure")].map((label) => <button className={`secondary-button ${selected.includes(label) ? "selected" : ""}`} aria-pressed={selected.includes(label)} key={label} onClick={() => toggle(label)}>{label}</button>)}</div>
+    <div className="quick-option-row">{[t("emotion.escapes.several"), t("emotion.escapes.unsure")].map((label) => <button className={`secondary-button ${selected.includes(label) ? "selected" : ""}`} aria-pressed={selected.includes(label)} key={label} onClick={() => toggle(label)}><Mark on={selected.includes(label)} />{label}</button>)}</div>
     <Navigation note={stepNote(stepNotes, "emotion", selected.length > 0)} onNext={() => onNext(selected.map((label) => ({ label, source: ownWords.includes(label) ? "custom" as const : "suggested" as const })))} />
   </Screen>;
 }
