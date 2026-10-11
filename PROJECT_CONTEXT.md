@@ -379,7 +379,7 @@ Response를 고른 기록에만 "해봤나요 / 도움이 됐나요"를 묻고, 
 ## 11. 배포와 계정 방향
 
 **운영 배포 (2026-09-27)** — 수업용. private GitHub 저장소 + Vercel,
-https://emotion-observatory.vercel.app . `main`에 푸시하면 다시 배포된다.
+https://emotion-observatory.vercel.app . `main`에 푸시하면 다시 배포된다. (2026-10-11: 이 저장소의 git 작성자 이메일을 noreply로 설정한 뒤 main 푸시가 운영 배포로 이어진 것이 관찰됨. main 푸시는 곧 공개 배포다. 영어 화면은 reviewStatus가 draft인 동안 운영에서 꺼져 있다.)
 
 - 로그인이 없다. 기록은 **각자 브라우저의 localStorage에만** 남고 서버로 보내지 않는다.
 - 따라서 기기나 브라우저를 바꾸면 이전 기록이 보이지 않는다. 브라우저 데이터를 지우면 사라진다.
