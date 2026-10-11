@@ -411,6 +411,11 @@ export const en: Messages = {
     delete: "Delete this entry",
     entryNote: "Choose something you can do now, such as a glass of water, a short walk, or turning your attention to something else.",
   },
+  safety: {
+    landing: "This app is not a crisis service or a medical tool. It does not diagnose or replace treatment. If you are in distress or worried about your safety, please close the app and reach out to someone close to you, your local emergency services, or a mental health professional.",
+    stopped: "It is fine to stop here. If you are in distress or worried about your safety, please contact someone close to you, your local emergency services, or a mental health professional right away.",
+    moreDistressed: "If this has made things harder, it is fine to stop here. If you are in distress or worried about your safety, please contact someone close to you, your local emergency services, or a mental health professional.",
+  },
   stopModal: {
     eyebrow: "A quick check",
     title: "Is thinking more about this\nhelping right now?",

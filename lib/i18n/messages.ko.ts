@@ -403,6 +403,17 @@ export const ko = {
     delete: "이 기록을 지우기",
     entryNote: "물 한 잔, 잠깐 걷기, 다른 일로 주의를 옮기기처럼 지금 가능한 것을 선택해보세요.",
   },
+  /**
+   * Not-a-crisis-service notices (2026-10-12 draft, for owner and expert review).
+   * Shown on the landing, stopped and more-distressed screens only. They react to
+   * where the user is or what the user chose; nothing here judges risk (SAFETY.md).
+   * No phone numbers on screen until regional contacts are reviewed.
+   */
+  safety: {
+    landing: "이 앱은 위기 상담이나 의료·치료 도구가 아닙니다. 진단하거나 치료를 대신하지 않습니다. 지금 많이 힘들거나 안전이 걱정된다면, 이 앱을 닫고 가까운 사람, 지역의 응급 서비스, 정신건강 전문가에게 도움을 청해 주세요.",
+    stopped: "지금은 여기서 멈춰도 괜찮습니다. 많이 힘들거나 안전이 걱정된다면, 가까운 사람이나 지역의 응급 서비스, 정신건강 전문가에게 바로 연락해 주세요.",
+    moreDistressed: "더 힘들어졌다면 여기서 멈춰도 됩니다. 많이 힘들거나 안전이 걱정된다면, 가까운 사람이나 지역의 응급 서비스, 정신건강 전문가에게 연락해 주세요.",
+  },
   stopModal: {
     eyebrow: "잠깐 확인할게요",
     title: "지금 더 생각하는 것이\n도움이 되고 있나요?",

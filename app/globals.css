@@ -142,3 +142,9 @@ p, .lede, .hint, .step-note, .small-note, .summary-footnote { text-wrap: pretty;
 .zone-recap { margin: 14px 0 0; color: var(--muted); font-size: 14px; line-height: 1.6; }
 .zone-note { padding: 2px 0 2px 16px; border-left: 3px solid var(--line-strong); }
 .zone-note p { margin: 0; color: var(--muted); font-size: 17px; line-height: 1.7; }
+
+/* Not-a-crisis-service notice (SAFETY.md, 2026-10-12). Calm rather than alarming: no
+   warning colour or icon, body-colour text on the card surface with a plain edge.
+   Contrast: --ink on --card 13.44:1 light, 13.39:1 dark. */
+.safety-note { max-width: 520px; margin: 16px 0 0; padding: 12px 14px; color: var(--ink); background: var(--card); border: 1px solid var(--line-strong); border-radius: 3px; font: 14px/1.65 system-ui, sans-serif; }
+.screen .lede + .safety-note { margin-top: 20px; }
