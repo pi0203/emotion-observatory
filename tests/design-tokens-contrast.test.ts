@@ -71,6 +71,29 @@ describe.each(Object.entries(themes))("%s theme", (_name, tokens) => {
   });
 });
 
+describe("settled values (owner's choices, 2026-10-12)", () => {
+  it("uses candidate B for the selected background, a different hue from the example zone", () => {
+    expect(themes.light["accent-soft"].toUpperCase()).toBe("#FFFDF6");
+    expect(themes.dark["accent-soft"].toUpperCase()).toBe("#2C3A33");
+    expect(css).not.toMatch(/#F7FBF5|#26313D/i);
+  });
+
+  it.each(Object.entries(themes))("keeps body and secondary text legible on the selected background (%s)", (_name, tokens) => {
+    expect(ratio(tokens.ink, tokens["accent-soft"])).toBeGreaterThanOrEqual(4.5);
+    expect(ratio(tokens.muted, tokens["accent-soft"])).toBeGreaterThanOrEqual(4.5);
+  });
+
+  it("draws the dark pad's centre lines at 3:1 or more against the whole pad", () => {
+    expect(ratio(themes.dark.axis, themes.dark.card)).toBeGreaterThanOrEqual(3);
+    expect(ratio(themes.dark.axis, themes.dark.paper)).toBeGreaterThanOrEqual(3);
+    expect(css).toMatch(/\.affect-grid::before, \.affect-grid::after \{[^}]*background: var\(--axis\)/);
+  });
+
+  it("keeps the light pad's centre lines as they were", () => {
+    expect(themes.light.axis.toUpperCase()).toBe(themes.light.line.toUpperCase());
+  });
+});
+
 describe("palette structure", () => {
   it("defines every light colour token again for dark, so dark never falls back to a light value", () => {
     expect(darkStart).toBeGreaterThan(0);
