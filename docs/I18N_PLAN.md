@@ -6,6 +6,12 @@
 현재 상태(2026-10-11): **단계 A(기반 공사)만 끝났다.** 화면은 이전과 같은 한국어이고,
 영어 문구, 영어 데이터, `/en` 주소, 언어 전환 버튼은 아직 없다.
 
+현재 상태(2026-10-11 갱신): **단계 B 끝남.** 루트 레이아웃이 언어별로 나뉘었다(`app/(ko)/layout.tsx`는 `lang="ko"`, `app/(en)/en/layout.tsx`는 개발 서버에서 `lang="en"`).
+없는 주소의 404는 `app/global-not-found.tsx`(`experimental.globalNotFound`)가 그리고, 공사 전과 같다(lang ko, 제목 「감정 관찰실」, 픽셀 같음).
+`/en`은 개발 서버에서만 열리고, 영어 문구와 데이터가 없다는 상태 틀만 보인다. 한국어로 대신 보여 주지 않는다.
+- 운영 /en 404는 탭 제목과 서버 HTML 모양이 /nope와 다르다(`/proto/login`처럼 Next 오류 틀이고, 그려진 뒤 탭 제목이 「404: This page could not be found.」). 링크 없는 주소이며 화면 글자와 색, lang은 같다. 단계 F에서 /en 차단을 풀 때 해소된다.
+- 단계 F에서 지울 것: `app/(en)/en/layout.tsx`의 운영 분기(운영 빌드에서 한국어 문서 틀과 제목을 쓰는 부분)와 `app/(en)/en/page.tsx`의 `notFound()` 차단.
+
 ---
 
 ## 1. 정해진 것
@@ -108,7 +114,7 @@ norm 표를 읽는 규칙이라 사전이 아니라 `data/norm-headers.ko.json`�
 ### 단계 A에서 옮기지 않은 것
 
 - `data/*.ko.json`의 내용(어휘, 몸 감각, needs, Coach 세트, 단계 안내). 콘텐츠이므로 언어별로 새로 쓴다.
-- `app/layout.tsx`의 제목, 설명, `<html lang="ko">`. 단계 B에서 경로와 함께 다룬다.
+- `app/layout.tsx`의 제목, 설명, `<html lang="ko">`. 단계 B에서 경로와 함께 다룬다. (단계 B에서 처리: 제목과 설명은 사전의 `meta`, 문서 틀은 `app/korean-document.tsx`)
 - `app/proto/bread`. 운영에서 막혀 있는 실험 화면이라 범위 밖이다.
 - `scripts/audit-norms.mjs`의 한국어 출력. 개발 도구다.
 

@@ -1,23 +1,23 @@
 "use client";
 
 import { useEffect, useReducer, useRef, useState } from "react";
-import { canGoBack, createSession, sessionReducer, understandRoute } from "../lib/session-types";
-import { appraisalEscapes, coachEscapes, coachResult, coachSetFor, getCoachSets } from "../lib/coach";
-import type { AffectPoint, BodyObservation, DeepReflection, EmotionSelection, EmotionSession, QuickNonSelection, SynthesisFit } from "../lib/session-types";
+import { canGoBack, createSession, sessionReducer, understandRoute } from "../../lib/session-types";
+import { appraisalEscapes, coachEscapes, coachResult, coachSetFor, getCoachSets } from "../../lib/coach";
+import type { AffectPoint, BodyObservation, DeepReflection, EmotionSelection, EmotionSession, QuickNonSelection, SynthesisFit } from "../../lib/session-types";
 
 type DeepContext = NonNullable<DeepReflection["context"]>;
 type DeepOutcome = NonNullable<DeepReflection["outcome"]>;
-import { getStorageAdapter } from "../lib/storage-adapter";
-import { applyImport, buildExport, downloadExport, exportFileName, MAX_IMPORT_BYTES, parseImport, planImport, readFileText, type ImportError, type ImportPlan } from "../lib/record-transfer";
-import { formatWhen, helpedOptions, summarise, triedOptions } from "../lib/records";
-import { migrateLegacyStorage } from "../lib/migrations";
-import { expandCandidates, filterQuickCandidates } from "../lib/quick-check";
-import { activationLabel, quickActivation, quickValence, scaleLabel } from "../lib/affect-labels";
-import { buildSynthesis, hasSynthesis } from "../lib/synthesis";
-import { requireContent, type LocaleContent } from "../lib/content";
-import { DEFAULT_LOCALE } from "../lib/i18n/locale";
-import { I18nProvider, renderRich, useT } from "../lib/i18n/react";
-import type { Translate } from "../lib/i18n/t";
+import { getStorageAdapter } from "../../lib/storage-adapter";
+import { applyImport, buildExport, downloadExport, exportFileName, MAX_IMPORT_BYTES, parseImport, planImport, readFileText, type ImportError, type ImportPlan } from "../../lib/record-transfer";
+import { formatWhen, helpedOptions, summarise, triedOptions } from "../../lib/records";
+import { migrateLegacyStorage } from "../../lib/migrations";
+import { expandCandidates, filterQuickCandidates } from "../../lib/quick-check";
+import { activationLabel, quickActivation, quickValence, scaleLabel } from "../../lib/affect-labels";
+import { buildSynthesis, hasSynthesis } from "../../lib/synthesis";
+import { requireContent, type LocaleContent } from "../../lib/content";
+import { DEFAULT_LOCALE } from "../../lib/i18n/locale";
+import { I18nProvider, renderRich, useT } from "../../lib/i18n/react";
+import type { Translate } from "../../lib/i18n/t";
 
 // Every read and write of a record goes through the one storage seam. It is
 // synchronous, like the localStorage calls it wraps, so no call site changes.

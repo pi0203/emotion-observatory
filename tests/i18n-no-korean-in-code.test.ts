@@ -14,7 +14,7 @@ describe("no Korean text written into the code", () => {
   const files = appSourceFiles().filter((file) => !isMessageFile(file));
 
   it("checks the screen and every lib file", () => {
-    expect(files).toContain("app/page.tsx");
+    expect(files).toContain("app/(ko)/page.tsx");
     expect(files).toContain("lib/synthesis.ts");
     expect(files).toContain("lib/i18n/react.tsx");
   });

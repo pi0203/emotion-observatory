@@ -1,7 +1,7 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { cleanup, fireEvent, render, screen, within } from "@testing-library/react";
-import LoginPrototype from "../app/proto/login/LoginPrototype";
-import LoginPrototypePage from "../app/proto/login/page";
+import LoginPrototype from "../app/(ko)/proto/login/LoginPrototype";
+import LoginPrototypePage from "../app/(ko)/proto/login/page";
 
 const FORBIDDEN = [/안전하게/, /안심/, /사탕/, /쿠폰/, /친구/, /초대/, /서두르/, /지금 바로/, /마감/, /남았/, /한정/];
 const EMOJI = /\p{Extended_Pictographic}/u;

@@ -12,6 +12,11 @@
  * not what old ones say.
  */
 export const ko = {
+  /** The page title and description in <head>, for this language's root layout and the 404 page. */
+  meta: {
+    title: "감정 관찰실",
+    description: "몸, 상황, 의미를 천천히 구별해보는 자기관찰 도구",
+  },
   common: {
     appName: "감정 관찰실",
     next: "다음",

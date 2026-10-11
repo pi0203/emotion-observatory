@@ -1,7 +1,7 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { cleanup, fireEvent, render, screen, within } from "@testing-library/react";
-import BreadPrototype from "../app/proto/bread/BreadPrototype";
-import BreadPrototypePage from "../app/proto/bread/page";
+import BreadPrototype from "../app/(ko)/proto/bread/BreadPrototype";
+import BreadPrototypePage from "../app/(ko)/proto/bread/page";
 
 const SCENARIO_TITLES = ["중요한 발표 직전", "롤러코스터 꼭대기", "동료의 부당한 성과 가로채기", "비 오는 늦은 밤 서재", "인적이 끊긴 낯선 방"];
 

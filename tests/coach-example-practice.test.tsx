@@ -1,6 +1,6 @@
 import { afterEach, beforeEach, describe, expect, it } from "vitest";
 import { cleanup, fireEvent, render, screen } from "@testing-library/react";
-import Home from "../app/page";
+import Home from "../app/(ko)/page";
 import { APPRAISAL_ESCAPES, COACH_ESCAPES, coachOrigin, coachResult, coachSets } from "../lib/coach";
 import { createSession, sessionReducer } from "../lib/session-types";
 import { buildSynthesis } from "../lib/synthesis";

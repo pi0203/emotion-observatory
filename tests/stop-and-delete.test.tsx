@@ -1,6 +1,6 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { cleanup, fireEvent, render, screen } from "@testing-library/react";
-import Home from "../app/page";
+import Home from "../app/(ko)/page";
 import { createSession, sessionReducer } from "../lib/session-types";
 import { loadCompleted, loadDraft, persistSession, saveCompleted } from "../lib/storage";
 import type { EmotionSession } from "../lib/session-types";

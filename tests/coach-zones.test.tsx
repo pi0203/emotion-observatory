@@ -2,7 +2,7 @@ import { readFileSync } from "node:fs";
 import { join } from "node:path";
 import { afterEach, beforeEach, describe, expect, it } from "vitest";
 import { cleanup, fireEvent, render, screen } from "@testing-library/react";
-import Home from "../app/page";
+import Home from "../app/(ko)/page";
 import emotions from "../data/emotions.ko.json";
 import { coachSets } from "../lib/coach";
 import { createSession, sessionReducer } from "../lib/session-types";

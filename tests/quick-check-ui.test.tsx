@@ -1,6 +1,6 @@
 import { afterEach, beforeEach, describe, expect, it } from "vitest";
 import { cleanup, fireEvent, render, screen, within } from "@testing-library/react";
-import Home from "../app/page";
+import Home from "../app/(ko)/page";
 
 // jsdom reports a zero-sized box, which would make the affect tap produce NaN.
 const stubGridSize = () => {

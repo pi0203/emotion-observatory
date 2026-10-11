@@ -1,7 +1,7 @@
 import { readFileSync } from "node:fs";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { cleanup, fireEvent, render, screen, waitFor } from "@testing-library/react";
-import Home from "../app/page";
+import Home from "../app/(ko)/page";
 import {
   applyImport, buildExport, EXPORT_FORMAT, exportFileName, isSessionShape, localDate, MAX_IMPORT_BYTES,
   parseImport, planImport, serializeExport,

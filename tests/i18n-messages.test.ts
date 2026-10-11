@@ -25,7 +25,7 @@ const reachable = (call: MessageCall) =>
 describe("the Korean dictionary", () => {
   it("finds the message requests in the code", () => {
     expect(calls.length).toBeGreaterThan(150);
-    expect(calls.some((call) => call.where.startsWith("app/page.tsx"))).toBe(true);
+    expect(calls.some((call) => call.where.startsWith("app/(ko)/page.tsx"))).toBe(true);
     expect(calls.some((call) => call.where.startsWith("lib/synthesis.ts"))).toBe(true);
   });
 
