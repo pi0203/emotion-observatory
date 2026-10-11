@@ -39,11 +39,8 @@ export const localStorageAdapter: StorageAdapter = {
   saveCompleted: (session) => local.saveCompleted(session),
   dropCompleted: (id) => local.dropCompleted(id),
   persistSession: (session) => local.persistSession(session),
-  // 기존 함수만 쓴다: 저장 키와 형식은 lib/storage.ts 그대로 남는다
-  clearAll: () => {
-    for (const session of local.loadCompleted()) local.dropCompleted(session.id);
-    local.removeDraft();
-  },
+  // 키를 직접 지운다: 읽을 수 없게 깨진 저장값도 남지 않는다
+  clearAll: () => local.clearAllRecords(),
 };
 
 /** 지금은 항상 localStorage 어댑터. 계정 저장소는 이 함수 뒤에 나중에 붙인다. */

@@ -134,6 +134,19 @@ describe("delete all", () => {
     expect(storage.loadDraft()).toBeNull();
     expect(Object.keys(window.localStorage).every((key) => key.startsWith("emotion-lab:"))).toBe(true);
   });
+
+  it("clears a corrupted stored value too, by removing the keys themselves", () => {
+    const { COMPLETED_KEY, DRAFT_KEY } = getStorageKeys();
+    window.localStorage.setItem(COMPLETED_KEY, "{not json");
+    window.localStorage.setItem(DRAFT_KEY, "[also broken");
+    window.localStorage.setItem("someone-else", "keep");
+    storage.clearAll();
+    expect(window.localStorage.getItem(COMPLETED_KEY)).toBeNull();
+    expect(window.localStorage.getItem(DRAFT_KEY)).toBeNull();
+    expect(window.localStorage.getItem("someone-else")).toBe("keep");
+    storage.saveCompleted(record("after"));
+    expect(ids()).toEqual(["after"]);
+  });
 });
 
 describe("no network", () => {

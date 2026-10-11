@@ -54,4 +54,15 @@ export const persistSession = (session: EmotionSession) => {
   removeDraft();
 };
 
+/**
+ * Removes both keys outright rather than reading and rewriting them, so a
+ * stored value that no longer parses is cleared too. The keys themselves stay
+ * the same; the next save writes them again in the same format.
+ */
+export const clearAllRecords = () => {
+  if (typeof window === "undefined") return;
+  window.localStorage.removeItem(COMPLETED_KEY);
+  window.localStorage.removeItem(DRAFT_KEY);
+};
+
 export const getStorageKeys = () => ({ DRAFT_KEY, COMPLETED_KEY });
