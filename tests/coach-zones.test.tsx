@@ -121,8 +121,8 @@ describe("text contrast inside the coach zones, computed from the tokens in glob
     expect(ratio(text, background)).toBeGreaterThanOrEqual(4.5);
   });
 
-  it("keeps --muted off --warm, because that pair falls short", () => {
-    expect(ratio("muted", "warm")).toBeLessThan(4.5);
+  it("reaches 4.5:1 for --muted on --warm in the sage palette, and still keeps --muted off the example zone", () => {
+    expect(ratio("muted", "warm")).toBeGreaterThanOrEqual(4.5);
     const exampleRules = css.match(/\.zone-example[^{]*\{[^}]*\}/g) ?? [];
     expect(exampleRules.length).toBeGreaterThan(0);
     for (const rule of exampleRules) expect(rule).not.toContain("var(--muted)");

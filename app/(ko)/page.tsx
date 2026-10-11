@@ -254,7 +254,7 @@ function TieredWords({ pool, selectedLabels, ownWords, onToggle, onAddCustom, me
   const poolLabels = pool.map((item) => item.label);
   const selectedAsItems = selectedLabels.map((label) => ({ label, source: "suggested" as const }));
   const expanded = expandCandidates([...pool, ...selectedAsItems], undefined, t.locale).filter((item) => !poolLabels.includes(item.label));
-  const chip = (label: string) => <button className={`chip ${selectedLabels.includes(label) ? "selected" : ""}`} key={label} onClick={() => onToggle(label)}>{label}</button>;
+  const chip = (label: string) => <button className={`chip ${selectedLabels.includes(label) ? "selected" : ""}`} aria-pressed={selectedLabels.includes(label)} key={label} onClick={() => onToggle(label)}><Mark on={selectedLabels.includes(label)} />{label}</button>;
   const addCustom = () => { onAddCustom(custom); setCustom(""); };
 
   return <>
@@ -458,7 +458,7 @@ function BodyScreen({ initial, onNext }: { initial: BodyObservation[]; onNext: (
   const [custom, setCustom] = useState(initial.find((item) => item.custom)?.label ?? "");
   const [showAll, setShowAll] = useState(false);
   const toggle = (label: string) => setSelected((current) => current.includes(label) ? current.filter((item) => item !== label) : [...current, label]);
-  const chip = (label: string) => <button className={`chip ${selected.includes(label) ? "selected" : ""}`} key={label} onClick={() => toggle(label)}>{label}</button>;
+  const chip = (label: string) => <button className={`chip ${selected.includes(label) ? "selected" : ""}`} aria-pressed={selected.includes(label)} key={label} onClick={() => toggle(label)}><Mark on={selected.includes(label)} />{label}</button>;
   const items = bodySignals.items as { label: string; region: string; firstTier?: boolean }[];
   const first = items.filter((item) => item.firstTier);
   const rest = bodySignals.regions
@@ -503,7 +503,7 @@ function ContextScreen({ initial, onNext }: { initial?: DeepContext; onNext: (co
   const { stepNotes } = useContent();
   const [text, setText] = useState(initial?.eventText ?? "");
   const [source, setSource] = useState<DeepContext["source"]>(initial?.source ?? "event");
-  return <Screen><StepHeading step={t("context.step")} title={t("context.title")} hint={t("context.hint")} /><textarea className="text-area" value={text} onChange={(event) => setText(event.target.value)} placeholder={t("context.placeholder")} /><div className="segmented"><span>{t("context.sourceQuestion")}</span>{(["event", "memory", "anticipation", "thought"] as const).map((value) => <button className={source === value ? "selected" : ""} key={value} onClick={() => setSource(value)}>{t(`contextSource.${value}`)}</button>)}</div><Navigation note={stepNote(stepNotes, "context", text.trim().length > 0)} onNext={() => onNext({ eventText: text, source })} /></Screen>;
+  return <Screen><StepHeading step={t("context.step")} title={t("context.title")} hint={t("context.hint")} /><textarea className="text-area" value={text} onChange={(event) => setText(event.target.value)} placeholder={t("context.placeholder")} /><div className="segmented"><span>{t("context.sourceQuestion")}</span>{(["event", "memory", "anticipation", "thought"] as const).map((value) => <button className={source === value ? "selected" : ""} aria-pressed={source === value} key={value} onClick={() => setSource(value)}><Mark on={source === value} />{t(`contextSource.${value}`)}</button>)}</div><Navigation note={stepNote(stepNotes, "context", text.trim().length > 0)} onNext={() => onNext({ eventText: text, source })} /></Screen>;
 }
 
 function MeaningScreen({ initial, onNext }: { initial: string[]; onNext: (selected: string[]) => void }) {
@@ -512,7 +512,7 @@ function MeaningScreen({ initial, onNext }: { initial: string[]; onNext: (select
   const [selected, setSelected] = useState(initial);
   const [custom, setCustom] = useState("");
   const toggle = (item: string) => setSelected((current) => current.includes(item) ? current.filter((value) => value !== item) : [...current, item]);
-  return <Screen><StepHeading step={t("meaning.step")} title={t("meaning.title")} hint={t("meaning.hint")} /><div className="choice-list compact">{concerns.map((item) => <button className={selected.includes(item) ? "selected" : ""} key={item} onClick={() => toggle(item)}>{item}</button>)}</div><input className="text-input" value={custom} onChange={(event) => setCustom(event.target.value)} placeholder={t("common.ownWordsPlaceholder")} /><Navigation note={stepNote(stepNotes, "meaning", selected.length > 0 || custom.trim().length > 0)} onNext={() => onNext([...selected, ...(custom ? [custom] : [])])} /></Screen>;
+  return <Screen><StepHeading step={t("meaning.step")} title={t("meaning.title")} hint={t("meaning.hint")} /><div className="choice-list compact">{concerns.map((item) => <button className={selected.includes(item) ? "selected" : ""} aria-pressed={selected.includes(item)} key={item} onClick={() => toggle(item)}><Mark on={selected.includes(item)} />{item}</button>)}</div><input className="text-input" value={custom} onChange={(event) => setCustom(event.target.value)} placeholder={t("common.ownWordsPlaceholder")} /><Navigation note={stepNote(stepNotes, "meaning", selected.length > 0 || custom.trim().length > 0)} onNext={() => onNext([...selected, ...(custom ? [custom] : [])])} /></Screen>;
 }
 
 function EmotionScreen({ initial, affect, onNext }: { initial: EmotionSelection[]; affect?: AffectPoint; onNext: (selected: EmotionSelection[]) => void }) {
@@ -543,7 +543,7 @@ function OutcomeScreen({ onNext }: { onNext: (outcome: DeepOutcome) => void }) {
   const [clarity, setClarity] = useState<DeepOutcome["clarity"]>();
   const [usefulness, setUsefulness] = useState<DeepOutcome["usefulness"]>();
   const [note, setNote] = useState("");
-  return <Screen><StepHeading step={t("outcome.step")} title={t("outcome.title")} hint={t("outcome.hint")} /><div className="choice-list compact">{(["much_clearer", "clearer", "same", "more_complex", "more_distressed"] as const).map((value) => <button className={clarity === value ? "selected" : ""} key={value} onClick={() => setClarity(value)}>{t(`outcome.clarity.${value}`)}</button>)}</div><h2 className="subquestion">{t("outcome.usefulnessQuestion")}</h2><div className="inline-choices">{(["helpful", "unsure", "unhelpful"] as const).map((value) => <button className={usefulness === value ? "selected" : ""} key={value} onClick={() => setUsefulness(value)}>{t(`outcome.usefulness.${value}`)}</button>)}</div><input className="text-input" value={note} onChange={(event) => setNote(event.target.value)} placeholder={t("outcome.notePlaceholder")} /><Navigation disabled={!clarity || !usefulness} onNext={() => onNext({ clarity: clarity!, usefulness: usefulness!, note })} /></Screen>;
+  return <Screen><StepHeading step={t("outcome.step")} title={t("outcome.title")} hint={t("outcome.hint")} /><div className="choice-list compact">{(["much_clearer", "clearer", "same", "more_complex", "more_distressed"] as const).map((value) => <button className={clarity === value ? "selected" : ""} aria-pressed={clarity === value} key={value} onClick={() => setClarity(value)}><Mark on={clarity === value} />{t(`outcome.clarity.${value}`)}</button>)}</div><h2 className="subquestion">{t("outcome.usefulnessQuestion")}</h2><div className="inline-choices">{(["helpful", "unsure", "unhelpful"] as const).map((value) => <button className={usefulness === value ? "selected" : ""} aria-pressed={usefulness === value} key={value} onClick={() => setUsefulness(value)}><Mark on={usefulness === value} />{t(`outcome.usefulness.${value}`)}</button>)}</div><input className="text-input" value={note} onChange={(event) => setNote(event.target.value)} placeholder={t("outcome.notePlaceholder")} /><Navigation disabled={!clarity || !usefulness} onNext={() => onNext({ clarity: clarity!, usefulness: usefulness!, note })} /></Screen>;
 }
 
 function SummaryScreen({ session, onFeedback, onSupport }: { session: EmotionSession; onFeedback: (feedback: { fit?: SynthesisFit; correction?: string }) => void; onSupport: () => void }) {
@@ -579,7 +579,7 @@ function SynthesisSection({ session, onFeedback }: { session: EmotionSession; on
     <p className="synthesis-caveat">{synthesis.caveat}</p>
 
     <p className="synthesis-question">{t("synthesisSection.fitQuestion")}</p>
-    <div className="inline-choices">{(["close", "partly", "unsure"] as const).map((value) => <button className={fit === value ? "selected" : ""} aria-pressed={fit === value} key={value} onClick={() => onFeedback({ fit: value })}>{t(`synthesisSection.fit.${value}`)}</button>)}</div>
+    <div className="inline-choices">{(["close", "partly", "unsure"] as const).map((value) => <button className={fit === value ? "selected" : ""} aria-pressed={fit === value} key={value} onClick={() => onFeedback({ fit: value })}><Mark on={fit === value} />{t(`synthesisSection.fit.${value}`)}</button>)}</div>
 
     {editing
       ? <div className="own-word-block">
@@ -612,13 +612,13 @@ function NeedScreen({ session, onNeed, onResponse, onDeep, onCoach, onBack }: { 
     <StepHeading step={t("need.step")} title={t("need.title")} hint={t("need.hint")} />
     {needsData.groups.map((group) => <div key={group}>
       <p className="tier-label">{group}</p>
-      <div className="choice-list compact">{list.filter((item) => item.group === group).map((item) => <button className={need?.id === item.id ? "selected" : ""} aria-pressed={need?.id === item.id} key={item.id} onClick={() => onNeed(item.id)}>{item.label}</button>)}</div>
+      <div className="choice-list compact">{list.filter((item) => item.group === group).map((item) => <button className={need?.id === item.id ? "selected" : ""} aria-pressed={need?.id === item.id} key={item.id} onClick={() => onNeed(item.id)}><Mark on={need?.id === item.id} />{item.label}</button>)}</div>
     </div>)}
 
     {need?.responses && <div className="response-block">
       <p className="tier-label">{need.label}</p>
       {need.because && <p className="step-note">{need.because}</p>}
-      <div className="choice-list">{need.responses.map((option) => <button className={picked.includes(option.id) ? "selected" : ""} aria-pressed={picked.includes(option.id)} key={option.id} onClick={() => onResponse(option.id)}>{option.label}</button>)}</div>
+      <div className="choice-list">{need.responses.map((option) => <button className={picked.includes(option.id) ? "selected" : ""} aria-pressed={picked.includes(option.id)} key={option.id} onClick={() => onResponse(option.id)}><Mark on={picked.includes(option.id)} />{option.label}</button>)}</div>
     </div>}
 
     {need?.route && <div className="response-block">
@@ -784,10 +784,10 @@ function RecordDetail({ session, onFollowUp, onBack }: { session: EmotionSession
     {item.canFollowUp && <section className="synthesis">
       <p className="tier-label">{t("recordDetail.followUpTitle")}</p>
       <p className="synthesis-question">{t("recordDetail.triedQuestion")}</p>
-      <div className="inline-choices">{triedOptions(t.locale).map((option) => <button className={followUp?.tried === option.id ? "selected" : ""} aria-pressed={followUp?.tried === option.id} key={option.id} onClick={() => onFollowUp({ tried: option.id })}>{option.label}</button>)}</div>
+      <div className="inline-choices">{triedOptions(t.locale).map((option) => <button className={followUp?.tried === option.id ? "selected" : ""} aria-pressed={followUp?.tried === option.id} key={option.id} onClick={() => onFollowUp({ tried: option.id })}><Mark on={followUp?.tried === option.id} />{option.label}</button>)}</div>
       {(followUp?.tried === "yes" || followUp?.tried === "partly") && <>
         <p className="synthesis-question">{t("recordDetail.helpedQuestion")}</p>
-        <div className="inline-choices">{helpedOptions(t.locale).map((option) => <button className={followUp?.helped === option.id ? "selected" : ""} aria-pressed={followUp?.helped === option.id} key={option.id} onClick={() => onFollowUp({ helped: option.id })}>{option.label}</button>)}</div>
+        <div className="inline-choices">{helpedOptions(t.locale).map((option) => <button className={followUp?.helped === option.id ? "selected" : ""} aria-pressed={followUp?.helped === option.id} key={option.id} onClick={() => onFollowUp({ helped: option.id })}><Mark on={followUp?.helped === option.id} />{option.label}</button>)}</div>
       </>}
       <p className="synthesis-caveat">{t("recordDetail.followUpCaveat")}</p>
     </section>}
