@@ -1,0 +1,178 @@
+/* Login window mock-up (scoped). Existing tokens only, no new colour.
+   The app has no dark palette yet, so dark mode here swaps the roles of the
+   existing tokens inside this page: ink becomes the ground, paper the text.
+   Contrast on ink: paper 13.44, line 10.80, line-strong 4.23.
+   The fluorescent accent is used as a fill only, never as an edge or a ring.
+   Nothing here animates. */
+
+.root {
+  --lp-ground: var(--paper);
+  --lp-text: var(--ink);
+  --lp-soft: var(--muted);          /* 4.74:1 on paper */
+  --lp-edge: var(--line-strong);    /* 3.18:1 on paper */
+  --lp-rule: var(--line);
+  --lp-focus: var(--accent-ink);    /* 5.01:1 on paper */
+  --lp-primary-edge: var(--accent-ink);
+  --lp-hover: var(--accent-subtle);
+  min-height: 100vh;
+  color: var(--lp-text);
+  background: var(--lp-ground);
+  color-scheme: light;
+}
+
+@media (prefers-color-scheme: dark) {
+  .root {
+    --lp-ground: var(--ink);
+    --lp-text: var(--paper);
+    --lp-soft: var(--line);          /* 10.80:1 on ink */
+    --lp-edge: var(--line-strong);   /* 4.23:1 on ink */
+    --lp-rule: var(--muted);
+    --lp-focus: var(--paper);        /* 13.44:1 on ink */
+    --lp-primary-edge: transparent;  /* the accent fill itself carries the edge: 11.26:1 on ink */
+    --lp-hover: transparent;
+    color-scheme: dark;
+  }
+}
+
+.page {
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 40px 24px 80px;
+  word-break: keep-all;
+  overflow-wrap: break-word;
+}
+
+.badge {
+  display: inline-block;
+  margin: 0 0 18px;
+  padding: 4px 10px;
+  color: var(--ink);
+  background: var(--accent-soft);
+  border: 1px solid var(--line-strong);
+  border-radius: 3px;
+  font: 600 12px system-ui, sans-serif;
+  letter-spacing: .04em;
+}
+
+.title { margin: 0; font-size: clamp(30px, 6vw, 42px); font-weight: 400; line-height: 1.2; letter-spacing: -.03em; text-wrap: balance; }
+.lede { margin: 18px 0 0; color: var(--lp-soft); line-height: 1.7; text-wrap: pretty; }
+
+.controls { margin-top: 36px; padding-top: 24px; border-top: 1px solid var(--lp-rule); }
+.controlsTitle { margin: 0 0 14px; font: 600 14px system-ui, sans-serif; letter-spacing: .02em; }
+.controlRow { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; margin-top: 12px; }
+.controlLabel { color: var(--lp-soft); font: 14px system-ui, sans-serif; margin-right: 4px; }
+.pageNote { margin-top: 24px; padding: 12px 14px; border: 1px solid var(--lp-edge); border-radius: 3px; font: 14px system-ui, sans-serif; line-height: 1.6; }
+
+/* Buttons: the two choices in the window are the same size; the main one is filled. */
+.primary, .secondary, .toggle {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 48px;
+  padding: 12px 18px;
+  border-radius: 3px;
+  font: 600 14px system-ui, sans-serif;
+  line-height: 1.4;
+  text-align: center;
+}
+.primary { color: var(--ink); background: var(--accent); border: 1px solid var(--lp-primary-edge); }
+.primary:hover { background: var(--accent-hover); }
+.primary:active { background: var(--accent-press); }
+.secondary, .toggle { color: var(--lp-text); background: transparent; border: 1px solid var(--lp-edge); }
+.secondary:hover, .toggle:hover { border-color: var(--lp-text); background: var(--lp-hover); }
+.secondary:disabled { opacity: .55; cursor: not-allowed; }
+.toggle { min-height: 42px; padding: 8px 14px; }
+.toggle[aria-pressed="true"] { color: var(--ink); background: var(--accent-soft); border-color: var(--lp-text); }
+.toggleMark { font-weight: 400; }
+
+.primary:focus-visible, .secondary:focus-visible, .toggle:focus-visible, .closeX:focus-visible, .more summary:focus-visible, .panel:focus-visible {
+  outline: 2px solid var(--lp-focus);
+  outline-offset: 2px;
+}
+.primary:focus-visible { outline-color: var(--lp-text); }
+
+/* The window */
+.backdrop {
+  position: fixed;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  padding: 16px;
+  background: rgba(36, 48, 42, .4); /* the app's own modal backdrop */
+}
+
+.panel {
+  width: min(100%, 480px);
+  max-height: calc(100dvh - 32px);
+  overflow: auto;
+  padding: 28px;
+  color: var(--lp-text);
+  background: var(--lp-ground);
+  border: 1px solid var(--lp-edge);
+  border-radius: 3px;
+  box-shadow: 0 20px 70px rgba(36, 48, 42, .15);
+  word-break: keep-all;
+  overflow-wrap: break-word;
+}
+
+.panelHead { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; }
+.panelTitle { margin: 0; font-size: 24px; font-weight: 400; line-height: 1.35; text-wrap: balance; }
+
+.closeX {
+  flex: 0 0 auto;
+  width: 44px;
+  height: 44px;
+  margin: -8px -10px 0 0;
+  color: var(--lp-text);
+  background: transparent;
+  border: 1px solid transparent;
+  border-radius: 3px;
+  font: 400 26px/1 system-ui, sans-serif;
+}
+.closeX:hover { border-color: var(--lp-edge); }
+
+.firstLine { margin: 16px 0 0; font-size: 17px; line-height: 1.6; }
+.soft { margin: 10px 0 0; color: var(--lp-soft); font-size: 15px; line-height: 1.6; }
+
+.facts { margin: 16px 0 0; padding-left: 1.2em; color: var(--lp-text); font-size: 15px; line-height: 1.7; }
+.facts li + li { margin-top: 6px; }
+
+.more { margin-top: 16px; border-top: 1px solid var(--lp-rule); padding-top: 12px; }
+.more summary { cursor: pointer; font: 600 14px system-ui, sans-serif; padding: 6px 0; }
+.undecided { margin: 8px 0 0; font-size: 15px; line-height: 1.6; }
+.undecided div { display: grid; grid-template-columns: 1fr auto; gap: 12px; padding: 8px 0; border-bottom: 1px solid var(--lp-rule); }
+.undecided dt { color: var(--lp-soft); }
+.undecided dd { margin: 0; font-weight: 600; }
+
+.protoNote { margin: 16px 0 0; padding: 10px 12px; border: 1px solid var(--lp-edge); border-left-width: 3px; border-radius: 3px; font: 14px system-ui, sans-serif; line-height: 1.6; }
+
+.actions { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 22px; }
+.actionsSingle { display: grid; margin-top: 22px; }
+
+.exampleLabel, .noticeTag {
+  display: inline-block;
+  margin: 14px 0 0;
+  padding: 4px 10px;
+  color: var(--ink);
+  background: var(--accent-soft);
+  border: 1px solid var(--line-strong);
+  border-radius: 3px;
+  font: 700 14px system-ui, sans-serif;
+}
+.noticeTag { margin-top: 0; }
+
+.table { width: 100%; margin-top: 16px; border-collapse: collapse; font-size: 15px; }
+.caption { text-align: left; color: var(--lp-soft); font: 13px system-ui, sans-serif; padding-bottom: 6px; }
+.table th, .table td { padding: 10px 8px; text-align: left; border-bottom: 1px solid var(--lp-rule); vertical-align: top; }
+.table th { font: 600 13px system-ui, sans-serif; border-bottom-color: var(--lp-edge); }
+.table td:first-child { white-space: nowrap; }
+
+.confirm { margin-top: 18px; padding-top: 4px; border-top: 1px solid var(--lp-rule); }
+
+@media (max-width: 420px) {
+  .page { padding: 28px 16px 64px; }
+  .panel { padding: 20px; }
+  .panelTitle { font-size: 21px; }
+  .actions { grid-template-columns: 1fr; }
+  .undecided div { grid-template-columns: 1fr; gap: 2px; }
+}
