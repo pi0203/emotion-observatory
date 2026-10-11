@@ -95,7 +95,8 @@ function App() {
 
   if (session.stage === "landing") {
     if (openRecord) return <RecordDetail session={openRecord} onFollowUp={(followUp) => saveFollowUp(openRecord, followUp)} onBack={() => setOpenRecord(null)} />;
-    if (records) return <RecordsScreen records={records} onOpen={setOpenRecord} onBack={() => setRecords(null)} onChanged={() => { setRecords(loadCompleted()); setDraft(loadDraft()); }} />;
+    // the same side padding as the screens inside a session; on its own the list touched the screen edge on phones
+    if (records) return <main className="app-shell"><RecordsScreen records={records} onOpen={setOpenRecord} onBack={() => setRecords(null)} onChanged={() => { setRecords(loadCompleted()); setDraft(loadDraft()); }} /></main>;
     return <LandingScreen onQuick={() => dispatch({ type: "START_QUICK", locale: t.locale })} onDeep={() => dispatch({ type: "START_DEEP", locale: t.locale })} draft={draft} onResume={resume} onRecords={showRecords} />;
   }
 
