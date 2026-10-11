@@ -4,6 +4,7 @@
  * the point is to decide, with numbers in hand, whether a source can be used at
  * all. See PROJECT_CONTEXT.md, Decision C.
  */
+import headers from "../data/norm-headers.ko.json" with { type: "json" };
 
 export type NormRow = {
   word: string;
@@ -63,14 +64,9 @@ export const parseDelimited = (text: string): Record<string, string>[] => {
   return body.map((entry) => Object.fromEntries(headers.map((header, i) => [header.trim(), (entry[i] ?? "").trim()])));
 };
 
-const NAMES = {
-  word: ["word", "단어", "term", "label", "어휘", "emotion"],
-  valence: ["valence", "v", "정서가", "쾌", "pleasure"],
-  arousal: ["arousal", "a", "각성", "활성"],
-  valenceSD: ["valence_sd", "valencesd", "v_sd", "sd_v", "정서가sd"],
-  arousalSD: ["arousal_sd", "arousalsd", "a_sd", "sd_a", "각성sd"],
-  source: ["source", "출처", "study", "dataset", "origin"],
-};
+/** Column names in Korean and English tables; the Korean ones are data (data/norm-headers.ko.json). */
+const NAMES = headers.columns;
+const NO_SOURCE = headers.noSource;
 
 const findColumn = (headers: string[], candidates: string[]) =>
   headers.find((header) => candidates.includes(header.toLowerCase().replace(/[\s.()-]/g, ""))) ??
@@ -129,7 +125,7 @@ export const auditCoverage = (rows: NormRow[], vocabulary: VocabularyEntry[]): A
 
   const sourceCounts = new Map<string, number>();
   for (const match of matched) {
-    for (const source of new Set(match.rows.map((row) => row.source ?? "(출처 표기 없음)"))) {
+    for (const source of new Set(match.rows.map((row) => row.source ?? NO_SOURCE))) {
       sourceCounts.set(source, (sourceCounts.get(source) ?? 0) + 1);
     }
   }
@@ -138,7 +134,7 @@ export const auditCoverage = (rows: NormRow[], vocabulary: VocabularyEntry[]): A
     .filter((match) => match.rows.length > 1)
     .map((match) => ({
       label: match.label,
-      sources: [...new Set(match.rows.map((row) => row.source ?? "(출처 표기 없음)"))],
+      sources: [...new Set(match.rows.map((row) => row.source ?? NO_SOURCE))],
       valenceSpread: spread(match.rows.map((row) => row.valence)),
       arousalSpread: spread(match.rows.map((row) => row.arousal)),
     }))

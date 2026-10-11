@@ -1,11 +1,13 @@
-import emotions from "../data/emotions.ko.json";
+import { requireContent } from "./content";
+import { DEFAULT_LOCALE, type Locale } from "./i18n/locale";
 import type { EmotionSelection } from "./session-types";
 
 export type QuickPoint = { x: number; y: number };
 
 type VocabularyItem = { label: string; valence: string; activation: string; neighbors?: string[]; contextDependent?: boolean };
 
-const items: VocabularyItem[] = emotions.items;
+/** The offered vocabulary of one language. Korean unless a caller asks otherwise. */
+const vocabularyOf = (locale: Locale): VocabularyItem[] => requireContent(locale).emotions.items;
 
 const asSelections = (labels: string[]): EmotionSelection[] =>
   labels.map((label) => ({ label, source: "suggested" as const }));
@@ -35,7 +37,7 @@ const bandWeight = (position: number, band: keyof typeof BAND_CENTRE) =>
  * A word flagged `contextDependent` is offered from either side, because its
  * valence depends on the situation and the app should not fix it to one.
  */
-const rankWithin = (valence: string, y: number) =>
+const rankWithin = (items: VocabularyItem[], valence: string, y: number) =>
   items
     .map((item, index) => ({ item, index, fit: bandWeight(y, item.activation as keyof typeof BAND_CENTRE) }))
     .filter((entry) => entry.item.valence === valence || entry.item.contextDependent)
@@ -47,7 +49,8 @@ const rankWithin = (valence: string, y: number) =>
  * the vertical position orders the words within a side. Moving the finger
  * changes the mix rather than snapping between fixed cells.
  */
-export const filterQuickCandidates = (point: QuickPoint, limit = 5): EmotionSelection[] => {
+export const filterQuickCandidates = (point: QuickPoint, limit = 5, locale: Locale = DEFAULT_LOCALE): EmotionSelection[] => {
+  const items = vocabularyOf(locale);
   const x = Math.max(0, Math.min(1, point.x));
   const y = Math.max(0, Math.min(1, point.y));
   const unpleasant = bandWeight(x, "negative");
@@ -55,7 +58,7 @@ export const filterQuickCandidates = (point: QuickPoint, limit = 5): EmotionSele
   const total = unpleasant + pleasant;
 
   const unpleasantShare = total === 0 ? 0.5 : unpleasant / total;
-  const ranked = { negative: rankWithin("negative", y), positive: rankWithin("positive", y) };
+  const ranked = { negative: rankWithin(items, "negative", y), positive: rankWithin(items, "positive", y) };
   let unpleasantSlots = Math.min(ranked.negative.length, Math.round(limit * unpleasantShare));
   let pleasantSlots = Math.min(ranked.positive.length, limit - unpleasantSlots);
   // whichever side runs out lends its slots to the other
@@ -84,7 +87,8 @@ export const filterQuickCandidates = (point: QuickPoint, limit = 5): EmotionSele
  * screen. `neighbors` records which words are worth comparing, not which are
  * psychologically closer, and the user can always step outside the list.
  */
-export const expandCandidates = (shown: EmotionSelection[], limit = 6): EmotionSelection[] => {
+export const expandCandidates = (shown: EmotionSelection[], limit = 6, locale: Locale = DEFAULT_LOCALE): EmotionSelection[] => {
+  const items = vocabularyOf(locale);
   const onScreen = new Set(shown.map((item) => item.label));
   const added: string[] = [];
   for (const label of onScreen) {

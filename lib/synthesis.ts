@@ -1,6 +1,7 @@
-import { activationLabel, contextSourceLabel, particleFor, quickActivation, quickValence, scaleLabel } from "./affect-labels";
-import emotions from "../data/emotions.ko.json";
-import concernTags from "../data/concern-tags.ko.json";
+import { activationLabel, contextSourceLabel, quickActivation, quickValence, scaleLabel } from "./affect-labels";
+import { requireContent } from "./content";
+import { DEFAULT_LOCALE, localeOf, type Locale } from "./i18n/locale";
+import { getT, type Translate } from "./i18n/t";
 import type { EmotionSession } from "./session-types";
 
 export type SynthesisLine = { id: string; text: string };
@@ -18,39 +19,55 @@ export type Synthesis = {
   caveat: string;
 };
 
-export const SYNTHESIS_LEAD = "당신이 고른 내용을 연결하면 이렇게 정리해볼 수 있습니다.";
-export const SYNTHESIS_CAVEAT = "이것은 해석이나 진단이 아니라, 당신이 고른 내용을 이어 붙이고 그 사이의 관계만 짚은 것입니다. 맞지 않으면 아래에서 고쳐 쓸 수 있습니다.";
-export const NOT_ENOUGH = "지금 기록만으로는 연결해볼 만한 정보가 충분하지 않습니다.";
+const ko = getT(DEFAULT_LOCALE);
+export const SYNTHESIS_LEAD = ko("synthesis.lead");
+export const SYNTHESIS_CAVEAT = ko("synthesis.caveat");
+export const NOT_ENOUGH = ko("synthesis.notEnough");
 
 type VocabularyItem = { label: string; contextTags?: string[]; contextDependent?: boolean; family?: string };
-const vocabulary: VocabularyItem[] = emotions.items;
-const lookup = (label: string) => vocabulary.find((item) => item.label === label);
+
+/**
+ * What one build needs: the screen's words (`t`) and the record's own content.
+ * The vocabulary and tags come from the language the record was written in.
+ */
+type Build = {
+  t: Translate;
+  lookup: (label: string) => VocabularyItem | undefined;
+  tagIsSpecific: (tag: string) => boolean;
+  concernTagMap: Record<string, string[]>;
+};
 
 /** A tag carried by a large share of the vocabulary says little on its own. */
 const BROAD_TAG_SHARE = 0.2;
-const tagIsSpecific = (tag: string) =>
-  vocabulary.filter((item) => item.contextTags?.includes(tag)).length / vocabulary.length < BROAD_TAG_SHARE;
 
-const join = (values: string[]) => values.join(", ");
+const prepare = (session: EmotionSession, locale: Locale): Build => {
+  const content = requireContent(localeOf(session));
+  const vocabulary: VocabularyItem[] = content.emotions.items;
+  return {
+    t: getT(locale),
+    lookup: (label) => vocabulary.find((item) => item.label === label),
+    tagIsSpecific: (tag) => vocabulary.filter((item) => item.contextTags?.includes(tag)).length / vocabulary.length < BROAD_TAG_SHARE,
+    concernTagMap: content.concernTags.map as Record<string, string[]>,
+  };
+};
 
-const listWithObject = (values: string[]) =>
-  `${values.map((value) => `“${value}”`).join(", ")}${particleFor(values[values.length - 1] ?? "", "을", "를")}`;
+const join = (t: Translate, values: string[]) => values.join(t("common.listSeparator"));
 
-const plainWithObject = (values: string[]) =>
-  `${join(values)}${particleFor(values[values.length - 1] ?? "", "을", "를")}`;
+/** A quoted list and its last entry; the message picks the particle from the last entry itself. */
+const quotedList = (t: Translate, values: string[]) => ({
+  list: values.map((value) => t("common.quoted", { value })).join(t("common.listSeparator")),
+  last: values[values.length - 1] ?? "",
+});
 
 const labels = (items?: { label: string }[]) => (items ?? []).map((item) => item.label);
 
-const quickAffectText = (affect: NonNullable<EmotionSession["quickCheck"]>["affect"]) =>
-  affect?.unknown ? "잘 모르겠음" : `${quickValence(affect?.valence)} · ${quickActivation(affect?.activation)}`;
+const quickAffectText = (t: Translate, affect: NonNullable<EmotionSession["quickCheck"]>["affect"]) =>
+  affect?.unknown ? t("common.unsure") : `${quickValence(affect?.valence, t.locale)} · ${quickActivation(affect?.activation, t.locale)}`;
 
-const deepAffectText = (affect: NonNullable<EmotionSession["deepReflection"]>["affect"]) =>
-  `${scaleLabel(affect?.valence)} · ${activationLabel(affect?.activation)}`;
+const deepAffectText = (t: Translate, affect: NonNullable<EmotionSession["deepReflection"]>["affect"]) =>
+  `${scaleLabel(affect?.valence, t.locale)} · ${activationLabel(affect?.activation, t.locale)}`;
 
-const declineText = (response?: "none-close" | "unsure") =>
-  response === "none-close" ? "가까운 말이 없다" : response === "unsure" ? "잘 모르겠다" : "";
-
-const buildObserved = (session: EmotionSession): SynthesisLine[] => {
+const buildObserved = ({ t }: Build, session: EmotionSession): SynthesisLine[] => {
   const quick = session.quickCheck;
   const deep = session.deepReflection;
   const lines: SynthesisLine[] = [];
@@ -59,38 +76,36 @@ const buildObserved = (session: EmotionSession): SynthesisLine[] => {
   const bothAffects = Boolean(quick?.affect && !quick.affect.unknown && deep?.affect);
 
   if (quick?.affect && !bothAffects) {
-    const text = quickAffectText(quick.affect);
-    lines.push({ id: "quick-affect", text: `빠른 확인에서 전체적인 느낌을 ${text}${particleFor(text, "으로", "로")} 표시했습니다.` });
+    lines.push({ id: "quick-affect", text: t("synthesis.observed.quickAffect", { text: quickAffectText(t, quick.affect) }) });
   }
   if (deep?.body?.length) {
-    lines.push({ id: "body", text: `몸에서는 ${listWithObject(deep.body.map((item) => item.label))} 알아차렸다고 적었습니다.` });
+    lines.push({ id: "body", text: t("synthesis.observed.body", quotedList(t, deep.body.map((item) => item.label))) });
   }
   if (deep?.affect) {
-    lines.push({ id: "deep-affect", text: `전체적인 느낌은 ${deepAffectText(deep.affect)} 쪽으로 표시했습니다.` });
+    lines.push({ id: "deep-affect", text: t("synthesis.observed.deepAffect", { text: deepAffectText(t, deep.affect) }) });
   }
   if (deep?.context?.eventText?.trim()) {
-    lines.push({ id: "context", text: `상황으로는 “${deep.context.eventText.trim()}”라고 적었고, 이것은 ${contextSourceLabel(deep.context.source)}에 가깝다고 표시했습니다.` });
+    lines.push({ id: "context", text: t("synthesis.observed.context", { event: deep.context.eventText.trim(), source: contextSourceLabel(deep.context.source, t.locale) }) });
   }
   if (deep?.concerns?.length) {
-    lines.push({ id: "meaning-entry", text: `그때 중요했던 것으로는 ${listWithObject(deep.concerns)} 골랐습니다.` });
+    lines.push({ id: "meaning-entry", text: t("synthesis.observed.concerns", quotedList(t, deep.concerns)) });
   }
   if (deepWords.length) {
-    lines.push({ id: "emotion", text: `지금 경험에 가까운 말로는 ${listWithObject(deepWords)} 골랐습니다.` });
+    lines.push({ id: "emotion", text: t("synthesis.observed.emotion", quotedList(t, deepWords)) });
   } else if (quickWords.length) {
-    lines.push({ id: "quick-emotion", text: `가까운 말로는 ${listWithObject(quickWords)} 골랐습니다.` });
+    lines.push({ id: "quick-emotion", text: t("synthesis.observed.quickEmotion", quotedList(t, quickWords)) });
   } else if (quick?.candidateResponse) {
-    lines.push({ id: "quick-decline", text: `제시된 후보에는 ${declineText(quick.candidateResponse)}고 표시했습니다.` });
+    lines.push({ id: "quick-decline", text: t(`synthesis.observed.declined.${quick.candidateResponse}`) });
   }
   if (bothAffects) {
-    const deepText = deepAffectText(deep!.affect);
-    lines.push({ id: "affect-before-after", text: `처음 빠른 확인에서는 ${quickAffectText(quick!.affect)} 쪽이었고, 조금 더 살펴본 뒤에는 ${deepText}${particleFor(deepText, "으로", "로")} 표시했습니다.` });
+    lines.push({ id: "affect-before-after", text: t("synthesis.observed.affectBeforeAfter", { quick: quickAffectText(t, quick!.affect), deep: deepAffectText(t, deep!.affect) }) });
   }
   return lines;
 };
 
 type Clue = SynthesisLine;
 
-const findClues = (session: EmotionSession): Clue[] => {
+const findClues = ({ t, lookup, tagIsSpecific, concernTagMap }: Build, session: EmotionSession): Clue[] => {
   const quick = session.quickCheck;
   const deep = session.deepReflection;
   const clues: Clue[] = [];
@@ -98,49 +113,49 @@ const findClues = (session: EmotionSession): Clue[] => {
   const deepWords = labels(deep?.emotionCandidates);
   const chosen = deepWords.length ? deepWords : quickWords;
 
-  const concernTagList = (deep?.concerns ?? []).flatMap((concern) => (concernTags.map as Record<string, string[]>)[concern] ?? []);
+  const concernTagList = (deep?.concerns ?? []).flatMap((concern) => concernTagMap[concern] ?? []);
   const wordTagList = chosen.flatMap((label) => lookup(label)?.contextTags ?? []);
   const shared = [...new Set(concernTagList.filter((tag) => wordTagList.includes(tag)))].filter(tagIsSpecific);
   if (shared.length) {
-    clues.push({ id: "concern-overlap", text: `고른 표현과 그때 중요했다고 한 것이 모두 ‘${join(shared)}’ 쪽을 가리킵니다. 같은 곳을 두 번 짚은 셈입니다.` });
+    clues.push({ id: "concern-overlap", text: t("synthesis.meaning.concernOverlap", { tags: join(t, shared) }) });
   }
 
   if (quickWords.length && deepWords.length && (quickWords.length !== deepWords.length || quickWords.some((word) => !deepWords.includes(word)))) {
-    clues.push({ id: "words-shifted", text: `빠르게 봤을 때는 ${join(quickWords)}, 자세히 본 뒤에는 ${plainWithObject(deepWords)} 골랐습니다. 같은 순간을 두 번 다르게 표현해본 셈입니다.` });
+    clues.push({ id: "words-shifted", text: t("synthesis.meaning.wordsShifted", { quick: join(t, quickWords), deep: join(t, deepWords), deepLast: deepWords[deepWords.length - 1] ?? "" }) });
   }
 
   const families = new Set(chosen.map((label) => lookup(label)?.family).filter(Boolean));
   if (chosen.length > 1 && families.size > 1) {
-    clues.push({ id: "several-kinds", text: `${join(chosen)}처럼 한 갈래로 묶이지 않는 표현을 함께 골랐습니다. 여러 결이 같이 있는 경험일 수 있습니다.` });
+    clues.push({ id: "several-kinds", text: t("synthesis.meaning.severalKinds", { words: join(t, chosen) }) });
   }
 
   const source = deep?.context?.source;
   if (source && source !== "event") {
-    clues.push({ id: "not-happening-now", text: `이 기록은 지금 벌어지고 있는 일이 아니라 ${contextSourceLabel(source)}에 대한 것이라고 표시했습니다.` });
+    clues.push({ id: "not-happening-now", text: t("synthesis.meaning.notHappeningNow", { source: contextSourceLabel(source, t.locale) }) });
   }
 
   return clues;
 };
 
-const buildUnknown = (session: EmotionSession, clueCount: number): SynthesisLine[] => {
+const buildUnknown = ({ t, lookup }: Build, session: EmotionSession, clueCount: number): SynthesisLine[] => {
   const quick = session.quickCheck;
   const deep = session.deepReflection;
   const lines: SynthesisLine[] = [];
   const chosen = labels(deep?.emotionCandidates).length ? labels(deep?.emotionCandidates) : labels(quick?.selected);
 
-  if (clueCount < 2) lines.push({ id: "not-enough", text: NOT_ENOUGH });
-  if (!deep?.context?.eventText?.trim()) lines.push({ id: "no-context", text: "어떤 일이 있었는지는 이 기록에 적히지 않았습니다." });
-  if (!deep?.concerns?.length) lines.push({ id: "no-concern", text: "그 순간 무엇이 중요했는지는 아직 적히지 않았습니다." });
+  if (clueCount < 2) lines.push({ id: "not-enough", text: t("synthesis.notEnough") });
+  if (!deep?.context?.eventText?.trim()) lines.push({ id: "no-context", text: t("synthesis.unknown.noContext") });
+  if (!deep?.concerns?.length) lines.push({ id: "no-concern", text: t("synthesis.unknown.noConcern") });
 
   const flagged = chosen.filter((label) => lookup(label)?.contextDependent);
   if (flagged.length) {
-    lines.push({ id: "context-dependent", text: `${listWithObject(flagged)} 상황에 따라 다르게 경험되는 표현입니다. 지금 어느 쪽에 가까운지는 이 기록만으로 정해지지 않습니다.` });
+    lines.push({ id: "context-dependent", text: t("synthesis.unknown.contextDependent", quotedList(t, flagged)) });
   }
-  if (quick?.affect?.unknown) lines.push({ id: "affect-unknown", text: "전체적인 느낌은 잘 모르겠다고 표시했습니다." });
+  if (quick?.affect?.unknown) lines.push({ id: "affect-unknown", text: t("synthesis.unknown.affectUnknown") });
   return lines;
 };
 
-const buildQuestions = (session: EmotionSession): string[] => {
+const buildQuestions = ({ t }: Build, session: EmotionSession): string[] => {
   const quick = session.quickCheck;
   const deep = session.deepReflection;
   const questions: string[] = [];
@@ -148,15 +163,15 @@ const buildQuestions = (session: EmotionSession): string[] => {
   const deepWords = labels(deep?.emotionCandidates);
   const chosen = deepWords.length ? deepWords : quickWords;
 
-  if (!deep?.concerns?.length) questions.push("그 순간 가장 중요했던 것은 무엇이었나요?");
-  if (!deep?.context?.eventText?.trim()) questions.push("무슨 일이 있었는지 한 줄로 적는다면 어떻게 될까요?");
-  if (chosen.length > 1) questions.push(`${chosen[0]}과 ${chosen[1]} 중 어느 쪽이 조금 더 가까웠나요?`);
+  if (!deep?.concerns?.length) questions.push(t("synthesis.questions.concern"));
+  if (!deep?.context?.eventText?.trim()) questions.push(t("synthesis.questions.context"));
+  if (chosen.length > 1) questions.push(t("synthesis.questions.compare", { first: chosen[0], second: chosen[1] }));
   if (quickWords.length && deepWords.length && quickWords.some((word) => !deepWords.includes(word))) {
-    questions.push("빠르게 봤을 때와 지금 사이에 무엇이 달라졌을까요?");
+    questions.push(t("synthesis.questions.changed"));
   }
-  if (chosen.length && !deep?.body?.length) questions.push("그때 몸에서는 무엇이 느껴졌나요?");
-  if (chosen.length) questions.push(`비슷한 상황에서도 ${chosen[0]}이라는 말을 쓰나요?`);
-  if (!questions.length) questions.push("지금 이것을 살펴보는 것이 도움이 되었나요?");
+  if (chosen.length && !deep?.body?.length) questions.push(t("synthesis.questions.body"));
+  if (chosen.length) questions.push(t("synthesis.questions.sameWord", { word: chosen[0] }));
+  if (!questions.length) questions.push(t("synthesis.questions.fallback"));
 
   return questions.slice(0, 3);
 };
@@ -168,15 +183,16 @@ const buildQuestions = (session: EmotionSession): string[] => {
  * trait, anyone's intent, or a direction read off the affect pad. With fewer
  * than two independent clues it interprets nothing and says so.
  */
-export const buildSynthesis = (session: EmotionSession): Synthesis => {
-  const clues = findClues(session);
+export const buildSynthesis = (session: EmotionSession, locale: Locale = localeOf(session)): Synthesis => {
+  const build = prepare(session, locale);
+  const clues = findClues(build, session);
   return {
-    lead: SYNTHESIS_LEAD,
-    observed: buildObserved(session),
+    lead: build.t("synthesis.lead"),
+    observed: buildObserved(build, session),
     meaning: clues.length >= 2 ? clues : [],
-    unknown: buildUnknown(session, clues.length),
-    questions: buildQuestions(session),
-    caveat: SYNTHESIS_CAVEAT,
+    unknown: buildUnknown(build, session, clues.length),
+    questions: buildQuestions(build, session),
+    caveat: build.t("synthesis.caveat"),
   };
 };
 

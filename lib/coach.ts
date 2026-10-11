@@ -1,4 +1,6 @@
-import granularity from "../data/granularity.ko.json";
+import { requireContent } from "./content";
+import { DEFAULT_LOCALE, localeOf, type Locale } from "./i18n/locale";
+import { getT } from "./i18n/t";
 import type { EmotionSession } from "./session-types";
 
 export type CoachAppraisal = { id: string; text: string };
@@ -11,7 +13,11 @@ export type CoachSet = {
   note: string;
 };
 
-export const coachSets: CoachSet[] = granularity.sets;
+/** The written examples for one language. Each language's sets are written for it, not translated. */
+export const getCoachSets = (locale: Locale = DEFAULT_LOCALE): CoachSet[] => requireContent(locale).granularity.sets;
+
+/** The Korean sets, as this module has always exported them. */
+export const coachSets: CoachSet[] = getCoachSets(DEFAULT_LOCALE);
 
 /** Words the user chose most recently: the deep pass if they went there, otherwise the quick one. */
 export const currentWords = (session: EmotionSession): string[] => {
@@ -23,10 +29,11 @@ export const currentWords = (session: EmotionSession): string[] => {
 /**
  * The set that overlaps most with what the user chose. No set, no coach —
  * nothing is forced, and a tie falls to the order the sets are written in.
+ * The sets come from the language the record was written in.
  */
-export const coachSetFor = (session: EmotionSession): CoachSet | undefined => {
+export const coachSetFor = (session: EmotionSession, locale: Locale = localeOf(session)): CoachSet | undefined => {
   const words = currentWords(session);
-  const scored = coachSets
+  const scored = getCoachSets(locale)
     .map((set) => ({ set, overlap: set.words.filter((word) => words.includes(word)).length }))
     .filter((entry) => entry.overlap > 0)
     .sort((a, b) => b.overlap - a.overlap);
@@ -35,14 +42,24 @@ export const coachSetFor = (session: EmotionSession): CoachSet | undefined => {
 
 /**
  * Always offered beside the set's own words, so no list of words ever reads as
- * a closed set of right answers.
+ * a closed set of right answers. Stored as picked, in the words the user saw.
  */
-export const COACH_ESCAPES = ["여러 개", "어느 것도 아님", "잘 모르겠음"];
+export const coachEscapes = (locale: Locale = DEFAULT_LOCALE): string[] => {
+  const t = getT(locale);
+  return [t("coach.escapes.several"), t("coach.escapes.none"), t("coach.escapes.unsure")];
+};
 
-export const APPRAISAL_ESCAPES: CoachAppraisal[] = [
-  { id: "none", text: "어느 것도 아니다." },
-  { id: "unsure", text: "잘 모르겠다." },
-];
+export const COACH_ESCAPES = coachEscapes(DEFAULT_LOCALE);
+
+export const appraisalEscapes = (locale: Locale = DEFAULT_LOCALE): CoachAppraisal[] => {
+  const t = getT(locale);
+  return [
+    { id: "none", text: t("coach.appraisalEscapes.none") },
+    { id: "unsure", text: t("coach.appraisalEscapes.unsure") },
+  ];
+};
+
+export const APPRAISAL_ESCAPES: CoachAppraisal[] = appraisalEscapes(DEFAULT_LOCALE);
 
 type CoachRecord = NonNullable<EmotionSession["coach"]>;
 
@@ -54,17 +71,18 @@ export const coachOrigin = (coach: CoachRecord): "example-practice" | "unknown" 
  * coach's own fields are read: the user's own words (`wordsBefore`) are not
  * put beside these, so nothing reads as a before and after.
  */
-export const coachResult = (session: EmotionSession) => {
+export const coachResult = (session: EmotionSession, locale: Locale = localeOf(session)) => {
   const coach = session.coach;
   if (!coach) return undefined;
-  const set = coachSets.find((item) => item.id === coach.setId);
-  const options = [...(set?.appraisals ?? []), ...APPRAISAL_ESCAPES];
+  const t = getT(locale);
+  const set = getCoachSets(locale).find((item) => item.id === coach.setId);
+  const options = [...(set?.appraisals ?? []), ...appraisalEscapes(locale)];
   return {
     origin: coachOrigin(coach),
     observations: [
       ...coach.appraisals.map((id) => options.find((item) => item.id === id)?.text).filter((text): text is string => Boolean(text)),
-      ...(coach.ownAppraisal ? [`“${coach.ownAppraisal}”`] : []),
+      ...(coach.ownAppraisal ? [t("common.quoted", { value: coach.ownAppraisal })] : []),
     ],
-    expressions: [...coach.wordsAfter, ...(coach.ownWord ? [`“${coach.ownWord}”`] : [])],
+    expressions: [...coach.wordsAfter, ...(coach.ownWord ? [t("common.quoted", { value: coach.ownWord })] : [])],
   };
 };

@@ -1,4 +1,5 @@
 import { coachSetFor, currentWords } from "./coach";
+import { DEFAULT_LOCALE, type Locale } from "./i18n/locale";
 
 export type EntryDecision = "observe" | "unsure" | "stop";
 // The user declining to pick a word is a normal answer, not missing data.
@@ -146,6 +147,13 @@ export type EmotionSession = {
   stopReason?: "user" | "entry";
   /** Carried over from the v1 storage shape, where some fields were unrecoverable. */
   migratedFromV1?: true;
+  /**
+   * The language the record was written in. The words in it are stored exactly
+   * as the user saw them, so this says how to read them. Optional on purpose:
+   * every record saved before it existed was written in Korean and reads as
+   * Korean (`localeOf`), so no stored record needs migrating.
+   */
+  locale?: Locale;
 };
 
 export type SessionDepth = "quick" | "quick+deep" | "deep";
@@ -159,8 +167,8 @@ export const sessionDepth = (session: EmotionSession): SessionDepth => {
 };
 
 export type SessionAction =
-  | { type: "START_QUICK" }
-  | { type: "START_DEEP" }
+  | { type: "START_QUICK"; locale?: Locale }
+  | { type: "START_DEEP"; locale?: Locale }
   | { type: "ENTER_DEEP" }
   | { type: "RESUME"; session: EmotionSession }
   | { type: "SET_QUICK_AFFECT"; affect: NonNullable<QuickCheck["affect"]> }
@@ -199,12 +207,13 @@ export type SessionAction =
   | { type: "BACK" }
   | { type: "STOP"; reason: "user" | "entry" };
 
-export const createSession = (entry: SessionEntry = "quick"): EmotionSession => ({
+export const createSession = (entry: SessionEntry = "quick", locale: Locale = DEFAULT_LOCALE): EmotionSession => ({
   id: crypto.randomUUID(),
   createdAt: new Date().toISOString(),
   status: "draft",
   stage: "landing",
   entry,
+  locale,
 });
 
 const emptyQuickCheck = (): QuickCheck => ({ candidatePool: [], selected: [] });
@@ -262,10 +271,10 @@ const NOT_A_STEP = new Set<SessionAction["type"]>([
 const reduce = (state: EmotionSession, action: SessionAction): EmotionSession => {
   switch (action.type) {
     case "START_QUICK":
-      return { ...createSession("quick"), stage: "quick-affect", quickCheck: emptyQuickCheck() };
+      return { ...createSession("quick", action.locale), stage: "quick-affect", quickCheck: emptyQuickCheck() };
     case "START_DEEP":
       // deepReflection waits until the user is past the gate, so refusing it leaves no empty record.
-      return { ...createSession("deep"), stage: "entry" };
+      return { ...createSession("deep", action.locale), stage: "entry" };
     case "ENTER_DEEP":
       // Reopen: same id, same quickCheck, no longer completed.
       return { ...state, stage: "entry", status: "draft", completedAt: undefined };

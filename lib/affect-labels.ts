@@ -1,39 +1,38 @@
+import { particleFor as pickParticle } from "./i18n/format";
+import { DEFAULT_LOCALE, type Locale } from "./i18n/locale";
+import { getT } from "./i18n/t";
+
 /**
  * Wording for the affect readings. The pleasantness axis stays 불쾌–유쾌
  * everywhere: 편안함 also carries low activation, so using it here would blur
  * the two axes together. Shared so the summary and the synthesis never
  * drift apart. Input is the stored 0..1 coordinate; the words are a coarse read
- * of a finer value, and the number itself is never shown.
+ * of a finer value, and the number itself is never shown. The words themselves
+ * live in the messages (`affectBands`).
  */
-const band = (value: number | undefined, words: string[]) => {
+const band = (value: number | undefined, words: readonly string[]) => {
   if (value === undefined || Number.isNaN(value)) return words[Math.floor(words.length / 2)];
   const index = Math.round(Math.max(0, Math.min(1, value)) * (words.length - 1));
   return words[index];
 };
 
-export const quickValence = (value?: number) =>
-  band(value, ["불쾌함 쪽", "조금 불쾌함 쪽", "중간", "조금 유쾌함 쪽", "유쾌함 쪽"]);
+export const quickValence = (value?: number, locale: Locale = DEFAULT_LOCALE) =>
+  band(value, getT(locale).list("affectBands.quickValence"));
 
-export const quickActivation = (value?: number) =>
-  band(value, ["가라앉은 느낌", "조금 가라앉은 느낌", "중간", "에너지가 올라온 느낌", "에너지가 많이 올라온 느낌"]);
+export const quickActivation = (value?: number, locale: Locale = DEFAULT_LOCALE) =>
+  band(value, getT(locale).list("affectBands.quickActivation"));
 
-export const scaleLabel = (value?: number) =>
-  band(value, ["매우 불쾌", "불쾌", "중간", "유쾌", "매우 유쾌"]);
+export const scaleLabel = (value?: number, locale: Locale = DEFAULT_LOCALE) =>
+  band(value, getT(locale).list("affectBands.valence"));
 
-export const activationLabel = (value?: number) =>
-  band(value, ["가라앉음", "조금 가라앉음", "중간", "활성됨", "많이 활성됨"]);
+export const activationLabel = (value?: number, locale: Locale = DEFAULT_LOCALE) =>
+  band(value, getT(locale).list("affectBands.activation"));
 
-export const contextSourceLabel = (source?: "event" | "memory" | "anticipation" | "thought") =>
-  ({ event: "실제 사건", memory: "기억", anticipation: "예상", thought: "생각" }[source ?? "event"]);
+export const contextSourceLabel = (source?: "event" | "memory" | "anticipation" | "thought", locale: Locale = DEFAULT_LOCALE) =>
+  getT(locale)(`contextSource.${source ?? "event"}`);
 
-/** Picks the Korean particle that fits the last syllable of `word`. */
-export const particleFor = (word: string, afterConsonant: string, afterVowel: string) => {
-  const last = word.trim().at(-1) ?? "";
-  const code = last.charCodeAt(0);
-  const isHangulSyllable = code >= 0xac00 && code <= 0xd7a3;
-  if (!isHangulSyllable) return afterVowel;
-  return (code - 0xac00) % 28 === 0 ? afterVowel : afterConsonant;
-};
+/** Picks the Korean particle that fits the last syllable of `word`. Kept here for existing callers. */
+export const particleFor = pickParticle;
 
 export const withParticle = (word: string, afterConsonant: string, afterVowel: string) =>
   `${word}${particleFor(word, afterConsonant, afterVowel)}`;

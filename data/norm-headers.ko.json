@@ -1,0 +1,12 @@
+{
+  "note": "Column names that lib/norm-audit.ts recognises in an external affective-norm table, lower-cased and without spaces, dots, brackets or hyphens. Korean tables name their columns in Korean, so the Korean names live here as data rather than as text in the code. noSource labels a row whose table gave no source.",
+  "columns": {
+    "word": ["word", "단어", "term", "label", "어휘", "emotion"],
+    "valence": ["valence", "v", "정서가", "쾌", "pleasure"],
+    "arousal": ["arousal", "a", "각성", "활성"],
+    "valenceSD": ["valence_sd", "valencesd", "v_sd", "sd_v", "정서가sd"],
+    "arousalSD": ["arousal_sd", "arousalsd", "a_sd", "sd_a", "각성sd"],
+    "source": ["source", "출처", "study", "dataset", "origin"]
+  },
+  "noSource": "(출처 표기 없음)"
+}
