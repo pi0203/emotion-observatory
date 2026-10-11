@@ -148,3 +148,21 @@ p, .lede, .hint, .step-note, .small-note, .summary-footnote { text-wrap: pretty;
 .zone-recap { margin: 14px 0 0; color: var(--muted); font-size: var(--t-small); line-height: 1.6; }
 .zone-note { padding: 2px 0 2px 16px; border-left: 3px solid var(--line-strong); }
 .zone-note p { margin: 0; color: var(--muted); font-size: var(--t-body); line-height: 1.7; }
+
+/* The homepage frame on the landing and record screens (docs/DESIGN_ALIGNMENT.md §5).
+   Steps keep their own minimal top bar. Colours and type come from the tokens, so dark
+   follows on its own. Every link is at least 24 x 24 px. */
+.site-frame { display: flex; flex-direction: column; }
+.site-main { flex: 1; outline: none; }
+.site-main .entry-screen { padding-top: 64px; }
+.site-main .screen { padding-top: 48px; }
+.site-header { display: flex; align-items: baseline; justify-content: space-between; gap: 12px 24px; flex-wrap: wrap; padding: 28px 0 18px; border-bottom: 1px solid var(--line); }
+.site-logo { display: inline-flex; align-items: center; min-height: 24px; color: var(--ink); text-decoration: none; font-family: var(--font-serif), serif; font-size: var(--t-lead); line-height: 1.1; letter-spacing: -.01em; }
+.site-nav ul { display: flex; flex-wrap: wrap; gap: 4px 18px; margin: 0; padding: 0; list-style: none; }
+.site-nav a { display: inline-flex; align-items: center; min-height: 24px; min-width: 24px; color: var(--muted); text-decoration: none; font-size: var(--t-aside); letter-spacing: .09em; text-transform: uppercase; }
+.site-logo:hover, .site-nav a:hover, .site-footer a:hover { color: var(--accent-ink); }
+.site-footer { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 10px; margin-top: 64px; padding: 24px 0 8px; border-top: 1px solid var(--line); color: var(--muted); font-size: var(--t-small); }
+.site-footer a { display: inline-flex; align-items: center; min-height: 24px; color: var(--ink); text-decoration: underline; text-underline-offset: .2em; text-decoration-color: var(--line-strong); }
+.skip-link { position: absolute; left: 16px; top: -100px; z-index: 10; padding: 10px 14px; color: var(--ink); background: var(--card); border: 1px solid var(--line-strong); border-radius: 3px; font-size: var(--t-small); text-decoration: none; }
+.skip-link:focus { top: 12px; }
+@media (max-width: 560px) { .site-header { padding-top: 20px; } .site-main .entry-screen { padding-top: 40px; } .site-main .screen { padding-top: 32px; } }

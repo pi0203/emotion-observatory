@@ -94,14 +94,20 @@ function App() {
   };
 
   if (session.stage === "landing") {
-    // the same app shell as the screens inside a session, so these get its side padding too; on their own they touched the screen edge on phones
-    return <main className="app-shell">
+    // the homepage frame (header, menu, footer) on the landing and record screens only;
+    // the steps keep their minimal top bar so nothing pushes the task down (docs/DESIGN_ALIGNMENT.md §5)
+    return <div className="app-shell site-frame">
+      <a className="skip-link" href="#main">{t("shell.skipToContent")}</a>
+      <SiteHeader />
+      <main id="main" tabIndex={-1} className="site-main">
       {openRecord
         ? <RecordDetail session={openRecord} onFollowUp={(followUp) => saveFollowUp(openRecord, followUp)} onBack={() => setOpenRecord(null)} />
         : records
           ? <RecordsScreen records={records} onOpen={setOpenRecord} onBack={() => setRecords(null)} onChanged={() => { setRecords(loadCompleted()); setDraft(loadDraft()); }} />
           : <LandingScreen onQuick={() => dispatch({ type: "START_QUICK", locale: t.locale })} onDeep={() => dispatch({ type: "START_DEEP", locale: t.locale })} draft={draft} onResume={resume} onRecords={showRecords} />}
-    </main>;
+      </main>
+      <SiteFooter />
+    </div>;
   }
 
   const stop = () => {
@@ -153,6 +159,38 @@ function App() {
       {stopConfirm && <StopModal onClose={() => setStopConfirm(false)} onStop={stop} />}
     </main>
   );
+}
+
+/** The homepage this app belongs to. Menu links open there, in the same tab. */
+const HOMEPAGE = "https://eunchanjoe.vercel.app";
+const HOMEPAGE_NAV = [
+  { href: `${HOMEPAGE}/me/`, label: "Me" },
+  { href: `${HOMEPAGE}/reading/`, label: "Reading" },
+  { href: `${HOMEPAGE}/threads/`, label: "Threads" },
+  { href: `${HOMEPAGE}/map/`, label: "Map" },
+];
+
+/** The homepage's header: its wordmark and menu, as on eunchanjoe.vercel.app. */
+function SiteHeader() {
+  const t = useT();
+  return <header className="site-header">
+    <a className="site-logo" href={`${HOMEPAGE}/`}>Eunchan Joe</a>
+    <nav className="site-nav" aria-label={t("shell.siteNav")}>
+      <ul>{HOMEPAGE_NAV.map((item) => <li key={item.href}><a href={item.href}>{item.label}</a></li>)}</ul>
+    </nav>
+  </header>;
+}
+
+/** A small footer: the app, its maker and the way back. No mail address, no licence line. */
+function SiteFooter() {
+  const t = useT();
+  return <footer className="site-footer">
+    <span>{t("common.appName")}</span>
+    <span aria-hidden="true">·</span>
+    <span>{t("shell.owner")}</span>
+    <span aria-hidden="true">·</span>
+    <a href={`${HOMEPAGE}/`}>eunchanjoe.vercel.app</a>
+  </footer>;
 }
 
 function EntryScreen({ draft, onStart, onUnsure, onStop, onResume }: { draft: EmotionSession | null; onStart: () => void; onUnsure: () => void; onStop: () => void; onResume: () => void }) {

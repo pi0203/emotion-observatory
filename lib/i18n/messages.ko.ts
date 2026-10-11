@@ -17,6 +17,12 @@ export const ko = {
     title: "감정 관찰실",
     description: "몸, 상황, 의미를 천천히 구별해보는 자기관찰 도구",
   },
+  /** The homepage frame on the landing and record screens (docs/DESIGN_ALIGNMENT.md §5). */
+  shell: {
+    skipToContent: "본문으로 건너뛰기",
+    siteNav: "홈페이지 메뉴",
+    owner: "조은찬",
+  },
   common: {
     appName: "감정 관찰실",
     next: "다음",

@@ -32,6 +32,11 @@ export const en: Messages = {
     title: "Emotion Observatory",
     description: "A small self-observation tool for slowly telling apart your body, the situation, and what it meant.",
   },
+  shell: {
+    skipToContent: "Skip to content",
+    siteNav: "Homepage menu",
+    owner: "Eunchan Joe",
+  },
   common: {
     appName: "Emotion Observatory",
     next: "Next",
