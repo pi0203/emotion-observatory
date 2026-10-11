@@ -1632,6 +1632,7 @@ MVP default:
 - no analytics containing free-text emotion content
 - no third-party logging of text fields
 - export / delete all
+  (2026-10-11 구현: 「지난 기록」 화면 아래 「기록 옮기기와 지우기」. 완료·중단 기록의 JSON 내보내기(작성 중 초안 제외, 암호화 안 됨을 알림), 가져오기(먼저 개수를 보여 주고 묻는다, 같은 id는 기존 기록 유지), 모두 지우기(한 번 확인). 네트워크 없음, `lib/record-transfer.ts`)
 - 중단 화면의 `이 기록을 지우기`는 그 기록을 이 기기에서 **실제로 지운다**(다른 기록은 남긴다). 2026-10-10 이전에는 작성 중 자리만 지워서, 중단 기록이 그대로 남는 버그가 있었다.
 - per-entry delete
 

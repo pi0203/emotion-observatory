@@ -26,6 +26,9 @@ export interface StorageAdapter {
 
   /** status가 draft면 초안 저장 후 완료 목록에서 제거, 아니면 완료 저장 후 초안 제거. */
   persistSession(session: EmotionSession): void;
+
+  /** 이 기기의 기록을 모두 지운다: 완료(중단 포함) 목록과 작성 중인 초안. 되돌릴 수 없다. */
+  clearAll(): void;
 }
 
 export const localStorageAdapter: StorageAdapter = {
@@ -36,6 +39,11 @@ export const localStorageAdapter: StorageAdapter = {
   saveCompleted: (session) => local.saveCompleted(session),
   dropCompleted: (id) => local.dropCompleted(id),
   persistSession: (session) => local.persistSession(session),
+  // 기존 함수만 쓴다: 저장 키와 형식은 lib/storage.ts 그대로 남는다
+  clearAll: () => {
+    for (const session of local.loadCompleted()) local.dropCompleted(session.id);
+    local.removeDraft();
+  },
 };
 
 /** 지금은 항상 localStorage 어댑터. 계정 저장소는 이 함수 뒤에 나중에 붙인다. */

@@ -8,6 +8,7 @@ import type { AffectPoint, BodyObservation, DeepReflection, EmotionSelection, Em
 type DeepContext = NonNullable<DeepReflection["context"]>;
 type DeepOutcome = NonNullable<DeepReflection["outcome"]>;
 import { getStorageAdapter } from "../lib/storage-adapter";
+import { applyImport, buildExport, downloadExport, exportFileName, MAX_IMPORT_BYTES, parseImport, planImport, readFileText, type ImportError, type ImportPlan } from "../lib/record-transfer";
 import { formatWhen, helpedOptions, summarise, triedOptions } from "../lib/records";
 import { migrateLegacyStorage } from "../lib/migrations";
 import { expandCandidates, filterQuickCandidates } from "../lib/quick-check";
@@ -20,7 +21,7 @@ import type { Translate } from "../lib/i18n/t";
 
 // Every read and write of a record goes through the one storage seam. It is
 // synchronous, like the localStorage calls it wraps, so no call site changes.
-const { dropCompleted, loadCompleted, loadDraft, persistSession, removeDraft, saveCompleted } = getStorageAdapter();
+const { clearAll, dropCompleted, loadCompleted, loadDraft, persistSession, removeDraft, saveCompleted } = getStorageAdapter();
 
 const progress: Record<string, string> = {
   body: "1 / 6",
@@ -94,7 +95,7 @@ function App() {
 
   if (session.stage === "landing") {
     if (openRecord) return <RecordDetail session={openRecord} onFollowUp={(followUp) => saveFollowUp(openRecord, followUp)} onBack={() => setOpenRecord(null)} />;
-    if (records) return <RecordsScreen records={records} onOpen={setOpenRecord} onBack={() => setRecords(null)} />;
+    if (records) return <RecordsScreen records={records} onOpen={setOpenRecord} onBack={() => setRecords(null)} onChanged={() => { setRecords(loadCompleted()); setDraft(loadDraft()); }} />;
     return <LandingScreen onQuick={() => dispatch({ type: "START_QUICK", locale: t.locale })} onDeep={() => dispatch({ type: "START_DEEP", locale: t.locale })} draft={draft} onResume={resume} onRecords={showRecords} />;
   }
 
@@ -631,7 +632,7 @@ function NeedScreen({ session, onNeed, onResponse, onDeep, onCoach, onBack }: { 
 }
 
 /** A list of what was recorded. No scores, no patterns across records, no interpretation. */
-function RecordsScreen({ records, onOpen, onBack }: { records: EmotionSession[]; onOpen: (session: EmotionSession) => void; onBack: () => void }) {
+function RecordsScreen({ records, onOpen, onBack, onChanged }: { records: EmotionSession[]; onOpen: (session: EmotionSession) => void; onBack: () => void; onChanged: () => void }) {
   const t = useT();
   return <Screen className="entry-screen">
     <p className="eyebrow">{t("records.eyebrow")}</p>
@@ -647,8 +648,113 @@ function RecordsScreen({ records, onOpen, onBack }: { records: EmotionSession[];
             {item.responseLabels.length > 0 && <span className="record-need">{t("records.responsesLine", { labels: item.responseLabels.join(" / ") })}</span>}
           </button>;
         })}</div>}
+    <RecordTransfer count={records.length} onChanged={onChanged} />
     <div className="navigation"><button className="quiet-button" onClick={onBack}>{t("records.backToStart")}</button><span /></div>
   </Screen>;
+}
+
+type TransferNote = { kind: "status" | "alert"; text: string };
+
+/**
+ * Export, import and delete-all, at the foot of the records list. Everything
+ * stays in the browser and goes through the storage adapter. Import always asks
+ * first, never overwrites a record already here, and saves nothing from a file
+ * it cannot read. Delete-all asks once more and says it cannot be undone.
+ */
+function RecordTransfer({ count, onChanged }: { count: number; onChanged: () => void }) {
+  const t = useT();
+  const fileInput = useRef<HTMLInputElement>(null);
+  const summary = useRef<HTMLParagraphElement>(null);
+  const [plan, setPlan] = useState<ImportPlan | null>(null);
+  const [confirmingDelete, setConfirmingDelete] = useState(false);
+  const [note, setNote] = useState<TransferNote | null>(null);
+
+  // the question takes the focus, so it is read before the choice is made
+  useEffect(() => {
+    if (plan || confirmingDelete) summary.current?.focus();
+  }, [plan, confirmingDelete]);
+
+  const refuse = (error: ImportError | "unreadable") => {
+    setPlan(null);
+    setNote({ kind: "alert", text: t(`recordTransfer.errors.${error}`) });
+  };
+
+  const exportAll = () => {
+    const name = exportFileName();
+    downloadExport(buildExport(loadCompleted()), name);
+    setNote({ kind: "status", text: t("recordTransfer.exported", { name }) });
+  };
+
+  const pickFile = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    event.target.value = "";
+    if (!file) return;
+    setConfirmingDelete(false);
+    if (file.size > MAX_IMPORT_BYTES) return refuse("too-large");
+    readFileText(file).then((text) => {
+      const parsed = parseImport(text);
+      if (!parsed.ok) return refuse(parsed.error);
+      setNote(null);
+      setPlan(planImport(parsed, loadCompleted()));
+    }, () => refuse("unreadable"));
+  };
+
+  const confirmImport = () => {
+    if (!plan) return;
+    const added = applyImport(plan, getStorageAdapter());
+    setNote({ kind: "status", text: t("recordTransfer.imported", { added, duplicates: plan.duplicates + (plan.add.length - added), invalid: plan.invalid }) });
+    setPlan(null);
+    onChanged();
+  };
+
+  const deleteAll = () => {
+    clearAll();
+    setConfirmingDelete(false);
+    setNote({ kind: "status", text: t("recordTransfer.deletedAll") });
+    onChanged();
+  };
+
+  return <section className="synthesis" aria-labelledby="record-transfer-title">
+    <p className="tier-label" id="record-transfer-title">{t("recordTransfer.title")}</p>
+    <p className="small-note">{t("recordTransfer.intro")}</p>
+
+    <p className="synthesis-question">{t("recordTransfer.exportNote")}</p>
+    <p className="small-note">{count > 0 ? t("recordTransfer.exportScope", { count }) : t("recordTransfer.exportEmpty")}</p>
+    <div className="quick-option-row">
+      <button className="secondary-button" disabled={count === 0} onClick={exportAll}>{t("recordTransfer.export")}</button>
+      <button className="secondary-button" onClick={() => fileInput.current?.click()}>{t("recordTransfer.import")}</button>
+      <input ref={fileInput} type="file" accept=".json,application/json" hidden aria-label={t("recordTransfer.importFileLabel")} onChange={pickFile} />
+    </div>
+
+    {plan && <div role="group" aria-labelledby="record-import-summary">
+      <p className="synthesis-question" id="record-import-summary" ref={summary} tabIndex={-1}>{t("recordTransfer.importSummary", { total: plan.total, duplicates: plan.duplicates, invalid: plan.invalid })}</p>
+      {plan.add.length > 0
+        ? <>
+            <p className="small-note">{t("recordTransfer.importRule", { add: plan.add.length })}</p>
+            <div className="quick-option-row">
+              <button className="secondary-button" onClick={confirmImport}>{t("recordTransfer.importConfirm")}</button>
+              <button className="quiet-button" onClick={() => { setPlan(null); setNote({ kind: "status", text: t("recordTransfer.importCancelled") }); }}>{t("recordTransfer.importCancel")}</button>
+            </div>
+          </>
+        : <>
+            <p className="small-note">{t("recordTransfer.importNothingNew")}</p>
+            <div className="quick-option-row"><button className="quiet-button" onClick={() => setPlan(null)}>{t("recordTransfer.importCancel")}</button></div>
+          </>}
+    </div>}
+
+    {!confirmingDelete
+      ? <div className="quick-option-row"><button className="quiet-button" onClick={() => { setPlan(null); setNote(null); setConfirmingDelete(true); }}>{t("recordTransfer.deleteAll")}</button></div>
+      : <div role="group" aria-labelledby="record-delete-title">
+          <p className="synthesis-question" id="record-delete-title" ref={summary} tabIndex={-1}>{t("recordTransfer.deleteAllConfirmTitle")}</p>
+          <p className="small-note">{t("recordTransfer.deleteAllConfirmBody")}</p>
+          <div className="quick-option-row">
+            <button className="secondary-button" onClick={deleteAll}>{t("recordTransfer.deleteAllConfirm")}</button>
+            <button className="quiet-button" onClick={() => setConfirmingDelete(false)}>{t("recordTransfer.deleteAllCancel")}</button>
+          </div>
+        </div>}
+
+    {note && <p className="step-note" role={note.kind}>{note.text}</p>}
+  </section>;
 }
 
 function RecordDetail({ session, onFollowUp, onBack }: { session: EmotionSession; onFollowUp: (followUp: { tried?: "yes" | "partly" | "no"; helped?: "yes" | "somewhat" | "no" | "unsure" }) => void; onBack: () => void }) {
