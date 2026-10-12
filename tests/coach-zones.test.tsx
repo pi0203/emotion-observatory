@@ -111,8 +111,8 @@ describe("text contrast inside the coach zones, computed from the tokens in glob
     ["ink", "warm", "예시 영역 본문 · 라벨 · 결과 행 이름"],
     ["ink", "card", "내 선택 영역의 선택지·칩 글자"],
     ["muted", "card", "내 선택 영역의 안내·입력 라벨·눈에 띈 것"],
-    ["ink", "accent-soft", "고른 선택지·칩"],
-    ["accent-ink", "accent-soft", "고른 항목의 ✓"],
+    ["on-accent", "accent-soft", "고른 선택지·칩 (파란 바탕)"],
+    ["check", "accent-soft", "고른 항목의 ✓"],
     ["accent-ink", "card", "✓ (선택 직후 hover 해제 상태 포함)"],
     ["muted", "paper", "참고 설명 문단"],
   ];
