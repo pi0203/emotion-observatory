@@ -172,7 +172,7 @@ function EntryScreen({ draft, onStart, onUnsure, onStop, onResume }: { draft: Em
 
 function LandingScreen({ onQuick, onDeep, draft, onResume, onRecords }: { onQuick: () => void; onDeep: () => void; draft: EmotionSession | null; onResume: () => void; onRecords: () => void }) {
   const t = useT();
-  return <Screen className="entry-screen"><p className="eyebrow">{t("common.appName")}</p><h1>{renderRich(t("landing.title"))}</h1><p className="lede">{renderRich(t("landing.lede"))}</p><WhyThis /><WhyWords /><div className="stack-actions"><button className="primary-button" onClick={onQuick}>{t("landing.quick")} <span>→</span></button><button className="secondary-button" onClick={onDeep}>{t("landing.deep")}</button>{draft && <button className="secondary-button" onClick={onResume}>{t("landing.resume")}</button>}<button className="secondary-button" onClick={onRecords}>{t("landing.records")}</button></div><p className="small-note">{t("landing.storageNote")}</p></Screen>;
+  return <Screen className="entry-screen"><p className="eyebrow">{t("common.appName")}</p><h1>{renderRich(t("landing.title"))}</h1><p className="lede">{renderRich(t("landing.lede"))}</p><WhyThis /><WhyWords /><ul className="landing-badges">{t.list("landing.badges").map((badge) => <li key={badge}>{badge}</li>)}</ul><div className="stack-actions"><button className="primary-button" onClick={onQuick}>{t("landing.quick")} <span>→</span></button><button className="secondary-button" onClick={onDeep}>{t("landing.deep")}</button>{draft && <button className="secondary-button" onClick={onResume}>{t("landing.resume")}</button>}<button className="secondary-button" onClick={onRecords}>{t("landing.records")}</button></div><p className="small-note">{t("landing.storageNote")}</p><AboutTool /></Screen>;
 }
 
 /**
@@ -221,6 +221,45 @@ function AffectPad({ initial, onChange }: { initial?: AffectPoint; onChange: (po
   </div>;
 }
 
+const REFERENCES = ["vedernikova", "widdershoven", "hoemann", "fugate", "dejonckheere", "thompson"] as const;
+const QUESTIONS = ["judge", "storage", "often", "worse", "body", "effect"] as const;
+
+/**
+ * Below the start buttons, so it never pushes them down: what the tool is and
+ * is not, the studies behind it with their limits (docs/EVIDENCE_CHAIN.md), and
+ * common questions. The lists start folded; each item rises in as it is shown.
+ */
+function AboutTool() {
+  const t = useT();
+  return <section className="about" aria-labelledby="about-title">
+    <h2 id="about-title">{t("about.title")}</h2>
+    <p>{t("about.what")}</p>
+    <p>{renderRich(t("about.not"))}</p>
+    <details className="about-fold">
+      <summary>{t("about.refsSummary")}</summary>
+      <p className="about-intro">{t("about.refsIntro")}</p>
+      <ol className="about-list">
+        {REFERENCES.map((id, index) => <li key={id} style={{ "--rise-order": index } as React.CSSProperties}>
+          <p className="about-cite">{t(`about.refs.${id}.cite`)}</p>
+          <p className="about-kind">{t(`about.refs.${id}.kind`)}</p>
+          <p><strong>{t("about.found")}</strong> {t(`about.refs.${id}.found`)}</p>
+          <p><strong>{t("about.limit")}</strong> {t(`about.refs.${id}.limit`)}</p>
+        </li>)}
+      </ol>
+      <p className="why-principle">{renderRich(t("about.refsClosing"))}</p>
+    </details>
+    <details className="about-fold">
+      <summary>{t("about.faqSummary")}</summary>
+      <dl className="about-list">
+        {QUESTIONS.map((id, index) => <div key={id} style={{ "--rise-order": index } as React.CSSProperties}>
+          <dt>{t(`about.faq.${id}.q`)}</dt>
+          <dd>{t(`about.faq.${id}.a`)}</dd>
+        </div>)}
+      </dl>
+    </details>
+  </section>;
+}
+
 function WhyThis() {
   const t = useT();
   return <details className="why">
@@ -238,7 +277,7 @@ function QuickAffectScreen({ onNext, onUnknown }: { onNext: (affect: AffectPoint
   const t = useT();
   const [point, setPoint] = useState<{ valence: number; activation: number } | null>(null);
   return <Screen>
-    <StepHeading step={t("quickAffect.step")} title={t("quickAffect.title")} hint={t("quickAffect.hint")} />
+    <StepHeading step={t("quickAffect.step")} title={t("quickAffect.title")} hint={t("quickAffect.hint")} basis={t("quickAffect.basis")} />
     <AffectPad onChange={setPoint} />
     <div className="quick-actions">
       <button className="quiet-button" onClick={onUnknown}>{t("common.unsure")}</button>
@@ -290,7 +329,7 @@ function QuickCandidatesScreen({ pool, selected, response, onToggle, onRespond, 
   const t = useT();
   const canCoach = getCoachSets(t.locale).some((set) => selected.some((item) => set.words.includes(item.label)));
   return <Screen>
-    <StepHeading step={t("quickCandidates.step")} title={t("quickCandidates.title")} hint={t("quickCandidates.hint")} />
+    <StepHeading step={t("quickCandidates.step")} title={t("quickCandidates.title")} hint={t("quickCandidates.hint")} basis={t("quickCandidates.basis")} />
     <div className="provisional-note">{t("common.provisionalNote")}</div>
     <TieredWords pool={pool} selectedLabels={selected.map((item) => item.label)} ownWords={selected.filter((item) => item.source === "custom").map((item) => item.label)} onToggle={onToggle} onAddCustom={onAddCustom} meanings={Object.fromEntries(selected.filter((item) => item.personalMeaning).map((item) => [item.label, item.personalMeaning!]))} onMeaning={onMeaning} />
 
@@ -466,7 +505,7 @@ function BodyScreen({ initial, onNext }: { initial: BodyObservation[]; onNext: (
     .filter((group) => group.labels.length);
 
   return <Screen>
-    <StepHeading step={t("body.step")} title={t("body.title")} hint={t("body.hint")} />
+    <StepHeading step={t("body.step")} title={t("body.title")} hint={t("body.hint")} basis={t("body.basis")} />
     <div className="chip-grid">{first.map((item) => chip(item.label))}</div>
     {!showAll && <button className="reveal-button" onClick={() => setShowAll(true)}>{t("body.more")}</button>}
     {showAll && rest.map((group) => <div key={group.region}>
@@ -492,7 +531,7 @@ function AffectScreen({ initial, onNext }: { initial?: AffectPoint; onNext: (aff
   );
   const [touched, setTouched] = useState(false);
   return <Screen>
-    <StepHeading step={t("affect.step")} title={t("affect.title")} hint={t("affect.hint")} />
+    <StepHeading step={t("affect.step")} title={t("affect.title")} hint={t("affect.hint")} basis={t("affect.basis")} />
     <AffectPad initial={initial} onChange={(next) => { setTouched(true); setPoint(next); }} />
     <Navigation note={stepNote(stepNotes, "affect", touched)} onNext={() => onNext(point ?? initial ?? {})} />
   </Screen>;
@@ -503,7 +542,7 @@ function ContextScreen({ initial, onNext }: { initial?: DeepContext; onNext: (co
   const { stepNotes } = useContent();
   const [text, setText] = useState(initial?.eventText ?? "");
   const [source, setSource] = useState<DeepContext["source"]>(initial?.source ?? "event");
-  return <Screen><StepHeading step={t("context.step")} title={t("context.title")} hint={t("context.hint")} /><textarea className="text-area" value={text} onChange={(event) => setText(event.target.value)} placeholder={t("context.placeholder")} /><div className="segmented"><span>{t("context.sourceQuestion")}</span>{(["event", "memory", "anticipation", "thought"] as const).map((value) => <button className={source === value ? "selected" : ""} aria-pressed={source === value} key={value} onClick={() => setSource(value)}><Mark on={source === value} />{t(`contextSource.${value}`)}</button>)}</div><Navigation note={stepNote(stepNotes, "context", text.trim().length > 0)} onNext={() => onNext({ eventText: text, source })} /></Screen>;
+  return <Screen><StepHeading step={t("context.step")} title={t("context.title")} hint={t("context.hint")} basis={t("context.basis")} /><textarea className="text-area" value={text} onChange={(event) => setText(event.target.value)} placeholder={t("context.placeholder")} /><div className="segmented"><span>{t("context.sourceQuestion")}</span>{(["event", "memory", "anticipation", "thought"] as const).map((value) => <button className={source === value ? "selected" : ""} aria-pressed={source === value} key={value} onClick={() => setSource(value)}><Mark on={source === value} />{t(`contextSource.${value}`)}</button>)}</div><Navigation note={stepNote(stepNotes, "context", text.trim().length > 0)} onNext={() => onNext({ eventText: text, source })} /></Screen>;
 }
 
 function MeaningScreen({ initial, onNext }: { initial: string[]; onNext: (selected: string[]) => void }) {
@@ -512,7 +551,7 @@ function MeaningScreen({ initial, onNext }: { initial: string[]; onNext: (select
   const [selected, setSelected] = useState(initial);
   const [custom, setCustom] = useState("");
   const toggle = (item: string) => setSelected((current) => current.includes(item) ? current.filter((value) => value !== item) : [...current, item]);
-  return <Screen><StepHeading step={t("meaning.step")} title={t("meaning.title")} hint={t("meaning.hint")} /><div className="choice-list compact">{concerns.map((item) => <button className={selected.includes(item) ? "selected" : ""} aria-pressed={selected.includes(item)} key={item} onClick={() => toggle(item)}><Mark on={selected.includes(item)} />{item}</button>)}</div><input className="text-input" value={custom} onChange={(event) => setCustom(event.target.value)} placeholder={t("common.ownWordsPlaceholder")} /><Navigation note={stepNote(stepNotes, "meaning", selected.length > 0 || custom.trim().length > 0)} onNext={() => onNext([...selected, ...(custom ? [custom] : [])])} /></Screen>;
+  return <Screen><StepHeading step={t("meaning.step")} title={t("meaning.title")} hint={t("meaning.hint")} basis={t("meaning.basis")} /><div className="choice-list compact">{concerns.map((item) => <button className={selected.includes(item) ? "selected" : ""} aria-pressed={selected.includes(item)} key={item} onClick={() => toggle(item)}><Mark on={selected.includes(item)} />{item}</button>)}</div><input className="text-input" value={custom} onChange={(event) => setCustom(event.target.value)} placeholder={t("common.ownWordsPlaceholder")} /><Navigation note={stepNote(stepNotes, "meaning", selected.length > 0 || custom.trim().length > 0)} onNext={() => onNext([...selected, ...(custom ? [custom] : [])])} /></Screen>;
 }
 
 function EmotionScreen({ initial, affect, onNext }: { initial: EmotionSelection[]; affect?: AffectPoint; onNext: (selected: EmotionSelection[]) => void }) {
@@ -530,7 +569,7 @@ function EmotionScreen({ initial, affect, onNext }: { initial: EmotionSelection[
   // the deep affect already narrowed the space once; this reuses it rather than listing everything
   const pool = filterQuickCandidates({ x: affect?.valence ?? 0.5, y: affect?.activation ?? 0.5 }, undefined, t.locale);
   return <Screen>
-    <StepHeading step={t("emotion.step")} title={t("emotion.title")} hint={t("emotion.hint")} />
+    <StepHeading step={t("emotion.step")} title={t("emotion.title")} hint={t("emotion.hint")} basis={t("emotion.basis")} />
     <div className="provisional-note">{t("common.provisionalNote")}</div>
     <TieredWords pool={pool} selectedLabels={selected} ownWords={ownWords} onToggle={toggle} onAddCustom={addOwnWord} />
     <div className="quick-option-row">{[t("emotion.escapes.several"), t("emotion.escapes.unsure")].map((label) => <button className={`secondary-button ${selected.includes(label) ? "selected" : ""}`} aria-pressed={selected.includes(label)} key={label} onClick={() => toggle(label)}><Mark on={selected.includes(label)} />{label}</button>)}</div>
@@ -543,7 +582,7 @@ function OutcomeScreen({ onNext }: { onNext: (outcome: DeepOutcome) => void }) {
   const [clarity, setClarity] = useState<DeepOutcome["clarity"]>();
   const [usefulness, setUsefulness] = useState<DeepOutcome["usefulness"]>();
   const [note, setNote] = useState("");
-  return <Screen><StepHeading step={t("outcome.step")} title={t("outcome.title")} hint={t("outcome.hint")} /><div className="choice-list compact">{(["much_clearer", "clearer", "same", "more_complex", "more_distressed"] as const).map((value) => <button className={clarity === value ? "selected" : ""} aria-pressed={clarity === value} key={value} onClick={() => setClarity(value)}><Mark on={clarity === value} />{t(`outcome.clarity.${value}`)}</button>)}</div><h2 className="subquestion">{t("outcome.usefulnessQuestion")}</h2><div className="inline-choices">{(["helpful", "unsure", "unhelpful"] as const).map((value) => <button className={usefulness === value ? "selected" : ""} aria-pressed={usefulness === value} key={value} onClick={() => setUsefulness(value)}><Mark on={usefulness === value} />{t(`outcome.usefulness.${value}`)}</button>)}</div><input className="text-input" value={note} onChange={(event) => setNote(event.target.value)} placeholder={t("outcome.notePlaceholder")} /><Navigation disabled={!clarity || !usefulness} onNext={() => onNext({ clarity: clarity!, usefulness: usefulness!, note })} /></Screen>;
+  return <Screen><StepHeading step={t("outcome.step")} title={t("outcome.title")} hint={t("outcome.hint")} basis={t("outcome.basis")} /><div className="choice-list compact">{(["much_clearer", "clearer", "same", "more_complex", "more_distressed"] as const).map((value) => <button className={clarity === value ? "selected" : ""} aria-pressed={clarity === value} key={value} onClick={() => setClarity(value)}><Mark on={clarity === value} />{t(`outcome.clarity.${value}`)}</button>)}</div><h2 className="subquestion">{t("outcome.usefulnessQuestion")}</h2><div className="inline-choices">{(["helpful", "unsure", "unhelpful"] as const).map((value) => <button className={usefulness === value ? "selected" : ""} aria-pressed={usefulness === value} key={value} onClick={() => setUsefulness(value)}><Mark on={usefulness === value} />{t(`outcome.usefulness.${value}`)}</button>)}</div><input className="text-input" value={note} onChange={(event) => setNote(event.target.value)} placeholder={t("outcome.notePlaceholder")} /><Navigation disabled={!clarity || !usefulness} onNext={() => onNext({ clarity: clarity!, usefulness: usefulness!, note })} /></Screen>;
 }
 
 function SummaryScreen({ session, onFeedback, onSupport }: { session: EmotionSession; onFeedback: (feedback: { fit?: SynthesisFit; correction?: string }) => void; onSupport: () => void }) {
@@ -801,7 +840,8 @@ function StoppedScreen({ session }: { session: EmotionSession }) { const t = use
 function StopModal({ onClose, onStop }: { onClose: () => void; onStop: () => void }) { const t = useT(); return <div className="modal-backdrop"><div className="modal" role="dialog" aria-modal="true"><p className="eyebrow">{t("stopModal.eyebrow")}</p><h2>{renderRich(t("stopModal.title"))}</h2><p>{t("stopModal.body")}</p><div className="modal-actions"><button className="secondary-button" onClick={onClose}>{t("stopModal.keepGoing")}</button><button className="primary-button" onClick={onStop}>{t("stopModal.stop")}</button></div></div></div>; }
 
 function Screen({ children, className = "" }: { children: React.ReactNode; className?: string }) { return <section className={`screen ${className}`}>{children}</section>; }
-function StepHeading({ step, title, hint }: { step: string; title: string; hint: string }) { return <><p className="eyebrow">{step}</p><h1>{title}</h1><p className="hint">{hint}</p></>; }
+/** The basis band, when given, says which moment the question is about, before the question itself. */
+function StepHeading({ step, title, hint, basis }: { step: string; title: string; hint: string; basis?: string }) { return <><p className="eyebrow">{step}</p>{basis && <p className="step-basis">{basis}</p>}<h1>{title}</h1><p className="hint">{hint}</p></>; }
 function Navigation({ onNext, disabled = false, note }: { onNext: () => void; disabled?: boolean; note?: string }) {
   const t = useT();
   return <><StepNote note={note} /><div className="navigation"><button className="skip-button" onClick={onNext}>{t("common.skip")}</button><button className="primary-button" disabled={disabled} onClick={onNext}>{t("common.next")} <span>→</span></button></div></>;

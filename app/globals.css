@@ -142,3 +142,37 @@ p, .lede, .hint, .step-note, .small-note, .summary-footnote { text-wrap: pretty;
 .zone-recap { margin: 14px 0 0; color: var(--muted); font-size: 14px; line-height: 1.6; }
 .zone-note { padding: 2px 0 2px 16px; border-left: 3px solid var(--line-strong); }
 .zone-note p { margin: 0; color: var(--muted); font-size: 17px; line-height: 1.7; }
+
+/* Landing guide (benchmarked on a one-question-at-a-time screening page, form only):
+   length badges above the buttons, a basis band above each question, and a folded
+   "about" section below the buttons. Lists rise in one after another when shown. */
+.landing-badges { display: flex; flex-wrap: wrap; gap: 8px; max-width: 560px; margin: 32px 0 0; padding: 0; list-style: none; }
+.landing-badges li { padding: 6px 12px; border: 1px solid var(--line); border-radius: 999px; background: var(--card); color: var(--ink); font: 500 13px system-ui, sans-serif; animation: rise-in .5s ease-out both; animation-delay: calc(var(--rise-order, 0) * 70ms); }
+.landing-badges li:nth-child(2) { --rise-order: 1; }
+.landing-badges li:nth-child(3) { --rise-order: 2; }
+.landing-badges + .stack-actions { margin-top: 20px; }
+.step-basis { display: inline-block; margin: -6px 0 18px; padding: 7px 12px; border-radius: 8px; background: var(--card); border: 1px solid var(--line); color: var(--ink); font: 500 14px system-ui, sans-serif; line-height: 1.5; }
+.about { max-width: 560px; margin-top: 72px; padding-top: 36px; border-top: 1px solid var(--line); }
+.about h2 { margin: 0 0 16px; font-size: 24px; font-weight: 400; letter-spacing: -.02em; }
+.about > p { margin: 0 0 14px; color: var(--muted); font-size: 15px; line-height: 1.75; }
+.about > p strong { color: var(--ink); font-weight: 600; }
+.about-fold { margin-top: 12px; border: 1px solid var(--line); border-radius: 12px; background: var(--card); }
+.about-fold > summary { display: flex; justify-content: space-between; align-items: center; padding: 16px 18px; color: var(--ink); font: 600 15px system-ui, sans-serif; cursor: pointer; list-style: none; }
+.about-fold > summary::-webkit-details-marker { display: none; }
+.about-fold > summary::after { content: "▸"; color: var(--accent-ink); transition: transform .2s ease; }
+.about-fold[open] > summary::after { transform: rotate(90deg); }
+.about-fold > summary:hover { color: var(--accent-ink); }
+.about-fold > .about-intro, .about-fold > .why-principle { margin: 0 18px 16px; font-size: 14px; line-height: 1.7; }
+.about-intro { color: var(--muted); }
+.about-list { margin: 0; padding: 0 18px 8px; list-style: none; }
+.about-list > * { margin: 0 0 12px; padding: 14px 16px; border-radius: 10px; background: var(--paper); }
+.about-fold[open] .about-list > * { animation: rise-in .45s ease-out both; animation-delay: calc(var(--rise-order, 0) * 60ms); }
+.about-list p, .about-list dd { margin: 0 0 8px; color: var(--muted); font-size: 14px; line-height: 1.7; }
+.about-list p:last-child, .about-list dd { margin-bottom: 0; }
+.about-list strong { margin-right: 4px; color: var(--ink); font: 600 13px system-ui, sans-serif; }
+.about-cite { color: var(--ink) !important; font-size: 14px; }
+.about-kind { display: inline-block; padding: 2px 8px; border-radius: 6px; background: var(--card); color: var(--ink) !important; font: 500 12px system-ui, sans-serif !important; }
+.about-list dt { margin-bottom: 6px; color: var(--ink); font: 600 15px system-ui, sans-serif; }
+.about-list dd { margin-left: 0; }
+@keyframes rise-in { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: none; } }
+/* Reduced motion follows the rule above: the rise becomes instant. */
