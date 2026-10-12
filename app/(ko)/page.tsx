@@ -283,6 +283,9 @@ function AboutTool() {
   </section>;
 }
 
+/** A web helpline opens in a new tab; a tel: or sms: link is left to the device. */
+const external = (href: string) => href.startsWith("https://") ? { target: "_blank", rel: "noopener noreferrer" } : {};
+
 function CrisisCard() {
   const t = useT();
   return (
@@ -291,15 +294,15 @@ function CrisisCard() {
         <strong>{t("crisis.lead")}</strong> {t("crisis.body")}
       </p>
       <div className="crisis-links">
-        <a href={`tel:${t("crisis.num109")}`} className="crisis-link">
+        <a href={t("crisis.href109")} className="crisis-link" {...external(t("crisis.href109"))}>
           <span>{t("crisis.lifeline109")}</span>
           <strong>{t("crisis.num109")}</strong>
         </a>
-        <a href={`tel:${t("crisis.num1577")}`} className="crisis-link">
+        <a href={t("crisis.href1577")} className="crisis-link" {...external(t("crisis.href1577"))}>
           <span>{t("crisis.mental1577")}</span>
           <strong>{t("crisis.num1577")}</strong>
         </a>
-        <a href={`tel:${t("crisis.num1388")}`} className="crisis-link">
+        <a href={t("crisis.href1388")} className="crisis-link" {...external(t("crisis.href1388"))}>
           <span>{t("crisis.youth1388")}</span>
           <strong>{t("crisis.num1388")}</strong>
         </a>

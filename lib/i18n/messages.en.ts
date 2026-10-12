@@ -77,6 +77,10 @@ export const en: Messages = {
     num1577: "741741",
     youth1388: "International Helplines",
     num1388: "findahelpline.com",
+    /** Where each line goes: a phone call, a text (Crisis Text Line takes HOME by text, not a call) or a web page. */
+    href109: "tel:988",
+    href1577: "sms:741741?&body=HOME",
+    href1388: "https://findahelpline.com",
   },
   about: {
     title: "About this tool",

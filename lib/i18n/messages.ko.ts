@@ -63,6 +63,10 @@ export const ko = {
     num1577: "1577-0199",
     youth1388: "청소년상담전화 (24세 이하)",
     num1388: "1388",
+    /** Where each line goes: a phone call, a text (Crisis Text Line takes HOME by text, not a call) or a web page. */
+    href109: "tel:109",
+    href1577: "tel:1577-0199",
+    href1388: "tel:1388",
   },
   /** Below the landing buttons: what the tool is, the studies behind it (docs/EVIDENCE_CHAIN.md), and common questions. */
   about: {
