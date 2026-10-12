@@ -241,3 +241,8 @@ p, .lede, .hint, .step-note, .small-note, .summary-footnote { text-wrap: pretty;
 .about-list dt { margin-bottom: 6px; color: var(--ink); font: 600 var(--t-small) var(--font-sans); }
 .about-list dd { margin-left: 0; }
 @keyframes rise-in { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: none; } }
+
+/* The basis band above each question (from the landing guide work): which moment
+   the question is about. Neutral on purpose: card fill, light border, muted text.
+   No blue and no coral; coral stays only under a selected choice. */
+.step-basis { display: inline-block; margin: -4px 0 18px; padding: 7px 12px; border: 1px solid var(--line); border-radius: 8px; background: var(--card); color: var(--muted); font: 500 var(--t-small) var(--font-sans); line-height: 1.5; }

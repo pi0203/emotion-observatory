@@ -118,6 +118,16 @@ describe("settled values (owner's choices, 2026-10-12)", () => {
     expect(css.match(/0 3px 0 var\(--pick-underline\)/g)).toHaveLength(4);
   });
 
+  it("keeps the basis band neutral: card fill, light border, muted text, no blue or coral", () => {
+    const at = css.indexOf(".step-basis {");
+    expect(at).toBeGreaterThan(0);
+    const body = css.slice(css.indexOf("{", at), css.indexOf("}", at));
+    expect(body).toMatch(/background: var\(--card\)/);
+    expect(body).toMatch(/border: 1px solid var\(--line\)/);
+    expect(body).toMatch(/color: var\(--muted\)/);
+    expect(body).not.toMatch(/--accent|--pick-underline|--on-accent|--check/);
+  });
+
   it("keeps the homepage's own frame colours, in light and in dark", () => {
     expect(upper(themes.light)).toMatchObject({ "site-ink": "#1E271F", "site-muted": "#46513F", "site-line": "#B2C4AC", "site-hover": "#984024" });
     expect(upper(themes.dark)).toMatchObject({ "site-ink": "#E8EEF5", "site-muted": "#98A5B6", "site-line": "#2A3441", "site-hover": "#FF8A63" });

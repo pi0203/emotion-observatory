@@ -212,6 +212,7 @@ export const en: Messages = {
     no: "I don’t think it would help right now",
   },
   quickAffect: {
+    basis: "As of this moment",
     step: "Quick look",
     title: "Which way is it leaning right now?",
     hint: "No need to pick an exact point. Tap once wherever feels about right.",
@@ -228,6 +229,7 @@ export const en: Messages = {
     startingPoint: "This is a starting point, not a complete list. Writing your own word is an equally normal path.",
   },
   quickCandidates: {
+    basis: "Based on where you just tapped",
     step: "Possible words",
     title: "Words that might come close to what you are experiencing.",
     hint: "This is not a verdict on your emotion. You can pick several, or none if nothing fits.",
@@ -296,6 +298,7 @@ export const en: Messages = {
     support: "So what might you need now?",
   },
   body: {
+    basis: "Only what you notice in your body right now",
     step: "Body",
     title: "First, what do you notice in your body?",
     hint: "Before looking for a name for the emotion, start with what you can notice in your body right now. No need to change how you are sitting. What you notice in this moment is enough.",
@@ -304,11 +307,13 @@ export const en: Messages = {
     customPlaceholder: "e.g. Cold hands",
   },
   affect: {
+    basis: "As of this moment",
     step: "Overall feeling",
     title: "Now that you have looked a little closer, which way is it leaning?",
     hint: "The spot you marked in the quick look is already placed. You can leave it or move it.",
   },
   context: {
+    basis: "Just the one thing that came to mind",
     step: "Situation",
     title: "What happened?",
     hint: "A few plain facts are enough.",
@@ -316,11 +321,13 @@ export const en: Messages = {
     sourceQuestion: "Which is this closest to?",
   },
   meaning: {
+    basis: "As of the moment it happened",
     step: "What mattered",
     title: "What seemed to matter in that moment?",
     hint: "There is no right answer. You can pick what comes close, or say you are not sure.",
   },
   emotion: {
+    basis: "Based on what you have written so far",
     step: "Words that come close",
     title: "Is there a word that comes close to what you have written so far?",
     hint: "These words are not right answers. They are provisional options for putting the experience into words.",
@@ -330,6 +337,7 @@ export const en: Messages = {
     },
   },
   outcome: {
+    basis: "Compared with when you started",
     step: "Did it help",
     title: "Compared with the start, is the experience a little clearer now?",
     hint: "If it has become more tangled or more uncomfortable, you can say so.",
