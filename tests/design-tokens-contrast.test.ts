@@ -35,24 +35,28 @@ const TEXT: [string, string, string][] = [
   ["ink", "paper", "body text"],
   ["ink", "card", "text on cards, inputs and choices"],
   ["ink", "warm", "the example zone and asides"],
-  ["ink", "accent-soft", "a selected choice"],
   ["ink", "accent-subtle", "hover and step notes"],
   ["muted", "paper", "secondary text and the eyebrow"],
   ["muted", "card", "secondary text on cards"],
   ["muted", "warm", "the provisional note"],
-  ["muted", "accent-soft", "secondary text inside a selected row"],
   ["accent-ink", "paper", "accent text: disclosure titles, labels, links"],
   ["accent-ink", "card", "accent text on cards"],
   ["on-accent", "accent", "the main button"],
   ["on-accent", "accent-hover", "the main button on hover"],
   ["on-accent", "accent-press", "the main button pressed"],
-  ["check", "accent-soft", "the ✓ and the record depth badge"],
+  ["on-accent", "accent-soft", "a selected choice"],
+  ["check", "accent-soft", "the ✓ on a selected choice"],
+  ["ink", "badge", "badge text"],
+  ["site-ink", "paper", "the homepage frame: logo and footer links"],
+  ["site-muted", "paper", "the homepage frame: menu and footer text"],
+  ["site-hover", "paper", "the homepage frame: a hovered link"],
 ];
 
 const EDGES: [string, string, string][] = [
   ["accent-ink", "paper", "focus ring"],
   ["accent-ink", "card", "focus ring on cards"],
-  ["accent-ink", "accent-soft", "selected edge"],
+  ["accent-soft", "paper", "a selected choice against the page"],
+  ["accent-soft", "card", "a selected choice against a card"],
   ["line-strong", "paper", "control borders"],
   ["line-strong", "card", "control borders on cards"],
   ["accent", "paper", "the main button against the page"],
@@ -71,16 +75,54 @@ describe.each(Object.entries(themes))("%s theme", (_name, tokens) => {
   });
 });
 
+const upper = (tokens: Record<string, string>) => Object.fromEntries(Object.entries(tokens).map(([k, v]) => [k, v.toUpperCase()]));
+
 describe("settled values (owner's choices, 2026-10-12)", () => {
-  it("uses candidate B for the selected background, a different hue from the example zone", () => {
-    expect(themes.light["accent-soft"].toUpperCase()).toBe("#FFFDF6");
-    expect(themes.dark["accent-soft"].toUpperCase()).toBe("#2C3A33");
-    expect(css).not.toMatch(/#F7FBF5|#26313D/i);
+  it("uses the light blue palette with a coral point, exactly as settled", () => {
+    expect(upper(themes.light)).toMatchObject({
+      paper: "#E0E8FF", card: "#F5F8FF", accent: "#2543D1", "on-accent": "#FFFFFF", ink: "#111A3D",
+      muted: "#3F4B7A", line: "#B5C5F5", "pick-underline": "#FF7A52",
+    });
+    expect(upper(themes.dark)).toMatchObject({
+      paper: "#0F1633", card: "#192250", accent: "#8CA2FF", "on-accent": "#0F1633", ink: "#EEF1FF",
+      muted: "#A9B4E6", line: "#2E3B7A", "pick-underline": "#FF8A66",
+    });
+    expect(css).not.toMatch(/#FFFDF6|#2C3A33/i);
   });
 
-  it.each(Object.entries(themes))("keeps body and secondary text legible on the selected background (%s)", (_name, tokens) => {
-    expect(ratio(tokens.ink, tokens["accent-soft"])).toBeGreaterThanOrEqual(4.5);
-    expect(ratio(tokens.muted, tokens["accent-soft"])).toBeGreaterThanOrEqual(4.5);
+  it("fills a selected choice with the blue and writes its text in --on-accent", () => {
+    for (const selector of [".chip.selected", ".choice-list button.selected", ".segmented button.selected", ".quick-option-row .secondary-button.selected"]) {
+      const at = css.indexOf(selector);
+      const body = css.slice(css.indexOf("{", at), css.indexOf("}", at));
+      expect(body, selector).toMatch(/background: var\(--accent-soft\)/);
+      expect(body, selector).toMatch(/color: var\(--on-accent\)/);
+      expect(body, selector).toMatch(/0 3px 0 var\(--pick-underline\)/);
+    }
+  });
+
+  it("uses coral in one place only: the line under a selected choice", () => {
+    expect(themes.light.dot).toBeUndefined();
+    expect(themes.dark.dot).toBeUndefined();
+    expect(css).not.toMatch(/var\(--dot\)|::before[^{]*\{[^}]*border-radius: 50%/);
+    // the coral values appear only as --pick-underline, once per theme
+    const coral = [themes.light["pick-underline"], themes.dark["pick-underline"]];
+    for (const hex of new Set(coral)) {
+      const defined = [...css.matchAll(new RegExp(`--([\\w-]+):\\s*${hex}`, "gi"))].map((m) => m[1]);
+      expect(new Set(defined)).toEqual(new Set(["pick-underline"]));
+    }
+    // and that token is used only as the 3px line under the four selected styles
+    const uses = [...css.matchAll(/([^{}]*)\{[^}]*var\(--pick-underline\)/g)].map((m) => m[1].trim());
+    expect(uses).toHaveLength(4);
+    for (const selector of uses) expect(selector).toMatch(/\.selected$/);
+    expect(css.match(/var\(--pick-underline\)/g)).toHaveLength(4);
+    expect(css.match(/0 3px 0 var\(--pick-underline\)/g)).toHaveLength(4);
+  });
+
+  it("keeps the homepage's own frame colours, in light and in dark", () => {
+    expect(upper(themes.light)).toMatchObject({ "site-ink": "#1E271F", "site-muted": "#46513F", "site-line": "#B2C4AC", "site-hover": "#984024" });
+    expect(upper(themes.dark)).toMatchObject({ "site-ink": "#E8EEF5", "site-muted": "#98A5B6", "site-line": "#2A3441", "site-hover": "#FF8A63" });
+    const frame = css.slice(css.indexOf(".site-header {"), css.indexOf(".skip-link {"));
+    expect(frame).not.toMatch(/var\(--(ink|muted|line|line-strong|accent-ink)\)/);
   });
 
   it("draws the dark pad's centre lines at 3:1 or more against the whole pad", () => {
