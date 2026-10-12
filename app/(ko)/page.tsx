@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useReducer, useRef, useState } from "react";
+import { useEffect, useReducer, useRef, useState, type CSSProperties } from "react";
 import { canGoBack, createSession, sessionReducer, understandRoute } from "../../lib/session-types";
 import { appraisalEscapes, coachEscapes, coachResult, coachSetFor, getCoachSets } from "../../lib/coach";
 import type { AffectPoint, BodyObservation, DeepReflection, EmotionSelection, EmotionSession, QuickNonSelection, SynthesisFit } from "../../lib/session-types";
@@ -238,8 +238,49 @@ function LandingScreen({ onQuick, onDeep, draft, onResume, onRecords }: { onQuic
       <WhyWords />
     </div>
 
+    <AboutTool />
     <CrisisCard />
   </Screen>;
+}
+
+const REFERENCES = ["vedernikova", "widdershoven", "hoemann", "fugate", "dejonckheere", "thompson"] as const;
+const QUESTIONS = ["judge", "storage", "often", "worse", "body", "effect"] as const;
+
+/**
+ * Below the "why" folds and above the crisis card: what the tool is, the studies
+ * behind it with their limits (docs/EVIDENCE_CHAIN.md), and common questions.
+ * The "not a crisis service" sentence comes last so the crisis card follows it
+ * directly. The lists start folded; each item rises in as it is shown.
+ */
+function AboutTool() {
+  const t = useT();
+  return <section className="about" aria-labelledby="about-title">
+    <h2 id="about-title">{t("about.title")}</h2>
+    <p>{t("about.what")}</p>
+    <details className="about-fold">
+      <summary>{t("about.refsSummary")}</summary>
+      <p className="about-intro">{t("about.refsIntro")}</p>
+      <ol className="about-list">
+        {REFERENCES.map((id, index) => <li key={id} style={{ "--rise-order": index } as CSSProperties}>
+          <p className="about-cite">{t(`about.refs.${id}.cite`)}</p>
+          <p className="about-kind">{t(`about.refs.${id}.kind`)}</p>
+          <p><strong>{t("about.found")}</strong> {t(`about.refs.${id}.found`)}</p>
+          <p><strong>{t("about.limit")}</strong> {t(`about.refs.${id}.limit`)}</p>
+        </li>)}
+      </ol>
+      <p className="why-principle">{renderRich(t("about.refsClosing"))}</p>
+    </details>
+    <details className="about-fold">
+      <summary>{t("about.faqSummary")}</summary>
+      <dl className="about-list">
+        {QUESTIONS.map((id, index) => <div key={id} style={{ "--rise-order": index } as CSSProperties}>
+          <dt>{t(`about.faq.${id}.q`)}</dt>
+          <dd>{t(`about.faq.${id}.a`)}</dd>
+        </div>)}
+      </dl>
+    </details>
+    <p className="about-not">{renderRich(t("about.not"))}</p>
+  </section>;
 }
 
 function CrisisCard() {

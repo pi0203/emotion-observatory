@@ -56,9 +56,9 @@ export const en: Messages = {
   landing: {
     title: "Take a closer look\nat what you are experiencing",
     lede: "This is not a test that guesses your emotions.\nYou can take a quick look, or take your time telling things apart.",
-    badgeQuick: "10-30s · Quick check",
-    badgeDeep: "6 steps · Deep reflection",
-    badgeLocal: "Private · Stored locally",
+    badgeQuick: "Quick · 2 steps · about 10 to 30 seconds",
+    badgeDeep: "Slow · 6 steps · about 3 to 5 minutes",
+    badgeLocal: "Private · Saved only on this device",
     badgeBoundary: "Non-medical self-monitoring",
     badgesLabel: "Observation features",
     quick: "Take a quick look",
@@ -77,6 +77,81 @@ export const en: Messages = {
     num1577: "741741",
     youth1388: "International Helplines",
     num1388: "findahelpline.com",
+  },
+  about: {
+    title: "About this tool",
+    what: "A self-observation tool for looking at what you are experiencing in parts: the body, the situation, what mattered, and the words for it. The quick look has two steps: tap once, then pick words that feel close. The slow look has six steps, from the body to the words.",
+    not: "It is not a medical tool or a crisis service, and it does not score or judge emotions. <b>It has not been shown to help with telling emotions apart or with mental health.</b>",
+    refsSummary: "Six studies behind it",
+    refsIntro: "How far research supports the ideas behind this app. Each study is listed with what it found and where it falls short.",
+    found: "What it found",
+    limit: "Limits",
+    refsClosing: "<b>No study has tested this app.</b> Using it now and then for 10 to 30 seconds is far less use than in any study above. These studies only show where the ideas behind the app stand.",
+    refs: {
+      vedernikova: {
+        cite: "Vedernikova, Kuppens, & Erbas (2021). From knowledge to differentiation. Frontiers in Psychology.",
+        kind: "Randomized controlled trial · full text read",
+        found: "120 adults spent about 15 minutes a day for 5 days reading what 12 emotions mean and the situations they arise in. Unlike a comparison group that learned geography, they told negative emotions apart more finely, and this held a month later.",
+        limit: "It was measured by rating made-up situations, with the same emotions that were taught. Results on other measures such as depression were not consistent.",
+      },
+      widdershoven: {
+        cite: "Widdershoven et al. (2019). Effect of self-monitoring through experience sampling on emotion differentiation in depression. Journal of Affective Disorders, 244.",
+        kind: "Randomized trial · author manuscript read",
+        found: "Among 79 people in treatment for depression, those who logged their feelings 10 times a day for 6 weeks told negative emotions apart more finely than those who did not.",
+        limit: "They logged about 150 times on average and met a researcher every week. Which part of this made the difference is unknown.",
+      },
+      hoemann: {
+        cite: "Hoemann, Barrett, & Quigley (2021). Emotional granularity increases with intensive ambulatory assessment. Frontiers in Psychology, 12.",
+        kind: "No comparison group · full text read",
+        found: "After 50 healthy adults logged nearly 9 times a day for about 2 weeks, they told both positive and negative emotions apart more finely.",
+        limit: "With no comparison group, it is unknown whether the logging caused this. The authors also noted that paying more attention to negative experiences might increase rumination.",
+      },
+      fugate: {
+        cite: "Fugate et al. (2026). The effects of teaching emotion words on emotional granularity, emotion regulation/dysregulation, and satisfaction with life. bioRxiv.",
+        kind: "Preprint, not yet peer reviewed · full text read",
+        found: "95 people learned the meaning and use of one emotion word a day for 14 days, with no clear change in telling emotions apart. It is the study closest to how this app offers words.",
+        limit: "There was no step for trying the learned words on their own experience. It has not been peer reviewed yet.",
+      },
+      dejonckheere: {
+        cite: "Dejonckheere et al. (2019). Complex affect dynamics add limited information to the prediction of psychological well-being. Nature Human Behaviour, 3(5).",
+        kind: "Reanalysis of existing data from 1,777 people · preprint read",
+        found: "Much of the link between telling emotions apart and depression overlapped with average mood. Once average mood was taken into account, little was added.",
+        limit: "The data come from one point in time, so they say nothing about cause and effect. It means any effect of this app has to be looked at alongside average mood.",
+      },
+      thompson: {
+        cite: "Thompson, Springstein, & Boden (2021). Gaining clarity about emotion differentiation. Social and Personality Psychology Compass, 15.",
+        kind: "Review · full text read",
+        found: "Common ways of measuring how finely people tell emotions apart can count feeling several emotions at once as telling them apart poorly.",
+        limit: "This app treats picking several words together as natural. That is why the research measures cannot be carried over to this app as they are.",
+      },
+    },
+    faqSummary: "Common questions",
+    faq: {
+      judge: {
+        q: "Does it tell me what I am feeling?",
+        a: "No. The app does not decide what your “real emotion” is, and it gives no score. The words are only a starting point; you pick the name or write your own.",
+      },
+      storage: {
+        q: "Where are my entries saved?",
+        a: "Only in the browser you are using. What you write is not sent to a server. Clearing your browser data removes it, and the storage is not encrypted. From past entries you can export them to a file or delete them all.",
+      },
+      often: {
+        q: "How often should I use it?",
+        a: "There is no set number. Days without it are fine too. Research does not yet know how much use it takes to help.",
+      },
+      worse: {
+        q: "What if it gets more tangled or uncomfortable?",
+        a: "Press Stop at any time. Going over things again and again can sometimes make it harder. At the last step you can also note that it felt more uncomfortable.",
+      },
+      body: {
+        q: "What if I notice nothing in my body?",
+        a: "That is fine too. You can skip the step.",
+      },
+      effect: {
+        q: "Does it work?",
+        a: "We do not know yet. Some studies found that people told emotions apart more finely after practice, but whether that helps in life, or whether this app does the same, has not been shown.",
+      },
+    },
   },
   whyThis: {
     summary: "Why look at an emotion more closely?",

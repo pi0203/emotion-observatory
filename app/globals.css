@@ -195,3 +195,33 @@ p, .lede, .hint, .step-note, .small-note, .summary-footnote { text-wrap: pretty;
 .skip-link { position: absolute; left: 16px; top: -100px; z-index: 10; padding: 10px 14px; color: var(--ink); background: var(--card); border: 1px solid var(--line-strong); border-radius: 3px; font-size: var(--t-small); text-decoration: none; }
 .skip-link:focus { top: 12px; }
 @media (max-width: 560px) { .site-header { padding-top: 20px; } .site-main .entry-screen { padding-top: 24px; } .site-main .screen { padding-top: 28px; } }
+
+/* About this tool, below the "why" folds and above the crisis card (from the
+   landing guide work, 2026-10-12): what the tool is, six studies with their
+   limits, common questions. Lists rise in one after another when opened; the
+   reduced-motion rule above makes that instant. */
+.about { margin-top: 32px; }
+.about h2 { margin: 0 0 16px; font-size: var(--t-lead); }
+.about > p { margin: 0 0 14px; color: var(--muted); font-size: var(--t-small); line-height: 1.75; }
+.about > p strong { color: var(--ink); font-weight: 700; }
+.about > .about-not { margin: 16px 0 0; color: var(--ink); }
+.about + .crisis-card { margin-top: 12px; }
+.about-fold { margin-top: 12px; border: 1px solid var(--line); border-radius: 12px; background: var(--card); box-shadow: 0 2px 8px var(--shadow); }
+.about-fold > summary { display: flex; justify-content: space-between; align-items: center; padding: 18px 20px; color: var(--ink); font: 600 var(--t-small) var(--font-sans); cursor: pointer; list-style: none; }
+.about-fold > summary::-webkit-details-marker { display: none; }
+.about-fold > summary::after { content: "+"; font-size: var(--t-lead); font-weight: 400; color: var(--accent-ink); line-height: 1; }
+.about-fold[open] > summary::after { content: "−"; }
+.about-fold > summary:hover { color: var(--accent-ink); }
+.about-fold > .about-intro, .about-fold > .why-principle { margin: 0 20px 16px; font-size: var(--t-small); line-height: 1.7; }
+.about-intro { color: var(--muted); }
+.about-list { margin: 0; padding: 0 20px 8px; list-style: none; }
+.about-list > * { margin: 0 0 12px; padding: 14px 16px; border-radius: 10px; background: var(--paper); }
+.about-fold[open] .about-list > * { animation: rise-in .45s ease-out both; animation-delay: calc(var(--rise-order, 0) * 60ms); }
+.about-list p, .about-list dd { margin: 0 0 8px; color: var(--muted); font-size: var(--t-small); line-height: 1.7; }
+.about-list p:last-child, .about-list dd { margin-bottom: 0; }
+.about-list strong { margin-right: 4px; color: var(--ink); font: 600 var(--t-aside) var(--font-sans); }
+.about-cite { color: var(--ink) !important; }
+.about-kind { display: inline-block; padding: 2px 8px; border-radius: 6px; background: var(--card); color: var(--ink) !important; font: 500 var(--t-aside) var(--font-sans) !important; }
+.about-list dt { margin-bottom: 6px; color: var(--ink); font: 600 var(--t-small) var(--font-sans); }
+.about-list dd { margin-left: 0; }
+@keyframes rise-in { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: none; } }

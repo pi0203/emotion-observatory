@@ -42,9 +42,9 @@ export const ko = {
   landing: {
     title: "지금의 경험을\n조금 더 알아보기",
     lede: "감정을 맞히는 검사가 아닙니다.\n빠르게 살펴보거나, 천천히 구별해볼 수 있습니다.",
-    badgeQuick: "10~30초 · 빠른 확인",
-    badgeDeep: "6단계 · 천천히 구별",
-    badgeLocal: "비공개 · 로컬 저장",
+    badgeQuick: "빠르게 · 2단계 · 10~30초쯤",
+    badgeDeep: "천천히 · 6단계 · 3~5분쯤",
+    badgeLocal: "비공개 · 이 기기에만 저장",
     badgeBoundary: "비의료 자기관찰",
     badgesLabel: "관찰 방식과 특징",
     quick: "빠르게 살펴보기",
@@ -63,6 +63,82 @@ export const ko = {
     num1577: "1577-0199",
     youth1388: "청소년상담전화 (24세 이하)",
     num1388: "1388",
+  },
+  /** Below the landing buttons: what the tool is, the studies behind it (docs/EVIDENCE_CHAIN.md), and common questions. */
+  about: {
+    title: "이 도구에 대하여",
+    what: "지금의 경험을 몸 · 상황 · 중요했던 것 · 표현으로 나누어 살펴보는 자기관찰 도구입니다. 빠르게 살펴보기는 화면을 한 번 누르고 가까운 말을 고르는 두 단계, 천천히 살펴보기는 몸에서 시작해 표현까지 가는 여섯 단계입니다.",
+    not: "의료 도구나 위기 상담 도구가 아니고, 감정에 점수를 매기거나 판정하지 않습니다. <b>감정 구별이나 정신건강을 나아지게 한다는 효과는 아직 검증되지 않았습니다.</b>",
+    refsSummary: "참고한 연구 6편",
+    refsIntro: "앱의 생각이 연구로 어디까지 뒷받침되는지 정리했습니다. 연구마다 나온 것과 한계를 함께 적었습니다.",
+    found: "나온 것",
+    limit: "한계",
+    refsClosing: "<b>이 앱을 직접 시험한 연구는 아직 없습니다.</b> 이 앱처럼 가끔, 10~30초씩 쓰는 방식은 위 어느 연구보다도 훨씬 적게 쓰는 것입니다. 위 연구들은 앱의 생각이 어디쯤 서 있는지 보여 줄 뿐입니다.",
+    refs: {
+      vedernikova: {
+        cite: "Vedernikova, Kuppens, & Erbas (2021). From knowledge to differentiation. Frontiers in Psychology.",
+        kind: "무작위 대조 실험 · 원문 확인",
+        found: "성인 120명이 5일 동안 하루 15분쯤 감정 12개의 뜻과 그 감정이 생기는 상황을 읽었습니다. 지리를 배운 비교 집단과 달리 부정 감정을 구별하는 정도가 늘었고, 1개월 뒤에도 유지됐습니다.",
+        limit: "가상 상황에 점수를 매기는 방식으로 쟀고, 배운 감정과 잰 감정이 같았습니다. 우울 같은 다른 지표의 결과는 일관되지 않았습니다.",
+      },
+      widdershoven: {
+        cite: "Widdershoven 외 (2019). Effect of self-monitoring through experience sampling on emotion differentiation in depression. Journal of Affective Disorders, 244.",
+        kind: "무작위 실험 · 저자 원고 확인",
+        found: "우울증 치료 중인 79명 가운데 6주 동안 하루 10번씩 기록한 사람들에게서, 기록하지 않은 사람들보다 부정 감정 구별이 늘었습니다.",
+        limit: "평균 150번쯤 기록했고 매주 연구자를 만났습니다. 기록의 어느 부분이 변화를 만들었는지는 알 수 없습니다.",
+      },
+      hoemann: {
+        cite: "Hoemann, Barrett, & Quigley (2021). Emotional granularity increases with intensive ambulatory assessment. Frontiers in Psychology, 12.",
+        kind: "비교 집단 없음 · 원문 확인",
+        found: "건강한 성인 50명이 2주쯤 하루 9번 가까이 기록한 뒤 긍정 · 부정 감정 구별이 모두 늘었습니다.",
+        limit: "비교 집단이 없어 기록 때문인지 알 수 없습니다. 저자들은 부정적인 경험에 주의를 더 기울이면 반추가 늘 수 있다는 가능성도 적었습니다.",
+      },
+      fugate: {
+        cite: "Fugate 외 (2026). The effects of teaching emotion words on emotional granularity, emotion regulation/dysregulation, and satisfaction with life. bioRxiv.",
+        kind: "동료심사 전 프리프린트 · 원문 확인",
+        found: "95명이 14일 동안 하루 한 단어씩 감정 단어의 뜻과 쓰임을 배웠지만, 감정 구별에 뚜렷한 변화가 없었습니다. 이 앱의 단어 탐색과 가장 닮은 연구입니다.",
+        limit: "배운 단어를 자기 경험에 대어 보는 단계가 없었습니다. 아직 심사를 거치지 않았습니다.",
+      },
+      dejonckheere: {
+        cite: "Dejonckheere 외 (2019). Complex affect dynamics add limited information to the prediction of psychological well-being. Nature Human Behaviour, 3(5).",
+        kind: "기존 자료 1,777명 재분석 · 심사 전 원고 확인",
+        found: "감정을 구별하는 정도와 우울의 관계는 상당 부분 평균 기분과 겹쳤습니다. 평균 기분을 함께 고려하면 더해지는 설명은 작았습니다.",
+        limit: "한 시점의 자료라 원인과 결과를 말하지 못합니다. 그래서 이 앱의 효과를 따질 때는 평균 기분을 함께 봐야 합니다.",
+      },
+      thompson: {
+        cite: "Thompson, Springstein, & Boden (2021). Gaining clarity about emotion differentiation. Social and Personality Psychology Compass, 15.",
+        kind: "리뷰 · 원문 확인",
+        found: "감정 구별을 재는 흔한 방법이, 여러 감정을 동시에 느끼는 것을 낮은 구별로 셀 수 있다고 지적했습니다.",
+        limit: "이 앱은 여러 표현을 함께 고르는 것을 자연스럽게 봅니다. 연구의 지표를 이 앱에 그대로 옮길 수 없는 이유입니다.",
+      },
+    },
+    faqSummary: "자주 묻는 질문",
+    faq: {
+      judge: {
+        q: "감정을 맞혀 주나요?",
+        a: "아니요. 앱은 무엇이 ‘진짜 감정’인지 판정하지 않고, 점수도 매기지 않습니다. 단어는 출발점일 뿐이고, 이름은 직접 고르거나 내 말로 적습니다.",
+      },
+      storage: {
+        q: "기록은 어디에 저장되나요?",
+        a: "지금 쓰는 브라우저 안에만 저장됩니다. 적은 내용은 서버로 보내지 않습니다. 브라우저 데이터를 지우면 함께 사라지고, 암호화된 저장소는 아닙니다. 지난 기록 화면에서 파일로 내보내거나 모두 지울 수 있습니다.",
+      },
+      often: {
+        q: "얼마나 자주 해야 하나요?",
+        a: "정해진 횟수는 없습니다. 쓰지 않는 날도 괜찮습니다. 몇 번을 써야 도움이 되는지는 연구로도 아직 모릅니다.",
+      },
+      worse: {
+        q: "하다가 더 복잡해지거나 불편해지면요?",
+        a: "언제든 ‘그만하기’를 누르면 됩니다. 생각을 계속 되짚는 것이 오히려 힘들게 할 때도 있습니다. 마지막 단계에서 ‘더 불편해짐’이라고 남길 수도 있습니다.",
+      },
+      body: {
+        q: "몸에서 아무것도 느껴지지 않으면요?",
+        a: "그것도 괜찮습니다. 이 단계는 건너뛰어도 됩니다.",
+      },
+      effect: {
+        q: "효과가 있나요?",
+        a: "아직 모릅니다. 감정을 구별하는 연습 뒤에 구별하는 정도가 늘었다는 연구는 있지만, 그것이 삶에 도움이 되는지, 이 앱으로도 그런지는 확인되지 않았습니다.",
+      },
+    },
   },
   whyThis: {
     summary: "왜 감정을 조금 더 자세히 살펴볼까요?",
