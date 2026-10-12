@@ -210,7 +210,61 @@ function EntryScreen({ draft, onStart, onUnsure, onStop, onResume }: { draft: Em
 
 function LandingScreen({ onQuick, onDeep, draft, onResume, onRecords }: { onQuick: () => void; onDeep: () => void; draft: EmotionSession | null; onResume: () => void; onRecords: () => void }) {
   const t = useT();
-  return <Screen className="entry-screen"><p className="eyebrow">{t("common.appName")}</p><h1>{renderRich(t("landing.title"))}</h1><p className="lede">{renderRich(t("landing.lede"))}</p><WhyThis /><WhyWords /><div className="stack-actions"><button className="primary-button" onClick={onQuick}>{t("landing.quick")} <span>→</span></button><button className="secondary-button" onClick={onDeep}>{t("landing.deep")}</button>{draft && <button className="secondary-button" onClick={onResume}>{t("landing.resume")}</button>}<button className="secondary-button" onClick={onRecords}>{t("landing.records")}</button></div><p className="small-note">{t("landing.storageNote")}</p></Screen>;
+  return <Screen className="entry-screen">
+    <section className="card hero-card">
+      <p className="eyebrow">{t("common.appName")}</p>
+      <h1>{renderRich(t("landing.title"))}</h1>
+      <p className="lede">{renderRich(t("landing.lede"))}</p>
+      <div className="badges" aria-label={t("landing.badgesLabel")}>
+        <span className="badge">⏱️ {t("landing.badgeQuick")}</span>
+        <span className="badge">🌱 {t("landing.badgeDeep")}</span>
+        <span className="badge">🔒 {t("landing.badgeLocal")}</span>
+        <span className="badge">🩺 {t("landing.badgeBoundary")}</span>
+      </div>
+      <div className="stack-actions">
+        <button className="primary-button" onClick={onQuick}>{t("landing.quick")} <span>→</span></button>
+        <button className="secondary-button" onClick={onDeep}>{t("landing.deep")}</button>
+        {draft && <button className="secondary-button" onClick={onResume}>{t("landing.resume")}</button>}
+        <button className="secondary-button" onClick={onRecords}>{t("landing.records")}</button>
+      </div>
+      <div className="privacy-note">
+        <span>🔒</span>
+        <span>{t("landing.storageNote")}</span>
+      </div>
+    </section>
+
+    <div className="why-section">
+      <WhyThis />
+      <WhyWords />
+    </div>
+
+    <CrisisCard />
+  </Screen>;
+}
+
+function CrisisCard() {
+  const t = useT();
+  return (
+    <aside className="crisis-card" aria-label={t("crisis.title")}>
+      <p className="crisis-lead">
+        <strong>{t("crisis.lead")}</strong> {t("crisis.body")}
+      </p>
+      <div className="crisis-links">
+        <a href={`tel:${t("crisis.num109")}`} className="crisis-link">
+          <span>{t("crisis.lifeline109")}</span>
+          <strong>{t("crisis.num109")}</strong>
+        </a>
+        <a href={`tel:${t("crisis.num1577")}`} className="crisis-link">
+          <span>{t("crisis.mental1577")}</span>
+          <strong>{t("crisis.num1577")}</strong>
+        </a>
+        <a href={`tel:${t("crisis.num1388")}`} className="crisis-link">
+          <span>{t("crisis.youth1388")}</span>
+          <strong>{t("crisis.num1388")}</strong>
+        </a>
+      </div>
+    </aside>
+  );
 }
 
 /**
