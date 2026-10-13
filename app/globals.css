@@ -121,7 +121,7 @@ h2 { font-family: var(--font-serif), serif; font-size: var(--t-lead); font-weigh
 .crisis-links { display: grid; gap: 10px; }
 .crisis-link { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 13px 18px; background: var(--card); border: 1.5px solid var(--line); border-radius: 10px; color: var(--ink); text-decoration: none; font-size: var(--t-aside); font-weight: 500; box-shadow: 0 1px 3px var(--shadow); transition: border-color .15s ease, background-color .15s ease, transform .15s ease; }
 .crisis-link:hover { border-color: var(--accent-ink); background: var(--accent-subtle); color: var(--accent-ink); transform: translateY(-1px); }
-.crisis-link strong { color: var(--accent-ink); font-size: var(--t-body); font-weight: 700; letter-spacing: .02em; font-variant-numeric: tabular-nums; white-space: nowrap; } /* a number is never split across lines (1577-0199 broke at 375px) */
+.crisis-link strong { color: var(--accent-ink); font-size: var(--t-body); font-weight: 700; letter-spacing: .02em; font-variant-numeric: tabular-nums; text-wrap: nowrap; } /* a number is never split across lines (1577-0199 broke at 375px) */
 .why-section { margin-top: 24px; }
 .why { max-width: 100%; margin: 12px 0; border: 1px solid var(--line); border-radius: 12px; background: var(--card); padding: 0 20px; box-shadow: 0 2px 8px var(--shadow); transition: border-color .15s ease; }
 .why:hover { border-color: var(--line-strong); }
