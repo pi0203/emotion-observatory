@@ -27,6 +27,18 @@ export const enOnly = {
   tagline: "A place to look closely at emotions we are still learning to understand.",
 } as const;
 
+/**
+ * English sentences the owner has not reviewed yet (2026-10-13). They stay
+ * unpublished even inside this draft: English cannot be marked "reviewed"
+ * while anything is listed here (tests/crisis-card.test.tsx).
+ * `keys` are shared messages whose English is still a draft; `outsideKorea`
+ * is English only and not drawn anywhere yet.
+ */
+export const pendingReview = {
+  keys: ["crisis.emergency"] as readonly string[],
+  outsideKorea: "If you are outside Korea, please contact your local emergency number.",
+} as const;
+
 export const en: Messages = {
   meta: {
     title: "Emotion Observatory",
@@ -77,18 +89,19 @@ export const en: Messages = {
   },
   crisis: {
     title: "Emergency and crisis support",
-    lead: "If you are in distress right now:",
-    body: "This app is not a medical or crisis care tool. If you are feeling overwhelmed or need immediate support, free and confidential helplines are available 24/7.",
-    lifeline109: "Suicide & Crisis Lifeline (US/CA)",
-    num109: "988",
-    mental1577: "Crisis Text Line (Text HOME)",
-    num1577: "741741",
-    youth1388: "International Helplines",
-    num1388: "findahelpline.com",
-    /** Where each line goes: a phone call, a text (Crisis Text Line takes HOME by text, not a call) or a web page. */
-    href109: "tel:988",
-    href1577: "sms:741741?&body=HOME",
-    href1388: "https://findahelpline.com",
+    /** Draft, held back until the owner reviews it: see `pendingReview` below. */
+    emergency: "If you are hurt or in immediate danger, call <b>119</b> (ambulance) or <b>112</b> (police) right away.",
+    intro: "If you need someone to talk to, there are counseling lines open 24 hours.",
+    lifeline109: "Suicide Prevention Counseling Line (24 hours)",
+    num109: "109",
+    mental1577: "Mental Health Crisis Counseling Line (24 hours)",
+    num1577: "1577-0199",
+    youth1388: "Youth Counseling Line (ages 9 to 24)",
+    num1388: "1388",
+    /** The Korean numbers, exactly as in the Korean card (owner, 2026-10-13). No US lines. */
+    href109: "tel:109",
+    href1577: "tel:1577-0199",
+    href1388: "tel:1388",
   },
   about: {
     title: "About this tool",

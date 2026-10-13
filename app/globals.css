@@ -114,8 +114,10 @@ h2 { font-family: var(--font-serif), serif; font-size: var(--t-lead); font-weigh
 .topbar-actions { display: flex; align-items: center; gap: 18px; }
 .privacy-note { display: flex; align-items: center; gap: 10px; margin-top: 24px; padding: 12px 14px; background: var(--accent-subtle); border: 1px solid var(--line); border-radius: 8px; color: var(--muted); font-size: var(--t-aside); line-height: 1.5; }
 .crisis-card { margin-top: 32px; padding: 22px 24px; background: var(--warm); border: 1px solid var(--line-strong); border-radius: 14px; box-shadow: 0 2px 10px var(--shadow); }
+/* Emergency line: body colour, only the numbers in bold; no warning colour or icon (owner, 2026-10-13). */
+.crisis-emergency { margin: 0 0 10px; color: var(--ink); font-size: var(--t-small); line-height: 1.65; }
+.crisis-emergency strong { color: inherit; font-weight: 700; font-variant-numeric: tabular-nums; }
 .crisis-lead { margin: 0 0 16px; color: var(--ink); font-size: var(--t-small); line-height: 1.65; }
-.crisis-lead strong { color: var(--accent-ink); font-weight: 700; }
 .crisis-links { display: grid; gap: 10px; }
 .crisis-link { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 13px 18px; background: var(--card); border: 1.5px solid var(--line); border-radius: 10px; color: var(--ink); text-decoration: none; font-size: var(--t-aside); font-weight: 500; box-shadow: 0 1px 3px var(--shadow); transition: border-color .15s ease, background-color .15s ease, transform .15s ease; }
 .crisis-link:hover { border-color: var(--accent-ink); background: var(--accent-subtle); color: var(--accent-ink); transform: translateY(-1px); }

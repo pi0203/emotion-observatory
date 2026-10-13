@@ -63,15 +63,16 @@ export const ko = {
   },
   crisis: {
     title: "긴급 지원 및 위기 상담 안내",
-    lead: "지금 마음이 많이 힘들다면 —",
-    body: "이 앱은 의료나 위기 대응 도구가 아닙니다. 감정이 버겁거나 혼자 감당하기 어려운 순간에는 24시간 열려 있는 전문 상담 전화의 도움을 받을 수 있습니다.",
+    /** First line of the card: emergency numbers in bold, no warning colour or icon (owner, 2026-10-13). */
+    emergency: "몸을 다쳤거나 지금 당장 위험하다면 <b>119</b>(구급) 또는 <b>112</b>(경찰)에 바로 연락하세요.",
+    intro: "이야기를 나눌 사람이 필요하다면, 24시간 열려 있는 상담 전화가 있습니다.",
     lifeline109: "자살예방상담전화 (24시간)",
     num109: "109",
     mental1577: "정신건강위기상담전화 (24시간)",
     num1577: "1577-0199",
-    youth1388: "청소년상담전화 (24세 이하)",
+    youth1388: "청소년상담전화 (9~24세)",
     num1388: "1388",
-    /** Where each line goes: a phone call, a text (Crisis Text Line takes HOME by text, not a call) or a web page. */
+    /** Where each line goes. Numbers checked by the owner against official sources on 2026-10-13 (SAFETY.md). */
     href109: "tel:109",
     href1577: "tel:1577-0199",
     href1388: "tel:1388",

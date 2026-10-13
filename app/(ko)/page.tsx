@@ -324,9 +324,8 @@ function CrisisCard() {
   const t = useT();
   return (
     <aside className="crisis-card" aria-label={t("crisis.title")}>
-      <p className="crisis-lead">
-        <strong>{t("crisis.lead")}</strong> {t("crisis.body")}
-      </p>
+      <p className="crisis-emergency">{renderRich(t("crisis.emergency"))}</p>
+      <p className="crisis-lead">{t("crisis.intro")}</p>
       <div className="crisis-links">
         <a href={t("crisis.href109")} className="crisis-link" {...external(t("crisis.href109"))}>
           <span>{t("crisis.lifeline109")}</span>
