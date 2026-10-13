@@ -28,7 +28,14 @@ export const scaleLabel = (value?: number, locale: Locale = DEFAULT_LOCALE) =>
 export const activationLabel = (value?: number, locale: Locale = DEFAULT_LOCALE) =>
   band(value, getT(locale).list("affectBands.activation"));
 
-export const contextSourceLabel = (source?: "event" | "memory" | "anticipation" | "thought", locale: Locale = DEFAULT_LOCALE) =>
+/**
+ * True only when a spot was actually marked. A skipped pad is stored as `{}`
+ * and must read as not recorded, never as the middle of the scale.
+ */
+export const hasAffectPoint = (affect?: { valence?: number; activation?: number; unknown?: boolean }) =>
+  Boolean(affect && !affect.unknown && typeof affect.valence === "number" && typeof affect.activation === "number");
+
+export const contextSourceLabel =(source?: "event" | "memory" | "anticipation" | "thought", locale: Locale = DEFAULT_LOCALE) =>
   getT(locale)(`contextSource.${source ?? "event"}`);
 
 /** Picks the Korean particle that fits the last syllable of `word`. Kept here for existing callers. */

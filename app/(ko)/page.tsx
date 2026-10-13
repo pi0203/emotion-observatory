@@ -12,7 +12,7 @@ import { applyImport, buildExport, downloadExport, exportFileName, MAX_IMPORT_BY
 import { formatWhen, helpedOptions, summarise, triedOptions } from "../../lib/records";
 import { migrateLegacyStorage } from "../../lib/migrations";
 import { expandCandidates, filterQuickCandidates } from "../../lib/quick-check";
-import { activationLabel, quickActivation, quickValence, scaleLabel } from "../../lib/affect-labels";
+import { activationLabel, hasAffectPoint, quickActivation, quickValence, scaleLabel } from "../../lib/affect-labels";
 import { buildSynthesis, hasSynthesis } from "../../lib/synthesis";
 import { requireContent, type LocaleContent } from "../../lib/content";
 import { DEFAULT_LOCALE } from "../../lib/i18n/locale";
@@ -93,6 +93,18 @@ function App() {
     if (draft) dispatch({ type: "RESUME", session: draft });
   };
 
+  // one draft slot: a new start would overwrite it, so with a draft waiting it asks first
+  const [pendingStart, setPendingStart] = useState<"quick" | "deep" | null>(null);
+  const begin = (kind: "quick" | "deep") => dispatch({ type: kind === "quick" ? "START_QUICK" : "START_DEEP", locale: t.locale });
+  const askToStart = (kind: "quick" | "deep") => draft ? setPendingStart(kind) : begin(kind);
+  const discardAndStart = () => {
+    if (!pendingStart) return;
+    removeDraft();
+    setDraft(null);
+    setPendingStart(null);
+    begin(pendingStart);
+  };
+
   if (session.stage === "landing") {
     // the homepage frame (header, menu, footer) on the landing and record screens only;
     // the steps keep their minimal top bar so nothing pushes the task down (docs/DESIGN_ALIGNMENT.md §5)
@@ -104,7 +116,7 @@ function App() {
         ? <RecordDetail session={openRecord} onFollowUp={(followUp) => saveFollowUp(openRecord, followUp)} onBack={() => setOpenRecord(null)} />
         : records
           ? <RecordsScreen records={records} onOpen={setOpenRecord} onBack={() => setRecords(null)} onChanged={() => { setRecords(loadCompleted()); setDraft(loadDraft()); }} />
-          : <LandingScreen onQuick={() => dispatch({ type: "START_QUICK", locale: t.locale })} onDeep={() => dispatch({ type: "START_DEEP", locale: t.locale })} draft={draft} onResume={resume} onRecords={showRecords} />}
+          : <LandingScreen onQuick={() => askToStart("quick")} onDeep={() => askToStart("deep")} draft={draft} onResume={resume} onRecords={showRecords} pendingStart={pendingStart} onDiscardAndStart={discardAndStart} onCancelStart={() => setPendingStart(null)} />}
       </main>
       <SiteFooter />
     </div>;
@@ -147,7 +159,7 @@ function App() {
       )}
       {session.stage === "entry-mini" && <EntryMini onAnswer={(helpful) => dispatch({ type: "SET_ENTRY_MINI", helpful })} />}
       {session.stage === "body" && <BodyScreen initial={session.deepReflection?.body ?? []} onNext={(body) => dispatch({ type: "SET_BODY", body })} />}
-      {session.stage === "affect" && <AffectScreen initial={session.deepReflection?.affect ?? quickAffectSuggestion(session)} onNext={(affect) => dispatch({ type: "SET_AFFECT", affect })} />}
+      {session.stage === "affect" && <AffectScreen initial={session.deepReflection?.affect ?? quickAffectSuggestion(session)} fromQuick={!session.deepReflection?.affect && Boolean(quickAffectSuggestion(session))} onNext={(affect) => dispatch({ type: "SET_AFFECT", affect })} />}
       {session.stage === "context" && <ContextScreen initial={session.deepReflection?.context} onNext={(context) => dispatch({ type: "SET_CONTEXT", context })} />}
       {session.stage === "meaning" && <MeaningScreen initial={session.deepReflection?.concerns ?? []} onNext={(selected) => dispatch({ type: "SET_CONCERNS", concerns: selected })} />}
       {session.stage === "emotion" && <EmotionScreen initial={session.deepReflection?.emotionCandidates ?? []} affect={session.deepReflection?.affect} onNext={(selected) => dispatch({ type: "SET_EMOTIONS", emotionCandidates: selected })} />}
@@ -208,8 +220,11 @@ function EntryScreen({ draft, onStart, onUnsure, onStop, onResume }: { draft: Em
   </Screen>;
 }
 
-function LandingScreen({ onQuick, onDeep, draft, onResume, onRecords }: { onQuick: () => void; onDeep: () => void; draft: EmotionSession | null; onResume: () => void; onRecords: () => void }) {
+function LandingScreen({ onQuick, onDeep, draft, onResume, onRecords, pendingStart, onDiscardAndStart, onCancelStart }: { onQuick: () => void; onDeep: () => void; draft: EmotionSession | null; onResume: () => void; onRecords: () => void; pendingStart: "quick" | "deep" | null; onDiscardAndStart: () => void; onCancelStart: () => void }) {
   const t = useT();
+  const confirmTitle = useRef<HTMLParagraphElement>(null);
+  // the question takes the focus, so it is read before the choice is made
+  useEffect(() => { if (pendingStart) confirmTitle.current?.focus(); }, [pendingStart]);
   return <Screen className="entry-screen">
     <section className="card hero-card">
       <p className="eyebrow">{t("common.appName")}</p>
@@ -218,18 +233,28 @@ function LandingScreen({ onQuick, onDeep, draft, onResume, onRecords }: { onQuic
       <div className="badges" aria-label={t("landing.badgesLabel")}>
         <span className="badge">⏱️ {t("landing.badgeQuick")}</span>
         <span className="badge">🌱 {t("landing.badgeDeep")}</span>
-        <span className="badge">🔒 {t("landing.badgeLocal")}</span>
+        <span className="badge">💻 {t("landing.badgeLocal")}</span>
         <span className="badge">🩺 {t("landing.badgeBoundary")}</span>
       </div>
-      <div className="stack-actions">
-        <button className="primary-button" onClick={onQuick}>{t("landing.quick")} <span>→</span></button>
-        <button className="secondary-button" onClick={onDeep}>{t("landing.deep")}</button>
-        {draft && <button className="secondary-button" onClick={onResume}>{t("landing.resume")}</button>}
-        <button className="secondary-button" onClick={onRecords}>{t("landing.records")}</button>
-      </div>
+      {pendingStart
+        ? <div className="draft-confirm" role="group" aria-labelledby="draft-confirm-title">
+            <p className="synthesis-question" id="draft-confirm-title" ref={confirmTitle} tabIndex={-1}>{t("landing.draftConfirm.title")}</p>
+            <p className="small-note">{t("landing.draftConfirm.body")}</p>
+            <div className="stack-actions">
+              <button className="primary-button" onClick={onResume}>{t("landing.draftConfirm.resume")}</button>
+              <button className="secondary-button" onClick={onDiscardAndStart}>{t("landing.draftConfirm.discard")}</button>
+              <button className="quiet-button" onClick={onCancelStart}>{t("landing.draftConfirm.cancel")}</button>
+            </div>
+          </div>
+        : <div className="stack-actions">
+            <button className="primary-button" onClick={onQuick}>{t("landing.quick")} <span>→</span></button>
+            <button className="secondary-button" onClick={onDeep}>{t("landing.deep")}</button>
+            {draft && <button className="secondary-button" onClick={onResume}>{t("landing.resume")}</button>}
+            <button className="secondary-button" onClick={onRecords}>{t("landing.records")}</button>
+          </div>}
       <div className="privacy-note">
-        <span>🔒</span>
-        <span>{t("landing.storageNote")}</span>
+        <span aria-hidden="true">💻</span>
+        <span>{t("landing.storageNote")} <button className="inline-link" onClick={onRecords}>{t("landing.storageManage")}</button></span>
       </div>
     </section>
 
@@ -244,7 +269,16 @@ function LandingScreen({ onQuick, onDeep, draft, onResume, onRecords }: { onQuic
 }
 
 const REFERENCES = ["vedernikova", "widdershoven", "hoemann", "fugate", "dejonckheere", "thompson"] as const;
-const QUESTIONS = ["judge", "storage", "often", "worse", "body", "effect"] as const;
+const QUESTIONS = ["judge", "ai", "storage", "often", "worse", "body", "effect"] as const;
+/** Each checked against Crossref on 2026-10-13; the same DOIs are in docs/EVIDENCE_CHAIN.md. */
+const REFERENCE_DOI: Record<(typeof REFERENCES)[number], string> = {
+  vedernikova: "10.3389/fpsyg.2021.703757",
+  widdershoven: "10.1016/j.jad.2018.10.092",
+  hoemann: "10.3389/fpsyg.2021.704125",
+  fugate: "10.64898/2026.08.12.744382",
+  dejonckheere: "10.1038/s41562-019-0555-0",
+  thompson: "10.1111/spc3.12584",
+};
 
 /**
  * Below the "why" folds and above the crisis card: what the tool is, the studies
@@ -262,7 +296,7 @@ function AboutTool() {
       <p className="about-intro">{t("about.refsIntro")}</p>
       <ol className="about-list">
         {REFERENCES.map((id, index) => <li key={id} style={{ "--rise-order": index } as CSSProperties}>
-          <p className="about-cite">{t(`about.refs.${id}.cite`)}</p>
+          <p className="about-cite">{t(`about.refs.${id}.cite`)} <a href={`https://doi.org/${REFERENCE_DOI[id]}`} target="_blank" rel="noopener noreferrer">{t("about.doiLink")}</a></p>
           <p className="about-kind">{t(`about.refs.${id}.kind`)}</p>
           <p><strong>{t("about.found")}</strong> {t(`about.refs.${id}.found`)}</p>
           <p><strong>{t("about.limit")}</strong> {t(`about.refs.${id}.limit`)}</p>
@@ -618,7 +652,7 @@ function BodyScreen({ initial, onNext }: { initial: BodyObservation[]; onNext: (
   </Screen>;
 }
 
-function AffectScreen({ initial, onNext }: { initial?: AffectPoint; onNext: (affect: AffectPoint) => void }) {
+function AffectScreen({ initial, fromQuick, onNext }: { initial?: AffectPoint; fromQuick: boolean; onNext: (affect: AffectPoint) => void }) {
   const t = useT();
   const { stepNotes } = useContent();
   const [point, setPoint] = useState<{ valence: number; activation: number } | null>(
@@ -628,9 +662,10 @@ function AffectScreen({ initial, onNext }: { initial?: AffectPoint; onNext: (aff
   );
   const [touched, setTouched] = useState(false);
   return <Screen>
-    <StepHeading step={t("affect.step")} title={t("affect.title")} hint={t("affect.hint")} basis={t("affect.basis")} />
+    <StepHeading step={t("affect.step")} title={t("affect.title")} hint={fromQuick ? t("affect.hint") : t("affect.hintFresh")} basis={t("affect.basis")} />
     <AffectPad initial={initial} onChange={(next) => { setTouched(true); setPoint(next); }} />
-    <Navigation note={stepNote(stepNotes, "affect", touched)} onNext={() => onNext(point ?? initial ?? {})} />
+    {/* skipping records nothing, even when the quick look's spot was placed here */}
+    <Navigation note={stepNote(stepNotes, "affect", touched)} onSkip={() => onNext({})} onNext={() => onNext(point ?? initial ?? {})} />
   </Screen>;
 }
 
@@ -685,8 +720,9 @@ function OutcomeScreen({ onNext }: { onNext: (outcome: DeepOutcome) => void }) {
 function SummaryScreen({ session, onFeedback, onSupport }: { session: EmotionSession; onFeedback: (feedback: { fit?: SynthesisFit; correction?: string }) => void; onSupport: () => void }) {
   const t = useT();
   const deep = session.deepReflection;
+  if (deep?.outcome?.clarity === "more_distressed") return <WorsenedScreen />;
   const quickAffect = session.quickCheck?.affect;
-  return <Screen><p className="eyebrow">{t("summary.eyebrow")}</p><h1>{t("summary.title")}</h1><div className="summary-card">{quickAffect && <SummaryRow label={t("summary.quickAffect")} value={quickAffect.unknown ? t("common.unsure") : `${quickValence(quickAffect.valence, t.locale)} · ${quickActivation(quickAffect.activation, t.locale)}`} />}<SummaryRow label={t("summary.body")} value={(deep?.body ?? []).map((item) => item.label).join(" · ") || t("common.notRecorded")} /><SummaryRow label={t("summary.affect")} value={`${scaleLabel(deep?.affect?.valence, t.locale)} · ${activationLabel(deep?.affect?.activation, t.locale)}`} /><SummaryRow label={t("summary.context")} value={deep?.context?.eventText || t("common.notRecorded")} /><SummaryRow label={t("summary.concerns")} value={(deep?.concerns ?? []).join(" · ") || t("common.notRecorded")} /><SummaryRow label={t("summary.words")} value={(deep?.emotionCandidates ?? []).map((item) => item.label).join(" · ") || t("common.notRecorded")} /></div><p className="summary-footnote">{t("summary.footnote")}</p><SynthesisSection session={session} onFeedback={onFeedback} /><div className="stack-actions"><button className="primary-button centered" onClick={onSupport}>{t("summary.support")} <span>→</span></button><a className="secondary-button centered" href="/">{t("common.backToStart")}</a></div></Screen>;
+  return <Screen><p className="eyebrow">{t("summary.eyebrow")}</p><h1>{t("summary.title")}</h1><div className="summary-card">{quickAffect && <SummaryRow label={t("summary.quickAffect")} value={quickAffect.unknown ? t("common.unsure") : `${quickValence(quickAffect.valence, t.locale)} · ${quickActivation(quickAffect.activation, t.locale)}`} />}<SummaryRow label={t("summary.body")} value={(deep?.body ?? []).map((item) => item.label).join(" · ") || t("common.notRecorded")} /><SummaryRow label={t("summary.affect")} value={deepAffectValue(t, deep?.affect)} /><SummaryRow label={t("summary.context")} value={deep?.context?.eventText || t("common.notRecorded")} /><SummaryRow label={t("summary.concerns")} value={(deep?.concerns ?? []).join(" · ") || t("common.notRecorded")} /><SummaryRow label={t("summary.words")} value={(deep?.emotionCandidates ?? []).map((item) => item.label).join(" · ") || t("common.notRecorded")} /></div><p className="summary-footnote">{t("summary.footnote")}</p><SynthesisSection session={session} onFeedback={onFeedback} /><div className="stack-actions"><button className="primary-button centered" onClick={onSupport}>{t("summary.support")} <span>→</span></button><a className="secondary-button centered" href="/">{t("common.backToStart")}</a></div></Screen>;
 }
 
 function SynthesisSection({ session, onFeedback }: { session: EmotionSession; onFeedback: (feedback: { fit?: SynthesisFit; correction?: string }) => void }) {
@@ -909,7 +945,7 @@ function RecordDetail({ session, onFollowUp, onBack }: { session: EmotionSession
     <div className="summary-card">
       <SummaryRow label={t("recordDetail.depth")} value={item.depthLabel} />
       {session.quickCheck?.affect && <SummaryRow label={t("recordDetail.quickAffect")} value={session.quickCheck.affect.unknown ? t("common.unsure") : `${quickValence(session.quickCheck.affect.valence, t.locale)} · ${quickActivation(session.quickCheck.affect.activation, t.locale)}`} />}
-      {deep?.affect && <SummaryRow label={t("recordDetail.deepAffect")} value={`${scaleLabel(deep.affect.valence, t.locale)} · ${activationLabel(deep.affect.activation, t.locale)}`} />}
+      {deep?.affect && <SummaryRow label={t("recordDetail.deepAffect")} value={deepAffectValue(t, deep.affect)} />}
       <SummaryRow label={t("recordDetail.words")} value={item.words.join(" · ") || t("common.notChosen")} />
       {item.personalMeanings.map((entry) => <SummaryRow key={entry.label} label={t("recordDetail.personalMeaning", { label: entry.label })} value={entry.meaning} />)}
       {deep?.context?.eventText && <SummaryRow label={t("recordDetail.context")} value={deep.context.eventText} />}
@@ -932,16 +968,42 @@ function RecordDetail({ session, onFollowUp, onBack }: { session: EmotionSession
   </Screen>;
 }
 
-function StoppedScreen({ session }: { session: EmotionSession }) { const t = useT(); return <Screen className="entry-screen"><p className="eyebrow">{t("stopped.eyebrow")}</p><h1>{renderRich(t("stopped.title"))}</h1><p className="lede">{t("stopped.lede")}</p><div className="stack-actions"><a className="primary-button centered" href="/">{t("stopped.home")}</a><button className="quiet-button" onClick={() => { removeDraft(); dropCompleted(session.id); window.location.reload(); }}>{t("stopped.delete")}</button></div>{session.stopReason === "entry" && <p className="small-note">{t("stopped.entryNote")}</p>}</Screen>; }
+function StoppedScreen({ session }: { session: EmotionSession }) { const t = useT(); return <Screen className="entry-screen"><p className="eyebrow">{t("stopped.eyebrow")}</p><h1>{renderRich(t("stopped.title"))}</h1><p className="lede">{t("stopped.lede")}</p><div className="stack-actions"><a className="primary-button centered" href="/">{t("stopped.home")}</a><button className="quiet-button" onClick={() => { removeDraft(); dropCompleted(session.id); window.location.reload(); }}>{t("stopped.delete")}</button></div>{session.stopReason === "entry" && <p className="small-note">{t("stopped.entryNote")}</p>}<HelpReveal /></Screen>; }
+
+/**
+ * After 더 불편해짐 the summary, its questions and the need screen are left out:
+ * nothing more is asked. Ending is the first action; the helplines are one
+ * optional tap away. This is not a risk check and judges nothing.
+ */
+function WorsenedScreen() {
+  const t = useT();
+  return <Screen className="entry-screen">
+    <p className="eyebrow">{t("worsened.eyebrow")}</p>
+    <h1>{renderRich(t("worsened.title"))}</h1>
+    <p className="lede">{t("worsened.lede")}</p>
+    <div className="stack-actions"><a className="primary-button centered" href="/">{t("worsened.finish")}</a></div>
+    <p className="small-note">{t("worsened.kept")}</p>
+    <HelpReveal />
+  </Screen>;
+}
+
+/** The helplines, folded until asked for, so they are offered without being pressed on anyone. */
+function HelpReveal() {
+  const t = useT();
+  return <details className="why help-reveal">
+    <summary>{t("worsened.showHelp")}</summary>
+    <CrisisCard />
+  </details>;
+}
 
 function StopModal({ onClose, onStop }: { onClose: () => void; onStop: () => void }) { const t = useT(); return <div className="modal-backdrop"><div className="modal" role="dialog" aria-modal="true"><p className="eyebrow">{t("stopModal.eyebrow")}</p><h2>{renderRich(t("stopModal.title"))}</h2><p>{t("stopModal.body")}</p><div className="modal-actions"><button className="secondary-button" onClick={onClose}>{t("stopModal.keepGoing")}</button><button className="primary-button" onClick={onStop}>{t("stopModal.stop")}</button></div></div></div>; }
 
 function Screen({ children, className = "" }: { children: React.ReactNode; className?: string }) { return <section className={`screen ${className}`}>{children}</section>; }
 /** The basis band, when given, says which moment the question is about, before the question itself. */
 function StepHeading({ step, title, hint, basis }: { step: string; title: string; hint: string; basis?: string }) { return <><p className="eyebrow">{step}</p>{basis && <p className="step-basis">{basis}</p>}<h1>{title}</h1><p className="hint">{hint}</p></>; }
-function Navigation({ onNext, disabled = false, note }: { onNext: () => void; disabled?: boolean; note?: string }) {
+function Navigation({ onNext, onSkip = onNext, disabled = false, note }: { onNext: () => void; onSkip?: () => void; disabled?: boolean; note?: string }) {
   const t = useT();
-  return <><StepNote note={note} /><div className="navigation"><button className="skip-button" onClick={onNext}>{t("common.skip")}</button><button className="primary-button" disabled={disabled} onClick={onNext}>{t("common.next")} <span>→</span></button></div></>;
+  return <><StepNote note={note} /><div className="navigation"><button className="skip-button" onClick={onSkip}>{t("common.skip")}</button><button className="primary-button" disabled={disabled} onClick={onNext}>{t("common.next")} <span>→</span></button></div></>;
 }
 function StepNote({ note }: { note?: string }) { return note ? <p className="step-note" role="note">{note}</p> : null; }
 function SummaryRow({ label, value }: { label: string; value: string }) { return <div className="summary-row"><span>{label}</span><strong>{value}</strong></div>; }
@@ -949,6 +1011,12 @@ function quickAffectSuggestion(session: EmotionSession): AffectPoint | undefined
   const affect = session.quickCheck?.affect;
   if (!affect || affect.unknown) return undefined;
   return { valence: affect.valence, activation: affect.activation };
+}
+/** 잘 모르겠음 stays its own answer; a skipped pad reads as not recorded, never as the middle. */
+function deepAffectValue(t: Translate, affect?: AffectPoint) {
+  if (affect?.unknown) return t("common.unsure");
+  if (!hasAffectPoint(affect)) return t("common.notRecorded");
+  return `${scaleLabel(affect!.valence, t.locale)} · ${activationLabel(affect!.activation, t.locale)}`;
 }
 function quickResponseLabel(t: Translate, response?: QuickNonSelection) { return response ? t(`quickCandidates.decline.${response}`) : ""; }
 const stepNote = (stepNotes: LocaleContent["stepNotes"], step: keyof LocaleContent["stepNotes"]["steps"], shown: boolean) => (shown ? stepNotes.steps[step] : undefined);

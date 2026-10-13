@@ -1,4 +1,4 @@
-import { activationLabel, contextSourceLabel, quickActivation, quickValence, scaleLabel } from "./affect-labels";
+import { activationLabel, contextSourceLabel, hasAffectPoint, quickActivation, quickValence, scaleLabel } from "./affect-labels";
 import { requireContent } from "./content";
 import { DEFAULT_LOCALE, localeOf, type Locale } from "./i18n/locale";
 import { getT, type Translate } from "./i18n/t";
@@ -73,7 +73,9 @@ const buildObserved = ({ t }: Build, session: EmotionSession): SynthesisLine[] =
   const lines: SynthesisLine[] = [];
   const quickWords = labels(quick?.selected);
   const deepWords = labels(deep?.emotionCandidates);
-  const bothAffects = Boolean(quick?.affect && !quick.affect.unknown && deep?.affect);
+  // a skipped deep pad is `{}`: it is not a reading, so it is neither shown nor compared
+  const deepMarked = hasAffectPoint(deep?.affect);
+  const bothAffects = Boolean(hasAffectPoint(quick?.affect) && deepMarked);
 
   if (quick?.affect && !bothAffects) {
     lines.push({ id: "quick-affect", text: t("synthesis.observed.quickAffect", { text: quickAffectText(t, quick.affect) }) });
@@ -81,8 +83,8 @@ const buildObserved = ({ t }: Build, session: EmotionSession): SynthesisLine[] =
   if (deep?.body?.length) {
     lines.push({ id: "body", text: t("synthesis.observed.body", quotedList(t, deep.body.map((item) => item.label))) });
   }
-  if (deep?.affect) {
-    lines.push({ id: "deep-affect", text: t("synthesis.observed.deepAffect", { text: deepAffectText(t, deep.affect) }) });
+  if (deepMarked) {
+    lines.push({ id: "deep-affect", text: t("synthesis.observed.deepAffect", { text: deepAffectText(t, deep!.affect) }) });
   }
   if (deep?.context?.eventText?.trim()) {
     lines.push({ id: "context", text: t("synthesis.observed.context", { event: deep.context.eventText.trim(), source: contextSourceLabel(deep.context.source, t.locale) }) });

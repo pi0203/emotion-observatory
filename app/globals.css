@@ -246,3 +246,27 @@ p, .lede, .hint, .step-note, .small-note, .summary-footnote { text-wrap: pretty;
    the question is about. Neutral on purpose: card fill, light border, muted text.
    No blue and no coral; coral stays only under a selected choice. */
 .step-basis { display: inline-block; margin: -4px 0 18px; padding: 7px 12px; border: 1px solid var(--line); border-radius: 8px; background: var(--card); color: var(--muted); font: 500 var(--t-small) var(--font-sans); line-height: 1.5; }
+
+/* Review follow-up (docs/REVIEW_2026_10_13.md). The storage note links to the
+   records screen; the draft question replaces the start buttons until answered;
+   the helplines fold under the stopped and worsened endings. */
+.privacy-note { align-items: flex-start; }
+.inline-link { display: inline; min-height: 24px; padding: 0; border: 0; background: none; color: var(--accent-ink); font: inherit; text-decoration: underline; text-underline-offset: .2em; cursor: pointer; }
+.draft-confirm .synthesis-question { margin-top: 0; outline: none; }
+.draft-confirm .small-note { margin: 8px 0 18px; }
+.about-cite a { color: var(--accent-ink); text-underline-offset: .2em; }
+.help-reveal { margin-top: 32px; }
+.help-reveal .crisis-card { margin: 0 0 16px; }
+
+/* Phones: the hero card, title and badges tighten so the first start button is
+   whole in the first screen (checked at 360 x 667). Badges become one muted line
+   of text rather than four stacked pills. */
+@media (max-width: 560px) {
+  .site-header { padding: 14px 0 10px; }
+  .site-main .entry-screen { padding-top: 16px; }
+  .hero-card { padding: 22px 18px; }
+  .hero-card .eyebrow { margin-bottom: 10px; }
+  .hero-card .lede { margin-top: 12px; font-size: var(--t-small); line-height: 1.6; }
+  .badges { gap: 2px 12px; margin: 12px 0 18px; }
+  .badge { padding: 0; border: 0; background: none; box-shadow: none; color: var(--muted); font-weight: 500; }
+}

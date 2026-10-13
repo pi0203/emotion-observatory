@@ -58,14 +58,22 @@ export const en: Messages = {
     lede: "This is not a test that guesses your emotions.\nYou can take a quick look, or take your time telling things apart.",
     badgeQuick: "Quick · 2 steps · about 10 to 30 seconds",
     badgeDeep: "Slow · 6 steps · about 3 to 5 minutes",
-    badgeLocal: "Private · Saved only on this device",
+    badgeLocal: "Saved only in this browser · Not encrypted",
     badgeBoundary: "Non-medical self-monitoring",
     badgesLabel: "Observation features",
     quick: "Take a quick look",
     deep: "Take it more slowly",
     resume: "Continue an unfinished entry",
     records: "See past entries",
-    storageNote: "Entries are saved only on this device. You can skip or close at any time.",
+    storageNote: "Entries are saved only in this browser and are not encrypted. Anyone using the same device and browser can see them, so take care on a shared device. Clearing the browser’s data removes them too.",
+    storageManage: "See or delete entries",
+    draftConfirm: {
+      title: "You have an unfinished entry",
+      body: "Starting again deletes the unfinished entry. You can continue it, delete it and start again, or leave it and go back.",
+      resume: "Continue it",
+      discard: "Delete it and start again",
+      cancel: "Cancel",
+    },
   },
   crisis: {
     title: "Emergency and crisis support",
@@ -91,6 +99,7 @@ export const en: Messages = {
     found: "What it found",
     limit: "Limits",
     refsClosing: "<b>No study has tested this app.</b> Using it now and then for 10 to 30 seconds is far less use than in any study above. These studies only show where the ideas behind the app stand.",
+    doiLink: "Source",
     refs: {
       vedernikova: {
         cite: "Vedernikova, Kuppens, & Erbas (2021). From knowledge to differentiation. Frontiers in Psychology.",
@@ -131,6 +140,10 @@ export const en: Messages = {
     },
     faqSummary: "Common questions",
     faq: {
+      ai: {
+        q: "Does AI analyze my emotions?",
+        a: "No. The closing summary follows fixed rules and only restates what you chose. What you write is not sent to an AI, and no AI infers your emotions. That AI tools helped build this app is a separate matter.",
+      },
       judge: {
         q: "Does it tell me what I am feeling?",
         a: "No. The app does not decide what your “real emotion” is, and it gives no score. The words are only a starting point; you pick the name or write your own.",
@@ -311,6 +324,7 @@ export const en: Messages = {
     step: "Overall feeling",
     title: "Now that you have looked a little closer, which way is it leaning?",
     hint: "The spot you marked in the quick look is already placed. You can leave it or move it.",
+    hintFresh: "Tap once on the spot closest to right now. If you are not sure, you can skip this.",
   },
   context: {
     basis: "Just the one thing that came to mind",
@@ -510,6 +524,14 @@ export const en: Messages = {
       no: "No",
       unsure: "I’m not sure",
     },
+  },
+  worsened: {
+    eyebrow: "That is enough for now",
+    title: "You noted that you feel\nmore uncomfortable",
+    lede: "You do not need to look any further. It is fine to stop here this time.",
+    finish: "Stop here",
+    kept: "You can see or delete this entry under “See past entries.”",
+    showHelp: "See where to find help",
   },
   stopped: {
     eyebrow: "Stopping here",
