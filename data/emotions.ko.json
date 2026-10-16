@@ -60,7 +60,8 @@
     {
       "label": "짜증",
       "aliases": [
-        "짜증남"
+        "짜증남",
+        "성가심"
       ],
       "family": "friction",
       "valence": "negative",
@@ -69,7 +70,8 @@
         "화남",
         "답답함",
         "억울함",
-        "조급함"
+        "조급함",
+        "예민함"
       ],
       "appraisalHints": [
         "하려던 일이 자꾸 방해받음",
@@ -208,7 +210,8 @@
         "두려움",
         "민망함",
         "막막함",
-        "놀라움"
+        "놀라움",
+        "혼란스러움"
       ],
       "appraisalHints": [
         "예상하지 못한 일이 갑자기 일어남"
@@ -329,7 +332,10 @@
         "노력"
       ],
       "provisional": true,
-      "normStatus": "provisional"
+      "normStatus": "provisional",
+      "aliases": [
+        "낙담"
+      ]
     },
     {
       "label": "부끄러움",
@@ -399,7 +405,8 @@
       "neighbors": [
         "부끄러움",
         "자책",
-        "죄책감"
+        "죄책감",
+        "초라함"
       ],
       "appraisalHints": [
         "나라는 사람 자체가 문제처럼 느껴짐"
@@ -471,7 +478,10 @@
         "평가"
       ],
       "provisional": true,
-      "normStatus": "provisional"
+      "normStatus": "provisional",
+      "aliases": [
+        "언짢음"
+      ]
     },
     {
       "label": "실망",
@@ -523,7 +533,8 @@
         "외로움",
         "허전함",
         "실망",
-        "연민"
+        "연민",
+        "울적함"
       ],
       "appraisalHints": [
         "소중한 것이 사라졌다고 느낌"
@@ -546,7 +557,8 @@
       "neighbors": [
         "외로움",
         "슬픔",
-        "아쉬움"
+        "아쉬움",
+        "울적함"
       ],
       "appraisalHints": [
         "있던 것이 빠져나간 느낌"
@@ -606,7 +618,9 @@
       "neighbors": [
         "걱정",
         "좌절",
-        "답답함"
+        "답답함",
+        "지침",
+        "혼란스러움"
       ],
       "appraisalHints": [
         "어디서부터 해야 할지 모르겠음"
@@ -672,7 +686,8 @@
       "neighbors": [
         "신남",
         "흥미",
-        "기쁨"
+        "기쁨",
+        "의욕"
       ],
       "appraisalHints": [
         "몸이 움직이고 싶은 느낌"
@@ -877,7 +892,8 @@
       "neighbors": [
         "평온",
         "안도",
-        "신뢰"
+        "신뢰",
+        "든든함"
       ],
       "appraisalHints": [
         "긴장을 놓아도 되는 느낌"
@@ -923,7 +939,8 @@
       "neighbors": [
         "평온",
         "편안함",
-        "만족"
+        "만족",
+        "홀가분함"
       ],
       "appraisalHints": [
         "걱정하던 일이 지나감"
@@ -968,7 +985,8 @@
         "친밀감",
         "편안함",
         "사랑",
-        "존경"
+        "존경",
+        "든든함"
       ],
       "appraisalHints": [
         "기댈 수 있다고 느낌"
@@ -1264,6 +1282,230 @@
       "contextTags": [
         "휴식",
         "시간"
+      ],
+      "provisional": true,
+      "normStatus": "provisional"
+    },
+    {
+      "label": "지침",
+      "family": "depletion",
+      "valence": "negative",
+      "activation": "low",
+      "neighbors": [
+        "무기력",
+        "막막함",
+        "좌절"
+      ],
+      "appraisalHints": [
+        "오래 버텨서 남은 힘이 적음"
+      ],
+      "contextTags": [
+        "반복",
+        "일·과제"
+      ],
+      "provisional": true,
+      "normStatus": "provisional"
+    },
+    {
+      "label": "무기력",
+      "family": "depletion",
+      "valence": "negative",
+      "activation": "low",
+      "neighbors": [
+        "지침",
+        "막막함",
+        "울적함"
+      ],
+      "appraisalHints": [
+        "무엇을 해도 달라지지 않을 것 같음"
+      ],
+      "contextTags": [
+        "반복",
+        "결과"
+      ],
+      "provisional": true,
+      "normStatus": "provisional"
+    },
+    {
+      "label": "혼란스러움",
+      "family": "confusion",
+      "valence": "negative",
+      "activation": "medium",
+      "neighbors": [
+        "당황",
+        "막막함",
+        "멍함",
+        "걱정"
+      ],
+      "appraisalHints": [
+        "여러 생각이 뒤엉켜 정리가 안 됨"
+      ],
+      "contextTags": [
+        "선택",
+        "변화"
+      ],
+      "provisional": true,
+      "normStatus": "provisional"
+    },
+    {
+      "label": "멍함",
+      "family": "confusion",
+      "valence": "neutral",
+      "activation": "low",
+      "neighbors": [
+        "혼란스러움",
+        "지침",
+        "평온"
+      ],
+      "appraisalHints": [
+        "생각이 잠시 멈춘 듯함"
+      ],
+      "contextTags": [
+        "휴식",
+        "일상"
+      ],
+      "contextDependent": true,
+      "provisional": true,
+      "normStatus": "provisional"
+    },
+    {
+      "label": "울적함",
+      "family": "loss",
+      "valence": "negative",
+      "activation": "low",
+      "neighbors": [
+        "슬픔",
+        "허전함",
+        "무기력",
+        "외로움"
+      ],
+      "appraisalHints": [
+        "마음이 가라앉아 잘 올라오지 않음"
+      ],
+      "contextTags": [
+        "일상",
+        "관계"
+      ],
+      "provisional": true,
+      "normStatus": "provisional"
+    },
+    {
+      "label": "초라함",
+      "family": "self-evaluation",
+      "valence": "negative",
+      "activation": "low",
+      "neighbors": [
+        "수치심",
+        "자책",
+        "부끄러움",
+        "실망"
+      ],
+      "appraisalHints": [
+        "내가 작고 보잘것없게 느껴짐"
+      ],
+      "contextTags": [
+        "자기평가",
+        "사람들 앞"
+      ],
+      "provisional": true,
+      "normStatus": "provisional"
+    },
+    {
+      "label": "예민함",
+      "family": "friction",
+      "valence": "negative",
+      "activation": "high",
+      "neighbors": [
+        "짜증",
+        "긴장",
+        "초조함"
+      ],
+      "appraisalHints": [
+        "작은 자극에도 크게 반응하게 됨"
+      ],
+      "contextTags": [
+        "반복",
+        "경계"
+      ],
+      "provisional": true,
+      "normStatus": "provisional"
+    },
+    {
+      "label": "의욕",
+      "family": "energy",
+      "valence": "positive",
+      "activation": "medium",
+      "neighbors": [
+        "활기",
+        "기대",
+        "자신감"
+      ],
+      "appraisalHints": [
+        "해보고 싶은 마음이 생김"
+      ],
+      "contextTags": [
+        "시작",
+        "기회"
+      ],
+      "provisional": true,
+      "normStatus": "provisional"
+    },
+    {
+      "label": "개운함",
+      "family": "ease",
+      "valence": "positive",
+      "activation": "low",
+      "neighbors": [
+        "편안함",
+        "안도",
+        "활기"
+      ],
+      "appraisalHints": [
+        "쉬고 나서 몸과 마음이 가벼워짐"
+      ],
+      "contextTags": [
+        "휴식",
+        "회복"
+      ],
+      "provisional": true,
+      "normStatus": "provisional"
+    },
+    {
+      "label": "홀가분함",
+      "family": "relief",
+      "valence": "positive",
+      "activation": "low",
+      "neighbors": [
+        "안도",
+        "개운함",
+        "여유"
+      ],
+      "appraisalHints": [
+        "짊어지던 것을 내려놓음"
+      ],
+      "contextTags": [
+        "마무리",
+        "해소"
+      ],
+      "provisional": true,
+      "normStatus": "provisional"
+    },
+    {
+      "label": "든든함",
+      "family": "connection",
+      "valence": "positive",
+      "activation": "low",
+      "neighbors": [
+        "신뢰",
+        "편안함",
+        "친밀감"
+      ],
+      "appraisalHints": [
+        "기댈 곳이 있다고 느낌"
+      ],
+      "contextTags": [
+        "관계",
+        "안전"
       ],
       "provisional": true,
       "normStatus": "provisional"
