@@ -2,6 +2,8 @@ node_modules/
 .next/
 out/
 *.tsbuildinfo
+# rewritten by next dev / next build; Next docs: do not track it (api-reference/config/typescript)
+next-env.d.ts
 .DS_Store
 .vercel
 .env*
