@@ -323,3 +323,13 @@ p, .lede, .hint, .step-note, .small-note, .summary-footnote { text-wrap: pretty;
   .reveal .reveal-step, .reveal .mini-dot { animation: none !important; }
   .reveal .mini-ring { display: none; }
 }
+
+/* Locking an export with a passphrase (records screen). */
+.lock-fields { margin: 18px 0 6px; padding: 16px 18px; border: 1px solid var(--line); border-radius: 12px; background: var(--card); }
+.lock-legend { margin: 0 0 6px; font: 600 var(--t-small) var(--font-sans); color: var(--ink); }
+.lock-label { display: block; margin: 12px 0 6px; font-size: var(--t-small); color: var(--muted); }
+.lock-fields .small-note { margin: 8px 0 0; }
+
+/* The one question at the end of the slower look (TalkToSomeoneQuestion). */
+.talk-question { margin: 40px 0 8px; padding-top: 28px; border-top: 1px solid var(--line); }
+.talk-question .subquestion { margin-top: 0; }

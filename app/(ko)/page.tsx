@@ -3,12 +3,13 @@
 import { useEffect, useReducer, useRef, useState, type CSSProperties } from "react";
 import { canGoBack, createSession, sessionReducer, understandRoute } from "../../lib/session-types";
 import { appraisalEscapes, coachEscapes, coachResult, coachSetFor, getCoachSets } from "../../lib/coach";
-import type { AffectPoint, BodyObservation, DeepReflection, EmotionSelection, EmotionSession, QuickNonSelection, SynthesisFit } from "../../lib/session-types";
+import type { AffectPoint, BodyObservation, DeepReflection, EmotionSelection, EmotionSession, QuickNonSelection, SynthesisFit, TalkToSomeone } from "../../lib/session-types";
 
 type DeepContext = NonNullable<DeepReflection["context"]>;
 type DeepOutcome = NonNullable<DeepReflection["outcome"]>;
 import { getStorageAdapter } from "../../lib/storage-adapter";
-import { applyImport, buildExport, downloadExport, exportFileName, MAX_IMPORT_BYTES, parseImport, planImport, readFileText, type ImportError, type ImportPlan } from "../../lib/record-transfer";
+import { applyImport, buildExport, downloadExport, downloadJson, exportFileName, MAX_IMPORT_BYTES, parseImport, planImport, readFileText, type ImportError, type ImportPlan } from "../../lib/record-transfer";
+import { isLockedText, lockedFileName, lockExport, MIN_PASSPHRASE_LENGTH, unlockExport } from "../../lib/record-crypto";
 import { formatWhen, helpedOptions, summarise, triedOptions } from "../../lib/records";
 import { migrateLegacyStorage } from "../../lib/migrations";
 import { expandCandidates, filterQuickCandidates } from "../../lib/quick-check";
@@ -171,7 +172,7 @@ function App() {
       {session.stage === "meaning" && <MeaningScreen initial={session.deepReflection?.concerns ?? []} onNext={(selected) => dispatch({ type: "SET_CONCERNS", concerns: selected })} />}
       {session.stage === "emotion" && <EmotionScreen initial={session.deepReflection?.emotionCandidates ?? []} affect={session.deepReflection?.affect} onNext={(selected) => dispatch({ type: "SET_EMOTIONS", emotionCandidates: selected })} />}
       {session.stage === "outcome" && <OutcomeScreen onNext={(outcome) => dispatch({ type: "SET_OUTCOME", outcome })} />}
-      {session.stage === "summary" && <SummaryScreen session={session} onFeedback={(feedback) => dispatch({ type: "SET_SYNTHESIS_FEEDBACK", ...feedback })} onSupport={() => dispatch({ type: "OPEN_SUPPORT" })} />}
+      {session.stage === "summary" && <SummaryScreen session={session} onFeedback={(feedback) => dispatch({ type: "SET_SYNTHESIS_FEEDBACK", ...feedback })} onTalk={(answer) => dispatch({ type: "SET_TALK_TO_SOMEONE", answer })} onSupport={() => dispatch({ type: "OPEN_SUPPORT" })} />}
       {session.stage === "support" && <NeedScreen session={session} onNeed={(id) => dispatch({ type: "CHOOSE_NEED", id })} onResponse={(id) => dispatch({ type: "TOGGLE_RESPONSE", id })} onDeep={() => dispatch({ type: "ENTER_DEEP" })} onCoach={() => dispatch({ type: "OPEN_COACH" })} onBack={() => dispatch({ type: "BACK" })} />}
       {session.stage === "stopped" && <StoppedScreen session={session} />}
 
@@ -755,7 +756,7 @@ function OutcomeScreen({ onNext }: { onNext: (outcome: DeepOutcome) => void }) {
   return <Screen><StepHeading step={t("outcome.step")} title={t("outcome.title")} hint={t("outcome.hint")} basis={t("outcome.basis")} /><div className="choice-list compact">{(["much_clearer", "clearer", "same", "more_complex", "more_distressed"] as const).map((value) => <button className={clarity === value ? "selected" : ""} aria-pressed={clarity === value} key={value} onClick={() => setClarity(value)}><Mark on={clarity === value} />{t(`outcome.clarity.${value}`)}</button>)}</div><h2 className="subquestion">{t("outcome.usefulnessQuestion")}</h2><div className="inline-choices">{(["helpful", "unsure", "unhelpful"] as const).map((value) => <button className={usefulness === value ? "selected" : ""} aria-pressed={usefulness === value} key={value} onClick={() => setUsefulness(value)}><Mark on={usefulness === value} />{t(`outcome.usefulness.${value}`)}</button>)}</div><input className="text-input" maxLength={INPUT_LIMITS.line} value={note} onChange={(event) => setNote(event.target.value)} placeholder={t("outcome.notePlaceholder")} /><Navigation disabled={!clarity || !usefulness} onNext={() => onNext({ clarity: clarity!, usefulness: usefulness!, note })} /></Screen>;
 }
 
-function SummaryScreen({ session, onFeedback, onSupport }: { session: EmotionSession; onFeedback: (feedback: { fit?: SynthesisFit; correction?: string }) => void; onSupport: () => void }) {
+function SummaryScreen({ session, onFeedback, onTalk, onSupport }: { session: EmotionSession; onFeedback: (feedback: { fit?: SynthesisFit; correction?: string }) => void; onTalk: (answer: TalkToSomeone) => void; onSupport: () => void }) {
   const t = useT();
   const deep = session.deepReflection;
   const play = useFirstReveal(`${session.id}:summary`);
@@ -780,9 +781,27 @@ function SummaryScreen({ session, onFeedback, onSupport }: { session: EmotionSes
     <p className="summary-footnote reveal-step" style={delay(d.rest)}>{t("summary.footnote")}</p>
     <div className="reveal-rest reveal-step" style={delay(d.rest)}>
       <SynthesisSection session={session} onFeedback={onFeedback} />
+      <TalkToSomeoneQuestion answer={session.talkToSomeone?.answer} onAnswer={onTalk} />
       <div className="stack-actions"><button className="primary-button centered" onClick={onSupport}>{t("summary.support")} <span>→</span></button><a className="secondary-button centered" href="/">{t("common.backToStart")}</a></div>
     </div>
   </Screen>;
+}
+
+/**
+ * One question at the end of the slower look: whether the person thinks of
+ * telling a person about this. Answering is optional, any answer can be
+ * changed, and none of them changes the next screen (session-types
+ * `talkToSomeone`). The app does not ask who, and does not follow up.
+ */
+const TALK_ANSWERS: TalkToSomeone[] = ["yes", "no", "not-yet"];
+function TalkToSomeoneQuestion({ answer, onAnswer }: { answer?: TalkToSomeone; onAnswer: (answer: TalkToSomeone) => void }) {
+  const t = useT();
+  return <section className="talk-question" aria-labelledby="talk-question-title">
+    <h2 className="subquestion" id="talk-question-title">{t("talkToSomeone.question")}</h2>
+    <p className="small-note">{t("talkToSomeone.hint")}</p>
+    <div className="inline-choices">{TALK_ANSWERS.map((value) => <button key={value} className={answer === value ? "selected" : ""} aria-pressed={answer === value} onClick={() => onAnswer(value)}><Mark on={answer === value} />{t(`talkToSomeone.answers.${value}`)}</button>)}</div>
+    {answer && <p className="small-note" role="status">{t("talkToSomeone.saved")}</p>}
+  </section>;
 }
 
 /**
@@ -940,21 +959,71 @@ function RecordTransfer({ count, onChanged }: { count: number; onChanged: () => 
   const [plan, setPlan] = useState<ImportPlan | null>(null);
   const [confirmingDelete, setConfirmingDelete] = useState(false);
   const [note, setNote] = useState<TransferNote | null>(null);
+  // locking the export (optional): empty fields export as before
+  const [passphrase, setPassphrase] = useState("");
+  const [passphraseAgain, setPassphraseAgain] = useState("");
+  const [busy, setBusy] = useState(false);
+  // a picked file that turned out to be locked, waiting for its passphrase
+  const [lockedText, setLockedText] = useState<string | null>(null);
+  const [unlockPassphrase, setUnlockPassphrase] = useState("");
+  const unlockInput = useRef<HTMLInputElement>(null);
+  const wantsLock = passphrase.length > 0 || passphraseAgain.length > 0;
+  const lockProblem = !wantsLock ? null : passphrase.length < MIN_PASSPHRASE_LENGTH ? "tooShort" : passphrase !== passphraseAgain ? "mismatch" : null;
 
   // the question takes the focus, so it is read before the choice is made
   useEffect(() => {
     if (plan || confirmingDelete) summary.current?.focus();
   }, [plan, confirmingDelete]);
+  useEffect(() => {
+    if (lockedText) unlockInput.current?.focus();
+  }, [lockedText]);
 
   const refuse = (error: ImportError | "unreadable") => {
     setPlan(null);
     setNote({ kind: "alert", text: t(`recordTransfer.errors.${error}`) });
   };
 
-  const exportAll = () => {
+  const exportAll = async () => {
     const name = exportFileName();
-    downloadExport(buildExport(loadCompleted()), name);
-    setNote({ kind: "status", text: t("recordTransfer.exported", { name }) });
+    const file = buildExport(loadCompleted());
+    if (!wantsLock) {
+      downloadExport(file, name);
+      setNote({ kind: "status", text: t("recordTransfer.exported", { name }) });
+      return;
+    }
+    if (lockProblem) return;
+    setBusy(true);
+    setNote({ kind: "status", text: t("recordTransfer.lock.locking") });
+    try {
+      const locked = await lockExport(file, passphrase);
+      const lockedName = lockedFileName(name);
+      downloadJson(JSON.stringify(locked, null, 2), lockedName);
+      setPassphrase("");
+      setPassphraseAgain("");
+      setNote({ kind: "status", text: t("recordTransfer.lock.exported", { name: lockedName }) });
+    } catch {
+      setNote({ kind: "alert", text: t("recordTransfer.lock.failed") });
+    } finally {
+      setBusy(false);
+    }
+  };
+
+  const unlock = async () => {
+    if (!lockedText || !unlockPassphrase) return;
+    setBusy(true);
+    setNote({ kind: "status", text: t("recordTransfer.lock.unlocking") });
+    const opened = await unlockExport(lockedText, unlockPassphrase);
+    setBusy(false);
+    if (!opened.ok) {
+      setNote({ kind: "alert", text: t(`recordTransfer.lock.errors.${opened.error}`) });
+      return;
+    }
+    setLockedText(null);
+    setUnlockPassphrase("");
+    const parsed = parseImport(opened.text);
+    if (!parsed.ok) return refuse(parsed.error);
+    setNote(null);
+    setPlan(planImport(parsed, loadCompleted()));
   };
 
   const pickFile = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -964,6 +1033,14 @@ function RecordTransfer({ count, onChanged }: { count: number; onChanged: () => 
     setConfirmingDelete(false);
     if (file.size > MAX_IMPORT_BYTES) return refuse("too-large");
     readFileText(file).then((text) => {
+      if (isLockedText(text)) {
+        setPlan(null);
+        setNote(null);
+        setUnlockPassphrase("");
+        setLockedText(text);
+        return;
+      }
+      setLockedText(null);
       const parsed = parseImport(text);
       if (!parsed.ok) return refuse(parsed.error);
       setNote(null);
@@ -993,11 +1070,30 @@ function RecordTransfer({ count, onChanged }: { count: number; onChanged: () => 
     <p className="synthesis-question">{t("recordTransfer.exportNote")}</p>
     <p className="small-note">{t("recordTransfer.exportShareNote")}</p>
     <p className="small-note">{count > 0 ? t("recordTransfer.exportScope", { count }) : t("recordTransfer.exportEmpty")}</p>
+    {count > 0 && <div className="lock-fields" role="group" aria-labelledby="lock-legend">
+      <p className="lock-legend" id="lock-legend">{t("recordTransfer.lock.legend")}</p>
+      <p className="small-note">{t("recordTransfer.lock.hint")}</p>
+      <label className="lock-label" htmlFor="lock-passphrase">{t("recordTransfer.lock.passphrase")}</label>
+      <input id="lock-passphrase" className="text-input" type="password" autoComplete="new-password" maxLength={200} value={passphrase} onChange={(event) => setPassphrase(event.target.value)} />
+      <label className="lock-label" htmlFor="lock-passphrase-again">{t("recordTransfer.lock.confirm")}</label>
+      <input id="lock-passphrase-again" className="text-input" type="password" autoComplete="new-password" maxLength={200} value={passphraseAgain} onChange={(event) => setPassphraseAgain(event.target.value)} />
+      {wantsLock && <p className="small-note" role={lockProblem ? "alert" : undefined}>{lockProblem === "tooShort" ? t("recordTransfer.lock.tooShort") : lockProblem === "mismatch" ? t("recordTransfer.lock.mismatch") : t("recordTransfer.lock.warning")}</p>}
+    </div>}
     <div className="quick-option-row">
-      <button className="secondary-button" disabled={count === 0} onClick={exportAll}>{t("recordTransfer.export")}</button>
+      <button className="secondary-button" disabled={count === 0 || busy || Boolean(lockProblem)} onClick={exportAll}>{wantsLock ? t("recordTransfer.lock.exportLocked") : t("recordTransfer.export")}</button>
       <button className="secondary-button" onClick={() => fileInput.current?.click()}>{t("recordTransfer.import")}</button>
       <input ref={fileInput} type="file" accept=".json,application/json" hidden aria-label={t("recordTransfer.importFileLabel")} onChange={pickFile} />
     </div>
+
+    {lockedText && <div role="group" aria-labelledby="record-unlock-question">
+      <p className="synthesis-question" id="record-unlock-question">{t("recordTransfer.lock.unlockQuestion")}</p>
+      <label className="lock-label" htmlFor="unlock-passphrase">{t("recordTransfer.lock.unlockLabel")}</label>
+      <input id="unlock-passphrase" ref={unlockInput} className="text-input" type="password" autoComplete="current-password" maxLength={200} value={unlockPassphrase} onChange={(event) => setUnlockPassphrase(event.target.value)} onKeyDown={(event) => { if (event.key === "Enter") void unlock(); }} />
+      <div className="quick-option-row">
+        <button className="secondary-button" disabled={!unlockPassphrase || busy} onClick={() => void unlock()}>{t("recordTransfer.lock.unlock")}</button>
+        <button className="quiet-button" onClick={() => { setLockedText(null); setUnlockPassphrase(""); setNote({ kind: "status", text: t("recordTransfer.importCancelled") }); }}>{t("recordTransfer.lock.unlockCancel")}</button>
+      </div>
+    </div>}
 
     {plan && <div role="group" aria-labelledby="record-import-summary">
       <p className="synthesis-question" id="record-import-summary" ref={summary} tabIndex={-1}>{t("recordTransfer.importSummary", { total: plan.total, duplicates: plan.duplicates, invalid: plan.invalid })}</p>
@@ -1042,6 +1138,7 @@ function RecordDetail({ session, onFollowUp, onBack }: { session: EmotionSession
       <SummaryRow label={t("recordDetail.depth")} value={item.depthLabel} />
       {session.quickCheck?.affect && <SummaryRow label={t("recordDetail.quickAffect")} value={session.quickCheck.affect.unknown ? t("common.unsure") : `${quickValence(session.quickCheck.affect.valence, t.locale)} · ${quickActivation(session.quickCheck.affect.activation, t.locale)}`} />}
       {deep?.affect && <SummaryRow label={t("recordDetail.deepAffect")} value={deepAffectValue(t, deep.affect)} />}
+      {session.talkToSomeone && <SummaryRow label={t("talkToSomeone.recordLabel")} value={t(`talkToSomeone.answers.${session.talkToSomeone.answer}`)} />}
       <SummaryRow label={t("recordDetail.words")} value={item.words.join(" · ") || t("common.notChosen")} />
       {item.personalMeanings.map((entry) => <SummaryRow key={entry.label} label={t("recordDetail.personalMeaning", { label: entry.label })} value={entry.meaning} />)}
       {deep?.context?.eventText && <SummaryRow label={t("recordDetail.context")} value={deep.context.eventText} />}

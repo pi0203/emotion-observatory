@@ -139,8 +139,11 @@ export const readFileText = (file: Blob): Promise<string> =>
   });
 
 /** Hands the file to the browser as a download. A local blob URL; no request leaves the device. */
-export const downloadExport = (file: ExportFile, name: string = exportFileName()) => {
-  const blob = new Blob([serializeExport(file)], { type: "application/json" });
+export const downloadExport = (file: ExportFile, name: string = exportFileName()) => downloadJson(serializeExport(file), name);
+
+/** Any JSON text as a download (the locked export uses this too). */
+export const downloadJson = (text: string, name: string) => {
+  const blob = new Blob([text], { type: "application/json" });
   const url = URL.createObjectURL(blob);
   const link = document.createElement("a");
   link.href = url;

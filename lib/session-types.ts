@@ -93,6 +93,8 @@ export type DeepReflection = {
  * A completed Quick Check can be reopened to add a Deep Reflection under the
  * same id, so the two never split into separate records.
  */
+export type TalkToSomeone = "yes" | "no" | "not-yet";
+
 export type EmotionSession = {
   id: string;
   createdAt: string;
@@ -104,6 +106,14 @@ export type EmotionSession = {
   deepReflection?: DeepReflection;
   /** Reserved for checking whether the summary is useful; never shown back as a score. */
   synthesisFeedback?: { fit?: SynthesisFit; correction?: string };
+  /**
+   * 「이 경험을 사람에게 말해 볼 생각이 있나요?」 on the closing screen of the slower look
+   * (2026-10-19, owner's decision; docs/EVIDENCE_CHAIN.md §5). The app's own
+   * statement that it is not meant to stand in for people. Kept as the person
+   * answered it: never scored, never summed across records, and no answer
+   * changes what the app shows next.
+   */
+  talkToSomeone?: { answer: TalkToSomeone; at: string };
   /**
    * The direction the user is exploring and what they picked inside it. One need
    * at a time, kept per need so stepping between them loses nothing. The app
@@ -193,6 +203,7 @@ export type SessionAction =
   | { type: "SET_EMOTIONS"; emotionCandidates: EmotionSelection[] }
   | { type: "SET_OUTCOME"; outcome: NonNullable<DeepReflection["outcome"]> }
   | { type: "SET_SYNTHESIS_FEEDBACK"; fit?: SynthesisFit; correction?: string }
+  | { type: "SET_TALK_TO_SOMEONE"; answer: TalkToSomeone }
   | { type: "OPEN_SUPPORT" }
   | { type: "CHOOSE_NEED"; id: string }
   | { type: "TOGGLE_RESPONSE"; id: string }
@@ -263,7 +274,7 @@ export const canGoBack = (session: EmotionSession) => (session.history?.length ?
 /** Actions that do not move the user to another screen, so they are not steps to undo. */
 const NOT_A_STEP = new Set<SessionAction["type"]>([
   "TOGGLE_QUICK_CANDIDATE", "SET_QUICK_CANDIDATE_RESPONSE", "ADD_QUICK_CUSTOM",
-  "SET_SYNTHESIS_FEEDBACK", "CHOOSE_NEED", "TOGGLE_RESPONSE",
+  "SET_SYNTHESIS_FEEDBACK", "SET_TALK_TO_SOMEONE", "CHOOSE_NEED", "TOGGLE_RESPONSE",
   "TOGGLE_COACH_WORD", "SET_COACH_OWN_WORD", "TOGGLE_APPRAISAL", "SET_OWN_APPRAISAL",
   "SET_PERSONAL_MEANING", "RESUME", "BACK",
 ]);
@@ -362,6 +373,9 @@ const reduce = (state: EmotionSession, action: SessionAction): EmotionSession =>
       if (action.correction !== undefined) feedback.correction = action.correction.trim() || undefined;
       return { ...state, synthesisFeedback: feedback };
     }
+    case "SET_TALK_TO_SOMEONE":
+      // merged onto the finished session like the summary feedback; stage and status stay
+      return { ...state, talkToSomeone: { answer: action.answer, at: new Date().toISOString() } };
     case "OPEN_SUPPORT":
       // reached from a finished summary; it must not reopen or end the session
       return { ...state, stage: "support", support: state.support ?? { chosen: [] } };

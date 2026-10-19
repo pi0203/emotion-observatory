@@ -185,7 +185,7 @@ describe("records screen", () => {
     const click = vi.spyOn(HTMLAnchorElement.prototype, "click").mockImplementation(() => {});
     seed([record("a")]);
     openRecords();
-    expect(screen.getByText("내보낸 파일에는 적은 내용이 그대로 들어 있고, 암호화되지 않습니다.")).toBeTruthy();
+    expect(screen.getByText("암호를 정하지 않으면, 내보낸 파일에는 적은 내용이 그대로 들어 있고 암호화되지 않습니다.")).toBeTruthy();
     fireEvent.click(screen.getByRole("button", { name: "파일로 내보내기" }));
     expect(click).toHaveBeenCalledTimes(1);
     expect(URL.createObjectURL).toHaveBeenCalledTimes(1);
