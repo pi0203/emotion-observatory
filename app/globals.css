@@ -297,3 +297,29 @@ p, .lede, .hint, .step-note, .small-note, .summary-footnote { text-wrap: pretty;
 .help-modal { width: min(100%, 520px); max-height: calc(100vh - 48px); overflow-y: auto; }
 .help-modal-title { margin: 0 0 16px; font-size: var(--t-lead); }
 .help-modal .crisis-card { margin: 0; }
+
+/* The closing screens: what the person chose falls into place, once (page.tsx, useFirstReveal).
+   Layout: the title closes the piece under the summary card. Document order keeps the title first. */
+.reveal-screen { display: flex; flex-direction: column; }
+.reveal-screen > * { order: 5; }
+.reveal-screen > .eyebrow { order: 0; }
+.reveal-screen > .mini-pad { order: 1; }
+.reveal-screen > .summary-card { order: 2; margin-top: 4px; }
+.reveal-screen > .reveal-title { order: 3; margin-top: 36px; font-size: var(--t-lead); }
+.reveal-screen > .summary-footnote { order: 4; margin-top: 12px; }
+.mini-pad { position: relative; width: 168px; aspect-ratio: 1.35; margin: 6px 0 22px; border: 1px solid var(--line-strong); border-radius: 48% 52% 50% 48%; background: var(--card); }
+.mini-pad::before, .mini-pad::after { content: ""; position: absolute; background: var(--axis); }
+.mini-pad::before { left: 0; right: 0; top: 50%; height: 1px; }
+.mini-pad::after { top: 0; bottom: 0; left: 50%; width: 1px; }
+.mini-dot, .mini-ring { position: absolute; width: 14px; height: 14px; border-radius: 50%; transform: translate(-50%, -50%); }
+.mini-dot { background: var(--accent); box-shadow: 0 0 0 2px var(--paper); }
+.mini-ring { border: 1.5px solid var(--accent); opacity: 0; }
+.reveal .reveal-step { animation: rise-in .5s ease-out both; animation-delay: var(--d, 0s); }
+.reveal .mini-dot { animation: dot-drop .45s cubic-bezier(.3, 1.6, .5, 1) both; animation-delay: .15s; }
+.reveal .mini-ring { animation: dot-ripple .9s ease-out both; animation-delay: .35s; }
+@keyframes dot-drop { from { transform: translate(-50%, -50%) scale(0); } to { transform: translate(-50%, -50%) scale(1); } }
+@keyframes dot-ripple { from { opacity: .55; transform: translate(-50%, -50%) scale(1); } to { opacity: 0; transform: translate(-50%, -50%) scale(3.2); } }
+@media (prefers-reduced-motion: reduce) {
+  .reveal .reveal-step, .reveal .mini-dot { animation: none !important; }
+  .reveal .mini-ring { display: none; }
+}

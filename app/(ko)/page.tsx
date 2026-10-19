@@ -636,7 +636,22 @@ function QuickSummaryScreen({ session, onDeep, onFeedback, onSupport }: { sessio
   const quick = session.quickCheck;
   const affect = quick?.affect?.unknown ? t("common.unsure") : `${quickValence(quick?.affect?.valence, t.locale)} · ${quickActivation(quick?.affect?.activation, t.locale)}`;
   const words = (quick?.selected ?? []).map((item) => item.label).join(" · ") || quickResponseLabel(t, quick?.candidateResponse) || t("common.notChosen");
-  return <Screen><p className="eyebrow">{t("quickSummary.eyebrow")}</p><h1>{t("quickSummary.title")}</h1><div className="summary-card"><SummaryRow label={t("quickSummary.affect")} value={affect} /><SummaryRow label={t("quickSummary.words")} value={words} />{quick?.granularityResponse === "unsure" && <SummaryRow label={t("quickSummary.granularity")} value={t("common.unsure")} />}{quick?.contrastAnswer && <SummaryRow label={t("quickSummary.contrast")} value={quick.contrastAnswer} />}</div><p className="summary-footnote">{t("quickSummary.footnote")}</p><SynthesisSection session={session} onFeedback={onFeedback} /><div className="stack-actions"><button className="primary-button centered" onClick={onDeep}>{t("quickSummary.deep")} <span>→</span></button><button className="secondary-button" onClick={onSupport}>{t("quickSummary.support")}</button><a className="secondary-button centered" href="/">{t("common.backToStart")}</a></div></Screen>;
+  const rows: [string, string][] = [[t("quickSummary.affect"), affect], [t("quickSummary.words"), words]];
+  if (quick?.granularityResponse === "unsure") rows.push([t("quickSummary.granularity"), t("common.unsure")]);
+  if (quick?.contrastAnswer) rows.push([t("quickSummary.contrast"), quick.contrastAnswer]);
+  const play = useFirstReveal(`${session.id}:quick-summary`);
+  const d = revealDelays(rows.length);
+  return <Screen className={`reveal-screen${play ? " reveal" : ""}`}>
+    <p className="eyebrow reveal-step" style={delay(0)}>{t("quickSummary.eyebrow")}</p>
+    <h1 className="reveal-title reveal-step" style={delay(d.title)}>{t("quickSummary.title")}</h1>
+    <MiniPad affect={quick?.affect} />
+    <div className="summary-card reveal-step" style={delay(d.card)}>{rows.map(([label, value], index) => <SummaryRow key={label} label={label} value={value} style={delay(d.rows[index])} />)}</div>
+    <p className="summary-footnote reveal-step" style={delay(d.rest)}>{t("quickSummary.footnote")}</p>
+    <div className="reveal-rest reveal-step" style={delay(d.rest)}>
+      <SynthesisSection session={session} onFeedback={onFeedback} />
+      <div className="stack-actions"><button className="primary-button centered" onClick={onDeep}>{t("quickSummary.deep")} <span>→</span></button><button className="secondary-button" onClick={onSupport}>{t("quickSummary.support")}</button><a className="secondary-button centered" href="/">{t("common.backToStart")}</a></div>
+    </div>
+  </Screen>;
 }
 
 function EntryMini({ onAnswer }: { onAnswer: (answer: "yes" | "unsure" | "no") => void }) {
@@ -743,9 +758,66 @@ function OutcomeScreen({ onNext }: { onNext: (outcome: DeepOutcome) => void }) {
 function SummaryScreen({ session, onFeedback, onSupport }: { session: EmotionSession; onFeedback: (feedback: { fit?: SynthesisFit; correction?: string }) => void; onSupport: () => void }) {
   const t = useT();
   const deep = session.deepReflection;
+  const play = useFirstReveal(`${session.id}:summary`);
   if (deep?.outcome?.clarity === "more_distressed") return <WorsenedScreen />;
   const quickAffect = session.quickCheck?.affect;
-  return <Screen><p className="eyebrow">{t("summary.eyebrow")}</p><h1>{t("summary.title")}</h1><div className="summary-card">{quickAffect && <SummaryRow label={t("summary.quickAffect")} value={quickAffect.unknown ? t("common.unsure") : `${quickValence(quickAffect.valence, t.locale)} · ${quickActivation(quickAffect.activation, t.locale)}`} />}<SummaryRow label={t("summary.body")} value={(deep?.body ?? []).map((item) => item.label).join(" · ") || t("common.notRecorded")} /><SummaryRow label={t("summary.affect")} value={deepAffectValue(t, deep?.affect)} /><SummaryRow label={t("summary.context")} value={deep?.context?.eventText || t("common.notRecorded")} /><SummaryRow label={t("summary.concerns")} value={(deep?.concerns ?? []).join(" · ") || t("common.notRecorded")} /><SummaryRow label={t("summary.words")} value={(deep?.emotionCandidates ?? []).map((item) => item.label).join(" · ") || t("common.notRecorded")} /></div><p className="summary-footnote">{t("summary.footnote")}</p><SynthesisSection session={session} onFeedback={onFeedback} /><div className="stack-actions"><button className="primary-button centered" onClick={onSupport}>{t("summary.support")} <span>→</span></button><a className="secondary-button centered" href="/">{t("common.backToStart")}</a></div></Screen>;
+  const rows: [string, string][] = [];
+  if (quickAffect) rows.push([t("summary.quickAffect"), quickAffect.unknown ? t("common.unsure") : `${quickValence(quickAffect.valence, t.locale)} · ${quickActivation(quickAffect.activation, t.locale)}`]);
+  rows.push(
+    [t("summary.body"), (deep?.body ?? []).map((item) => item.label).join(" · ") || t("common.notRecorded")],
+    [t("summary.affect"), deepAffectValue(t, deep?.affect)],
+    [t("summary.context"), deep?.context?.eventText || t("common.notRecorded")],
+    [t("summary.concerns"), (deep?.concerns ?? []).join(" · ") || t("common.notRecorded")],
+    [t("summary.words"), (deep?.emotionCandidates ?? []).map((item) => item.label).join(" · ") || t("common.notRecorded")],
+  );
+  const d = revealDelays(rows.length);
+  return <Screen className={`reveal-screen${play ? " reveal" : ""}`}>
+    <p className="eyebrow reveal-step" style={delay(0)}>{t("summary.eyebrow")}</p>
+    <h1 className="reveal-title reveal-step" style={delay(d.title)}>{t("summary.title")}</h1>
+    {/* the point from the slower look; the quick one stays in its row, so two dots never read as a path */}
+    <MiniPad affect={deep?.affect} />
+    <div className="summary-card reveal-step" style={delay(d.card)}>{rows.map(([label, value], index) => <SummaryRow key={label} label={label} value={value} style={delay(d.rows[index])} />)}</div>
+    <p className="summary-footnote reveal-step" style={delay(d.rest)}>{t("summary.footnote")}</p>
+    <div className="reveal-rest reveal-step" style={delay(d.rest)}>
+      <SynthesisSection session={session} onFeedback={onFeedback} />
+      <div className="stack-actions"><button className="primary-button centered" onClick={onSupport}>{t("summary.support")} <span>→</span></button><a className="secondary-button centered" href="/">{t("common.backToStart")}</a></div>
+    </div>
+  </Screen>;
+}
+
+/**
+ * The closing screens put together what the person chose, one piece after
+ * another, the first time they are shown for a record (docs/BENCHMARK_TALKV_2026_10_19.md).
+ * The motion points at what the person did, never at the app working: there
+ * is no waiting, no progress figure, and every button works at once. A back
+ * step or a re-render shows the screen as it is. With reduced motion turned on
+ * in the system, nothing moves. Screen readers get the whole screen at once,
+ * title first: only the visual order differs from the document order.
+ */
+const revealedScreens = new Set<string>();
+function useFirstReveal(key: string) {
+  // reading in the initialiser and recording in the effect keeps the render pure (Strict Mode calls the initialiser twice)
+  const [play] = useState(() => !revealedScreens.has(key));
+  useEffect(() => { revealedScreens.add(key); }, [key]);
+  return play;
+}
+/** Seconds: the rows rise one by one, then the title closes the piece; the rest arrives with the footnote, about 1.2 s in all. */
+const revealDelays = (count: number) => {
+  const step = count > 1 ? Math.min(0.18, 0.6 / (count - 1)) : 0;
+  const rows = Array.from({ length: count }, (_, index) => 0.45 + index * step);
+  const last = rows[rows.length - 1] ?? 0.45;
+  return { card: 0.35, rows, title: last + 0.15, rest: last + 0.3 };
+};
+const delay = (seconds: number) => ({ "--d": `${seconds}s` }) as CSSProperties;
+
+/** The spot the person marked, drawn small on the same pad. Nothing when the pad was skipped or left as unsure. */
+function MiniPad({ affect }: { affect?: AffectPoint }) {
+  if (!hasAffectPoint(affect)) return null;
+  const at = { left: `${affect!.valence! * 100}%`, top: `${(1 - affect!.activation!) * 100}%` };
+  return <div className="mini-pad reveal-step" style={delay(0)} aria-hidden="true">
+    <span className="mini-ring" style={at} />
+    <span className="mini-dot" style={at} />
+  </div>;
 }
 
 function SynthesisSection({ session, onFeedback }: { session: EmotionSession; onFeedback: (feedback: { fit?: SynthesisFit; correction?: string }) => void }) {
@@ -1052,7 +1124,7 @@ function Navigation({ onNext, onSkip = onNext, disabled = false, note }: { onNex
   return <><StepNote note={note} /><div className="navigation"><button className="skip-button" onClick={onSkip}>{t("common.skip")}</button><button className="primary-button" disabled={disabled} onClick={onNext}>{t("common.next")} <span>→</span></button></div></>;
 }
 function StepNote({ note }: { note?: string }) { return note ? <p className="step-note" role="note">{note}</p> : null; }
-function SummaryRow({ label, value }: { label: string; value: string }) { return <div className="summary-row"><span>{label}</span><strong>{value}</strong></div>; }
+function SummaryRow({ label, value, style }: { label: string; value: string; style?: CSSProperties }) { return <div className="summary-row reveal-step" style={style}><span>{label}</span><strong>{value}</strong></div>; }
 function quickAffectSuggestion(session: EmotionSession): AffectPoint | undefined {
   const affect = session.quickCheck?.affect;
   if (!affect || affect.unknown) return undefined;
