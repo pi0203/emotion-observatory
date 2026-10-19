@@ -32,6 +32,15 @@
   --backdrop: rgba(17, 26, 61, .4);
   --shadow: rgba(17, 26, 61, .14);
   --axis: #B5C5F5;          /* the affect pad's centre lines (same as --line in light) */
+  /* Tones (owner's choice B, 2026-10-19; it widens the 2026-10-12 rule above): each step gets its own
+     quiet paper, after the homepage's per-page backgrounds, and the landing gets colour points. Coral
+     may now appear as a small dot and peach as a surface; red warning colour is still never used. */
+  --tone-blue-paper: #E0E8FF;   --tone-blue-card: #F5F8FF;   --tone-blue-line: #B5C5F5;   --tone-blue-blob: #CFDBFA;
+  --tone-lilac-paper: #ECE6FA;  --tone-lilac-card: #F8F5FE;  --tone-lilac-line: #C9BCEB;  --tone-lilac-blob: #D9D0F5;  --tone-lilac-ink: #5B45B0;
+  --tone-mint-paper: #E2F1E8;   --tone-mint-card: #F4FAF6;   --tone-mint-line: #A9D3B8;   --tone-mint-blob: #CDEBD9;   --tone-mint-ink: #2F7D52;
+  --tone-peach-paper: #FBEDE5;  --tone-peach-card: #FFF8F4;  --tone-peach-line: #F0C3AA;  --tone-peach-blob: #FFD9C7;  --tone-peach-ink: #A2481F;
+  --tone-butter-paper: #F7F1DE; --tone-butter-card: #FFFCF2; --tone-butter-line: #E3D29E;
+  --tone-mist-paper: #E3EEF3;   --tone-mist-card: #F5FAFC;   --tone-mist-line: #AFCBD8;
   /* Type scale, after the homepage (docs/DESIGN_ALIGNMENT.md §4): five steps instead of eleven sizes. */
   --t-aside: .76rem;        /* labels, meta, eyebrows (was 12 and 13px) */
   --t-small: .875rem;       /* notes and hints (was 14 and 15px) */
@@ -69,6 +78,12 @@
     --backdrop: rgba(0, 0, 0, .55);
     --shadow: rgba(0, 0, 0, .45);
     --axis: #5F70C0;          /* 3.29:1 on --card, 3.86:1 on --paper */
+    --tone-blue-paper: #0F1633;   --tone-blue-card: #192250;   --tone-blue-line: #2E3B7A;   --tone-blue-blob: #26356B;
+    --tone-lilac-paper: #18142F;  --tone-lilac-card: #241E46;  --tone-lilac-line: #463C7A;  --tone-lilac-blob: #3B3266;  --tone-lilac-ink: #B9A8F5;
+    --tone-mint-paper: #0D1D19;   --tone-mint-card: #16302A;   --tone-mint-line: #2D5A49;   --tone-mint-blob: #1F4A3A;   --tone-mint-ink: #7FD1A6;
+    --tone-peach-paper: #22140F;  --tone-peach-card: #33211A;  --tone-peach-line: #6B4636;  --tone-peach-blob: #5A3527;  --tone-peach-ink: #FF9C78;
+    --tone-butter-paper: #1E1A0D; --tone-butter-card: #2D2814; --tone-butter-line: #5E5530;
+    --tone-mist-paper: #0D1A21;   --tone-mist-card: #172A33;   --tone-mist-line: #2E4D5B;
   }
 }
 * { box-sizing: border-box; }
@@ -347,4 +362,69 @@ p, .lede, .hint, .step-note, .small-note, .summary-footnote { text-wrap: pretty;
   /* on a phone the menu takes its own line, so the switch sits beside the name instead of falling under the menu */
   .site-header .lang-switch { order: 1; margin-left: auto; align-self: center; }
   .site-header .site-nav { order: 2; flex-basis: 100%; }
+}
+
+
+/* ---- Option B (owner's choice, 2026-10-19): a tone per step and colour points on the landing ---- */
+/* The tone is set on <html data-tone> by the app (emotion-app.tsx, toneOf). Only token values move. */
+:root[data-tone="blue"] { --paper: var(--tone-blue-paper); --card: var(--tone-blue-card); --line: var(--tone-blue-line); }
+:root[data-tone="lilac"] { --paper: var(--tone-lilac-paper); --card: var(--tone-lilac-card); --line: var(--tone-lilac-line); }
+:root[data-tone="mint"] { --paper: var(--tone-mint-paper); --card: var(--tone-mint-card); --line: var(--tone-mint-line); }
+:root[data-tone="peach"] { --paper: var(--tone-peach-paper); --card: var(--tone-peach-card); --line: var(--tone-peach-line); }
+:root[data-tone="butter"] { --paper: var(--tone-butter-paper); --card: var(--tone-butter-card); --line: var(--tone-butter-line); }
+:root[data-tone="mist"] { --paper: var(--tone-mist-paper); --card: var(--tone-mist-card); --line: var(--tone-mist-line); }
+html, body { transition: background-color .5s ease; }
+@media (prefers-reduced-motion: reduce) { html, body { transition: none; } }
+:root[data-tone="landing"] body { background: linear-gradient(180deg, var(--tone-blue-paper) 0%, var(--tone-lilac-paper) 48%, var(--tone-peach-paper) 100%); }
+
+/* the landing card: a soft wash, a drawing of the pad, the app name as a pill */
+.hero-card { background: linear-gradient(165deg, var(--card) 0%, var(--tone-peach-card) 100%); }
+.hero-pad { position: relative; width: 168px; aspect-ratio: 1.38; margin: 0 0 22px; border: 1.5px solid var(--line-strong); border-radius: 48% 52% 50% 48%;
+  background: radial-gradient(circle at 78% 26%, var(--tone-peach-blob) 0, transparent 60%), radial-gradient(circle at 22% 26%, var(--tone-lilac-blob) 0, transparent 60%),
+    radial-gradient(circle at 22% 76%, var(--tone-blue-blob) 0, transparent 60%), radial-gradient(circle at 78% 76%, var(--tone-mint-blob) 0, transparent 60%), var(--card); }
+.hero-dot { position: absolute; left: 72%; top: 30%; width: 14px; height: 14px; border-radius: 50%; background: var(--accent); box-shadow: 0 0 0 5px var(--focus-ring); transform: translate(-50%, -50%); }
+.hero-card > .eyebrow { display: inline-block; padding: 4px 10px; border-radius: 99px; background: var(--accent-subtle); }
+
+/* the four badges as coloured pills, on phones too */
+.badges { display: flex; flex-wrap: wrap; gap: 8px; }
+.badges .badge { display: inline-flex; box-shadow: none; }
+.badges .badge:nth-child(1) { background: var(--tone-blue-paper); border-color: var(--tone-blue-line); }
+.badges .badge:nth-child(2) { background: var(--tone-mint-paper); border-color: var(--tone-mint-line); }
+.badges .badge:nth-child(3) { background: var(--tone-peach-paper); border-color: var(--tone-peach-line); }
+.badges .badge:nth-child(4) { background: var(--tone-lilac-paper); border-color: var(--tone-lilac-line); }
+
+/* a colour dot before each fold title */
+.why > summary::before, .about-fold > summary::before { content: ""; flex: none; display: inline-block; width: 10px; height: 10px; margin-right: 10px; border-radius: 50%; background: var(--accent); vertical-align: middle; }
+.why-section .why:nth-of-type(1) > summary::before { background: var(--tone-lilac-ink); }
+.why-section .why:nth-of-type(2) > summary::before { background: var(--tone-mint-ink); }
+.about-fold:nth-of-type(1) > summary::before { background: var(--tone-peach-ink); }
+.about-fold:nth-of-type(2) > summary::before { background: var(--tone-lilac-ink); }
+.about-fold:nth-of-type(3) > summary::before { background: var(--tone-mint-ink); }
+.about-fold > summary { justify-content: flex-start; }
+.about-fold > summary::after { margin-left: auto; }
+.why-section .why:nth-of-type(1) { background: var(--tone-lilac-card); border-color: var(--tone-lilac-line); }
+.why-section .why:nth-of-type(2) { background: var(--tone-mint-card); border-color: var(--tone-mint-line); }
+
+/* the crisis card in a warm, quiet surface (no red, no warning icon: SAFETY.md) */
+.crisis-card { background: var(--tone-peach-card); border-color: var(--tone-peach-line); }
+
+/* Phones: keep the first start button whole in the first screen (360 x 667) with the drawing and pills.
+   The drawing shrinks and sits beside the app name; the pills stay pills but smaller. */
+@media (max-width: 560px) {
+  .hero-card { display: grid; grid-template-columns: 1fr auto; column-gap: 12px; }
+  .hero-card > * { grid-column: 1 / -1; }
+  .hero-card > .hero-pad { grid-column: 2; grid-row: 1; width: 84px; margin: 0; align-self: start; }
+  .hero-card > .eyebrow { grid-column: 1; grid-row: 1; align-self: center; justify-self: start; }
+  .hero-dot { width: 10px; height: 10px; box-shadow: 0 0 0 3px var(--focus-ring); }
+  .badges { gap: 6px; }
+  .badges .badge { padding: 3px 10px; border: 1px solid; color: var(--ink); font-weight: 500; }
+  /* grid items do not collapse margins: keep the old 32px gap above the buttons, not 18 + 32 */
+  .hero-card > .badges { margin-bottom: 0; }
+}
+/* English runs longer than Korean: on phones the landing title is a size smaller so
+   "Take a quick look" stays whole in the first screen at 360 x 667. Korean is unchanged. */
+@media (max-width: 560px) {
+  :lang(en) .hero-card { --t-scene: 1.85rem; }  /* the scene step, a size down for English on phones */
+  :lang(en) .hero-card h1 { line-height: 1.2; }
+  :lang(en) .hero-card .eyebrow { letter-spacing: .06em; }
 }

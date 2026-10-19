@@ -1,6 +1,6 @@
 {
   "provisional": true,
-  "note": "DRAFT, not yet reviewed by the owner: do not publish before review (docs/I18N_PLAN.md §4). A UI fixture written before research or review. It was written in English for English speakers, not translated from the Korean list, so its items and counts do not pair with the Korean ones. It does not settle an emotion taxonomy and is not used for psychological classification or automatic inference. Many everyday English emotion words also appear in scales such as PANAS or the mDES; this list does not reproduce any scale’s item set, instructions or rating format, and it is not a measure.",
+  "note": "Reviewed by the owner on 2026-10-19 (docs/I18N_PLAN.md §4). A UI fixture written before research or review. It was written in English for English speakers, not translated from the Korean list, so its items and counts do not pair with the Korean ones. It does not settle an emotion taxonomy and is not used for psychological classification or automatic inference. Many everyday English emotion words also appear in scales such as PANAS or the mDES; this list does not reproduce any scale’s item set, instructions or rating format, and it is not a measure.",
   "fieldNotes": {
     "family": "Groupings for exploring only, not a classification of what emotions are.",
     "valence/activation": "Coordinates for narrowing the candidates, not a lookup table that produces an emotion.",

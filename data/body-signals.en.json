@@ -1,5 +1,5 @@
 {
-  "note": "DRAFT, not yet reviewed by the owner: do not publish before review (docs/I18N_PLAN.md §4). A list for picking what can be noticed in the body right now. Body sensations are not translated into emotions: a racing heart does not mean anxiety, and the same sensation can be experienced differently depending on the situation.",
+  "note": "Reviewed by the owner on 2026-10-19 (docs/I18N_PLAN.md §4). A list for picking what can be noticed in the body right now. Body sensations are not translated into emotions: a racing heart does not mean anxiety, and the same sensation can be experienced differently depending on the situation.",
   "fieldNotes": {
     "region": "Groups the sensations by part of the body so they are easier to scan. Not a classification of sensations.",
     "firstTier": "The few shown first. The rest open by region under “Show other body sensations.”",

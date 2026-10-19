@@ -12,16 +12,16 @@ import { reviewStatus } from "../lib/i18n/messages.en";
 const HANGUL = /[ᄀ-ᇿ㄰-㆏가-힣]/;
 const EN_FILES = ["body-signals", "concern-tags", "concerns", "emotions", "granularity", "needs", "step-notes"].map((name) => `data/${name}.en.json`);
 
-describe("English content drafts (data/*.en.json, 2026-10-19)", () => {
+describe("English content (data/*.en.json, written and reviewed 2026-10-19)", () => {
   afterEach(() => { vi.unstubAllEnvs(); vi.resetModules(); });
 
-  it("are written in English and marked as drafts", () => {
+  it("are written in English and marked as reviewed by the owner", () => {
     for (const file of EN_FILES) {
       const text = readFileSync(file, "utf8");
       expect(text, file).not.toMatch(HANGUL);
       expect(text, file).not.toMatch(/—/);
       const json = JSON.parse(text);
-      if (!Array.isArray(json)) expect(String(json.note), file).toMatch(/^DRAFT/);
+      if (!Array.isArray(json)) expect(String(json.note), file).toMatch(/^Reviewed by the owner on 2026-10-19/);
     }
   });
 
@@ -37,16 +37,29 @@ describe("English content drafts (data/*.en.json, 2026-10-19)", () => {
     expect(families(emotionsEn.items)).toEqual(families(emotionsKo.items));
   });
 
-  it("stay off in production until the owner marks the English as reviewed", async () => {
-    expect(reviewStatus).toBe("draft");
+  it("are on in production because the owner marked the English as reviewed", async () => {
+    expect(reviewStatus).toBe("reviewed");
     vi.stubEnv("NODE_ENV", "production");
     vi.resetModules();
     const { englishAvailable } = await import("../lib/i18n/availability");
     const { hasContent } = await import("../lib/content");
+    expect(englishAvailable()).toBe(true);
+    expect(hasContent("en")).toBe(true);
+  });
+
+  it("go off in production again if the status is set back to draft", async () => {
+    vi.stubEnv("NODE_ENV", "production");
+    vi.resetModules();
+    vi.doMock("../lib/i18n/messages.en", async (original) => ({ ...(await original<object>()), reviewStatus: "draft" }));
+    const { englishAvailable } = await import("../lib/i18n/availability");
+    const { hasContent } = await import("../lib/content");
     const { hasMessages } = await import("../lib/i18n/t");
+    const { default: EnglishPage } = await import("../app/(en)/en/page");
     expect(englishAvailable()).toBe(false);
     expect(hasContent("en")).toBe(false);
     expect(hasMessages("en")).toBe(false);
+    expect(() => EnglishPage()).toThrow(/NEXT_HTTP_ERROR_FALLBACK;404/);
+    vi.doUnmock("../lib/i18n/messages.en");
   });
 
   it("open on the development server so the drafts can be read in place", async () => {

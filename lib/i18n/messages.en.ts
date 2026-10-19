@@ -3,10 +3,11 @@ import type { Messages } from "./messages.ko";
 /**
  * English wording for the app. Stage C of docs/I18N_PLAN.md.
  *
- * STATUS: draft. Written new for English readers, not translated line by line;
- * the safety and principle sentences keep the Korean meaning. Nothing here is
- * shown to anyone yet: lib/i18n/t.ts keeps English switched off until the owner
- * has reviewed this file and set `reviewStatus` to "reviewed".
+ * STATUS: reviewed. Written new for English readers, not translated line by line;
+ * the safety and principle sentences keep the Korean meaning. The owner read it
+ * side by side with the Korean (the review sheet of 2026-10-19, which also held
+ * the content in data/*.en.json) and opened English on 2026-10-19 ("열어줘").
+ * Setting `reviewStatus` back to "draft" closes /en in production again.
  *
  * Same format as the Korean file: `{name}` is a parameter, `\n` a line break,
  * `<b>...</b>` emphasis. English needs no particle placeholders, so a message
@@ -15,7 +16,7 @@ import type { Messages } from "./messages.ko";
  * Words in `emotion.escapes` and `coach.escapes` are stored in records as the
  * user picked them, so an English record keeps these English words.
  */
-export const reviewStatus: "draft" | "reviewed" = "draft";
+export const reviewStatus: "draft" | "reviewed" = "reviewed";
 
 /**
  * Wording that exists only in English, outside the shared Messages shape, so
@@ -28,14 +29,14 @@ export const enOnly = {
 } as const;
 
 /**
- * English sentences the owner has not reviewed yet (2026-10-13). They stay
- * unpublished even inside this draft: English cannot be marked "reviewed"
- * while anything is listed here (tests/crisis-card.test.tsx).
- * `keys` are shared messages whose English is still a draft; `outsideKorea`
- * is English only and not drawn anywhere yet.
+ * English sentences waiting for the owner. English cannot be marked "reviewed"
+ * while anything is listed in `keys` (tests/crisis-card.test.tsx).
+ * `crisis.emergency` was reviewed with the rest on 2026-10-19.
+ * `outsideKorea` is English only and is still not drawn anywhere: adding it to
+ * the crisis card is a separate decision for the owner (SAFETY.md).
  */
 export const pendingReview = {
-  keys: ["crisis.emergency"] as readonly string[],
+  keys: [] as readonly string[],
   outsideKorea: "If you are outside Korea, please contact your local emergency number.",
 } as const;
 
@@ -96,7 +97,7 @@ export const en: Messages = {
   },
   crisis: {
     title: "Emergency and crisis support",
-    /** Draft, held back until the owner reviews it: see `pendingReview` below. */
+    /** Reviewed by the owner with the rest of the English, 2026-10-19. */
     emergency: "If you are hurt or in immediate danger, call <b>119</b> (ambulance) or <b>112</b> (police) right away.",
     intro: "If you need someone to talk to, there are counseling lines open 24 hours.",
     lifeline109: "Suicide Prevention Counseling Line (24 hours)",

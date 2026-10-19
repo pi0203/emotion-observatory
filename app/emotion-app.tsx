@@ -21,6 +21,7 @@ import { DEFAULT_LOCALE, type Locale } from "../lib/i18n/locale";
 import { englishAvailable } from "../lib/i18n/availability";
 import { I18nProvider, renderRich, useT } from "../lib/i18n/react";
 import type { Translate } from "../lib/i18n/t";
+import { toneOf } from "../lib/tones";
 
 // Every read and write of a record goes through the one storage seam. It is
 // synchronous, like the localStorage calls it wraps, so no call site changes.
@@ -95,6 +96,12 @@ function App() {
     window.addEventListener("popstate", onPop);
     return () => window.removeEventListener("popstate", onPop);
   }, []);
+
+  // option B: a quiet paper colour per step, set on <html> so the whole page follows (lib/tones.ts)
+  const tone = toneOf(session.stage, Boolean(records || openRecord));
+  useEffect(() => {
+    document.documentElement.dataset.tone = tone;
+  }, [tone]);
 
   const resume = () => {
     if (draft) dispatch({ type: "RESUME", session: draft });
@@ -241,6 +248,8 @@ function LandingScreen({ onQuick, onDeep, draft, onResume, onRecords, pendingSta
   useEffect(() => { if (pendingStart) confirmTitle.current?.focus(); }, [pendingStart]);
   return <Screen className="entry-screen">
     <section className="card hero-card">
+      {/* a drawing of the pad used in the steps: four quiet colours and one dot (decoration only) */}
+      <div className="hero-pad" aria-hidden="true"><span className="hero-dot" /></div>
       <p className="eyebrow">{t("common.appName")}</p>
       <h1>{renderRich(t("landing.title"))}</h1>
       <p className="lede">{renderRich(t("landing.lede"))}</p>

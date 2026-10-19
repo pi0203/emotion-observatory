@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { SITE_URL } from "../site";
 import { type Locale } from "./locale";
+import { englishAvailable } from "./availability";
 import { getT, hasMessages } from "./t";
 
 /**
@@ -23,7 +24,8 @@ export const metadataFor = (locale: Locale): Metadata => {
     metadataBase: new URL(SITE_URL),
     title: t("meta.title"),
     description: t("meta.description"),
-    alternates: { canonical: path },
+    // each language names the other, so search engines treat them as one page in two languages
+    alternates: englishAvailable() ? { canonical: path, languages: { ko: "/", en: "/en" } } : { canonical: path },
     openGraph: { type: "website", siteName: t("meta.title"), title: t("meta.title"), description: t("meta.description"), url: path, locale: locale === "ko" ? "ko_KR" : "en_US", images: [image] },
     twitter: { card: "summary_large_image", title: t("meta.title"), description: t("meta.description"), images: [image] },
   };

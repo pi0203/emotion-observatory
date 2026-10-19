@@ -1,5 +1,5 @@
 // @vitest-environment node
-import { describe, expect, it } from "vitest";
+import { describe, expect, it, vi } from "vitest";
 import { createT, getT, hasMessages, interpolate, isWellFormed, particleFor, placeholdersOf } from "../lib/i18n";
 import { ko } from "../lib/i18n/messages.ko";
 import { getContent, hasContent, requireContent } from "../lib/content";
@@ -110,15 +110,24 @@ describe("dates", () => {
   });
 });
 
-describe("a language that is not written yet", () => {
-  it("says so plainly instead of falling back to Korean", () => {
+describe("a language that is switched off", () => {
+  it("says so plainly instead of falling back to Korean", async () => {
     expect(hasMessages("ko")).toBe(true);
-    expect(hasMessages("en")).toBe(false);
-    expect(() => createT("en")).toThrow(/not|No messages/);
     expect(hasContent("ko")).toBe(true);
-    expect(hasContent("en")).toBe(false);
-    expect(getContent("en")).toBeNull();
-    expect(() => requireContent("en")).toThrow(/has not been written yet/);
+    // English is open now (owner, 2026-10-19); set back to draft in production, it must not borrow Korean
+    vi.stubEnv("NODE_ENV", "production");
+    vi.resetModules();
+    vi.doMock("../lib/i18n/messages.en", async (original) => ({ ...(await original<object>()), reviewStatus: "draft" }));
+    const i18n = await import("../lib/i18n");
+    const content = await import("../lib/content");
+    expect(i18n.hasMessages("en")).toBe(false);
+    expect(() => i18n.createT("en")).toThrow(/not|No messages/);
+    expect(content.hasContent("en")).toBe(false);
+    expect(content.getContent("en")).toBeNull();
+    expect(() => content.requireContent("en")).toThrow(/has not been written yet/);
+    vi.doUnmock("../lib/i18n/messages.en");
+    vi.unstubAllEnvs();
+    vi.resetModules();
   });
 
   it("gives Korean content by default, the same files as before", () => {

@@ -1,5 +1,5 @@
 {
-  "note": "DRAFT, not yet reviewed by the owner: do not publish before review (docs/I18N_PLAN.md §4). The list picked when answering “Which direction feels most needed right now?” at the end of a session. It is a direction the user tries on for now; the app never says “this is what you really need.”",
+  "note": "Reviewed by the owner on 2026-10-19 (docs/I18N_PLAN.md §4). The list picked when answering “Which direction feels most needed right now?” at the end of a session. It is a direction the user tries on for now; the app never says “this is what you really need.”",
   "fieldNotes": {
     "responses": "Things that can actually be tried in that direction after closing the app. Limited to two to four, with an option not to do anything at the end.",
     "because": "Why these options are showing. The only basis is the need the user picked. No claims about psychological mechanisms and no prescriptive wording.",

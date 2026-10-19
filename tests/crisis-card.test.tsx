@@ -89,13 +89,15 @@ describe("crisis card wording (owner, 2026-10-13)", () => {
     expect(en.crisis.youth1388).toMatch(/\(ages 9 to 24\)$/);
   });
 
-  it("holds the two unreviewed English sentences back, and English stays off", () => {
-    expect(pendingReview.keys).toContain("crisis.emergency");
+  it("opens English only with nothing left pending, and still does not draw the outside-Korea line", () => {
+    // reviewed by the owner with the rest of the English on 2026-10-19
     expect(en.crisis.emergency).toBe("If you are hurt or in immediate danger, call <b>119</b> (ambulance) or <b>112</b> (police) right away.");
-    expect(pendingReview.outsideKorea).toBe("If you are outside Korea, please contact your local emergency number.");
     // English cannot be marked reviewed while a sentence is still waiting for the owner.
     if (reviewStatus === "reviewed") expect(pendingReview.keys).toEqual([]);
-    expect(reviewStatus).toBe("draft");
+    // the outside-Korea sentence is a separate decision (SAFETY.md): written, but used nowhere
+    expect(pendingReview.outsideKorea).toBe("If you are outside Korea, please contact your local emergency number.");
+    const app = readFileSync(join(__dirname, "../app/emotion-app.tsx"), "utf8");
+    expect(app).not.toMatch(/outsideKorea/);
   });
 
   it("uses no warning colour and no icon", () => {

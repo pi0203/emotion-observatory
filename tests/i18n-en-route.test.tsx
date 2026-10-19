@@ -1,6 +1,9 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import { readFileSync } from "node:fs";
+import { join } from "node:path";
 import { cleanup, render, screen } from "@testing-library/react";
 import EnglishPage from "../app/(en)/en/page";
+import EnglishStatus from "../app/(en)/en/EnglishStatus";
 import { coachSetFor } from "../lib/coach";
 import { localeOf } from "../lib/i18n";
 import { metadataFor } from "../lib/i18n/metadata";
@@ -30,29 +33,34 @@ describe("/en route", () => {
     vi.unstubAllEnvs();
   });
 
-  it("renders the 404 page in a production build", () => {
+  it("shows the English app in a production build, since the owner opened English (2026-10-19)", () => {
     vi.stubEnv("NODE_ENV", "production");
-    expect(() => EnglishPage()).toThrow(/NEXT_HTTP_ERROR_FALLBACK;404/);
+    render(EnglishPage());
+    expect(screen.getByRole("heading", { level: 1 }).textContent).toMatch(/Take a closer look/);
+    // the only Korean on the English landing is the name of the other language, on the switch
+    expect(document.body.textContent?.replace("한국어", "")).not.toMatch(HANGUL);
   });
 
-  it("opens in development and says plainly what is not written, with no Korean in its place", () => {
-    vi.stubEnv("NODE_ENV", "development");
-    render(EnglishPage());
-    expect(screen.getByRole("heading", { level: 1, name: "/en is not written yet" })).toBeTruthy();
-    expect(screen.getAllByText("not written")).toHaveLength(2);
+  it("keeps the development status frame plain English, with no Korean in its place", () => {
+    render(<EnglishStatus />);
+    expect(screen.getByRole("heading", { level: 1 }).textContent).toMatch(/\/en/);
+    expect(screen.getAllByText("written")).toHaveLength(2);
     expect(document.body.textContent).not.toMatch(HANGUL);
   });
 
-  it("names itself as unwritten in the tab instead of borrowing the Korean title", () => {
-    expect(metadataFor("en").title).toBe("[en] messages not written");
-    expect(String(metadataFor("en").description)).not.toMatch(HANGUL);
+  it("gives English its own title, description and address, and names both languages", () => {
+    const en = metadataFor("en");
+    expect(en).toMatchObject({ title: "Emotion Observatory", alternates: { canonical: "/en", languages: { ko: "/", en: "/en" } } });
+    expect(en.openGraph).toMatchObject({ locale: "en_US", url: "/en" });
+    expect(en.robots).toBeUndefined();
+    expect(String(en.description)).not.toMatch(HANGUL);
     const ko = metadataFor("ko");
     expect(ko).toMatchObject({ title: "감정 관찰실", description: "몸, 상황, 의미를 천천히 구별해보는 자기관찰 도구" });
     // the share card and canonical address point at the public site, not at a preview
     expect(String(ko.metadataBase)).toBe("https://emotion-observatory.vercel.app/");
     expect(ko.alternates?.canonical).toBe("/");
     expect(ko.openGraph).toMatchObject({ title: "감정 관찰실", locale: "ko_KR", url: "/" });
-    expect(metadataFor("en").robots).toEqual({ index: false });
+    expect(ko.alternates).toMatchObject({ languages: { ko: "/", en: "/en" } });
   });
 });
 
@@ -84,12 +92,23 @@ describe("the English screen meeting a record written in Korean", () => {
     expect(coachSetFor(record)?.words).toContain("짜증");
   });
 
-  it("refuses to describe it in English words that do not exist yet, rather than quietly using Korean", () => {
+  it("frames it in English but keeps the words exactly as they were stored", () => {
     const record = koreanRecord();
-    expect(() => summarise(record, "en")).toThrow(/No messages for locale "en"/);
-    expect(() => buildSynthesis(record, "en")).toThrow(/No messages for locale "en"/);
-    expect(() => formatWhen(record.createdAt, "en")).toThrow(/No messages for locale "en"/);
+    // the record's words are never translated or dropped (docs/I18N_PLAN.md stage E)
+    expect(summarise(record, "en").words).toEqual(["짜증", "억울함"]);
+    expect(summarise(record, "en").depthLabel).toBe("Quick look");
+    const synthesis = buildSynthesis(record, "en");
+    expect(synthesis.lead).toMatch(/^Putting together/);
+    expect(JSON.stringify(synthesis)).toMatch(/짜증/);
+    expect(formatWhen(record.createdAt, "en")).not.toMatch(HANGUL);
     // the Korean screen reads the same record exactly as before
     expect(summarise(record).words).toEqual(["짜증", "억울함"]);
+  });
+});
+
+describe("the English document", () => {
+  it("uses the same type as Korean, so headings stay in the serif face", () => {
+    const layout = readFileSync(join(__dirname, "../app/(en)/en/layout.tsx"), "utf8");
+    expect(layout).toMatch(/<html lang="en" className=\{fontVariables\}>/);
   });
 });

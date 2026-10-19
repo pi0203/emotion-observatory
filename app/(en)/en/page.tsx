@@ -5,13 +5,13 @@ import { hasContent } from "../../../lib/content";
 import { hasMessages } from "../../../lib/i18n/t";
 
 /**
- * /en. Blocked in production builds (the 404 page), open in development, the
- * same way as the prototypes. It does not fall back to Korean: until English
- * messages and content are written it shows only what is missing.
+ * /en. Open since the owner marked the English as reviewed (2026-10-19,
+ * `reviewStatus` in lib/i18n/messages.en.ts). If that is set back to "draft",
+ * a production build shows the 404 page again; development then shows only
+ * what is missing. It never falls back to Korean.
  */
 export default function EnglishPage() {
-  if (process.env.NODE_ENV === "production") notFound();
-  // the English drafts in place, for reading before review; the status frame while they are switched off
   if (hasMessages("en") && hasContent("en")) return <EmotionApp locale="en" />;
+  if (process.env.NODE_ENV === "production") notFound();
   return <EnglishStatus />;
 }

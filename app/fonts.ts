@@ -7,7 +7,7 @@ import { Noto_Sans_KR, Noto_Serif_KR } from "next/font/google";
  * next/font downloads them at build time and serves them from this site, so a
  * visitor's browser never contacts Google. `display: "swap"` and the size-matched
  * fallback are next/font defaults, written out here so they are not lost.
- * No English face is loaded while English is switched off (docs/I18N_PLAN.md).
+ * English (/en) uses the same two faces for their Latin glyphs; no separate English face is loaded.
  */
 const sans = Noto_Sans_KR({ weight: "400", subsets: ["latin"], display: "swap", adjustFontFallback: true, variable: "--font-sans" });
 const serif = Noto_Serif_KR({ weight: "400", subsets: ["latin"], display: "swap", adjustFontFallback: true, variable: "--font-serif" });

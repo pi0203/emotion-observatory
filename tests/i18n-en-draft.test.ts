@@ -76,8 +76,8 @@ describe("English messages (stage C draft)", () => {
     expect(en.recordTransfer.deleteAllConfirmBody).toMatch(/cannot be brought back/);
   });
 
-  it("stays switched off until the owner marks it reviewed", () => {
-    expect(reviewStatus).toBe("draft");
-    expect(hasMessages("en")).toBe(false);
+  it("is switched on because the owner marked it reviewed (2026-10-19)", () => {
+    expect(reviewStatus).toBe("reviewed");
+    expect(hasMessages("en")).toBe(true);
   });
 });

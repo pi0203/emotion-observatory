@@ -1,5 +1,5 @@
 {
-  "note": "DRAFT, not yet reviewed by the owner: do not publish before review (docs/I18N_PLAN.md §4). Loosely links each concern option to the contextTags in the vocabulary. It does not claim a cause or a right answer; it is used only to check whether two things the user chose point to the same place. Overlap does not mean causation. Keys are the sentences in concerns.en.json, and values are contextTags used in emotions.en.json.",
+  "note": "Reviewed by the owner on 2026-10-19 (docs/I18N_PLAN.md §4). Loosely links each concern option to the contextTags in the vocabulary. It does not claim a cause or a right answer; it is used only to check whether two things the user chose point to the same place. Overlap does not mean causation. Keys are the sentences in concerns.en.json, and values are contextTags used in emotions.en.json.",
   "map": {
     "I wanted to be respected": [
       "relationships",

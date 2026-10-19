@@ -50,6 +50,39 @@ const TEXT: [string, string, string][] = [
   ["site-ink", "paper", "the homepage frame: logo and footer links"],
   ["site-muted", "paper", "the homepage frame: menu and footer text"],
   ["site-hover", "paper", "the homepage frame: a hovered link"],
+  // tones per step (option B, 2026-10-19)
+  ["ink", "tone-blue-paper", "body text on the blue step"],
+  ["ink", "tone-blue-card", "card text on the blue step"],
+  ["muted", "tone-blue-paper", "secondary text on the blue step"],
+  ["muted", "tone-blue-card", "secondary text on blue cards"],
+  ["accent-ink", "tone-blue-paper", "accent text on the blue step"],
+  ["ink", "tone-lilac-paper", "body text on the lilac step"],
+  ["ink", "tone-lilac-card", "card text on the lilac step"],
+  ["muted", "tone-lilac-paper", "secondary text on the lilac step"],
+  ["muted", "tone-lilac-card", "secondary text on lilac cards"],
+  ["accent-ink", "tone-lilac-paper", "accent text on the lilac step"],
+  ["ink", "tone-mint-paper", "body text on the mint step"],
+  ["ink", "tone-mint-card", "card text on the mint step"],
+  ["muted", "tone-mint-paper", "secondary text on the mint step"],
+  ["muted", "tone-mint-card", "secondary text on mint cards"],
+  ["accent-ink", "tone-mint-paper", "accent text on the mint step"],
+  ["ink", "tone-peach-paper", "body text on the peach step"],
+  ["ink", "tone-peach-card", "card text on the peach step"],
+  ["muted", "tone-peach-paper", "secondary text on the peach step"],
+  ["muted", "tone-peach-card", "secondary text on peach cards"],
+  ["accent-ink", "tone-peach-paper", "accent text on the peach step"],
+  ["ink", "tone-butter-paper", "body text on the butter step"],
+  ["ink", "tone-butter-card", "card text on the butter step"],
+  ["muted", "tone-butter-paper", "secondary text on the butter step"],
+  ["muted", "tone-butter-card", "secondary text on butter cards"],
+  ["accent-ink", "tone-butter-paper", "accent text on the butter step"],
+  ["ink", "tone-mist-paper", "body text on the mist step"],
+  ["ink", "tone-mist-card", "card text on the mist step"],
+  ["muted", "tone-mist-paper", "secondary text on the mist step"],
+  ["muted", "tone-mist-card", "secondary text on mist cards"],
+  ["accent-ink", "tone-mist-paper", "accent text on the mist step"],
+  ["site-ink", "tone-blue-paper", "the homepage frame on the landing wash, top"],
+  ["site-muted", "tone-peach-paper", "the homepage frame on the landing wash, bottom"],
 ];
 
 const EDGES: [string, string, string][] = [
@@ -61,6 +94,24 @@ const EDGES: [string, string, string][] = [
   ["line-strong", "card", "control borders on cards"],
   ["accent", "paper", "the main button against the page"],
   ["accent", "card", "the affect dot on the pad"],
+  ["line-strong", "tone-blue-paper", "control borders on the blue step"],
+  ["line-strong", "tone-blue-card", "control borders on blue cards"],
+  ["accent", "tone-blue-card", "the affect dot on a blue pad"],
+  ["line-strong", "tone-lilac-paper", "control borders on the lilac step"],
+  ["line-strong", "tone-lilac-card", "control borders on lilac cards"],
+  ["accent", "tone-lilac-card", "the affect dot on a lilac pad"],
+  ["line-strong", "tone-mint-paper", "control borders on the mint step"],
+  ["line-strong", "tone-mint-card", "control borders on mint cards"],
+  ["accent", "tone-mint-card", "the affect dot on a mint pad"],
+  ["line-strong", "tone-peach-paper", "control borders on the peach step"],
+  ["line-strong", "tone-peach-card", "control borders on peach cards"],
+  ["accent", "tone-peach-card", "the affect dot on a peach pad"],
+  ["line-strong", "tone-butter-paper", "control borders on the butter step"],
+  ["line-strong", "tone-butter-card", "control borders on butter cards"],
+  ["accent", "tone-butter-card", "the affect dot on a butter pad"],
+  ["line-strong", "tone-mist-paper", "control borders on the mist step"],
+  ["line-strong", "tone-mist-card", "control borders on mist cards"],
+  ["accent", "tone-mist-card", "the affect dot on a mist pad"],
 ];
 
 describe.each(Object.entries(themes))("%s theme", (_name, tokens) => {
@@ -103,7 +154,10 @@ describe("settled values (owner's choices, 2026-10-12)", () => {
   it("uses coral in one place only: the line under a selected choice", () => {
     expect(themes.light.dot).toBeUndefined();
     expect(themes.dark.dot).toBeUndefined();
-    expect(css).not.toMatch(/var\(--dot\)|::before[^{]*\{[^}]*border-radius: 50%/);
+    expect(css).not.toMatch(/var\(--dot\)/);
+    // option B (owner, 2026-10-19) allows a small colour dot, but only before fold titles
+    const dotted = [...css.replace(/\/\*[\s\S]*?\*\//g, "").matchAll(/([^{}]*::before[^{]*)\{[^}]*border-radius: 50%/g)].map((m) => m[1].trim());
+    for (const selector of dotted) expect(selector).toMatch(/^(\.why|\.about-fold)[^,]*> summary::before(, \.about-fold > summary::before)?$/);
     // the coral values appear only as --pick-underline, once per theme
     const coral = [themes.light["pick-underline"], themes.dark["pick-underline"]];
     for (const hex of new Set(coral)) {
