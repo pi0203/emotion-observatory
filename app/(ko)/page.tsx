@@ -55,6 +55,8 @@ function App() {
   const [openRecord, setOpenRecord] = useState<EmotionSession | null>(null);
   // true after the browser refused a write (quota full, storage blocked): the steps still work, the record is just not kept
   const [saveFailed, setSaveFailed] = useState(false);
+  // the helplines on every step, one tap away (SAFETY.md): a fixed card, no judgement of risk
+  const [helpOpen, setHelpOpen] = useState(false);
 
   const showRecords = () => { setRecords(loadCompleted()); setOpenRecord(null); };
   const saveFollowUp = (session: EmotionSession, followUp: NonNullable<NonNullable<EmotionSession["support"]>["followUp"]>) => {
@@ -173,7 +175,10 @@ function App() {
       {session.stage === "support" && <NeedScreen session={session} onNeed={(id) => dispatch({ type: "CHOOSE_NEED", id })} onResponse={(id) => dispatch({ type: "TOGGLE_RESPONSE", id })} onDeep={() => dispatch({ type: "ENTER_DEEP" })} onCoach={() => dispatch({ type: "OPEN_COACH" })} onBack={() => dispatch({ type: "BACK" })} />}
       {session.stage === "stopped" && <StoppedScreen session={session} />}
 
+      <p className="help-line"><button className="inline-link" onClick={() => setHelpOpen(true)}>{t("common.helpLink")}</button></p>
+
       {stopConfirm && <StopModal onClose={() => setStopConfirm(false)} onStop={stop} />}
+      {helpOpen && <HelpDialog onClose={() => setHelpOpen(false)} />}
     </main>
   );
 }
@@ -278,7 +283,7 @@ const PREVIEW_QUICK = ["quickAffect.title", "quickCandidates.title"] as const;
 const PREVIEW_DEEP = ["body.title", "affect.title", "context.title", "meaning.title", "emotion.title", "outcome.title"] as const;
 
 const REFERENCES = ["vedernikova", "widdershoven", "hoemann", "fugate", "dejonckheere", "thompson"] as const;
-const QUESTIONS = ["judge", "ai", "storage", "often", "worse", "body", "effect"] as const;
+const QUESTIONS = ["judge", "ai", "storage", "maker", "often", "worse", "body", "effect"] as const;
 /** Each checked against Crossref on 2026-10-13; the same DOIs are in docs/EVIDENCE_CHAIN.md. */
 const REFERENCE_DOI: Record<(typeof REFERENCES)[number], string> = {
   vedernikova: "10.3389/fpsyg.2021.703757",
@@ -692,7 +697,7 @@ function ContextScreen({ initial, onNext }: { initial?: DeepContext; onNext: (co
   const { stepNotes } = useContent();
   const [text, setText] = useState(initial?.eventText ?? "");
   const [source, setSource] = useState<DeepContext["source"]>(initial?.source ?? "event");
-  return <Screen><StepHeading step={t("context.step")} title={t("context.title")} hint={t("context.hint")} basis={t("context.basis")} /><textarea className="text-area" maxLength={INPUT_LIMITS.text} value={text} onChange={(event) => setText(event.target.value)} placeholder={t("context.placeholder")} /><div className="segmented"><span>{t("context.sourceQuestion")}</span>{(["event", "memory", "anticipation", "thought"] as const).map((value) => <button className={source === value ? "selected" : ""} aria-pressed={source === value} key={value} onClick={() => setSource(value)}><Mark on={source === value} />{t(`contextSource.${value}`)}</button>)}</div><Navigation note={stepNote(stepNotes, "context", text.trim().length > 0)} onNext={() => onNext({ eventText: text, source })} /></Screen>;
+  return <Screen><StepHeading step={t("context.step")} title={t("context.title")} hint={t("context.hint")} basis={t("context.basis")} /><textarea className="text-area" maxLength={INPUT_LIMITS.text} value={text} onChange={(event) => setText(event.target.value)} placeholder={t("context.placeholder")} /><p className="small-note">{t("context.privacyHint")}</p><div className="segmented"><span>{t("context.sourceQuestion")}</span>{(["event", "memory", "anticipation", "thought"] as const).map((value) => <button className={source === value ? "selected" : ""} aria-pressed={source === value} key={value} onClick={() => setSource(value)}><Mark on={source === value} />{t(`contextSource.${value}`)}</button>)}</div><Navigation note={stepNote(stepNotes, "context", text.trim().length > 0)} onNext={() => onNext({ eventText: text, source })} /></Screen>;
 }
 
 function MeaningScreen({ initial, onNext }: { initial: string[]; onNext: (selected: string[]) => void }) {
@@ -914,6 +919,7 @@ function RecordTransfer({ count, onChanged }: { count: number; onChanged: () => 
     <p className="small-note">{t("recordTransfer.intro")}</p>
 
     <p className="synthesis-question">{t("recordTransfer.exportNote")}</p>
+    <p className="small-note">{t("recordTransfer.exportShareNote")}</p>
     <p className="small-note">{count > 0 ? t("recordTransfer.exportScope", { count }) : t("recordTransfer.exportEmpty")}</p>
     <div className="quick-option-row">
       <button className="secondary-button" disabled={count === 0} onClick={exportAll}>{t("recordTransfer.export")}</button>
@@ -1012,6 +1018,28 @@ function HelpReveal() {
     <summary>{t("worsened.showHelp")}</summary>
     <CrisisCard />
   </details>;
+}
+
+/**
+ * The same crisis card as on the landing, opened from any step. It does not
+ * stop or change the session; closing it returns to the step as it was.
+ */
+function HelpDialog({ onClose }: { onClose: () => void }) {
+  const t = useT();
+  const closeButton = useRef<HTMLButtonElement>(null);
+  useEffect(() => {
+    closeButton.current?.focus();
+    const onKey = (event: KeyboardEvent) => { if (event.key === "Escape") onClose(); };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [onClose]);
+  return <div className="modal-backdrop" onClick={(event) => { if (event.target === event.currentTarget) onClose(); }}>
+    <div className="modal help-modal" role="dialog" aria-modal="true" aria-labelledby="help-dialog-title">
+      <h2 id="help-dialog-title" className="help-modal-title">{t("crisis.title")}</h2>
+      <CrisisCard />
+      <div className="modal-actions"><button ref={closeButton} className="secondary-button" onClick={onClose}>{t("common.close")}</button></div>
+    </div>
+  </div>;
 }
 
 function StopModal({ onClose, onStop }: { onClose: () => void; onStop: () => void }) { const t = useT(); return <div className="modal-backdrop"><div className="modal" role="dialog" aria-modal="true"><p className="eyebrow">{t("stopModal.eyebrow")}</p><h2>{renderRich(t("stopModal.title"))}</h2><p>{t("stopModal.body")}</p><div className="modal-actions"><button className="secondary-button" onClick={onClose}>{t("stopModal.keepGoing")}</button><button className="primary-button" onClick={onStop}>{t("stopModal.stop")}</button></div></div></div>; }

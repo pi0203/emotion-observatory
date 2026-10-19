@@ -291,3 +291,9 @@ p, .lede, .hint, .step-note, .small-note, .summary-footnote { text-wrap: pretty;
 .preview-list > ol > li { margin: 0 0 8px; padding: 12px 16px; border-radius: 10px; background: var(--paper); font-size: var(--t-small); line-height: 1.6; }
 .preview-list > ol > li::marker { color: var(--muted); }
 .about-fold[open] .preview-list > ol > li { animation: rise-in .45s ease-out both; animation-delay: calc(var(--rise-order, 0) * 60ms); }
+
+/* Under every step: one tap to the helplines (SAFETY.md). Quiet, not a warning. */
+.help-line { margin: 48px 0 0; text-align: center; font-size: var(--t-small); color: var(--muted); }
+.help-modal { width: min(100%, 520px); max-height: calc(100vh - 48px); overflow-y: auto; }
+.help-modal-title { margin: 0 0 16px; font-size: var(--t-lead); }
+.help-modal .crisis-card { margin: 0; }

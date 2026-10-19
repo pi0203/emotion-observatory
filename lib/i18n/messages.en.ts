@@ -63,6 +63,8 @@ export const en: Messages = {
     backToStart: "Back to the start",
     ownWordsPlaceholder: "In my own words",
     provisionalNote: "A provisional set of words · Only what you choose is recorded",
+    helpLink: "Where to get help",
+    close: "Close",
     saveFailed: "This browser is not saving the record. Its storage may be full, or the browser may be blocking it. You can go on, but closing this screen will lose this record. Exporting old records to a file and deleting them on the records screen frees space.",
     quoted: "“{value}”",
     listSeparator: ", ",
@@ -170,6 +172,10 @@ export const en: Messages = {
       storage: {
         q: "Where are my entries saved?",
         a: "Only in the browser you are using. What you write is not sent to a server. Clearing your browser data removes it, and the storage is not encrypted. From past entries you can export them to a file or delete them all.",
+      },
+      maker: {
+        q: "Can the maker see my records?",
+        a: "No. The app sends what you write nowhere, so the maker cannot see it either. It uses no visit statistics, ads or tracking cookies. The hosting company (Vercel) handles access logs (IP address, browser type, time), as for any website; those logs contain nothing you wrote in the app.",
       },
       often: {
         q: "How often should I use it?",
@@ -351,6 +357,7 @@ export const en: Messages = {
     title: "What happened?",
     hint: "A few plain facts are enough.",
     placeholder: "Write what comes to mind",
+    privacyHint: "You can write “a friend” or “my manager” instead of someone’s name. The record stays on this device, and an exported file holds it as written.",
     sourceQuestion: "Which is this closest to?",
   },
   meaning: {
@@ -489,6 +496,7 @@ export const en: Messages = {
     title: "Move or delete entries",
     intro: "Use this to move entries to another device or keep a copy, without logging in. Everything happens inside the browser on this device.",
     exportNote: "The exported file contains what you wrote as it is, and it is not encrypted.",
+    exportShareNote: "Anyone you send the file to can read everything in it. If your records mention other people, think twice.",
     exportScope: "Exports {count} finished and stopped entries. Unfinished entries are not included.",
     export: "Export to a file",
     exportEmpty: "There are no entries to export.",
