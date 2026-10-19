@@ -482,3 +482,66 @@ doi 10.1177/14614448221142007 — **[원문]** (r/Replika 게시글 2017~2021, n
   「사람 관계의 대체물이 되지 않겠다」는 자기 선언에 가깝다. 넣을지는 본인이 정한다.
 - 수업 발표용 문장: 종이 감정카드는 의인화 위험이 없지만 되돌려 주기가 없고, 챗봇은 되돌려 주지만 관계가 생긴다.
   이 앱은 그 사이 「되돌려 주되 관계는 아닌」 자리를 겨눈다.
+
+## 6. 비계인가 대체인가, 그리고 청소년 (2026-10-19)
+
+두 논문을 읽고, 그 논문들이 인용한 자료와 청소년기 감정 구별 연구를 따로 확인한 기록이다.
+확인은 Crossref·출판사·PubMed·arXiv/bioRxiv에서 했고, 인용문은 직접 본 문장만 적는다.
+
+### 출발한 두 논문
+
+| 논문 | 종류 · 읽기 수준 | 이 앱에서 쓰는 세기 |
+|---|---|---|
+| Pereira Campos, J., & Koff, T. (2026). Your brain on ChatGPT, but whose brain? The missing adolescent in AI-cognition research. *Front. Dev. Psychol.* 4:1885225. doi 10.3389/fdpys.2026.1885225 | 가설·이론 논문 **[원문]**. 저자 스스로 “We advance it as a hypothesis.” | 설계 원칙의 **배경**. 효과 근거 아님 |
+| 박형빈 (2025). 아동의 뇌 발달 관점에서 본 AI Digital Textbooks (AIDT)의 가능성과 한계. *한국초등교육* 36(2), 91–105. doi 10.20972/Kjee.36.2.202506.91 | 서술형 문헌 고찰 **[원문]**. 체계적 검색 없음 | 설계 점검 목록으로만 |
+
+Pereira Campos & Koff의 중심 질문이 이 앱의 기존 설계를 점검하는 기준이 된다:
+“The question to ask of any exchange is where the cognitive work happened.”
+**비계**(사용자가 계속 고르고 판단한다)인지 **대체**(도구가 대신 이름 붙이고 정리한다)인지.
+
+| 앱의 설계 | 판정 |
+|---|---|
+| 후보 3~5개 중 사용자가 고르기, 「내 말로 적기」 동등 | 비계. 논문의 “구조 셋을 주고 어느 것이 나은지 고르게 하라” 예와 같은 모양 |
+| Coach는 단어보다 「무엇이 중요했나」를 먼저 묻고 정답표가 없다 | 비계 |
+| 요약은 고른 것만 잇고 「다음에 생각해볼 질문」을 남긴다 | 비계 (논문: “Did the exchange leave a process behind, a question asked … or only a finished product?”) |
+| 10~30초, 최소 입력(P0) | 대체 아님. 줄인 것은 타이핑과 회상이고 판단은 사용자에게 남는다 |
+| V2 AI 옵션 「적은 글에서 단어 3~5개 제안」 「반복 패턴 요약」(§17) | **대체 위험** → §17 「Scaffold constraints」(제안) |
+
+### 인용된 자료 확인 결과
+
+| 자료 | 상태 · 수준 | 확인한 것 | 이 앱에서 |
+|---|---|---|---|
+| APA (2025). *Health advisory: Artificial intelligence and adolescent well-being.* | 권고문 **[원문]** | “adolescents may struggle to distinguish between the simulated empathy of an AI chatbot or companion and genuine human understanding.” “Reduced persuasive design … should be minimized or eliminated” “Regular reminders that the user is interacting with nonhuman, AI-based technology should also be included.” | **설계 원칙의 근거로 가능** (V2 AI 조항의 주 근거). 근거 상태는 “research on its impacts is still developing”으로 적혀 있다 |
+| Fan 외 (2025). *Br. J. Educ. Technol.* 56(2), 489–530. doi 10.1111/bjet.13544 | 무작위 실험, 대학생 117명 **[초록]** | “ChatGPT group outperformed in the essay score improvement but their knowledge gain and transfer were not significantly different.” 「metacognitive laziness」는 저자의 가능성 제시이지 측정 결과가 아니다 | 약한 보조 근거. **대학생 대상**으로 표기 |
+| Xu 외 (2025). *Br. J. Educ. Technol.* 56(5), 1842–1863. doi 10.1111/bjet.13599 | 준실험 4주, 대학생 68명 **[초록]** | 메타인지 지원이 있을 때 자기조절학습이 늘었고 “students were at risk of decreasing their level of self‑regulated learning if they lacked metacognitive support”. 성취도 차이는 없었다 | 약한 보조 근거 |
+| Horowitz-Kraus 외 (2026). *Cerebral Cortex* 36(10), bhag167. doi 10.1093/cercor/bhag167 | 동료심사 출판(2026-10). 6~7세 15명 vs 성인 16명 **[초록]** | “Creativity scores, assessed outside of the scanner, did not differ between groups.” | 배경으로만. 청소년 연구가 아니고 표본이 작다 |
+| Kosmyna 외 (2025). arXiv 2506.08872 / 비판: Stankovic 외, arXiv 2601.00856 | 둘 다 프리프린트 **[초록]** | 비판은 표본 크기, 재현성, EEG 분석, 보고 불일치, 투명성을 든다 | **인용하지 않는다** |
+| Klarin 외 (2024). *Front. Artif. Intell.* 7:1415782 | 횡단 설문 **[원문]** | 연구1(12~16세)에서만 실행기능 문제 보고가 높았고 연구2(평균 17세)에서는 차이가 없었다 | 배경으로만 |
+| Gerlich (2025). *Societies* 15(1), 6 + 정정 15(9), 252 | 횡단, 편의표집 **[원문 일부]** | 「가장 어린 집단」은 17~25세다 | 인용하지 않는 쪽 |
+| Roebers (2017). *Dev. Rev.* 45, 31–51 | 리뷰 **[초록]**, 본문 **[미확인]** | 「어린 청소년은 유창한 글을 믿는다」는 Pereira Campos & Koff의 서술을 초록에서 확인하지 못했다 | **이 주장의 근거로 쓰지 않는다** |
+| Liu & Yip (2026). *JAMA Pediatr.* 180(5), 473–474 / Nagata 외 (2026). *JAMA Pediatr.* 180(1), 7–8 | 뷰포인트 **[초록·첫 단락]** | Liu & Yip: “developmental work occurring within human relationships is being outsourced to technology.” Nagata: “little to no empirical evidence exists on its health effects.” | 배경으로만 |
+
+### 청소년기 감정 구별 연구 (새로 찾은 것)
+
+| 자료 | 수준 | 확인한 것 | 이 앱에서 |
+|---|---|---|---|
+| Nook, Sasse, Lambert, McLaughlin, & Somerville (2018). *Psychol. Sci.* 29(8), 1346–1357. doi 10.1177/0956797618773357 | 횡단, 5~25세 143명 **[초록]** | 부정정서 구별이 “fell from childhood to adolescence and rose from adolescence to adulthood” | 설계 근거로 가능: 청소년에게 이름 붙이기가 어려운 것은 **정상 발달**일 수 있다 |
+| Nook 외 (2017). *Nat. Hum. Behav.* 1, 881–889. doi 10.1038/s41562-017-0238-7 | 횡단 **[초록]** | 정서 표상이 “from a monodimensional focus on valence to a bidimensional focus on both valence and arousal”로 발달하고, 언어 지식이 이를 매개했다 | 배경: 2축 패드와 단어 후보 구조와 양립한다. 인과 아님 |
+| Dunning 외 (2025). *J. Adolesc.* 97(8), 2033–2047. doi 10.1002/jad.70028 | 스코핑 리뷰, 40편 **[초록]** | 낮은 구별과 우울 증상의 관련은 “good evidence”이지만 어린 청소년 연구가 적어 “conclusions drawn are tenuous” | 효과를 주장하지 않는 근거 |
+| Carolus & Starr (2026). *Cogn. Emot.* 40(3), 738–744. doi 10.1080/02699931.2025.2523812 | 사전등록 종단, 14~17세 241명 **[초록]** | “Brooding predicted stronger associations between low NED and concurrent depression” | 반추 주의의 근거: 깊이는 선택, 끝은 분명하게(P6) |
+| Kauer 외 (2012). *JMIR* 14(3), e67. doi 10.2196/jmir.1858 | RCT 2차분석, 14~24세 114명 **[초록]** | 자기관찰이 정서 자기인식을 거쳐 우울을 줄였다는 간접효과 | 배경으로만. 해악 검출용 설계가 아니다 |
+
+국내 청소년의 정서 구별이나 감정 앱을 다룬 실증 연구는 찾지 못했다. 청소년의 감정 자기관찰이 반추를 늘리는지 직접 검증한 RCT도 찾지 못했다.
+
+### 박형빈 (2025)를 쓸 때 주의할 곳
+
+- Uhls 외 (2014)를 「51명 현장 실험」으로 소개하지만 51명은 캠프 집단이고 전체는 105명, **무작위 배정이 아니다**. 캠프의 자연·숙박 효과가 섞였고, 학습 시간을 조작한 연구도 아니다.
+- 「아동기 정서 발달에 부정적 영향을 준다」는 단정형이지만 같은 문단의 근거로 그 세기를 확인할 수 없다.
+- Tottenham & Gabard-Durnam (2017)의 「보호자가 외부 조절자」는 원문에서 **영아기·아동기**에 한정된다. 청소년 사용자에게 옮기지 않는다.
+- 쓸 수 있는 것: 선택지 과부하(Sweller 인용) — 이 앱의 「3~5개부터 넓히기」와 같은 방향. 미성년자 데이터는 보호자 동의 전제 — 로그인 Phase에서 다룬다.
+
+### 여기서 나온 것
+
+- [PRODUCT_SPEC §2 「나이」](../PRODUCT_SPEC.md) — 청소년도 쓸 수 있지만 청소년을 대상으로 설계·시험하지 않았다는 입장.
+- [PRODUCT_SPEC §17 「Scaffold constraints」](../PRODUCT_SPEC.md) — V2 AI가 이름을 대신 붙이지 않게 하는 조항(제안).
+- 지금 설계에서 바꿀 것은 없다. 「잘 모르겠음」을 정상 경로로 두기, 여러 단어 동시 선택, 깊이는 선택, 「그만하기」는 위 근거와 같은 방향이다.

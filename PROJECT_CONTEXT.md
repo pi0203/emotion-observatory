@@ -211,6 +211,7 @@ Quick과 Deep은 **같은 EmotionSession**에 속하고, **두 affect를 모두 
 - **`contextDependent`** — 양쪽 어디서든 제시되는 맥락 의존 표현
 - **synthesis v2** — 관찰 / 연결 / 모르는 것 / 질문, 단서 2개 미만이면 해석하지 않음
 - **norm audit 도구** — 외부 자료를 복제하지 않고 coverage만 조사
+- **비계/대체와 나이 입장 (2026-10-19)** — 두 논문과 관련 연구 확인, PRODUCT_SPEC §2 「나이」, §17 「Scaffold constraints」(제안) ([docs/EVIDENCE_CHAIN.md §6](docs/EVIDENCE_CHAIN.md))
 - **talkv.me 대조 보완 (2026-10-19)** — 모든 단계에서 위기 카드 한 번에 열기, 다른 사람 이름·파일 공유 안내, 「만든 사람이 볼 수 있나요」 FAQ, 「아무것도 보내지 않는다」 테스트 ([docs/BENCHMARK_TALKV_2026_10_19.md](docs/BENCHMARK_TALKV_2026_10_19.md))
 - **공개 화면 보완 (2026-10-19)** — 보안 응답 헤더, Next 16.4.2, 입력 길이 상한, 저장 실패 안내, 파비콘·OG 이미지·robots·sitemap, 랜딩의 단계 미리 보기 ([docs/SECURITY_HEADERS.md](docs/SECURITY_HEADERS.md), [docs/BENCHMARK_JEEPEDIA_2026_10_19.md](docs/BENCHMARK_JEEPEDIA_2026_10_19.md))
 
