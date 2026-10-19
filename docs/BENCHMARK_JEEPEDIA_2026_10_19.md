@@ -12,7 +12,7 @@
 | 저쪽 | 이쪽에 넣은 것 |
 |---|---|
 | 문항 8개 미리 보기 | 「어떤 질문이 나오나요 · 미리 보기」 — 빠르게 2단계, 천천히 6단계의 실제 질문을 각 단계가 쓰는 같은 문구에서 가져와 보여준다 (`PREVIEW_QUICK`, `PREVIEW_DEEP`) |
-| OG 이미지·canonical·robots·sitemap | `app/opengraph-image.png`(1200×630, 앱 색과 글꼴), `app/icon.svg`(파비콘), `app/robots.ts`, `app/sitemap.ts`, `metadataBase`와 canonical. 링크를 카카오톡 등에 붙일 때 미리보기가 생긴다 |
+| OG 이미지·canonical·robots·sitemap | `public/og-image.png`(1200×630, 앱 색과 글꼴, metadata에 명시), `app/icon.svg`(파비콘), `app/robots.ts`, `app/sitemap.ts`, `metadataBase`와 canonical. 링크를 카카오톡 등에 붙일 때 미리보기가 생긴다 |
 
 ## 이쪽이 더 나은 것 (유지)
 

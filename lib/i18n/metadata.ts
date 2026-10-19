@@ -6,7 +6,9 @@ import { getT, hasMessages } from "./t";
 /**
  * The <head> for a language: title, description, canonical address and the
  * card shown when the link is shared (Open Graph / Twitter). The share image
- * itself comes from app/opengraph-image.png by file convention. A language
+ * is a plain file in public/, named here explicitly: the opengraph-image file
+ * convention attaches to a segment's layout, and with one root layout per
+ * language there is none at app/ for it to attach to (Turbopack emitted no tag). A language
  * without messages gets a plain development notice instead of borrowing
  * Korean, so it is obvious in the tab that nothing has been written for it yet.
  */
@@ -16,12 +18,13 @@ export const metadataFor = (locale: Locale): Metadata => {
   }
   const t = getT(locale);
   const path = locale === "ko" ? "/" : `/${locale}`;
+  const image = { url: "/og-image.png", width: 1200, height: 630, alt: t("meta.shareImageAlt") };
   return {
     metadataBase: new URL(SITE_URL),
     title: t("meta.title"),
     description: t("meta.description"),
     alternates: { canonical: path },
-    openGraph: { type: "website", siteName: t("meta.title"), title: t("meta.title"), description: t("meta.description"), url: path, locale: locale === "ko" ? "ko_KR" : "en_US" },
-    twitter: { card: "summary_large_image", title: t("meta.title"), description: t("meta.description") },
+    openGraph: { type: "website", siteName: t("meta.title"), title: t("meta.title"), description: t("meta.description"), url: path, locale: locale === "ko" ? "ko_KR" : "en_US", images: [image] },
+    twitter: { card: "summary_large_image", title: t("meta.title"), description: t("meta.description"), images: [image] },
   };
 };

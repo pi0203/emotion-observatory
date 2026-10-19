@@ -43,6 +43,7 @@ export const en: Messages = {
   meta: {
     title: "Emotion Observatory",
     description: "A small self-observation tool for slowly telling apart your body, the situation, and what it meant.",
+    shareImageAlt: "Emotion Observatory: a closer look at what you are experiencing now. A self-observation tool, not a test that names your emotion.",
   },
   shell: {
     skipToContent: "Skip to content",

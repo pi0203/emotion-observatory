@@ -16,6 +16,7 @@ export const ko = {
   meta: {
     title: "감정 관찰실",
     description: "몸, 상황, 의미를 천천히 구별해보는 자기관찰 도구",
+    shareImageAlt: "감정 관찰실 — 지금의 경험을 조금 더 알아보기. 감정을 맞히는 검사가 아닌 자기관찰 도구.",
   },
   /** The homepage frame on the landing and record screens (docs/DESIGN_ALIGNMENT.md §5). */
   shell: {
