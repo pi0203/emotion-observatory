@@ -62,6 +62,7 @@ export const en: Messages = {
     backToStart: "Back to the start",
     ownWordsPlaceholder: "In my own words",
     provisionalNote: "A provisional set of words · Only what you choose is recorded",
+    saveFailed: "This browser is not saving the record. Its storage may be full, or the browser may be blocking it. You can go on, but closing this screen will lose this record. Exporting old records to a file and deleting them on the records screen frees space.",
     quoted: "“{value}”",
     listSeparator: ", ",
   },
@@ -151,6 +152,10 @@ export const en: Messages = {
         limit: "This app treats picking several words together as natural. That is why the research measures cannot be carried over to this app as they are.",
       },
     },
+    previewSummary: "What will I be asked? A preview",
+    previewIntro: "See the screens before you start. You can press Stop on any of them, and you need not pick anything that does not fit.",
+    previewQuick: "Quick look, 2 steps",
+    previewDeep: "Slow look, 6 steps",
     faqSummary: "Common questions",
     faq: {
       ai: {

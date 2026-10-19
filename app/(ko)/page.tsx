@@ -15,6 +15,7 @@ import { expandCandidates, filterQuickCandidates } from "../../lib/quick-check";
 import { activationLabel, hasAffectPoint, quickActivation, quickValence, scaleLabel } from "../../lib/affect-labels";
 import { buildSynthesis, hasSynthesis } from "../../lib/synthesis";
 import { requireContent, type LocaleContent } from "../../lib/content";
+import { INPUT_LIMITS } from "../../lib/limits";
 import { DEFAULT_LOCALE } from "../../lib/i18n/locale";
 import { I18nProvider, renderRich, useT } from "../../lib/i18n/react";
 import type { Translate } from "../../lib/i18n/t";
@@ -52,6 +53,8 @@ function App() {
   const [stopConfirm, setStopConfirm] = useState(false);
   const [records, setRecords] = useState<EmotionSession[] | null>(null);
   const [openRecord, setOpenRecord] = useState<EmotionSession | null>(null);
+  // true after the browser refused a write (quota full, storage blocked): the steps still work, the record is just not kept
+  const [saveFailed, setSaveFailed] = useState(false);
 
   const showRecords = () => { setRecords(loadCompleted()); setOpenRecord(null); };
   const saveFollowUp = (session: EmotionSession, followUp: NonNullable<NonNullable<EmotionSession["support"]>["followUp"]>) => {
@@ -72,7 +75,7 @@ function App() {
 
   useEffect(() => {
     if (!hydrated || session.stage === "landing") return;
-    persistSession(session);
+    setSaveFailed(!persistSession(session));
   }, [hydrated, session]);
 
   // keep the browser's back button in step with the app's, so neither surprises the other
@@ -140,6 +143,8 @@ function App() {
           )}
         </div>
       </header>
+
+      {saveFailed && <p className="save-warning" role="status">{t("common.saveFailed")}</p>}
 
       {progress[session.stage] && (
         <div className="progress-row" aria-label={t("common.progress", { step: progress[session.stage] })}>
@@ -268,6 +273,10 @@ function LandingScreen({ onQuick, onDeep, draft, onResume, onRecords, pendingSta
   </Screen>;
 }
 
+/** The question each step asks, in the order it is met; the preview on the landing lists them from the same messages the steps use. */
+const PREVIEW_QUICK = ["quickAffect.title", "quickCandidates.title"] as const;
+const PREVIEW_DEEP = ["body.title", "affect.title", "context.title", "meaning.title", "emotion.title", "outcome.title"] as const;
+
 const REFERENCES = ["vedernikova", "widdershoven", "hoemann", "fugate", "dejonckheere", "thompson"] as const;
 const QUESTIONS = ["judge", "ai", "storage", "often", "worse", "body", "effect"] as const;
 /** Each checked against Crossref on 2026-10-13; the same DOIs are in docs/EVIDENCE_CHAIN.md. */
@@ -291,6 +300,16 @@ function AboutTool() {
   return <section className="about" aria-labelledby="about-title">
     <h2 id="about-title">{t("about.title")}</h2>
     <p>{t("about.what")}</p>
+    <details className="about-fold">
+      <summary>{t("about.previewSummary")}</summary>
+      <p className="about-intro">{t("about.previewIntro")}</p>
+      <div className="about-list preview-list">
+        <h3>{t("about.previewQuick")}</h3>
+        <ol>{PREVIEW_QUICK.map((key, index) => <li key={key} style={{ "--rise-order": index } as CSSProperties}>{t(key).replace(/\n/g, " ")}</li>)}</ol>
+        <h3>{t("about.previewDeep")}</h3>
+        <ol>{PREVIEW_DEEP.map((key, index) => <li key={key} style={{ "--rise-order": index + PREVIEW_QUICK.length } as CSSProperties}>{t(key).replace(/\n/g, " ")}</li>)}</ol>
+      </div>
+    </details>
     <details className="about-fold">
       <summary>{t("about.refsSummary")}</summary>
       <p className="about-intro">{t("about.refsIntro")}</p>
@@ -440,14 +459,14 @@ function TieredWords({ pool, selectedLabels, ownWords, onToggle, onAddCustom, me
       <div className="chip-grid">{ownWords.map((label) => chip(label))}</div>
       {onMeaning && ownWords.map((label) => <div className="own-meaning" key={label}>
         <label className="field-label" htmlFor={`meaning-${label}`}>{t("words.meaningLabel", { label })} <em>{t("words.optional")}</em></label>
-        <input id={`meaning-${label}`} className="text-input" defaultValue={meanings?.[label] ?? ""} onChange={(event) => onMeaning(label, event.target.value)} placeholder={t("words.meaningPlaceholder")} />
+        <input id={`meaning-${label}`} className="text-input" maxLength={INPUT_LIMITS.line} defaultValue={meanings?.[label] ?? ""} onChange={(event) => onMeaning(label, event.target.value)} placeholder={t("words.meaningPlaceholder")} />
       </div>)}
     </>}
 
     <div className="own-word-block">
       <p className="tier-label">{t("words.notListed")}</p>
       <div className="own-word-row">
-        <input className="text-input" value={custom} onChange={(event) => setCustom(event.target.value)} onKeyDown={(event) => { if (event.key === "Enter") addCustom(); }} placeholder={t("common.ownWordsPlaceholder")} aria-label={t("common.ownWordsPlaceholder")} />
+        <input className="text-input" maxLength={INPUT_LIMITS.word} value={custom} onChange={(event) => setCustom(event.target.value)} onKeyDown={(event) => { if (event.key === "Enter") addCustom(); }} placeholder={t("common.ownWordsPlaceholder")} aria-label={t("common.ownWordsPlaceholder")} />
         <button className="small-button" disabled={!custom.trim()} onClick={addCustom}>{t("words.add")}</button>
       </div>
       <p className="small-note">{t("words.startingPoint")}</p>
@@ -550,7 +569,7 @@ function CoachAppraisalScreen({ session, onToggle, onOwn, onNext, onLeave }: { s
     <p className="small-note">{t("coach.appraisalPickNote")}</p>
     <div className="choice-list">{[...set.appraisals, ...appraisalEscapes(t.locale)].map((item) => <button className={picked.includes(item.id) ? "selected" : ""} aria-pressed={picked.includes(item.id)} key={item.id} onClick={() => onToggle(item.id)}><Mark on={picked.includes(item.id)} />{item.text}</button>)}</div>
     <label className="field-label" htmlFor="coach-own-appraisal">{t("coach.ownAppraisalLabel")}</label>
-    <input id="coach-own-appraisal" className="text-input" value={own} onChange={(event) => { setOwn(event.target.value); onOwn(event.target.value); }} placeholder={t("coach.ownAppraisalPlaceholder")} />
+    <input id="coach-own-appraisal" className="text-input" maxLength={INPUT_LIMITS.word} value={own} onChange={(event) => { setOwn(event.target.value); onOwn(event.target.value); }} placeholder={t("coach.ownAppraisalPlaceholder")} />
     </MineZone>
     <CoachNavigation onNext={onNext} onLeave={onLeave} />
   </Screen>;
@@ -573,7 +592,7 @@ function CoachWordsScreen({ session, onToggle, onOwnWord, onNext, onLeave }: { s
     {observations.length > 0 && <p className="zone-recap">{t("coach.recap", { observations: observations.join(" ") })}</p>}
     <div className="chip-grid" role="group" aria-label={t("coach.wordsGroup")}>{[...(set?.words ?? []), ...coachEscapes(t.locale)].map((label) => <button className={`chip ${picked.includes(label) ? "selected" : ""}`} aria-pressed={picked.includes(label)} key={label} onClick={() => onToggle(label)}><Mark on={picked.includes(label)} />{label}</button>)}</div>
     <label className="field-label" htmlFor="coach-own">{t("coach.ownWordLabel")}</label>
-    <input id="coach-own" className="text-input" value={own} onChange={(event) => { setOwn(event.target.value); onOwnWord(event.target.value); }} placeholder={t("coach.ownWordPlaceholder")} />
+    <input id="coach-own" className="text-input" maxLength={INPUT_LIMITS.word} value={own} onChange={(event) => { setOwn(event.target.value); onOwnWord(event.target.value); }} placeholder={t("coach.ownWordPlaceholder")} />
     <p className="small-note">{t("coach.wordsPickNote")}</p>
     </MineZone>
     <CoachNavigation onNext={onNext} onLeave={onLeave} />
@@ -643,7 +662,7 @@ function BodyScreen({ initial, onNext }: { initial: BodyObservation[]; onNext: (
       <div className="chip-grid">{group.labels.map((label) => chip(label))}</div>
     </div>)}
     <label className="field-label" htmlFor="body-custom">{t("body.customLabel")}</label>
-    <input id="body-custom" className="text-input" value={custom} onChange={(event) => setCustom(event.target.value)} placeholder={t("body.customPlaceholder")} />
+    <input id="body-custom" className="text-input" maxLength={INPUT_LIMITS.word} value={custom} onChange={(event) => setCustom(event.target.value)} placeholder={t("body.customPlaceholder")} />
     <Navigation
       note={stepNote(stepNotes, "body", selected.length > 0 || custom.trim().length > 0)}
       onNext={() => onNext([...selected.filter((label) => label !== custom).map((label) => ({ label })), ...(custom.trim() ? [{ label: custom.trim(), custom: true }] : [])])}
@@ -673,7 +692,7 @@ function ContextScreen({ initial, onNext }: { initial?: DeepContext; onNext: (co
   const { stepNotes } = useContent();
   const [text, setText] = useState(initial?.eventText ?? "");
   const [source, setSource] = useState<DeepContext["source"]>(initial?.source ?? "event");
-  return <Screen><StepHeading step={t("context.step")} title={t("context.title")} hint={t("context.hint")} basis={t("context.basis")} /><textarea className="text-area" value={text} onChange={(event) => setText(event.target.value)} placeholder={t("context.placeholder")} /><div className="segmented"><span>{t("context.sourceQuestion")}</span>{(["event", "memory", "anticipation", "thought"] as const).map((value) => <button className={source === value ? "selected" : ""} aria-pressed={source === value} key={value} onClick={() => setSource(value)}><Mark on={source === value} />{t(`contextSource.${value}`)}</button>)}</div><Navigation note={stepNote(stepNotes, "context", text.trim().length > 0)} onNext={() => onNext({ eventText: text, source })} /></Screen>;
+  return <Screen><StepHeading step={t("context.step")} title={t("context.title")} hint={t("context.hint")} basis={t("context.basis")} /><textarea className="text-area" maxLength={INPUT_LIMITS.text} value={text} onChange={(event) => setText(event.target.value)} placeholder={t("context.placeholder")} /><div className="segmented"><span>{t("context.sourceQuestion")}</span>{(["event", "memory", "anticipation", "thought"] as const).map((value) => <button className={source === value ? "selected" : ""} aria-pressed={source === value} key={value} onClick={() => setSource(value)}><Mark on={source === value} />{t(`contextSource.${value}`)}</button>)}</div><Navigation note={stepNote(stepNotes, "context", text.trim().length > 0)} onNext={() => onNext({ eventText: text, source })} /></Screen>;
 }
 
 function MeaningScreen({ initial, onNext }: { initial: string[]; onNext: (selected: string[]) => void }) {
@@ -682,7 +701,7 @@ function MeaningScreen({ initial, onNext }: { initial: string[]; onNext: (select
   const [selected, setSelected] = useState(initial);
   const [custom, setCustom] = useState("");
   const toggle = (item: string) => setSelected((current) => current.includes(item) ? current.filter((value) => value !== item) : [...current, item]);
-  return <Screen><StepHeading step={t("meaning.step")} title={t("meaning.title")} hint={t("meaning.hint")} basis={t("meaning.basis")} /><div className="choice-list compact">{concerns.map((item) => <button className={selected.includes(item) ? "selected" : ""} aria-pressed={selected.includes(item)} key={item} onClick={() => toggle(item)}><Mark on={selected.includes(item)} />{item}</button>)}</div><input className="text-input" value={custom} onChange={(event) => setCustom(event.target.value)} placeholder={t("common.ownWordsPlaceholder")} /><Navigation note={stepNote(stepNotes, "meaning", selected.length > 0 || custom.trim().length > 0)} onNext={() => onNext([...selected, ...(custom ? [custom] : [])])} /></Screen>;
+  return <Screen><StepHeading step={t("meaning.step")} title={t("meaning.title")} hint={t("meaning.hint")} basis={t("meaning.basis")} /><div className="choice-list compact">{concerns.map((item) => <button className={selected.includes(item) ? "selected" : ""} aria-pressed={selected.includes(item)} key={item} onClick={() => toggle(item)}><Mark on={selected.includes(item)} />{item}</button>)}</div><input className="text-input" maxLength={INPUT_LIMITS.word} value={custom} onChange={(event) => setCustom(event.target.value)} placeholder={t("common.ownWordsPlaceholder")} /><Navigation note={stepNote(stepNotes, "meaning", selected.length > 0 || custom.trim().length > 0)} onNext={() => onNext([...selected, ...(custom ? [custom] : [])])} /></Screen>;
 }
 
 function EmotionScreen({ initial, affect, onNext }: { initial: EmotionSelection[]; affect?: AffectPoint; onNext: (selected: EmotionSelection[]) => void }) {
@@ -713,7 +732,7 @@ function OutcomeScreen({ onNext }: { onNext: (outcome: DeepOutcome) => void }) {
   const [clarity, setClarity] = useState<DeepOutcome["clarity"]>();
   const [usefulness, setUsefulness] = useState<DeepOutcome["usefulness"]>();
   const [note, setNote] = useState("");
-  return <Screen><StepHeading step={t("outcome.step")} title={t("outcome.title")} hint={t("outcome.hint")} basis={t("outcome.basis")} /><div className="choice-list compact">{(["much_clearer", "clearer", "same", "more_complex", "more_distressed"] as const).map((value) => <button className={clarity === value ? "selected" : ""} aria-pressed={clarity === value} key={value} onClick={() => setClarity(value)}><Mark on={clarity === value} />{t(`outcome.clarity.${value}`)}</button>)}</div><h2 className="subquestion">{t("outcome.usefulnessQuestion")}</h2><div className="inline-choices">{(["helpful", "unsure", "unhelpful"] as const).map((value) => <button className={usefulness === value ? "selected" : ""} aria-pressed={usefulness === value} key={value} onClick={() => setUsefulness(value)}><Mark on={usefulness === value} />{t(`outcome.usefulness.${value}`)}</button>)}</div><input className="text-input" value={note} onChange={(event) => setNote(event.target.value)} placeholder={t("outcome.notePlaceholder")} /><Navigation disabled={!clarity || !usefulness} onNext={() => onNext({ clarity: clarity!, usefulness: usefulness!, note })} /></Screen>;
+  return <Screen><StepHeading step={t("outcome.step")} title={t("outcome.title")} hint={t("outcome.hint")} basis={t("outcome.basis")} /><div className="choice-list compact">{(["much_clearer", "clearer", "same", "more_complex", "more_distressed"] as const).map((value) => <button className={clarity === value ? "selected" : ""} aria-pressed={clarity === value} key={value} onClick={() => setClarity(value)}><Mark on={clarity === value} />{t(`outcome.clarity.${value}`)}</button>)}</div><h2 className="subquestion">{t("outcome.usefulnessQuestion")}</h2><div className="inline-choices">{(["helpful", "unsure", "unhelpful"] as const).map((value) => <button className={usefulness === value ? "selected" : ""} aria-pressed={usefulness === value} key={value} onClick={() => setUsefulness(value)}><Mark on={usefulness === value} />{t(`outcome.usefulness.${value}`)}</button>)}</div><input className="text-input" maxLength={INPUT_LIMITS.line} value={note} onChange={(event) => setNote(event.target.value)} placeholder={t("outcome.notePlaceholder")} /><Navigation disabled={!clarity || !usefulness} onNext={() => onNext({ clarity: clarity!, usefulness: usefulness!, note })} /></Screen>;
 }
 
 function SummaryScreen({ session, onFeedback, onSupport }: { session: EmotionSession; onFeedback: (feedback: { fit?: SynthesisFit; correction?: string }) => void; onSupport: () => void }) {
@@ -754,7 +773,7 @@ function SynthesisSection({ session, onFeedback }: { session: EmotionSession; on
 
     {editing
       ? <div className="own-word-block">
-          <textarea className="text-area" value={correction} onChange={(event) => setCorrection(event.target.value)} placeholder={t("synthesisSection.correctionPlaceholder")} aria-label={t("synthesisSection.correct")} />
+          <textarea className="text-area" maxLength={INPUT_LIMITS.text} value={correction} onChange={(event) => setCorrection(event.target.value)} placeholder={t("synthesisSection.correctionPlaceholder")} aria-label={t("synthesisSection.correct")} />
           <div className="quick-option-row">
             <button className="small-button" onClick={() => { onFeedback({ correction }); setEditing(false); }}>{t("synthesisSection.keep")}</button>
             <button className="quiet-button" onClick={() => { setCorrection(session.synthesisFeedback?.correction ?? ""); setEditing(false); }}>{t("synthesisSection.cancel")}</button>

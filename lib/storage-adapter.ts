@@ -16,16 +16,17 @@ import * as local from "./storage";
  */
 export interface StorageAdapter {
   loadDraft(): EmotionSession | null;
-  saveDraft(session: EmotionSession): void;
+  /** False when the browser refused the write (quota full, storage blocked). */
+  saveDraft(session: EmotionSession): boolean;
   removeDraft(): void;
 
   loadCompleted(): EmotionSession[];
   /** id 기준 upsert. 같은 id로 다시 저장하면 새 기록이 아니라 갱신이다. */
-  saveCompleted(session: EmotionSession): void;
+  saveCompleted(session: EmotionSession): boolean;
   dropCompleted(id: string): void;
 
   /** status가 draft면 초안 저장 후 완료 목록에서 제거, 아니면 완료 저장 후 초안 제거. */
-  persistSession(session: EmotionSession): void;
+  persistSession(session: EmotionSession): boolean;
 
   /** 이 기기의 기록을 모두 지운다: 완료(중단 포함) 목록과 작성 중인 초안. 되돌릴 수 없다. */
   clearAll(): void;

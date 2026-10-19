@@ -272,3 +272,22 @@ p, .lede, .hint, .step-note, .small-note, .summary-footnote { text-wrap: pretty;
   .badges { gap: 2px 12px; margin: 12px 0 18px; }
   .badge { padding: 0; border: 0; background: none; box-shadow: none; color: var(--muted); font-weight: 500; }
 }
+
+/* Shown under the top bar while the browser refuses to write a record (quota full, storage blocked). */
+.save-warning {
+  margin: 0 0 1rem;
+  padding: .75rem 1rem;
+  border: 1px solid var(--line-strong);
+  border-radius: .75rem;
+  background: var(--warm);
+  color: var(--ink);
+  font-size: var(--t-small);
+  line-height: 1.55;
+}
+
+/* The step preview on the landing: two short numbered lists under one fold. */
+.preview-list > h3 { margin: 0 0 8px; padding: 0; background: none; font: 600 var(--t-aside) var(--font-sans); color: var(--accent-ink); letter-spacing: .04em; }
+.preview-list > ol { margin: 0 0 16px; padding: 0; list-style: decimal inside; background: none; }
+.preview-list > ol > li { margin: 0 0 8px; padding: 12px 16px; border-radius: 10px; background: var(--paper); font-size: var(--t-small); line-height: 1.6; }
+.preview-list > ol > li::marker { color: var(--muted); }
+.about-fold[open] .preview-list > ol > li { animation: rise-in .45s ease-out both; animation-delay: calc(var(--rise-order, 0) * 60ms); }

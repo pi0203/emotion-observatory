@@ -46,7 +46,13 @@ describe("/en route", () => {
   it("names itself as unwritten in the tab instead of borrowing the Korean title", () => {
     expect(metadataFor("en").title).toBe("[en] messages not written");
     expect(String(metadataFor("en").description)).not.toMatch(HANGUL);
-    expect(metadataFor("ko")).toEqual({ title: "감정 관찰실", description: "몸, 상황, 의미를 천천히 구별해보는 자기관찰 도구" });
+    const ko = metadataFor("ko");
+    expect(ko).toMatchObject({ title: "감정 관찰실", description: "몸, 상황, 의미를 천천히 구별해보는 자기관찰 도구" });
+    // the share card and canonical address point at the public site, not at a preview
+    expect(String(ko.metadataBase)).toBe("https://emotion-observatory.vercel.app/");
+    expect(ko.alternates?.canonical).toBe("/");
+    expect(ko.openGraph).toMatchObject({ title: "감정 관찰실", locale: "ko_KR", url: "/" });
+    expect(metadataFor("en").robots).toEqual({ index: false });
   });
 });
 

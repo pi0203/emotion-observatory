@@ -36,6 +36,7 @@ export const ko = {
     backToStart: "처음으로 돌아가기",
     ownWordsPlaceholder: "내 말로 적기",
     provisionalNote: "임시 단어 모음 · 스스로 고른 표현만 기록됩니다",
+    saveFailed: "이 브라우저에 기록을 저장하지 못하고 있습니다. 저장 공간이 가득 찼거나 브라우저가 저장을 막고 있을 수 있습니다. 계속할 수는 있지만, 이 화면을 닫으면 지금 기록은 남지 않습니다. 지난 기록 화면에서 오래된 기록을 파일로 내보내고 지우면 공간이 생깁니다.",
     quoted: "“{value}”",
     listSeparator: ", ",
   },
@@ -126,6 +127,10 @@ export const ko = {
         limit: "이 앱은 여러 표현을 함께 고르는 것을 자연스럽게 봅니다. 연구의 지표를 이 앱에 그대로 옮길 수 없는 이유입니다.",
       },
     },
+    previewSummary: "어떤 질문이 나오나요 · 미리 보기",
+    previewIntro: "시작하기 전에 어떤 화면이 나오는지 볼 수 있습니다. 어느 화면에서든 ‘그만하기’를 누를 수 있고, 맞는 답이 없으면 고르지 않아도 됩니다.",
+    previewQuick: "빠르게 살펴보기 · 2단계",
+    previewDeep: "조금 더 천천히 살펴보기 · 6단계",
     faqSummary: "자주 묻는 질문",
     faq: {
       ai: {

@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="감정 관찰실">
+  <!-- the affect pad: a pale oval with its two axes and one dot "about here" -->
+  <rect width="64" height="64" rx="14" fill="#E0E8FF"/>
+  <ellipse cx="32" cy="32" rx="22" ry="17" fill="#F5F8FF" stroke="#6474B0" stroke-width="2"/>
+  <line x1="10" y1="32" x2="54" y2="32" stroke="#B5C5F5" stroke-width="2"/>
+  <line x1="32" y1="15" x2="32" y2="49" stroke="#B5C5F5" stroke-width="2"/>
+  <circle cx="39" cy="26" r="5" fill="#2543D1"/>
+</svg>
