@@ -1,0 +1,230 @@
+{
+  "note": "DRAFT, not yet reviewed by the owner: do not publish before review (docs/I18N_PLAN.md §4). The list picked when answering “Which direction feels most needed right now?” at the end of a session. It is a direction the user tries on for now; the app never says “this is what you really need.”",
+  "fieldNotes": {
+    "responses": "Things that can actually be tried in that direction after closing the app. Limited to two to four, with an option not to do anything at the end.",
+    "because": "Why these options are showing. The only basis is the need the user picked. No claims about psychological mechanisms and no prescriptive wording.",
+    "route": "A need that leads to more exploring inside the app rather than to an action outside it.",
+    "exit": "An option to finish without a response.",
+    "group": "Labels that group the list so it is easy to scan. They do not mean one direction is better, and the order is not a recommendation. The pleasant directions are mixed in so they are not pushed to the bottom of the list."
+  },
+  "needs": [
+    {
+      "id": "pace",
+      "label": "Adjusting the pace of body and mind a little",
+      "because": "Because you chose “Adjusting the pace of body and mind,” here are a few small things to try with your body right now.",
+      "responses": [
+        {
+          "id": "feel-now",
+          "label": "Notice your body for a moment, without forcing your breathing or posture to change"
+        },
+        {
+          "id": "loosen",
+          "label": "Gently move one spot that feels tense"
+        },
+        {
+          "id": "shift",
+          "label": "Change your seat or position a little, then notice again"
+        },
+        {
+          "id": "pace-stop",
+          "label": "Leave it here for now"
+        }
+      ],
+      "group": "In this moment"
+    },
+    {
+      "id": "savour",
+      "label": "Staying a little longer with a good moment",
+      "because": "Because you chose “Staying with a good moment,” here are a few ways to take it in a little more and keep something of it.",
+      "responses": [
+        {
+          "id": "body-good",
+          "label": "Pause and notice what feels good in your body now"
+        },
+        {
+          "id": "what-was-good",
+          "label": "Write one sentence about what was good"
+        },
+        {
+          "id": "share",
+          "label": "Share it with someone"
+        },
+        {
+          "id": "keep-scene",
+          "label": "Keep a scene or feeling you want to remember"
+        }
+      ],
+      "group": "In this moment"
+    },
+    {
+      "id": "sort-thoughts",
+      "label": "Sorting out thoughts",
+      "because": "Because you chose “Sorting out thoughts,” here are ways to move what is in your head onto paper.",
+      "responses": [
+        {
+          "id": "split-fact",
+          "label": "Write down the facts and your reading of them separately"
+        },
+        {
+          "id": "one-thing",
+          "label": "Write down only the one thing on your mind most"
+        },
+        {
+          "id": "in-out",
+          "label": "Separate what can be decided now from what cannot"
+        },
+        {
+          "id": "later",
+          "label": "Set it aside to look at again later"
+        }
+      ],
+      "group": "Looking closer"
+    },
+    {
+      "id": "conditions",
+      "label": "Looking at what helped this good moment come about",
+      "because": "Because you chose “Looking at what helped,” here are ways to look back at what came along with this experience.",
+      "responses": [
+        {
+          "id": "where",
+          "label": "Look back at what the situation was"
+        },
+        {
+          "id": "with-whom",
+          "label": "Notice who you were with, or whether you were alone"
+        },
+        {
+          "id": "what-helped",
+          "label": "Write down what in the place or activity helped"
+        },
+        {
+          "id": "repeatable",
+          "label": "Think about whether these conditions could come together again"
+        }
+      ],
+      "group": "Looking closer"
+    },
+    {
+      "id": "understand",
+      "label": "Understanding this experience a little more",
+      "route": true,
+      "because": "Because you chose “Understanding a little more,” this leads to a place in the app for looking a little further.",
+      "group": "Looking closer"
+    },
+    {
+      "id": "express",
+      "label": "Getting ready to tell someone",
+      "because": "Because you chose “Getting ready to tell someone,” here are ways to sort out what to say before saying it.",
+      "responses": [
+        {
+          "id": "one-sentence",
+          "label": "Write the main thing you want to get across in one sentence"
+        },
+        {
+          "id": "three-parts",
+          "label": "Write down what happened / how you feel / what you would like, separately"
+        },
+        {
+          "id": "thanks",
+          "label": "Put into words one thing you appreciated or enjoyed"
+        },
+        {
+          "id": "timing",
+          "label": "First consider whether now is the time to talk"
+        }
+      ],
+      "group": "With others"
+    },
+    {
+      "id": "ask-help",
+      "label": "Asking someone for help",
+      "because": "Because you chose “Asking for help,” here are ways to work out whom to ask and for what.",
+      "responses": [
+        {
+          "id": "who",
+          "label": "Write down one person who comes to mind"
+        },
+        {
+          "id": "what",
+          "label": "Write in one sentence what you would ask for"
+        },
+        {
+          "id": "when",
+          "label": "Decide whether to reach out now or later"
+        },
+        {
+          "id": "help-stop",
+          "label": "Not right now"
+        }
+      ],
+      "group": "With others"
+    },
+    {
+      "id": "boundary",
+      "label": "Setting a boundary or some distance",
+      "because": "Because you chose “Setting a boundary or some distance,” here are ways to write down where the line might go.",
+      "responses": [
+        {
+          "id": "line",
+          "label": "Write in one line what is fine and where it starts to be too much"
+        },
+        {
+          "id": "distance",
+          "label": "Think of a way to step back for a while"
+        },
+        {
+          "id": "say-it",
+          "label": "Write what you would say in one sentence"
+        },
+        {
+          "id": "boundary-stop",
+          "label": "Hold off on deciding for now"
+        }
+      ],
+      "group": "With others"
+    },
+    {
+      "id": "solve",
+      "label": "Deciding on a step for the actual problem",
+      "because": "Because you chose “Deciding on a step,” here are ways to start without making it big.",
+      "responses": [
+        {
+          "id": "smallest",
+          "label": "Pick the smallest thing you can do today"
+        },
+        {
+          "id": "mine",
+          "label": "Separate what is up to you from what is not"
+        },
+        {
+          "id": "conditions",
+          "label": "Check the conditions or the deadline"
+        },
+        {
+          "id": "solve-stop",
+          "label": "Leave the next step for later"
+        }
+      ],
+      "group": "Doing something"
+    },
+    {
+      "id": "unsure",
+      "label": "I’m not sure",
+      "exit": true,
+      "group": "For now"
+    },
+    {
+      "id": "nothing",
+      "label": "Nothing for now",
+      "exit": true,
+      "group": "For now"
+    }
+  ],
+  "groups": [
+    "In this moment",
+    "Looking closer",
+    "With others",
+    "Doing something",
+    "For now"
+  ]
+}

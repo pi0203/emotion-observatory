@@ -1,0 +1,159 @@
+{
+  "note": "DRAFT, not yet reviewed by the owner: do not publish before review (docs/I18N_PLAN.md §4). A list for picking what can be noticed in the body right now. Body sensations are not translated into emotions: a racing heart does not mean anxiety, and the same sensation can be experienced differently depending on the situation.",
+  "fieldNotes": {
+    "region": "Groups the sensations by part of the body so they are easier to scan. Not a classification of sensations.",
+    "firstTier": "The few shown first. The rest open by region under “Show other body sensations.”",
+    "valence": "Left out on purpose. Giving body sensations a pleasant or unpleasant value would open the door to reading emotions off the body."
+  },
+  "regions": [
+    "Breathing and chest",
+    "Heartbeat",
+    "Muscles and posture",
+    "Stomach and gut",
+    "Temperature and skin",
+    "Energy and weight",
+    "Movement and stillness"
+  ],
+  "items": [
+    {
+      "label": "shallow breathing",
+      "region": "Breathing and chest"
+    },
+    {
+      "label": "deeper breathing",
+      "region": "Breathing and chest",
+      "firstTier": true
+    },
+    {
+      "label": "easy breathing",
+      "region": "Breathing and chest"
+    },
+    {
+      "label": "tight chest",
+      "region": "Breathing and chest",
+      "firstTier": true
+    },
+    {
+      "label": "chest feels open",
+      "region": "Breathing and chest"
+    },
+    {
+      "label": "racing heart",
+      "region": "Heartbeat",
+      "firstTier": true
+    },
+    {
+      "label": "steady, calm heartbeat",
+      "region": "Heartbeat"
+    },
+    {
+      "label": "pounding heart",
+      "region": "Heartbeat"
+    },
+    {
+      "label": "tense neck and shoulders",
+      "region": "Muscles and posture",
+      "firstTier": true
+    },
+    {
+      "label": "clenched jaw",
+      "region": "Muscles and posture"
+    },
+    {
+      "label": "body feels stiff",
+      "region": "Muscles and posture"
+    },
+    {
+      "label": "loose shoulders",
+      "region": "Muscles and posture",
+      "firstTier": true
+    },
+    {
+      "label": "face softening",
+      "region": "Muscles and posture"
+    },
+    {
+      "label": "body feels loose",
+      "region": "Muscles and posture"
+    },
+    {
+      "label": "knot in the stomach",
+      "region": "Stomach and gut"
+    },
+    {
+      "label": "churning stomach",
+      "region": "Stomach and gut"
+    },
+    {
+      "label": "queasy",
+      "region": "Stomach and gut"
+    },
+    {
+      "label": "stomach at ease",
+      "region": "Stomach and gut",
+      "firstTier": true
+    },
+    {
+      "label": "warm and steady inside",
+      "region": "Stomach and gut"
+    },
+    {
+      "label": "flushed face",
+      "region": "Temperature and skin"
+    },
+    {
+      "label": "cold hands or feet",
+      "region": "Temperature and skin",
+      "firstTier": true
+    },
+    {
+      "label": "warmth through the body",
+      "region": "Temperature and skin",
+      "firstTier": true
+    },
+    {
+      "label": "tingling or prickly",
+      "region": "Temperature and skin"
+    },
+    {
+      "label": "body feels heavy",
+      "region": "Energy and weight",
+      "firstTier": true
+    },
+    {
+      "label": "strength draining away",
+      "region": "Energy and weight"
+    },
+    {
+      "label": "energy building up",
+      "region": "Energy and weight",
+      "firstTier": true
+    },
+    {
+      "label": "body feels light",
+      "region": "Energy and weight"
+    },
+    {
+      "label": "fidgety",
+      "region": "Movement and stillness",
+      "firstTier": true
+    },
+    {
+      "label": "hard to stay still",
+      "region": "Movement and stillness"
+    },
+    {
+      "label": "steady and grounded",
+      "region": "Movement and stillness"
+    },
+    {
+      "label": "still, as if paused",
+      "region": "Movement and stillness"
+    },
+    {
+      "label": "nothing stands out",
+      "region": "Movement and stillness",
+      "firstTier": true
+    }
+  ]
+}

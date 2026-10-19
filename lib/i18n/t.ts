@@ -1,6 +1,8 @@
 import { interpolate, type ParamValue } from "./format";
 import { DEFAULT_LOCALE, type Locale } from "./locale";
 import { ko, type Messages } from "./messages.ko";
+import { en } from "./messages.en";
+import { englishAvailable } from "./availability";
 
 type Ko = typeof ko;
 
@@ -39,11 +41,11 @@ export type Translate = {
 };
 
 /**
- * Messages by language. English is planned but not written: it is new content,
- * not a translation (docs/I18N_PLAN.md), so asking for it fails loudly instead
- * of quietly showing Korean.
+ * Messages by language. English is new writing, not a translation
+ * (docs/I18N_PLAN.md). It is switched on only where `englishAvailable()` says
+ * so; elsewhere asking for it fails loudly instead of quietly showing Korean.
  */
-const MESSAGES: Record<Locale, Messages | null> = { ko, en: null };
+const MESSAGES: Record<Locale, Messages | null> = { ko, en: englishAvailable() ? en : null };
 
 export const hasMessages = (locale: Locale) => MESSAGES[locale] !== null;
 

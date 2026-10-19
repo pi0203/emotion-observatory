@@ -14,6 +14,13 @@
 
 ---
 
+현재 상태(2026-10-19): **단계 D 초안 끝, 본인 검토 대기.** 영어 콘텐츠 `data/*.en.json` 7개를 영어 독자를 위해 새로 썼다(초안).
+화면 본체는 `app/emotion-app.tsx`로 옮겨 「/」(한국어)와 「/en」(영어)이 같이 쓴다.
+- **어디서 보이나:** `lib/i18n/availability.ts`의 `englishAvailable()` — 개발 서버에서는 초안이 켜지고, 운영에서는 `messages.en.ts`의 `reviewStatus`가 `"reviewed"`일 때만 켜진다. 운영 /en은 그 전까지 404이고, 머리말의 「English」 전환도 보이지 않는다.
+- **검토표:** 화면 문구 426개, 감정 단어 73개, 몸 감각, 중요했던 것, 필요한 방향, Coach 세트를 한국어와 나란히 놓은 HTML(세션 산출물 `english-review-sheet.html`).
+- **초안을 쓰며 정한 것(검토 대상):** `concernTags` 타입을 `{ note; map: Record<string, string[]> }`로 넓혔다(키가 언어마다 다른 문장이라). 몸 감각의 영역 이름과 needs 묶음 이름은 화면에 그대로 나오므로 영어로 썼다. 뜻이 1:1로 맞지 않는 단어(억울함 → wronged, 서운함 → hurt, 답답함 → frustrated · stuck 등)의 선택 이유는 검토표와 하위 작업 보고에 있다. needs 문장 「I wanted to feel safe」의 safe는 화면 문구 시험이 막는 낱말이라 검토 때 다시 본다.
+- **단계 E(기록 저장소를 언어별로 나누기)는 아직이다.** 지금은 영어 화면도 한국어와 같은 저장소를 쓴다.
+
 ## 1. 정해진 것
 
 본인이 정한 것이다. 바꾸려면 본인에게 먼저 묻는다.

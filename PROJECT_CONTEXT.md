@@ -211,6 +211,7 @@ Quick과 Deep은 **같은 EmotionSession**에 속하고, **두 affect를 모두 
 - **`contextDependent`** — 양쪽 어디서든 제시되는 맥락 의존 표현
 - **synthesis v2** — 관찰 / 연결 / 모르는 것 / 질문, 단서 2개 미만이면 해석하지 않음
 - **norm audit 도구** — 외부 자료를 복제하지 않고 coverage만 조사
+- **고른 위치 반영 · 영어판 초안 (2026-10-19 밤)** — 「도움받을 수 있는 곳」을 위쪽 막대로(좁은 화면은 「← 뒤로 · 도움 · 그만하기」), 정리 화면 제목을 맨 위로. 화면 본체를 `app/emotion-app.tsx`로 옮겨 /en이 같이 쓰고, 영어 콘텐츠 초안 `data/*.en.json`. 영어는 개발 서버에서만 보이며 운영은 본인 검토 뒤([docs/I18N_PLAN.md](docs/I18N_PLAN.md))
 - **본인 결정 반영 (2026-10-19 저녁)** — 내보낸 파일 암호 잠금(선택), 천천히 살펴보기 끝의 「사람에게 말해 볼 생각」 질문(저장만, 점수 · 분기 없음), 위기 표현 감지 설계 초안([docs/CRISIS_DETECTION_DRAFT.md](docs/CRISIS_DETECTION_DRAFT.md), 미구현)
 - **비계/대체와 나이 입장 (2026-10-19)** — 두 논문과 관련 연구 확인, PRODUCT_SPEC §2 「나이」, §17 「Scaffold constraints」(제안) ([docs/EVIDENCE_CHAIN.md §6](docs/EVIDENCE_CHAIN.md))
 - **talkv.me 대조 보완 (2026-10-19)** — 모든 단계에서 위기 카드 한 번에 열기, 다른 사람 이름·파일 공유 안내, 「만든 사람이 볼 수 있나요」 FAQ, 「아무것도 보내지 않는다」 테스트 ([docs/BENCHMARK_TALKV_2026_10_19.md](docs/BENCHMARK_TALKV_2026_10_19.md))

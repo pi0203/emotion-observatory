@@ -156,7 +156,8 @@ describe("palette structure", () => {
 
   it("writes no colour outside the token blocks", () => {
     const outside = css.replace(lightBlock, "").replace(darkBlock, "").replace(/\/\*[\s\S]*?\*\//g, "");
-    expect(outside.match(/#[0-9a-fA-F]{3,8}\b|rgba?\(|hsla?\(|\bwhite\b|\bblack\b/g) ?? []).toEqual([]);
+    // colour keywords only: `white-space` is a property, not a colour
+    expect(outside.match(/#[0-9a-fA-F]{3,8}\b|rgba?\(|hsla?\(|(?<![-\w])(?:white|black)(?![-\w])/g) ?? []).toEqual([]);
   });
 
   it("no longer uses the fluorescent green anywhere", () => {

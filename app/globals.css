@@ -292,20 +292,26 @@ p, .lede, .hint, .step-note, .small-note, .summary-footnote { text-wrap: pretty;
 .preview-list > ol > li::marker { color: var(--muted); }
 .about-fold[open] .preview-list > ol > li { animation: rise-in .45s ease-out both; animation-delay: calc(var(--rise-order, 0) * 60ms); }
 
-/* Under every step: one tap to the helplines (SAFETY.md). Quiet, not a warning. */
-.help-line { margin: 48px 0 0; text-align: center; font-size: var(--t-small); color: var(--muted); }
+/* The top bar on every step: back, help, stop. Narrow screens use the short labels so the bar stays on one line. */
+.topbar-actions .text-button { white-space: nowrap; }
+.label-narrow { display: none; }
+@media (max-width: 560px) {
+  .topbar-actions { gap: 14px; }
+  .label-wide { display: none; }
+  .label-narrow { display: inline; }
+}
 .help-modal { width: min(100%, 520px); max-height: calc(100vh - 48px); overflow-y: auto; }
 .help-modal-title { margin: 0 0 16px; font-size: var(--t-lead); }
 .help-modal .crisis-card { margin: 0; }
 
 /* The closing screens: what the person chose falls into place, once (page.tsx, useFirstReveal).
-   Layout: the title closes the piece under the summary card. Document order keeps the title first. */
+   Layout: the title opens the screen, then the small pad and the summary (owner's choice 2026-10-19). */
 .reveal-screen { display: flex; flex-direction: column; }
 .reveal-screen > * { order: 5; }
 .reveal-screen > .eyebrow { order: 0; }
-.reveal-screen > .mini-pad { order: 1; }
-.reveal-screen > .summary-card { order: 2; margin-top: 4px; }
-.reveal-screen > .reveal-title { order: 3; margin-top: 36px; font-size: var(--t-lead); }
+.reveal-screen > .reveal-title { order: 1; margin: 0 0 22px; }
+.reveal-screen > .mini-pad { order: 2; }
+.reveal-screen > .summary-card { order: 3; margin-top: 4px; }
 .reveal-screen > .summary-footnote { order: 4; margin-top: 12px; }
 .mini-pad { position: relative; width: 168px; aspect-ratio: 1.35; margin: 6px 0 22px; border: 1px solid var(--line-strong); border-radius: 48% 52% 50% 48%; background: var(--card); }
 .mini-pad::before, .mini-pad::after { content: ""; position: absolute; background: var(--axis); }
@@ -333,3 +339,12 @@ p, .lede, .hint, .step-note, .small-note, .summary-footnote { text-wrap: pretty;
 /* The one question at the end of the slower look (TalkToSomeoneQuestion). */
 .talk-question { margin: 40px 0 8px; padding-top: 28px; border-top: 1px solid var(--line); }
 .talk-question .subquestion { margin-top: 0; }
+
+/* The other language, at the end of the homepage frame's header. */
+.lang-switch { margin-left: 18px; color: var(--site-muted); font: var(--t-aside) var(--font-sans); letter-spacing: .06em; text-decoration: none; border: 1px solid var(--site-line); border-radius: 99px; padding: 4px 10px; white-space: nowrap; }
+.lang-switch:hover { color: var(--site-hover); }
+@media (max-width: 560px) {
+  /* on a phone the menu takes its own line, so the switch sits beside the name instead of falling under the menu */
+  .site-header .lang-switch { order: 1; margin-left: auto; align-self: center; }
+  .site-header .site-nav { order: 2; flex-basis: 100%; }
+}

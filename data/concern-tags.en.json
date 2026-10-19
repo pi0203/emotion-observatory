@@ -1,0 +1,40 @@
+{
+  "note": "DRAFT, not yet reviewed by the owner: do not publish before review (docs/I18N_PLAN.md §4). Loosely links each concern option to the contextTags in the vocabulary. It does not claim a cause or a right answer; it is used only to check whether two things the user chose point to the same place. Overlap does not mean causation. Keys are the sentences in concerns.en.json, and values are contextTags used in emotions.en.json.",
+  "map": {
+    "I wanted to be respected": [
+      "relationships",
+      "being evaluated"
+    ],
+    "I wanted to be understood": [
+      "relationships"
+    ],
+    "I wanted to feel safe": [
+      "safety"
+    ],
+    "I wanted to be recognized": [
+      "being evaluated",
+      "self-judgment",
+      "achievement"
+    ],
+    "I wanted to feel connected": [
+      "relationships",
+      "closeness"
+    ],
+    "I wanted to make my own choices": [
+      "boundaries",
+      "choices"
+    ],
+    "I wanted things to be fair": [
+      "fairness"
+    ],
+    "I wanted to do well": [
+      "achievement",
+      "effort",
+      "being evaluated"
+    ],
+    "I wanted to rest": [
+      "rest",
+      "time"
+    ]
+  }
+}

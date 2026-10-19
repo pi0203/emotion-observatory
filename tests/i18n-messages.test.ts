@@ -25,7 +25,8 @@ const reachable = (call: MessageCall) =>
 describe("the Korean dictionary", () => {
   it("finds the message requests in the code", () => {
     expect(calls.length).toBeGreaterThan(150);
-    expect(calls.some((call) => call.where.startsWith("app/(ko)/page.tsx"))).toBe(true);
+    // the screens moved to app/emotion-app.tsx (shared by "/" and "/en", 2026-10-19)
+    expect(calls.some((call) => call.where.startsWith("app/emotion-app.tsx"))).toBe(true);
     expect(calls.some((call) => call.where.startsWith("lib/synthesis.ts"))).toBe(true);
   });
 

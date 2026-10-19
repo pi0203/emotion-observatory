@@ -1,0 +1,1741 @@
+{
+  "provisional": true,
+  "note": "DRAFT, not yet reviewed by the owner: do not publish before review (docs/I18N_PLAN.md §4). A UI fixture written before research or review. It was written in English for English speakers, not translated from the Korean list, so its items and counts do not pair with the Korean ones. It does not settle an emotion taxonomy and is not used for psychological classification or automatic inference. Many everyday English emotion words also appear in scales such as PANAS or the mDES; this list does not reproduce any scale’s item set, instructions or rating format, and it is not a measure.",
+  "fieldNotes": {
+    "family": "Groupings for exploring only, not a classification of what emotions are.",
+    "valence/activation": "Coordinates for narrowing the candidates, not a lookup table that produces an emotion.",
+    "neighbors": "Words worth comparing, kept as exploration metadata. Not a claim that they are psychologically close.",
+    "appraisalHints": "Not a definition of the emotion. Tentative hints that may help when exploring the difference between similar words.",
+    "contextTags": "Loose clues about situations in which someone might use this word. The summary can quote a tag when it meets what the user said mattered, so tags are plain everyday nouns.",
+    "contextDependent": "UI metadata saying that how pleasant or unpleasant this feels can depend on the situation, so it is not fixed as positive or negative. It is not an essential category of “mixed emotion.” When narrowing candidates it can be offered from either side.",
+    "norms": "valencePrototype / arousalPrototype / valenceSD / arousalSD / normSource are filled only when verified external norm data is linked. While normStatus is “provisional” there are no coordinates, and no value is entered whose source and terms of use have not been checked."
+  },
+  "items": [
+    {
+      "label": "tense",
+      "family": "uncertainty",
+      "valence": "negative",
+      "activation": "high",
+      "neighbors": [
+        "nervous",
+        "anxious",
+        "worried",
+        "stressed",
+        "on edge"
+      ],
+      "appraisalHints": [
+        "body bracing for what comes next",
+        "pressure to get it right"
+      ],
+      "contextTags": [
+        "waiting",
+        "being evaluated",
+        "work"
+      ],
+      "provisional": true,
+      "normStatus": "provisional"
+    },
+    {
+      "label": "nervous",
+      "aliases": [
+        "jittery",
+        "antsy"
+      ],
+      "family": "uncertainty",
+      "valence": "negative",
+      "activation": "high",
+      "neighbors": [
+        "tense",
+        "anxious",
+        "impatient",
+        "excited"
+      ],
+      "appraisalHints": [
+        "hard to sit still while waiting"
+      ],
+      "contextTags": [
+        "waiting",
+        "uncertainty"
+      ],
+      "provisional": true,
+      "normStatus": "provisional"
+    },
+    {
+      "label": "annoyed",
+      "aliases": [
+        "bugged",
+        "irked"
+      ],
+      "family": "friction",
+      "valence": "negative",
+      "activation": "high",
+      "neighbors": [
+        "angry",
+        "frustrated",
+        "wronged",
+        "impatient",
+        "on edge"
+      ],
+      "appraisalHints": [
+        "keep getting interrupted",
+        "small things getting under the skin"
+      ],
+      "contextTags": [
+        "work",
+        "repetition"
+      ],
+      "provisional": true,
+      "normStatus": "provisional"
+    },
+    {
+      "label": "angry",
+      "aliases": [
+        "mad"
+      ],
+      "family": "friction",
+      "valence": "negative",
+      "activation": "high",
+      "neighbors": [
+        "annoyed",
+        "outraged",
+        "wronged"
+      ],
+      "appraisalHints": [
+        "a line was crossed",
+        "wanting to stop something"
+      ],
+      "contextTags": [
+        "relationships",
+        "boundaries"
+      ],
+      "provisional": true,
+      "normStatus": "provisional"
+    },
+    {
+      "label": "anxious",
+      "aliases": [
+        "uneasy"
+      ],
+      "family": "uncertainty",
+      "valence": "negative",
+      "activation": "high",
+      "neighbors": [
+        "worried",
+        "scared",
+        "tense",
+        "nervous"
+      ],
+      "appraisalHints": [
+        "sense that something bad may happen",
+        "unsure what to do"
+      ],
+      "contextTags": [
+        "uncertainty",
+        "the future"
+      ],
+      "provisional": true,
+      "normStatus": "provisional"
+    },
+    {
+      "label": "wronged",
+      "aliases": [
+        "treated unfairly"
+      ],
+      "family": "fairness",
+      "valence": "negative",
+      "activation": "high",
+      "neighbors": [
+        "angry",
+        "hurt",
+        "frustrated",
+        "outraged"
+      ],
+      "appraisalHints": [
+        "not being given a fair deal",
+        "sense it was not my fault"
+      ],
+      "contextTags": [
+        "fairness",
+        "relationships",
+        "being evaluated"
+      ],
+      "provisional": true,
+      "normStatus": "provisional"
+    },
+    {
+      "label": "impatient",
+      "aliases": [
+        "in a hurry"
+      ],
+      "family": "urgency",
+      "valence": "negative",
+      "activation": "high",
+      "neighbors": [
+        "nervous",
+        "annoyed",
+        "tense",
+        "stressed"
+      ],
+      "appraisalHints": [
+        "time feels too short"
+      ],
+      "contextTags": [
+        "deadlines",
+        "waiting"
+      ],
+      "provisional": true,
+      "normStatus": "provisional"
+    },
+    {
+      "label": "scared",
+      "aliases": [
+        "frightened"
+      ],
+      "family": "threat",
+      "valence": "negative",
+      "activation": "high",
+      "neighbors": [
+        "anxious",
+        "flustered"
+      ],
+      "appraisalHints": [
+        "danger feels close"
+      ],
+      "contextTags": [
+        "safety",
+        "uncertainty"
+      ],
+      "provisional": true,
+      "normStatus": "provisional"
+    },
+    {
+      "label": "flustered",
+      "aliases": [
+        "thrown",
+        "caught off guard"
+      ],
+      "family": "threat",
+      "valence": "negative",
+      "activation": "high",
+      "neighbors": [
+        "scared",
+        "awkward",
+        "surprised",
+        "confused"
+      ],
+      "appraisalHints": [
+        "something unexpected, all at once"
+      ],
+      "contextTags": [
+        "the unexpected",
+        "in front of others"
+      ],
+      "provisional": true,
+      "normStatus": "provisional"
+    },
+    {
+      "label": "outraged",
+      "aliases": [
+        "indignant"
+      ],
+      "family": "friction",
+      "valence": "negative",
+      "activation": "high",
+      "neighbors": [
+        "angry",
+        "wronged",
+        "disgusted"
+      ],
+      "appraisalHints": [
+        "something wrong is happening"
+      ],
+      "contextTags": [
+        "fairness",
+        "values"
+      ],
+      "provisional": true,
+      "normStatus": "provisional"
+    },
+    {
+      "label": "on edge",
+      "aliases": [
+        "touchy",
+        "edgy"
+      ],
+      "family": "friction",
+      "valence": "negative",
+      "activation": "high",
+      "neighbors": [
+        "annoyed",
+        "tense",
+        "nervous",
+        "stressed"
+      ],
+      "appraisalHints": [
+        "small things set off a big reaction"
+      ],
+      "contextTags": [
+        "repetition",
+        "boundaries"
+      ],
+      "provisional": true,
+      "normStatus": "provisional"
+    },
+    {
+      "label": "stressed",
+      "aliases": [
+        "under pressure"
+      ],
+      "family": "urgency",
+      "valence": "negative",
+      "activation": "high",
+      "neighbors": [
+        "overwhelmed",
+        "tense",
+        "impatient",
+        "drained"
+      ],
+      "appraisalHints": [
+        "too many demands at once",
+        "not enough time or room"
+      ],
+      "contextTags": [
+        "deadlines",
+        "responsibility",
+        "work"
+      ],
+      "provisional": true,
+      "normStatus": "provisional"
+    },
+    {
+      "label": "frustrated",
+      "aliases": [
+        "fed up"
+      ],
+      "family": "friction",
+      "valence": "negative",
+      "activation": "medium",
+      "neighbors": [
+        "annoyed",
+        "stuck",
+        "discouraged",
+        "wronged"
+      ],
+      "appraisalHints": [
+        "not getting through to someone",
+        "something keeps getting in the way"
+      ],
+      "contextTags": [
+        "relationships",
+        "work"
+      ],
+      "provisional": true,
+      "normStatus": "provisional"
+    },
+    {
+      "label": "worried",
+      "aliases": [
+        "concerned"
+      ],
+      "family": "uncertainty",
+      "valence": "negative",
+      "activation": "medium",
+      "neighbors": [
+        "anxious",
+        "tense",
+        "overwhelmed"
+      ],
+      "appraisalHints": [
+        "going over what might happen"
+      ],
+      "contextTags": [
+        "the future",
+        "responsibility"
+      ],
+      "provisional": true,
+      "normStatus": "provisional"
+    },
+    {
+      "label": "hurt",
+      "aliases": [
+        "slighted"
+      ],
+      "family": "social",
+      "valence": "negative",
+      "activation": "medium",
+      "neighbors": [
+        "disappointed",
+        "lonely",
+        "wronged",
+        "wistful"
+      ],
+      "appraisalHints": [
+        "a hoped-for response did not come",
+        "feeling less important to someone"
+      ],
+      "contextTags": [
+        "relationships",
+        "expectations"
+      ],
+      "provisional": true,
+      "normStatus": "provisional"
+    },
+    {
+      "label": "discouraged",
+      "aliases": [
+        "defeated",
+        "disheartened"
+      ],
+      "family": "blocked",
+      "valence": "negative",
+      "activation": "medium",
+      "neighbors": [
+        "frustrated",
+        "disappointed",
+        "stuck"
+      ],
+      "appraisalHints": [
+        "effort has not paid off",
+        "the way ahead seems blocked"
+      ],
+      "contextTags": [
+        "work",
+        "effort"
+      ],
+      "provisional": true,
+      "normStatus": "provisional"
+    },
+    {
+      "label": "embarrassed",
+      "family": "self-evaluation",
+      "valence": "negative",
+      "activation": "medium",
+      "neighbors": [
+        "awkward",
+        "ashamed",
+        "flustered"
+      ],
+      "appraisalHints": [
+        "a side of me I did not want seen"
+      ],
+      "contextTags": [
+        "in front of others",
+        "self-judgment"
+      ],
+      "provisional": true,
+      "normStatus": "provisional"
+    },
+    {
+      "label": "awkward",
+      "aliases": [
+        "sheepish"
+      ],
+      "family": "self-evaluation",
+      "valence": "negative",
+      "activation": "medium",
+      "neighbors": [
+        "embarrassed",
+        "flustered"
+      ],
+      "appraisalHints": [
+        "an uncomfortable moment with others"
+      ],
+      "contextTags": [
+        "in front of others"
+      ],
+      "provisional": true,
+      "normStatus": "provisional"
+    },
+    {
+      "label": "guilty",
+      "family": "self-evaluation",
+      "valence": "negative",
+      "activation": "medium",
+      "neighbors": [
+        "regretful",
+        "hard on myself",
+        "ashamed"
+      ],
+      "appraisalHints": [
+        "my actions affected someone"
+      ],
+      "contextTags": [
+        "relationships",
+        "responsibility"
+      ],
+      "provisional": true,
+      "normStatus": "provisional"
+    },
+    {
+      "label": "ashamed",
+      "family": "self-evaluation",
+      "valence": "negative",
+      "activation": "medium",
+      "neighbors": [
+        "embarrassed",
+        "hard on myself",
+        "guilty",
+        "small"
+      ],
+      "appraisalHints": [
+        "as if who I am is the problem"
+      ],
+      "contextTags": [
+        "self-judgment",
+        "in front of others"
+      ],
+      "provisional": true,
+      "normStatus": "provisional"
+    },
+    {
+      "label": "hard on myself",
+      "aliases": [
+        "blaming myself"
+      ],
+      "family": "self-evaluation",
+      "valence": "negative",
+      "activation": "medium",
+      "neighbors": [
+        "guilty",
+        "regretful",
+        "ashamed"
+      ],
+      "appraisalHints": [
+        "looking for the cause in myself"
+      ],
+      "contextTags": [
+        "self-judgment",
+        "responsibility"
+      ],
+      "provisional": true,
+      "normStatus": "provisional"
+    },
+    {
+      "label": "disgusted",
+      "aliases": [
+        "grossed out"
+      ],
+      "family": "friction",
+      "valence": "negative",
+      "activation": "medium",
+      "neighbors": [
+        "outraged",
+        "annoyed"
+      ],
+      "appraisalHints": [
+        "wanting to keep away from it"
+      ],
+      "contextTags": [
+        "values",
+        "keeping distance"
+      ],
+      "provisional": true,
+      "normStatus": "provisional"
+    },
+    {
+      "label": "confused",
+      "aliases": [
+        "mixed up"
+      ],
+      "family": "confusion",
+      "valence": "negative",
+      "activation": "medium",
+      "neighbors": [
+        "flustered",
+        "stuck",
+        "zoned out",
+        "worried",
+        "overwhelmed"
+      ],
+      "appraisalHints": [
+        "thoughts tangled, hard to sort out"
+      ],
+      "contextTags": [
+        "choices",
+        "change"
+      ],
+      "provisional": true,
+      "normStatus": "provisional"
+    },
+    {
+      "label": "overwhelmed",
+      "aliases": [
+        "swamped"
+      ],
+      "family": "blocked",
+      "valence": "negative",
+      "activation": "medium",
+      "neighbors": [
+        "stressed",
+        "stuck",
+        "worried",
+        "confused"
+      ],
+      "appraisalHints": [
+        "too much to take in at once"
+      ],
+      "contextTags": [
+        "scale",
+        "responsibility"
+      ],
+      "provisional": true,
+      "normStatus": "provisional"
+    },
+    {
+      "label": "disappointed",
+      "aliases": [
+        "let down"
+      ],
+      "family": "loss",
+      "valence": "negative",
+      "activation": "low",
+      "neighbors": [
+        "hurt",
+        "wistful",
+        "discouraged"
+      ],
+      "appraisalHints": [
+        "an expected outcome did not come"
+      ],
+      "contextTags": [
+        "expectations",
+        "outcomes"
+      ],
+      "provisional": true,
+      "normStatus": "provisional"
+    },
+    {
+      "label": "lonely",
+      "aliases": [
+        "left out"
+      ],
+      "family": "social",
+      "valence": "negative",
+      "activation": "low",
+      "neighbors": [
+        "sad",
+        "empty",
+        "hurt"
+      ],
+      "appraisalHints": [
+        "cut off from others",
+        "a sense of being alone"
+      ],
+      "contextTags": [
+        "relationships",
+        "closeness"
+      ],
+      "provisional": true,
+      "normStatus": "provisional"
+    },
+    {
+      "label": "sad",
+      "aliases": [
+        "sorrowful"
+      ],
+      "family": "loss",
+      "valence": "negative",
+      "activation": "low",
+      "neighbors": [
+        "lonely",
+        "empty",
+        "disappointed",
+        "compassionate",
+        "down"
+      ],
+      "appraisalHints": [
+        "something precious is gone"
+      ],
+      "contextTags": [
+        "loss",
+        "relationships"
+      ],
+      "provisional": true,
+      "normStatus": "provisional"
+    },
+    {
+      "label": "empty",
+      "aliases": [
+        "hollow"
+      ],
+      "family": "loss",
+      "valence": "negative",
+      "activation": "low",
+      "neighbors": [
+        "lonely",
+        "sad",
+        "wistful",
+        "down"
+      ],
+      "appraisalHints": [
+        "something that was there has gone"
+      ],
+      "contextTags": [
+        "loss",
+        "change"
+      ],
+      "provisional": true,
+      "normStatus": "provisional"
+    },
+    {
+      "label": "wistful",
+      "family": "loss",
+      "valence": "negative",
+      "activation": "low",
+      "neighbors": [
+        "disappointed",
+        "regretful",
+        "empty"
+      ],
+      "appraisalHints": [
+        "wishing it had gone a bit differently"
+      ],
+      "contextTags": [
+        "chances",
+        "endings"
+      ],
+      "provisional": true,
+      "normStatus": "provisional"
+    },
+    {
+      "label": "regretful",
+      "family": "self-evaluation",
+      "valence": "negative",
+      "activation": "low",
+      "neighbors": [
+        "guilty",
+        "wistful",
+        "hard on myself"
+      ],
+      "appraisalHints": [
+        "wishing I had done it differently"
+      ],
+      "contextTags": [
+        "choices",
+        "the past"
+      ],
+      "provisional": true,
+      "normStatus": "provisional"
+    },
+    {
+      "label": "stuck",
+      "aliases": [
+        "at a loss"
+      ],
+      "family": "blocked",
+      "valence": "negative",
+      "activation": "low",
+      "neighbors": [
+        "overwhelmed",
+        "discouraged",
+        "frustrated",
+        "drained",
+        "confused"
+      ],
+      "appraisalHints": [
+        "not knowing where to start",
+        "no way to move things forward"
+      ],
+      "contextTags": [
+        "beginnings",
+        "scale"
+      ],
+      "provisional": true,
+      "normStatus": "provisional"
+    },
+    {
+      "label": "drained",
+      "aliases": [
+        "worn out",
+        "exhausted"
+      ],
+      "family": "depletion",
+      "valence": "negative",
+      "activation": "low",
+      "neighbors": [
+        "helpless",
+        "stuck",
+        "discouraged"
+      ],
+      "appraisalHints": [
+        "little energy left after holding on"
+      ],
+      "contextTags": [
+        "repetition",
+        "work"
+      ],
+      "provisional": true,
+      "normStatus": "provisional"
+    },
+    {
+      "label": "helpless",
+      "aliases": [
+        "powerless"
+      ],
+      "family": "depletion",
+      "valence": "negative",
+      "activation": "low",
+      "neighbors": [
+        "drained",
+        "stuck",
+        "down"
+      ],
+      "appraisalHints": [
+        "as if nothing will make a difference"
+      ],
+      "contextTags": [
+        "repetition",
+        "outcomes"
+      ],
+      "provisional": true,
+      "normStatus": "provisional"
+    },
+    {
+      "label": "down",
+      "aliases": [
+        "blue",
+        "gloomy"
+      ],
+      "family": "loss",
+      "valence": "negative",
+      "activation": "low",
+      "neighbors": [
+        "sad",
+        "empty",
+        "helpless",
+        "lonely"
+      ],
+      "appraisalHints": [
+        "mood sinking and slow to lift"
+      ],
+      "contextTags": [
+        "everyday life",
+        "relationships"
+      ],
+      "provisional": true,
+      "normStatus": "provisional"
+    },
+    {
+      "label": "small",
+      "aliases": [
+        "insignificant"
+      ],
+      "family": "self-evaluation",
+      "valence": "negative",
+      "activation": "low",
+      "neighbors": [
+        "ashamed",
+        "hard on myself",
+        "embarrassed",
+        "disappointed"
+      ],
+      "appraisalHints": [
+        "feeling little and unimportant"
+      ],
+      "contextTags": [
+        "self-judgment",
+        "in front of others"
+      ],
+      "provisional": true,
+      "normStatus": "provisional"
+    },
+    {
+      "label": "bored",
+      "aliases": [
+        "uninterested"
+      ],
+      "family": "interest",
+      "valence": "negative",
+      "activation": "low",
+      "neighbors": [
+        "zoned out",
+        "down",
+        "drained"
+      ],
+      "appraisalHints": [
+        "nothing here holds attention"
+      ],
+      "contextTags": [
+        "everyday life",
+        "repetition"
+      ],
+      "provisional": true,
+      "normStatus": "provisional"
+    },
+    {
+      "label": "delighted",
+      "aliases": [
+        "overjoyed"
+      ],
+      "family": "joy",
+      "valence": "positive",
+      "activation": "high",
+      "neighbors": [
+        "excited",
+        "happy",
+        "moved"
+      ],
+      "appraisalHints": [
+        "something hoped for happened"
+      ],
+      "contextTags": [
+        "achievement",
+        "relationships"
+      ],
+      "provisional": true,
+      "normStatus": "provisional"
+    },
+    {
+      "label": "excited",
+      "aliases": [
+        "thrilled",
+        "pumped"
+      ],
+      "family": "joy",
+      "valence": "positive",
+      "activation": "high",
+      "neighbors": [
+        "delighted",
+        "energized",
+        "eager",
+        "nervous"
+      ],
+      "appraisalHints": [
+        "something good seems close"
+      ],
+      "contextTags": [
+        "expectations",
+        "play"
+      ],
+      "provisional": true,
+      "normStatus": "provisional"
+    },
+    {
+      "label": "energized",
+      "aliases": [
+        "lively",
+        "full of energy"
+      ],
+      "family": "energy",
+      "valence": "positive",
+      "activation": "high",
+      "neighbors": [
+        "excited",
+        "interested",
+        "delighted",
+        "motivated"
+      ],
+      "appraisalHints": [
+        "body wanting to move"
+      ],
+      "contextTags": [
+        "recharging",
+        "beginnings"
+      ],
+      "provisional": true,
+      "normStatus": "provisional"
+    },
+    {
+      "label": "eager",
+      "aliases": [
+        "looking forward"
+      ],
+      "family": "interest",
+      "valence": "positive",
+      "activation": "high",
+      "neighbors": [
+        "interested",
+        "excited",
+        "delighted",
+        "giddy"
+      ],
+      "appraisalHints": [
+        "what is ahead feels worth waiting for"
+      ],
+      "contextTags": [
+        "the future",
+        "plans"
+      ],
+      "provisional": true,
+      "normStatus": "provisional"
+    },
+    {
+      "label": "giddy",
+      "aliases": [
+        "fluttery",
+        "butterflies"
+      ],
+      "family": "interest",
+      "valence": "positive",
+      "activation": "high",
+      "neighbors": [
+        "eager",
+        "excited",
+        "hopeful",
+        "nervous"
+      ],
+      "appraisalHints": [
+        "body reacting before the moment comes"
+      ],
+      "contextTags": [
+        "waiting",
+        "plans",
+        "relationships"
+      ],
+      "provisional": true,
+      "normStatus": "provisional"
+    },
+    {
+      "label": "inspired",
+      "family": "self-transcendent",
+      "valence": "positive",
+      "activation": "high",
+      "neighbors": [
+        "impressed",
+        "curious",
+        "hopeful"
+      ],
+      "appraisalHints": [
+        "suddenly wanting to make or do"
+      ],
+      "contextTags": [
+        "learning",
+        "creating"
+      ],
+      "provisional": true,
+      "normStatus": "provisional"
+    },
+    {
+      "label": "surprised",
+      "family": "self-transcendent",
+      "valence": "positive",
+      "activation": "high",
+      "neighbors": [
+        "curious",
+        "impressed",
+        "flustered"
+      ],
+      "appraisalHints": [
+        "meeting something not expected"
+      ],
+      "contextTags": [
+        "the unexpected",
+        "new things"
+      ],
+      "provisional": true,
+      "contextDependent": true,
+      "normStatus": "provisional"
+    },
+    {
+      "label": "interested",
+      "aliases": [
+        "engaged"
+      ],
+      "family": "interest",
+      "valence": "positive",
+      "activation": "medium",
+      "neighbors": [
+        "eager",
+        "energized",
+        "happy",
+        "curious",
+        "absorbed"
+      ],
+      "appraisalHints": [
+        "wanting to know more"
+      ],
+      "contextTags": [
+        "learning",
+        "new things"
+      ],
+      "provisional": true,
+      "normStatus": "provisional"
+    },
+    {
+      "label": "happy",
+      "aliases": [
+        "cheerful"
+      ],
+      "family": "joy",
+      "valence": "positive",
+      "activation": "medium",
+      "neighbors": [
+        "delighted",
+        "interested",
+        "excited",
+        "amused"
+      ],
+      "appraisalHints": [
+        "liking what is happening now"
+      ],
+      "contextTags": [
+        "play",
+        "relationships"
+      ],
+      "provisional": true,
+      "normStatus": "provisional"
+    },
+    {
+      "label": "amused",
+      "aliases": [
+        "entertained",
+        "tickled"
+      ],
+      "family": "joy",
+      "valence": "positive",
+      "activation": "medium",
+      "neighbors": [
+        "happy",
+        "delighted",
+        "surprised"
+      ],
+      "appraisalHints": [
+        "something seemed funny"
+      ],
+      "contextTags": [
+        "play",
+        "relationships"
+      ],
+      "provisional": true,
+      "normStatus": "provisional"
+    },
+    {
+      "label": "proud",
+      "aliases": [
+        "accomplished"
+      ],
+      "family": "pride",
+      "valence": "positive",
+      "activation": "medium",
+      "neighbors": [
+        "satisfied",
+        "delighted",
+        "moved",
+        "confident"
+      ],
+      "appraisalHints": [
+        "having pulled something off"
+      ],
+      "contextTags": [
+        "achievement",
+        "self-judgment"
+      ],
+      "provisional": true,
+      "normStatus": "provisional"
+    },
+    {
+      "label": "moved",
+      "aliases": [
+        "touched"
+      ],
+      "family": "connection",
+      "valence": "positive",
+      "activation": "medium",
+      "neighbors": [
+        "delighted",
+        "grateful",
+        "proud",
+        "in awe"
+      ],
+      "appraisalHints": [
+        "something stirred inside"
+      ],
+      "contextTags": [
+        "relationships",
+        "stories"
+      ],
+      "provisional": true,
+      "contextDependent": true,
+      "normStatus": "provisional"
+    },
+    {
+      "label": "grateful",
+      "aliases": [
+        "thankful"
+      ],
+      "family": "connection",
+      "valence": "positive",
+      "activation": "medium",
+      "neighbors": [
+        "moved",
+        "satisfied",
+        "connected"
+      ],
+      "appraisalHints": [
+        "having received something"
+      ],
+      "contextTags": [
+        "relationships",
+        "help"
+      ],
+      "provisional": true,
+      "normStatus": "provisional"
+    },
+    {
+      "label": "loving",
+      "aliases": [
+        "fond"
+      ],
+      "family": "connection",
+      "valence": "positive",
+      "activation": "medium",
+      "neighbors": [
+        "connected",
+        "moved",
+        "trusting",
+        "affectionate"
+      ],
+      "appraisalHints": [
+        "caring deeply about someone"
+      ],
+      "contextTags": [
+        "relationships"
+      ],
+      "provisional": true,
+      "normStatus": "provisional"
+    },
+    {
+      "label": "connected",
+      "aliases": [
+        "close",
+        "belonging"
+      ],
+      "family": "connection",
+      "valence": "positive",
+      "activation": "medium",
+      "neighbors": [
+        "loving",
+        "trusting",
+        "grateful",
+        "affectionate"
+      ],
+      "appraisalHints": [
+        "a sense of not being alone",
+        "closeness to someone"
+      ],
+      "contextTags": [
+        "relationships",
+        "closeness"
+      ],
+      "provisional": true,
+      "normStatus": "provisional"
+    },
+    {
+      "label": "curious",
+      "aliases": [
+        "intrigued"
+      ],
+      "family": "interest",
+      "valence": "positive",
+      "activation": "medium",
+      "neighbors": [
+        "interested",
+        "inspired",
+        "surprised"
+      ],
+      "appraisalHints": [
+        "wanting to find out"
+      ],
+      "contextTags": [
+        "learning",
+        "new things"
+      ],
+      "provisional": true,
+      "normStatus": "provisional"
+    },
+    {
+      "label": "hopeful",
+      "family": "interest",
+      "valence": "positive",
+      "activation": "medium",
+      "neighbors": [
+        "eager",
+        "confident",
+        "giddy"
+      ],
+      "appraisalHints": [
+        "things could get better"
+      ],
+      "contextTags": [
+        "the future",
+        "uncertainty"
+      ],
+      "provisional": true,
+      "normStatus": "provisional"
+    },
+    {
+      "label": "confident",
+      "aliases": [
+        "sure of myself"
+      ],
+      "family": "pride",
+      "valence": "positive",
+      "activation": "medium",
+      "neighbors": [
+        "proud",
+        "hopeful",
+        "energized"
+      ],
+      "appraisalHints": [
+        "this seems doable"
+      ],
+      "contextTags": [
+        "achievement",
+        "beginnings"
+      ],
+      "provisional": true,
+      "normStatus": "provisional"
+    },
+    {
+      "label": "impressed",
+      "aliases": [
+        "wowed"
+      ],
+      "family": "self-transcendent",
+      "valence": "positive",
+      "activation": "medium",
+      "neighbors": [
+        "in awe",
+        "admiring",
+        "moved"
+      ],
+      "appraisalHints": [
+        "seeing something remarkable"
+      ],
+      "contextTags": [
+        "art",
+        "skill"
+      ],
+      "provisional": true,
+      "normStatus": "provisional"
+    },
+    {
+      "label": "in awe",
+      "aliases": [
+        "awestruck"
+      ],
+      "family": "self-transcendent",
+      "valence": "positive",
+      "activation": "medium",
+      "neighbors": [
+        "impressed",
+        "admiring",
+        "moved"
+      ],
+      "appraisalHints": [
+        "meeting something much bigger"
+      ],
+      "contextTags": [
+        "nature",
+        "scale",
+        "art"
+      ],
+      "provisional": true,
+      "contextDependent": true,
+      "normStatus": "provisional"
+    },
+    {
+      "label": "compassionate",
+      "aliases": [
+        "sympathetic"
+      ],
+      "family": "connection",
+      "valence": "positive",
+      "activation": "medium",
+      "neighbors": [
+        "affectionate",
+        "sad",
+        "loving"
+      ],
+      "appraisalHints": [
+        "another person’s pain feels close"
+      ],
+      "contextTags": [
+        "relationships",
+        "suffering"
+      ],
+      "provisional": true,
+      "contextDependent": true,
+      "normStatus": "provisional"
+    },
+    {
+      "label": "affectionate",
+      "aliases": [
+        "warm",
+        "tender"
+      ],
+      "family": "connection",
+      "valence": "positive",
+      "activation": "medium",
+      "neighbors": [
+        "loving",
+        "connected",
+        "compassionate"
+      ],
+      "appraisalHints": [
+        "wanting to be gentle with someone"
+      ],
+      "contextTags": [
+        "relationships",
+        "care"
+      ],
+      "provisional": true,
+      "normStatus": "provisional"
+    },
+    {
+      "label": "motivated",
+      "aliases": [
+        "driven"
+      ],
+      "family": "energy",
+      "valence": "positive",
+      "activation": "medium",
+      "neighbors": [
+        "energized",
+        "eager",
+        "confident"
+      ],
+      "appraisalHints": [
+        "wanting to give it a try"
+      ],
+      "contextTags": [
+        "beginnings",
+        "chances"
+      ],
+      "provisional": true,
+      "normStatus": "provisional"
+    },
+    {
+      "label": "absorbed",
+      "aliases": [
+        "in the zone",
+        "in flow"
+      ],
+      "family": "interest",
+      "valence": "positive",
+      "activation": "medium",
+      "neighbors": [
+        "interested",
+        "curious",
+        "motivated"
+      ],
+      "appraisalHints": [
+        "losing track of time in something"
+      ],
+      "contextTags": [
+        "play",
+        "creating"
+      ],
+      "provisional": true,
+      "normStatus": "provisional"
+    },
+    {
+      "label": "relaxed",
+      "aliases": [
+        "at ease"
+      ],
+      "family": "ease",
+      "valence": "positive",
+      "activation": "low",
+      "neighbors": [
+        "calm",
+        "relieved",
+        "trusting",
+        "supported"
+      ],
+      "appraisalHints": [
+        "guard can come down"
+      ],
+      "contextTags": [
+        "rest",
+        "safety"
+      ],
+      "provisional": true,
+      "normStatus": "provisional"
+    },
+    {
+      "label": "calm",
+      "aliases": [
+        "peaceful",
+        "at peace"
+      ],
+      "family": "ease",
+      "valence": "positive",
+      "activation": "low",
+      "neighbors": [
+        "relaxed",
+        "relieved",
+        "content",
+        "unhurried"
+      ],
+      "appraisalHints": [
+        "no need to hurry"
+      ],
+      "contextTags": [
+        "rest"
+      ],
+      "provisional": true,
+      "normStatus": "provisional"
+    },
+    {
+      "label": "relieved",
+      "aliases": [
+        "breathing easier"
+      ],
+      "family": "relief",
+      "valence": "positive",
+      "activation": "low",
+      "neighbors": [
+        "calm",
+        "relaxed",
+        "satisfied",
+        "unburdened"
+      ],
+      "appraisalHints": [
+        "a worry has passed"
+      ],
+      "contextTags": [
+        "resolution",
+        "safety"
+      ],
+      "provisional": true,
+      "normStatus": "provisional"
+    },
+    {
+      "label": "satisfied",
+      "aliases": [
+        "pleased"
+      ],
+      "family": "pride",
+      "valence": "positive",
+      "activation": "low",
+      "neighbors": [
+        "proud",
+        "calm",
+        "grateful",
+        "fulfilled",
+        "content"
+      ],
+      "appraisalHints": [
+        "this is good enough"
+      ],
+      "contextTags": [
+        "outcomes",
+        "everyday life"
+      ],
+      "provisional": true,
+      "normStatus": "provisional"
+    },
+    {
+      "label": "content",
+      "family": "ease",
+      "valence": "positive",
+      "activation": "low",
+      "neighbors": [
+        "calm",
+        "satisfied",
+        "fulfilled",
+        "relaxed"
+      ],
+      "appraisalHints": [
+        "nothing more needed right now"
+      ],
+      "contextTags": [
+        "everyday life",
+        "rest"
+      ],
+      "provisional": true,
+      "normStatus": "provisional"
+    },
+    {
+      "label": "trusting",
+      "aliases": [
+        "trust"
+      ],
+      "family": "connection",
+      "valence": "positive",
+      "activation": "low",
+      "neighbors": [
+        "connected",
+        "relaxed",
+        "loving",
+        "admiring",
+        "supported"
+      ],
+      "appraisalHints": [
+        "someone can be relied on"
+      ],
+      "contextTags": [
+        "relationships",
+        "safety"
+      ],
+      "provisional": true,
+      "normStatus": "provisional"
+    },
+    {
+      "label": "admiring",
+      "aliases": [
+        "respect",
+        "looking up to someone"
+      ],
+      "family": "self-transcendent",
+      "valence": "positive",
+      "activation": "low",
+      "neighbors": [
+        "impressed",
+        "in awe",
+        "trusting"
+      ],
+      "appraisalHints": [
+        "holding someone’s ways in high regard"
+      ],
+      "contextTags": [
+        "relationships",
+        "values"
+      ],
+      "provisional": true,
+      "normStatus": "provisional"
+    },
+    {
+      "label": "fulfilled",
+      "family": "ease",
+      "valence": "positive",
+      "activation": "low",
+      "neighbors": [
+        "satisfied",
+        "calm",
+        "grateful",
+        "content"
+      ],
+      "appraisalHints": [
+        "a sense of nothing missing"
+      ],
+      "contextTags": [
+        "everyday life",
+        "recharging"
+      ],
+      "provisional": true,
+      "normStatus": "provisional"
+    },
+    {
+      "label": "unhurried",
+      "aliases": [
+        "leisurely",
+        "laid-back"
+      ],
+      "family": "ease",
+      "valence": "positive",
+      "activation": "low",
+      "neighbors": [
+        "calm",
+        "relaxed",
+        "content"
+      ],
+      "appraisalHints": [
+        "room to take things slowly"
+      ],
+      "contextTags": [
+        "rest",
+        "time"
+      ],
+      "provisional": true,
+      "normStatus": "provisional"
+    },
+    {
+      "label": "refreshed",
+      "aliases": [
+        "recharged"
+      ],
+      "family": "ease",
+      "valence": "positive",
+      "activation": "low",
+      "neighbors": [
+        "relaxed",
+        "relieved",
+        "energized"
+      ],
+      "appraisalHints": [
+        "lighter in body and mind after rest"
+      ],
+      "contextTags": [
+        "rest",
+        "recharging"
+      ],
+      "provisional": true,
+      "normStatus": "provisional"
+    },
+    {
+      "label": "unburdened",
+      "aliases": [
+        "lighter"
+      ],
+      "family": "relief",
+      "valence": "positive",
+      "activation": "low",
+      "neighbors": [
+        "relieved",
+        "refreshed",
+        "unhurried"
+      ],
+      "appraisalHints": [
+        "having set down something heavy"
+      ],
+      "contextTags": [
+        "endings",
+        "resolution"
+      ],
+      "provisional": true,
+      "normStatus": "provisional"
+    },
+    {
+      "label": "supported",
+      "aliases": [
+        "secure",
+        "backed up"
+      ],
+      "family": "connection",
+      "valence": "positive",
+      "activation": "low",
+      "neighbors": [
+        "trusting",
+        "relaxed",
+        "connected"
+      ],
+      "appraisalHints": [
+        "having someone to lean on"
+      ],
+      "contextTags": [
+        "relationships",
+        "safety"
+      ],
+      "provisional": true,
+      "normStatus": "provisional"
+    },
+    {
+      "label": "zoned out",
+      "aliases": [
+        "spaced out",
+        "blank"
+      ],
+      "family": "confusion",
+      "valence": "neutral",
+      "activation": "low",
+      "neighbors": [
+        "confused",
+        "drained",
+        "calm",
+        "bored"
+      ],
+      "appraisalHints": [
+        "thoughts seem to have paused"
+      ],
+      "contextTags": [
+        "rest",
+        "everyday life"
+      ],
+      "provisional": true,
+      "contextDependent": true,
+      "normStatus": "provisional"
+    }
+  ]
+}

@@ -49,6 +49,7 @@ export const en: Messages = {
     skipToContent: "Skip to content",
     siteNav: "Homepage menu",
     owner: "Eunchan Joe",
+    otherLanguage: "한국어",
   },
   common: {
     appName: "Emotion Observatory",
@@ -56,6 +57,7 @@ export const en: Messages = {
     skip: "Skip",
     stop: "Stop",
     stepBack: "← Back one step",
+    stepBackShort: "← Back",
     progress: "Step {step}",
     unsure: "Not sure",
     notChosen: "Nothing chosen",
@@ -64,6 +66,7 @@ export const en: Messages = {
     ownWordsPlaceholder: "In my own words",
     provisionalNote: "A provisional set of words · Only what you choose is recorded",
     helpLink: "Where to get help",
+    helpShort: "Help",
     close: "Close",
     saveFailed: "This browser is not saving the record. Its storage may be full, or the browser may be blocking it. You can go on, but closing this screen will lose this record. Exporting old records to a file and deleting them on the records screen frees space.",
     quoted: "“{value}”",

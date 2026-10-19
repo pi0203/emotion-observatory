@@ -1,0 +1,69 @@
+{
+  "note": "DRAFT, not yet reviewed by the owner: do not publish before review (docs/I18N_PLAN.md §4). Sets for practicing the differences between similar words inside an example situation. They do not record the user’s actual events or current feelings. They do not teach definitions, and there is no right answer. Written for English rather than translated from the Korean sets; the set and appraisal ids are kept so code and records refer to them the same way.",
+  "guardrail": "There is no mapping between the appraisals chosen and the words. Whichever ones are chosen, the text that follows is the same and only quotes the sentences the user picked. The wording itself matters even more: an appraisal describes what was observed in the situation, not how the emotion feels. No appraisal may read like the definition of one word, and each one has to fit several words. That is why several can be picked and the user can write their own.",
+  "fieldNotes": {
+    "words": "The words compared in this set. None of them is the right answer, and they appear in the same order and the same form whichever appraisal was picked.",
+    "appraisals": "Observations of what was there in the situation. Asked before any word, and several can be picked.",
+    "note": "A short note shown only after choosing. It is the same whichever appraisal was picked."
+  },
+  "sets": [
+    {
+      "id": "friction-unfair-stuck",
+      "words": [
+        "annoyed",
+        "frustrated",
+        "wronged"
+      ],
+      "event": "Someone kept ignoring a request I had made.",
+      "question": "What might have been going on in this example situation?",
+      "appraisals": [
+        {
+          "id": "repeated",
+          "text": "I had to say the same thing several times."
+        },
+        {
+          "id": "unheard",
+          "text": "What I said went by as if I had never said it."
+        },
+        {
+          "id": "open-ended",
+          "text": "There was no telling how long it would go on."
+        },
+        {
+          "id": "one-sided",
+          "text": "It seemed like I was the only one making an effort."
+        }
+      ],
+      "note": "Words like “annoyed,” “frustrated,” and “wronged” can each come close to these things in different ways. The same situation differs from person to person, and several words can fit at once."
+    },
+    {
+      "id": "calm-relief-content",
+      "words": [
+        "calm",
+        "relieved",
+        "content"
+      ],
+      "event": "I had finished what I was doing and was sitting for a while, doing nothing.",
+      "question": "What might have been going on in this example situation?",
+      "appraisals": [
+        {
+          "id": "eased",
+          "text": "Something that had been on my mind eased a little."
+        },
+        {
+          "id": "enough",
+          "text": "It felt like I had done as much as I meant to."
+        },
+        {
+          "id": "nothing-urgent",
+          "text": "There was nothing I had to hurry to do."
+        },
+        {
+          "id": "quiet",
+          "text": "It was quiet around me, and nothing interrupted."
+        }
+      ],
+      "note": "Words like “calm,” “relieved,” and “content” can each come close to these things in different ways. The same moment differs from person to person, and several words can fit at once."
+    }
+  ]
+}

@@ -45,7 +45,8 @@ describe("English messages (stage C draft)", () => {
   it("is written in English, without em dashes or reassuring promises", () => {
     for (const [key, value] of enMessages) {
       const text = typeof value === "string" ? value : value.join(" ");
-      expect(text, key).not.toMatch(HANGUL);
+      // the one exception: the switch names Korean in Korean, as language menus do (it carries lang="ko")
+      if (key !== "shell.otherLanguage") expect(text, key).not.toMatch(HANGUL);
       expect(text, key).not.toMatch(/—/);
       expect(text, key).not.toMatch(/\bsafe(ly)?\b|\bguarantee(s|d)?\b(?! health)|\bcure\b|\bimprove(s|d)?\b|\bproven\b/i);
     }
