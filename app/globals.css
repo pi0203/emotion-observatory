@@ -272,6 +272,7 @@ p, .lede, .hint, .step-note, .small-note, .summary-footnote { text-wrap: pretty;
 .draft-confirm .synthesis-question { margin-top: 0; outline: none; }
 .draft-confirm .small-note { margin: 8px 0 18px; }
 .about-cite a { color: var(--accent-ink); text-underline-offset: .2em; }
+.about-checked { margin-top: 4px; font: 400 var(--t-aside) var(--font-sans) !important; font-variant-numeric: tabular-nums; }
 .help-reveal { margin-top: 32px; }
 .help-reveal .crisis-card { margin: 0 0 16px; }
 

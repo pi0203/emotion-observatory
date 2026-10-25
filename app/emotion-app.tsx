@@ -22,6 +22,7 @@ import { englishAvailable } from "../lib/i18n/availability";
 import { I18nProvider, renderRich, useT } from "../lib/i18n/react";
 import type { Translate } from "../lib/i18n/t";
 import { toneOf } from "../lib/tones";
+import { enOnly } from "../lib/i18n/messages.en";
 
 // Every read and write of a record goes through the one storage seam. It is
 // synchronous, like the localStorage calls it wraps, so no call site changes.
@@ -306,6 +307,21 @@ const REFERENCE_DOI: Record<(typeof REFERENCES)[number], string> = {
   dejonckheere: "10.1038/s41562-019-0555-0",
   thompson: "10.1111/spc3.12584",
 };
+/**
+ * The day each study was last looked at again: publication status and any correction or
+ * retraction notice on Crossref (docs/KNOWLEDGE_DURABILITY.md, owner approval 2026-10-25).
+ * Update the date only after actually re-checking; log what changed in docs/EVIDENCE_CHAIN.md.
+ */
+const REFERENCE_CHECKED_ON: Record<(typeof REFERENCES)[number], string> = {
+  vedernikova: "2026-10-25",
+  widdershoven: "2026-10-25",
+  hoemann: "2026-10-25",
+  fugate: "2026-10-25",
+  dejonckheere: "2026-10-25",
+  thompson: "2026-10-25",
+};
+const dayParts = (iso: string) => { const [year, month, day] = iso.split("-"); return { year, month, day }; };
+const LAST_CHECKED = Object.values(REFERENCE_CHECKED_ON).sort().at(-1) ?? "";
 
 /**
  * Below the "why" folds and above the crisis card: what the tool is, the studies
@@ -331,10 +347,12 @@ function AboutTool() {
     <details className="about-fold">
       <summary>{t("about.refsSummary")}</summary>
       <p className="about-intro">{t("about.refsIntro")}</p>
+      <p className="about-intro about-checked-all">{t("about.refsChecked", dayParts(LAST_CHECKED))}</p>
       <ol className="about-list">
         {REFERENCES.map((id, index) => <li key={id} style={{ "--rise-order": index } as CSSProperties}>
           <p className="about-cite">{t(`about.refs.${id}.cite`)} <a href={`https://doi.org/${REFERENCE_DOI[id]}`} target="_blank" rel="noopener noreferrer">{t("about.doiLink")}</a></p>
           <p className="about-kind">{t(`about.refs.${id}.kind`)}</p>
+          <p className="about-checked">{t("about.checkedOn", dayParts(REFERENCE_CHECKED_ON[id]))}</p>
           <p><strong>{t("about.found")}</strong> {t(`about.refs.${id}.found`)}</p>
           <p><strong>{t("about.limit")}</strong> {t(`about.refs.${id}.limit`)}</p>
         </li>)}
@@ -362,6 +380,8 @@ function CrisisCard() {
   return (
     <aside className="crisis-card" aria-label={t("crisis.title")}>
       <p className="crisis-emergency">{renderRich(t("crisis.emergency"))}</p>
+      {/* English only: the card lists Korean numbers, and an English reader may be elsewhere */}
+      {t.locale === "en" && <p className="crisis-emergency crisis-abroad">{enOnly.outsideKorea}</p>}
       <p className="crisis-lead">{t("crisis.intro")}</p>
       <div className="crisis-links">
         <a href={t("crisis.href109")} className="crisis-link" {...external(t("crisis.href109"))}>
