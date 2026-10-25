@@ -1,0 +1,310 @@
+[
+ {
+  "key": "landing.badgesLabel",
+  "english": "Observation features",
+  "readingA": "관찰 기능 (functions the tool offers)",
+  "readingB": "관찰의 특징 (characteristics of this observation: length, storage, scope)",
+  "note": "Badges describe properties (time, storage, non-medical), so 'features' reads more like 특징 than 기능; translated as 기능."
+ },
+ {
+  "key": "affectPad.bottom / affectBands.quickActivation.0",
+  "english": "Low, settled",
+  "readingA": "낮고 차분함 (calm, stable; neutral-to-positive)",
+  "readingB": "낮고 가라앉음 (sunk, subdued; leans negative/low mood)",
+  "note": "'settled' could be calm or sunk-down; the Korean word chosen changes the emotional tone of the low-arousal pole."
+ },
+ {
+  "key": "contextSource.anticipation",
+  "english": "Something expected",
+  "readingA": "앞으로 일어날 것으로 예상되는 일 (anticipated future event)",
+  "readingB": "예상했던/예상대로인 일 (something one expected, not a surprise)",
+  "note": "Key name suggests A, but the English alone allows B."
+ },
+ {
+  "key": "entry.resumeBody",
+  "english": "Picks up where you left off, from this device.",
+  "readingA": "이 기기에 저장된 기록으로 이어서 함 (data is stored on this device)",
+  "readingB": "이 기기에서 멈춘 곳부터 (you left off on this device)",
+  "note": "'from this device' attachment is unclear; neither says plainly that other devices will not have it."
+ },
+ {
+  "key": "entryMini.lede",
+  "english": "And do you think thinking about this would help right now?",
+  "readingA": "이 경험/감정에 대해 생각해 보는 것",
+  "readingB": "이 확인(몸 상태)에 대해 생각해 보는 것",
+  "note": "'this' has no clear antecedent after a question about the body."
+ },
+ {
+  "key": "words.meaningLabel",
+  "english": "What does “{label}” hold for you right now?",
+  "readingA": "그 단어가 지금 당신에게 어떤 의미인지",
+  "readingB": "그 감정 안에 무엇이 들어 있는지(내용, 이유)",
+  "note": "'hold for you' is idiomatic; guessed as 무엇이 담겨 있나요."
+ },
+ {
+  "key": "coach.escapes.several",
+  "english": "Several",
+  "readingA": "여러 개가 해당됨 (several apply)",
+  "readingB": "여러 개를 고르겠음 / 여러 감정이 섞임",
+  "note": "Bare 'Several' as an escape option; unclear what it records."
+ },
+ {
+  "key": "about.faq.storage.a",
+  "english": "Only in the browser you are using. What you write is not sent to a server. Clearing your browser data removes it, and the storage is not encrypted. From past entries you can export them to a file (locked with a passphrase if you like) or delete them all.",
+  "readingA": "‘지난 기록’ 화면에서 (screen name)",
+  "readingB": "예전 기록 중에서 (older entries only)",
+  "note": "'From past entries you can export them' : 'them' = all entries or only past ones."
+ },
+ {
+  "key": "about.refs.dejonckheere.limit",
+  "english": "The data come from one point in time, so they say nothing about cause and effect. It means any effect of this app has to be looked at alongside average mood.",
+  "readingA": "'It' = the finding (overlap with average mood)",
+  "readingB": "'It' = the limitation (single time point)",
+  "note": "Second sentence logically follows the 'found' text, but sits after the cross-sectional limit."
+ },
+ {
+  "key": "about.refs.thompson.limit",
+  "english": "This app treats picking several words together as natural. That is why the research measures cannot be carried over to this app as they are.",
+  "readingA": "연구의 측정 방법으로 이 앱 사용자를 평가할 수 없음",
+  "readingB": "연구 결과를 이 앱에 그대로 적용할 수 없음",
+  "note": "'research measures ... carried over' could mean the instruments or the findings."
+ },
+ {
+  "key": "whyWords.shaped",
+  "english": "How we put emotions into words is shaped not only by what we feel in the body and by the situation, but also by our history, our language, our relationships and our culture. The same experience can be divided and named a little differently by different people and communities.",
+  "readingA": "우리 각자의 살아온 이력 (personal history)",
+  "readingB": "사회/집단의 역사 (collective history)",
+  "note": "'our history' translated literally as 역사."
+ },
+ {
+  "key": "whyThis.distinguish",
+  "english": "Sometimes, though, telling apart experiences that seem alike can help you choose what you need right now. Feeling stuck can call for rest one time, and for sorting out what you want to say another time.",
+  "readingA": "답답함 (stifled, frustrated)",
+  "readingB": "막막함/정체됨 (unable to move forward)",
+  "note": "'Feeling stuck' rendered as 꽉 막힌 느낌; the Korean emotion word choice was a guess."
+ },
+ {
+  "key": "meta.description / about.what",
+  "english": "A small self-observation tool for slowly telling apart your body, the situation, and what it meant.",
+  "readingA": "그것이 나에게 무엇을 의미했는지 (personal meaning/appraisal)",
+  "readingB": "그 상황이 무엇을 뜻했는지 (what the situation signified)",
+  "note": "'what it meant' and 'what mattered' are vague about the referent; translated literally."
+ },
+ {
+  "key": "common.provisionalNote",
+  "english": "A provisional set of words · Only what you choose is recorded",
+  "readingA": "잠정적인(확정되지 않은 후보) 단어 모음",
+  "readingB": "임시(나중에 바뀔/보완될) 단어 목록",
+  "note": "'provisional' could mean tentative suggestions or a list still being revised."
+ },
+ {
+  "key": "coach.footnoteUnknown / coach.observationsUnknown / coach.expressionsUnknown",
+  "english": "We cannot tell whether this entry was saved as example practice. It does not change the words you picked earlier and is not used in your summary.",
+  "readingA": "예전 형식으로 저장된 기록이라 연습 기록인지 구분 불가",
+  "readingB": "현재 기록의 저장 여부 자체가 불확실",
+  "note": "Context guessed; 'this step' in the Unknown labels also has no clear referent."
+ },
+ {
+  "key": "common.saveFailed",
+  "english": "This browser is not saving the record. Its storage may be full, or the browser may be blocking it. You can go on, but closing this screen will lose this record. Exporting old records to a file and deleting them on the records screen frees space.",
+  "readingA": "기록 화면에서 내보내고 삭제 (both on records screen)",
+  "readingB": "내보내기는 어디서든, 삭제는 기록 화면에서",
+  "note": "Scope of 'on the records screen' is minor-ambiguous."
+ },
+ {
+  "key": "coach.ownWordPlaceholder",
+  "english": "e.g. Like the air going out of it",
+  "readingA": "김빠진/맥이 빠지는 느낌 (idiomatic deflation)",
+  "readingB": "literal air leaking out",
+  "note": "'it' has no referent; rendered literally as 바람이 빠져나가는 것처럼."
+ },
+ {
+  "key": "common.stop",
+  "english": "Stop",
+  "readingA": "그만하기 (end the session)",
+  "readingB": "멈추기/일시정지 (pause, can resume)",
+  "note": "Whether Stop ends or pauses is not stated; translated as 그만하기."
+ },
+ {
+  "key": "shell.owner",
+  "english": "Eunchan Joe",
+  "readingA": "조은찬 (Korean order, surname Joe = 조)",
+  "readingB": "은찬 조 (Western order)",
+  "note": "Name back-rendered as 조은찬; spelling 'Joe' assumed to be 조."
+ },
+ {
+  "key": "quickSummary.title",
+  "english": "This is as far as you went.",
+  "readingA": "여기까지 살펴보셨어요 (진행 범위를 중립적으로 요약)",
+  "readingB": "여기까지밖에 못 갔어요 (중간에 멈췄다는 뉘앙스)",
+  "note": "'as far as you went' can sound like falling short; same string at summary.title."
+ },
+ {
+  "key": "summary.title",
+  "english": "This is as far as you went.",
+  "readingA": "이번에 해 본 범위 요약",
+  "readingB": "더 가지 않고 멈춘 지점",
+  "note": "Same issue as quickSummary.title."
+ },
+ {
+  "key": "quickSummary.contrast",
+  "english": "Difference in the situation",
+  "readingA": "상황에 따라 단어/감정이 어떻게 달라지는지(상황별 차이)",
+  "readingB": "상황 자체에 생긴 변화",
+  "note": "Section label; unclear what is being contrasted. Guessed literal '상황에서의 차이'."
+ },
+ {
+  "key": "quickSummary.deep",
+  "english": "Take it more slowly",
+  "readingA": "더 깊이(자세한 버전으로) 살펴보기",
+  "readingB": "속도를 늦추기",
+  "note": "Also need.routeDeep. Reads as a pacing instruction, though it likely routes to a deeper flow."
+ },
+ {
+  "key": "emotion.escapes.several",
+  "english": "Several",
+  "readingA": "여러 단어가 해당됨",
+  "readingB": "여러 감정이 섞여 있음 / 여러 개 고르기",
+  "note": "Bare word as an escape option; meaning only clear from context."
+ },
+ {
+  "key": "affect.hintFresh",
+  "english": "Tap once on the spot closest to right now. If you are not sure, you can skip this.",
+  "readingA": "지금 느낌과 가장 가까운 지점",
+  "readingB": "현재 시점에 가까운 지점",
+  "note": "'closest to right now' omits 'how you feel'."
+ },
+ {
+  "key": "context.basis",
+  "english": "Just the one thing that came to mind",
+  "readingA": "기준 라벨: 떠오른 한 가지에 대해서만",
+  "readingB": "지시: 한 가지만 적으세요",
+  "note": "Fragment; could be a scope label or an instruction."
+ },
+ {
+  "key": "summary.footnote",
+  "english": "This did not find the right answer about your emotion. It left a few clues for putting the experience into words.",
+  "readingA": "정답을 찾으려는 도구가 아니라는 안내",
+  "readingB": "정답을 찾는 데 실패했다는 결과 통보",
+  "note": "'This did not find the right answer' can read as a failure."
+ },
+ {
+  "key": "synthesisSection.keep",
+  "english": "Keep this in the entry",
+  "readingA": "이 요약을 기록에 저장하기",
+  "readingB": "고치지 않고 그대로 두기",
+  "note": "Unclear whether it saves or just declines the rewrite."
+ },
+ {
+  "key": "synthesis.observed.emotion",
+  "english": "For words close to what you are experiencing, you chose {list}.",
+  "readingA": "기록 당시 겪던 것과 가까운 단어",
+  "readingB": "지금 이 순간 겪는 것과 가까운 단어",
+  "note": "Present tense 'are experiencing' inside a past-tense recap."
+ },
+ {
+  "key": "synthesis.observed.declined.unsure",
+  "english": "Among the words offered, you marked that you were not sure.",
+  "readingA": "제시된 단어 중 고르기 어려웠다",
+  "readingB": "단어들 중 '잘 모르겠음'을 골랐다",
+  "note": "'Among the words offered, you marked that you were not sure' is slightly awkward."
+ },
+ {
+  "key": "synthesis.meaning.concernOverlap",
+  "english": "The words you chose and what you said mattered both point toward “{tags}.” You touched the same place twice.",
+  "readingA": "두 응답이 같은 지점으로 모인다(수렴)",
+  "readingB": "같은 것을 반복했다(중복)",
+  "note": "Metaphor 'touched the same place twice'; rendered '두 번 짚은 셈'."
+ },
+ {
+  "key": "synthesis.unknown.contextDependent",
+  "english": "{list} can be experienced differently depending on the situation. This entry alone does not settle which way it leans now.",
+  "readingA": "감정이 긍정/부정 중 어느 쪽인지",
+  "readingB": "단어 중 어느 쪽 의미에 가까운지",
+  "note": "'which way it leans' has unclear 'it' and axis."
+ },
+ {
+  "key": "need.routeNone",
+  "english": "There is no situation comparison for the words you picked yet. You can try another direction.",
+  "readingA": "고른 단어들의 상황별 비교 자료가 아직 없음",
+  "readingB": "상황끼리 비교할 내용이 없음",
+  "note": "'situation comparison' is opaque; I had to guess."
+ },
+ {
+  "key": "need.varies",
+  "english": "Even with the same experience, what you need can change from time to time. If the experience is calm or full, staying with it may suit you better than solving something.",
+  "readingA": "full = 충만한/만족스러운",
+  "readingB": "full = 꽉 찬/벅찬(압도된)",
+  "note": "'calm or full' is ambiguous; I chose 충만하다."
+ },
+ {
+  "key": "talkToSomeone.saved",
+  "english": "Kept with this record.",
+  "readingA": "답변이 이 기록에 저장됨",
+  "readingB": "이 기록을 보관함",
+  "note": "Subject omitted; minor."
+ },
+ {
+  "key": "outcome.usefulnessQuestion",
+  "english": "Was this entry helpful just now?",
+  "readingA": "방금 기록한 과정이 도움이 됐나",
+  "readingB": "이 기록(결과물)이 도움이 됐나",
+  "note": "'entry' = act vs. saved record."
+ },
+ {
+  "key": "recordTransfer.exportScope",
+  "english": "Exports {count} finished and stopped entries. Unfinished entries are not included.",
+  "readingA": "완료+중단 기록 합계 {count}개",
+  "readingB": "각각 {count}개",
+  "note": "Also the 'stopped' vs 'unfinished' distinction is not explained to users."
+ },
+ {
+  "key": "recordTransfer.errors.not-json",
+  "english": "The file could not be read. It may be damaged, or it is not a JSON file. Nothing was saved.",
+  "readingA": "손상되었거나 JSON이 아닐 수 있음(둘 다 추정)",
+  "readingB": "손상 가능성 + JSON 아님 단정",
+  "note": "Mixed modality 'may be damaged, or it is not'; Korean keeps the oddness."
+ },
+ {
+  "key": "recordTransfer.lock.warning",
+  "english": "If you forget the passphrase, no one can open this file, the maker included. The passphrase is not stored anywhere.",
+  "readingA": "앱 제작자도 열 수 없음",
+  "readingB": "파일을 만든 사용자 본인도 열 수 없음",
+  "note": "'the maker' is unclear; rendered '만든 사람'."
+ },
+ {
+  "key": "recordTransfer.lock.exportLocked",
+  "english": "Export locked",
+  "readingA": "버튼: 잠가서 내보내기",
+  "readingB": "상태: 내보내기가 잠김(비활성)",
+  "note": "Could read as a status message."
+ },
+ {
+  "key": "recordDetail.depth",
+  "english": "How far you went",
+  "readingA": "빠르게/자세히 중 어느 단계까지 했는지",
+  "readingB": "얼마나 진척됐는지",
+  "note": "Label; guessed it refers to quick/deep depth."
+ },
+ {
+  "key": "recordDetail.personalMeaning",
+  "english": "“{label}” meant",
+  "readingA": "그 단어가 나에게 뜻한 것",
+  "readingB": "그 단어의 사전적 의미",
+  "note": "Truncated label “{label}” meant; the object is missing."
+ },
+ {
+  "key": "recordDetail.followUpCaveat",
+  "english": "This is not an evaluation. “No” is a normal answer too. Your answer is not used to recommend anything or to give a score.",
+  "readingA": "normal = 흔한/평범한 답",
+  "readingB": "normal = 괜찮은/정상적인 답",
+  "note": "Rendered '평범한 답'."
+ },
+ {
+  "key": "worsened.eyebrow",
+  "english": "That is enough for now",
+  "readingA": "지금은 이걸로 충분해요 (안심)",
+  "readingB": "이제 그만하세요 (제지)",
+  "note": "'That is enough' can sound curt in English."
+ }
+]

@@ -1,0 +1,2600 @@
+[
+ {
+  "key": "meta.title",
+  "ko": "감정 관찰실",
+  "en": "Emotion Observatory",
+  "bt": "감정 관측소"
+ },
+ {
+  "key": "meta.description",
+  "ko": "몸, 상황, 의미를 천천히 구별해보는 자기관찰 도구",
+  "en": "A small self-observation tool for slowly telling apart your body, the situation, and what it meant.",
+  "bt": "몸과 상황, 그리고 그것이 무엇을 의미했는지를 천천히 구분해 보는 작은 자기 관찰 도구."
+ },
+ {
+  "key": "meta.shareImageAlt",
+  "ko": "감정 관찰실 — 지금의 경험을 조금 더 알아보기. 감정을 맞히는 검사가 아닌 자기관찰 도구.",
+  "en": "Emotion Observatory: a closer look at what you are experiencing now. A self-observation tool, not a test that names your emotion.",
+  "bt": "감정 관측소: 지금 겪고 있는 것을 좀 더 가까이 들여다보기. 감정에 이름을 붙여 주는 테스트가 아니라 자기 관찰 도구입니다."
+ },
+ {
+  "key": "shell.skipToContent",
+  "ko": "본문으로 건너뛰기",
+  "en": "Skip to content",
+  "bt": "본문으로 건너뛰기"
+ },
+ {
+  "key": "shell.siteNav",
+  "ko": "홈페이지 메뉴",
+  "en": "Homepage menu",
+  "bt": "홈페이지 메뉴"
+ },
+ {
+  "key": "shell.owner",
+  "ko": "조은찬",
+  "en": "Eunchan Joe",
+  "bt": "조은찬"
+ },
+ {
+  "key": "common.appName",
+  "ko": "감정 관찰실",
+  "en": "Emotion Observatory",
+  "bt": "감정 관측소"
+ },
+ {
+  "key": "common.next",
+  "ko": "다음",
+  "en": "Next",
+  "bt": "다음"
+ },
+ {
+  "key": "common.skip",
+  "ko": "건너뛰기",
+  "en": "Skip",
+  "bt": "건너뛰기"
+ },
+ {
+  "key": "common.stop",
+  "ko": "그만하기",
+  "en": "Stop",
+  "bt": "그만하기"
+ },
+ {
+  "key": "common.stepBack",
+  "ko": "← 한 단계 뒤로",
+  "en": "← Back one step",
+  "bt": "← 한 단계 뒤로"
+ },
+ {
+  "key": "common.stepBackShort",
+  "ko": "← 뒤로",
+  "en": "← Back",
+  "bt": "← 뒤로"
+ },
+ {
+  "key": "common.progress",
+  "ko": "진행 {step}",
+  "en": "Step {step}",
+  "bt": "{step}단계"
+ },
+ {
+  "key": "common.unsure",
+  "ko": "잘 모르겠음",
+  "en": "Not sure",
+  "bt": "잘 모르겠어요"
+ },
+ {
+  "key": "common.notChosen",
+  "ko": "고르지 않음",
+  "en": "Nothing chosen",
+  "bt": "고른 것 없음"
+ },
+ {
+  "key": "common.notRecorded",
+  "ko": "기록하지 않음",
+  "en": "Not recorded",
+  "bt": "기록되지 않음"
+ },
+ {
+  "key": "common.backToStart",
+  "ko": "처음으로 돌아가기",
+  "en": "Back to the start",
+  "bt": "처음으로 돌아가기"
+ },
+ {
+  "key": "common.ownWordsPlaceholder",
+  "ko": "내 말로 적기",
+  "en": "In my own words",
+  "bt": "내 말로"
+ },
+ {
+  "key": "common.provisionalNote",
+  "ko": "임시 단어 모음 · 스스로 고른 표현만 기록됩니다",
+  "en": "A provisional set of words · Only what you choose is recorded",
+  "bt": "잠정적인 단어 모음 · 고른 것만 기록됩니다"
+ },
+ {
+  "key": "common.helpLink",
+  "ko": "도움받을 수 있는 곳",
+  "en": "Where to get help",
+  "bt": "도움받을 수 있는 곳"
+ },
+ {
+  "key": "common.helpShort",
+  "ko": "도움",
+  "en": "Help",
+  "bt": "도움"
+ },
+ {
+  "key": "common.close",
+  "ko": "닫기",
+  "en": "Close",
+  "bt": "닫기"
+ },
+ {
+  "key": "common.saveFailed",
+  "ko": "이 브라우저에 기록을 저장하지 못하고 있습니다. 저장 공간이 가득 찼거나 브라우저가 저장을 막고 있을 수 있습니다. 계속할 수는 있지만, 이 화면을 닫으면 지금 기록은 남지 않습니다. 지난 기록 화면에서 오래된 기록을 파일로 내보내고 지우면 공간이 생깁니다.",
+  "en": "This browser is not saving the record. Its storage may be full, or the browser may be blocking it. You can go on, but closing this screen will lose this record. Exporting old records to a file and deleting them on the records screen frees space.",
+  "bt": "이 브라우저에 기록이 저장되지 않고 있어요. 저장 공간이 가득 찼거나 브라우저가 저장을 막고 있을 수 있어요. 계속 진행할 수는 있지만, 이 화면을 닫으면 이 기록은 사라져요. 기록 화면에서 예전 기록을 파일로 내보낸 뒤 삭제하면 공간이 생겨요."
+ },
+ {
+  "key": "common.quoted",
+  "ko": "“{value}”",
+  "en": "“{value}”",
+  "bt": "“{value}”"
+ },
+ {
+  "key": "landing.title",
+  "ko": "지금의 경험을\n조금 더 알아보기",
+  "en": "Take a closer look\nat what you are experiencing",
+  "bt": "겪고 있는 것을\n좀 더 가까이 들여다보세요"
+ },
+ {
+  "key": "landing.lede",
+  "ko": "감정을 맞히는 검사가 아닙니다.\n빠르게 살펴보거나, 천천히 구별해볼 수 있습니다.",
+  "en": "This is not a test that guesses your emotions.\nYou can take a quick look, or take your time telling things apart.",
+  "bt": "감정을 알아맞히는 테스트가 아니에요.\n빠르게 살펴볼 수도 있고, 시간을 들여 하나하나 구분해 볼 수도 있어요."
+ },
+ {
+  "key": "landing.badgeQuick",
+  "ko": "빠르게 · 2단계 · 10~30초쯤",
+  "en": "Quick · 2 steps · about 10 to 30 seconds",
+  "bt": "빠르게 · 2단계 · 약 10~30초"
+ },
+ {
+  "key": "landing.badgeDeep",
+  "ko": "천천히 · 6단계 · 3~5분쯤",
+  "en": "Slow · 6 steps · about 3 to 5 minutes",
+  "bt": "천천히 · 6단계 · 약 3~5분"
+ },
+ {
+  "key": "landing.badgeLocal",
+  "ko": "이 브라우저에만 저장 · 암호화 안 됨",
+  "en": "Saved only in this browser · Not encrypted",
+  "bt": "이 브라우저에만 저장 · 암호화되지 않음"
+ },
+ {
+  "key": "landing.badgeBoundary",
+  "ko": "비의료 자기관찰",
+  "en": "Non-medical self-monitoring",
+  "bt": "비의료적 자기 모니터링"
+ },
+ {
+  "key": "landing.badgesLabel",
+  "ko": "관찰 방식과 특징",
+  "en": "Observation features",
+  "bt": "관찰 기능"
+ },
+ {
+  "key": "landing.quick",
+  "ko": "빠르게 살펴보기",
+  "en": "Take a quick look",
+  "bt": "빠르게 살펴보기"
+ },
+ {
+  "key": "landing.deep",
+  "ko": "조금 더 천천히 살펴보기",
+  "en": "Take it more slowly",
+  "bt": "좀 더 천천히 하기"
+ },
+ {
+  "key": "landing.resume",
+  "ko": "지난 기록 이어하기",
+  "en": "Continue an unfinished entry",
+  "bt": "마치지 않은 기록 이어서 하기"
+ },
+ {
+  "key": "landing.records",
+  "ko": "지난 기록 보기",
+  "en": "See past entries",
+  "bt": "지난 기록 보기"
+ },
+ {
+  "key": "landing.storageNote",
+  "ko": "기록은 이 브라우저에만 저장되고 암호화되지 않습니다. 같은 기기와 브라우저를 쓰는 사람은 볼 수 있으니 공용 기기에서는 주의해 주세요. 브라우저 데이터를 지우면 함께 사라집니다.",
+  "en": "Entries are saved only in this browser and are not encrypted. Anyone using the same device and browser can see them, so take care on a shared device. Clearing the browser’s data removes them too.",
+  "bt": "기록은 이 브라우저에만 저장되며 암호화되지 않아요. 같은 기기와 브라우저를 쓰는 사람은 누구나 볼 수 있으니, 공용 기기에서는 주의하세요. 브라우저 데이터를 지우면 기록도 함께 지워져요."
+ },
+ {
+  "key": "landing.storageManage",
+  "ko": "기록 보기·지우기",
+  "en": "See or delete entries",
+  "bt": "기록 보기 또는 삭제"
+ },
+ {
+  "key": "landing.draftConfirm.title",
+  "ko": "이어하던 기록이 있습니다",
+  "en": "You have an unfinished entry",
+  "bt": "마치지 않은 기록이 있어요"
+ },
+ {
+  "key": "landing.draftConfirm.body",
+  "ko": "새로 시작하면 이어하던 기록은 지워집니다. 이어서 하거나, 지우고 새로 시작하거나, 그대로 두고 돌아갈 수 있습니다.",
+  "en": "Starting again deletes the unfinished entry. You can continue it, delete it and start again, or leave it and go back.",
+  "bt": "새로 시작하면 마치지 않은 기록이 삭제돼요. 이어서 하거나, 삭제하고 새로 시작하거나, 그대로 두고 돌아갈 수 있어요."
+ },
+ {
+  "key": "landing.draftConfirm.resume",
+  "ko": "이어서 하기",
+  "en": "Continue it",
+  "bt": "이어서 하기"
+ },
+ {
+  "key": "landing.draftConfirm.discard",
+  "ko": "이어하던 기록을 지우고 새로 시작",
+  "en": "Delete it and start again",
+  "bt": "삭제하고 새로 시작하기"
+ },
+ {
+  "key": "landing.draftConfirm.cancel",
+  "ko": "취소",
+  "en": "Cancel",
+  "bt": "취소"
+ },
+ {
+  "key": "crisis.title",
+  "ko": "긴급 지원 및 위기 상담 안내",
+  "en": "Emergency and crisis support",
+  "bt": "응급 및 위기 지원"
+ },
+ {
+  "key": "crisis.emergency",
+  "ko": "몸을 다쳤거나 지금 당장 위험하다면 <b>119</b>(구급) 또는 <b>112</b>(경찰)에 바로 연락하세요.",
+  "en": "If you are hurt or in immediate danger, call <b>119</b> (ambulance) or <b>112</b> (police) right away.",
+  "bt": "다쳤거나 당장 위험한 상황이라면 바로 <b>119</b>(구급) 또는 <b>112</b>(경찰)에 전화하세요."
+ },
+ {
+  "key": "crisis.intro",
+  "ko": "이야기를 나눌 사람이 필요하다면, 24시간 열려 있는 상담 전화가 있습니다.",
+  "en": "If you need someone to talk to, there are counseling lines open 24 hours.",
+  "bt": "이야기 나눌 사람이 필요하다면, 24시간 운영하는 상담 전화가 있어요."
+ },
+ {
+  "key": "crisis.lifeline109",
+  "ko": "자살예방상담전화 (24시간)",
+  "en": "Suicide Prevention Counseling Line (24 hours)",
+  "bt": "자살예방 상담전화 (24시간)"
+ },
+ {
+  "key": "crisis.mental1577",
+  "ko": "정신건강위기상담전화 (24시간)",
+  "en": "Mental Health Crisis Counseling Line (24 hours)",
+  "bt": "정신건강 위기상담 전화 (24시간)"
+ },
+ {
+  "key": "crisis.youth1388",
+  "ko": "청소년상담전화 (9~24세)",
+  "en": "Youth Counseling Line (ages 9 to 24)",
+  "bt": "청소년 상담전화 (9~24세)"
+ },
+ {
+  "key": "about.title",
+  "ko": "이 도구에 대하여",
+  "en": "About this tool",
+  "bt": "이 도구에 대하여"
+ },
+ {
+  "key": "about.what",
+  "ko": "지금의 경험을 몸 · 상황 · 중요했던 것 · 표현으로 나누어 살펴보는 자기관찰 도구입니다. 빠르게 살펴보기는 화면을 한 번 누르고 가까운 말을 고르는 두 단계, 천천히 살펴보기는 몸에서 시작해 표현까지 가는 여섯 단계입니다.",
+  "en": "A self-observation tool for looking at what you are experiencing in parts: the body, the situation, what mattered, and the words for it. The quick look has two steps: tap once, then pick words that feel close. The slow look has six steps, from the body to the words.",
+  "bt": "지금 겪고 있는 것을 몸, 상황, 중요했던 것, 그리고 그것을 가리키는 말로 나누어 살펴보는 자기 관찰 도구입니다. 빠르게 보기는 두 단계로, 한 번 탭한 다음 가깝게 느껴지는 단어를 고릅니다. 천천히 보기는 몸에서 말까지 여섯 단계입니다."
+ },
+ {
+  "key": "about.not",
+  "ko": "의료 도구나 위기 상담 도구가 아니고, 감정에 점수를 매기거나 판정하지 않습니다. <b>감정 구별이나 정신건강을 나아지게 한다는 효과는 아직 검증되지 않았습니다.</b>",
+  "en": "It is not a medical tool or a crisis service, and it does not score or judge emotions. <b>It has not been shown to help with telling emotions apart or with mental health.</b>",
+  "bt": "의료 도구나 위기 지원 서비스가 아니며, 감정에 점수를 매기거나 감정을 판단하지 않습니다. <b>감정을 구분하는 데나 정신 건강에 도움이 된다는 것은 입증되지 않았습니다.</b>"
+ },
+ {
+  "key": "about.refsSummary",
+  "ko": "참고한 연구 6편",
+  "en": "Six studies behind it",
+  "bt": "이 도구의 바탕이 된 연구 여섯 편"
+ },
+ {
+  "key": "about.refsIntro",
+  "ko": "앱의 생각이 연구로 어디까지 뒷받침되는지 정리했습니다. 연구마다 나온 것과 한계를 함께 적었습니다.",
+  "en": "How far research supports the ideas behind this app. Each study is listed with what it found and where it falls short.",
+  "bt": "이 앱의 바탕이 된 아이디어를 연구가 어디까지 뒷받침하는지. 각 연구마다 무엇을 발견했는지, 어디에서 부족한지를 함께 적었습니다."
+ },
+ {
+  "key": "about.found",
+  "ko": "나온 것",
+  "en": "What it found",
+  "bt": "발견한 것"
+ },
+ {
+  "key": "about.limit",
+  "ko": "한계",
+  "en": "Limits",
+  "bt": "한계"
+ },
+ {
+  "key": "about.refsClosing",
+  "ko": "<b>이 앱을 직접 시험한 연구는 아직 없습니다.</b> 이 앱처럼 가끔, 10~30초씩 쓰는 방식은 위 어느 연구보다도 훨씬 적게 쓰는 것입니다. 위 연구들은 앱의 생각이 어디쯤 서 있는지 보여 줄 뿐입니다.",
+  "en": "<b>No study has tested this app.</b> Using it now and then for 10 to 30 seconds is far less use than in any study above. These studies only show where the ideas behind the app stand.",
+  "bt": "<b>이 앱을 검증한 연구는 없습니다.</b> 가끔 10~30초씩 사용하는 것은 위의 어떤 연구에서보다도 훨씬 적은 사용량입니다. 이 연구들은 앱의 바탕이 된 아이디어가 어디쯤에 있는지를 보여 줄 뿐입니다."
+ },
+ {
+  "key": "about.doiLink",
+  "ko": "원문",
+  "en": "Source",
+  "bt": "출처"
+ },
+ {
+  "key": "about.refs.vedernikova.cite",
+  "ko": "Vedernikova, Kuppens, & Erbas (2021). From knowledge to differentiation. Frontiers in Psychology.",
+  "en": "Vedernikova, Kuppens, & Erbas (2021). From knowledge to differentiation. Frontiers in Psychology.",
+  "bt": "Vedernikova, Kuppens, & Erbas (2021). From knowledge to differentiation. Frontiers in Psychology."
+ },
+ {
+  "key": "about.refs.vedernikova.kind",
+  "ko": "무작위 대조 실험 · 원문 확인",
+  "en": "Randomized controlled trial · full text read",
+  "bt": "무작위 대조 시험 · 전문 읽음"
+ },
+ {
+  "key": "about.refs.vedernikova.found",
+  "ko": "성인 120명이 5일 동안 하루 15분쯤 감정 12개의 뜻과 그 감정이 생기는 상황을 읽었습니다. 지리를 배운 비교 집단과 달리 부정 감정을 구별하는 정도가 늘었고, 1개월 뒤에도 유지됐습니다.",
+  "en": "120 adults spent about 15 minutes a day for 5 days reading what 12 emotions mean and the situations they arise in. Unlike a comparison group that learned geography, they told negative emotions apart more finely, and this held a month later.",
+  "bt": "성인 120명이 5일 동안 하루 약 15분씩 12가지 감정의 의미와 그 감정이 생기는 상황에 대해 읽었습니다. 지리를 배운 비교 집단과 달리, 이들은 부정적 감정을 더 세밀하게 구분했고, 이는 한 달 뒤에도 유지되었습니다."
+ },
+ {
+  "key": "about.refs.vedernikova.limit",
+  "ko": "가상 상황에 점수를 매기는 방식으로 쟀고, 배운 감정과 잰 감정이 같았습니다. 우울 같은 다른 지표의 결과는 일관되지 않았습니다.",
+  "en": "It was measured by rating made-up situations, with the same emotions that were taught. Results on other measures such as depression were not consistent.",
+  "bt": "가상의 상황을 평가하는 방식으로, 그것도 가르친 것과 같은 감정들로 측정했습니다. 우울 같은 다른 지표에서의 결과는 일관되지 않았습니다."
+ },
+ {
+  "key": "about.refs.widdershoven.cite",
+  "ko": "Widdershoven 외 (2019). Effect of self-monitoring through experience sampling on emotion differentiation in depression. Journal of Affective Disorders, 244.",
+  "en": "Widdershoven et al. (2019). Effect of self-monitoring through experience sampling on emotion differentiation in depression. Journal of Affective Disorders, 244.",
+  "bt": "Widdershoven et al. (2019). Effect of self-monitoring through experience sampling on emotion differentiation in depression. Journal of Affective Disorders, 244."
+ },
+ {
+  "key": "about.refs.widdershoven.kind",
+  "ko": "무작위 실험 · 저자 원고 확인",
+  "en": "Randomized trial · author manuscript read",
+  "bt": "무작위 시험 · 저자 원고 읽음"
+ },
+ {
+  "key": "about.refs.widdershoven.found",
+  "ko": "우울증 치료 중인 79명 가운데 6주 동안 하루 10번씩 기록한 사람들에게서, 기록하지 않은 사람들보다 부정 감정 구별이 늘었습니다.",
+  "en": "Among 79 people in treatment for depression, those who logged their feelings 10 times a day for 6 weeks told negative emotions apart more finely than those who did not.",
+  "bt": "우울증 치료를 받고 있는 79명 가운데, 6주 동안 하루 10번 감정을 기록한 사람들은 그렇지 않은 사람들보다 부정적 감정을 더 세밀하게 구분했습니다."
+ },
+ {
+  "key": "about.refs.widdershoven.limit",
+  "ko": "평균 150번쯤 기록했고 매주 연구자를 만났습니다. 기록의 어느 부분이 변화를 만들었는지는 알 수 없습니다.",
+  "en": "They logged about 150 times on average and met a researcher every week. Which part of this made the difference is unknown.",
+  "bt": "이들은 평균 약 150번 기록했고 매주 연구자를 만났습니다. 이 가운데 무엇이 차이를 만들었는지는 알 수 없습니다."
+ },
+ {
+  "key": "about.refs.hoemann.cite",
+  "ko": "Hoemann, Barrett, & Quigley (2021). Emotional granularity increases with intensive ambulatory assessment. Frontiers in Psychology, 12.",
+  "en": "Hoemann, Barrett, & Quigley (2021). Emotional granularity increases with intensive ambulatory assessment. Frontiers in Psychology, 12.",
+  "bt": "Hoemann, Barrett, & Quigley (2021). Emotional granularity increases with intensive ambulatory assessment. Frontiers in Psychology, 12."
+ },
+ {
+  "key": "about.refs.hoemann.kind",
+  "ko": "비교 집단 없음 · 원문 확인",
+  "en": "No comparison group · full text read",
+  "bt": "비교 집단 없음 · 전문 읽음"
+ },
+ {
+  "key": "about.refs.hoemann.found",
+  "ko": "건강한 성인 50명이 2주쯤 하루 9번 가까이 기록한 뒤 긍정 · 부정 감정 구별이 모두 늘었습니다.",
+  "en": "After 50 healthy adults logged nearly 9 times a day for about 2 weeks, they told both positive and negative emotions apart more finely.",
+  "bt": "건강한 성인 50명이 약 2주 동안 하루 9번 가까이 기록한 뒤, 긍정적 감정과 부정적 감정을 모두 더 세밀하게 구분했습니다."
+ },
+ {
+  "key": "about.refs.hoemann.limit",
+  "ko": "비교 집단이 없어 기록 때문인지 알 수 없습니다. 저자들은 부정적인 경험에 주의를 더 기울이면 반추가 늘 수 있다는 가능성도 적었습니다.",
+  "en": "With no comparison group, it is unknown whether the logging caused this. The authors also noted that paying more attention to negative experiences might increase rumination.",
+  "bt": "비교 집단이 없어서, 기록이 이런 변화를 일으켰는지는 알 수 없습니다. 저자들은 또한 부정적 경험에 더 주의를 기울이면 반추가 늘어날 수 있다고 언급했습니다."
+ },
+ {
+  "key": "about.refs.fugate.cite",
+  "ko": "Fugate 외 (2026). The effects of teaching emotion words on emotional granularity, emotion regulation/dysregulation, and satisfaction with life. bioRxiv.",
+  "en": "Fugate et al. (2026). The effects of teaching emotion words on emotional granularity, emotion regulation/dysregulation, and satisfaction with life. bioRxiv.",
+  "bt": "Fugate et al. (2026). The effects of teaching emotion words on emotional granularity, emotion regulation/dysregulation, and satisfaction with life. bioRxiv."
+ },
+ {
+  "key": "about.refs.fugate.kind",
+  "ko": "동료심사 전 프리프린트 · 원문 확인",
+  "en": "Preprint, not yet peer reviewed · full text read",
+  "bt": "프리프린트, 아직 동료 심사 전 · 전문 읽음"
+ },
+ {
+  "key": "about.refs.fugate.found",
+  "ko": "95명이 14일 동안 하루 한 단어씩 감정 단어의 뜻과 쓰임을 배웠지만, 감정 구별에 뚜렷한 변화가 없었습니다. 이 앱의 단어 탐색과 가장 닮은 연구입니다.",
+  "en": "95 people learned the meaning and use of one emotion word a day for 14 days, with no clear change in telling emotions apart. It is the study closest to how this app offers words.",
+  "bt": "95명이 14일 동안 하루에 감정 단어 하나씩 그 의미와 쓰임을 배웠는데, 감정 구분에는 뚜렷한 변화가 없었습니다. 이 앱이 단어를 제시하는 방식과 가장 가까운 연구입니다."
+ },
+ {
+  "key": "about.refs.fugate.limit",
+  "ko": "배운 단어를 자기 경험에 대어 보는 단계가 없었습니다. 아직 심사를 거치지 않았습니다.",
+  "en": "There was no step for trying the learned words on their own experience. It has not been peer reviewed yet.",
+  "bt": "배운 단어를 자신의 경험에 적용해 보는 단계가 없었습니다. 아직 동료 심사를 거치지 않았습니다."
+ },
+ {
+  "key": "about.refs.dejonckheere.cite",
+  "ko": "Dejonckheere 외 (2019). Complex affect dynamics add limited information to the prediction of psychological well-being. Nature Human Behaviour, 3(5).",
+  "en": "Dejonckheere et al. (2019). Complex affect dynamics add limited information to the prediction of psychological well-being. Nature Human Behaviour, 3(5).",
+  "bt": "Dejonckheere et al. (2019). Complex affect dynamics add limited information to the prediction of psychological well-being. Nature Human Behaviour, 3(5)."
+ },
+ {
+  "key": "about.refs.dejonckheere.kind",
+  "ko": "기존 자료 1,777명 재분석 · 심사 전 원고 확인",
+  "en": "Reanalysis of existing data from 1,777 people · preprint read",
+  "bt": "1,777명의 기존 데이터 재분석 · 프리프린트 읽음"
+ },
+ {
+  "key": "about.refs.dejonckheere.found",
+  "ko": "감정을 구별하는 정도와 우울의 관계는 상당 부분 평균 기분과 겹쳤습니다. 평균 기분을 함께 고려하면 더해지는 설명은 작았습니다.",
+  "en": "Much of the link between telling emotions apart and depression overlapped with average mood. Once average mood was taken into account, little was added.",
+  "bt": "감정 구분과 우울 사이 연관성의 상당 부분이 평균 기분과 겹쳤습니다. 평균 기분을 고려하고 나면 더해지는 것은 거의 없었습니다."
+ },
+ {
+  "key": "about.refs.dejonckheere.limit",
+  "ko": "한 시점의 자료라 원인과 결과를 말하지 못합니다. 그래서 이 앱의 효과를 따질 때는 평균 기분을 함께 봐야 합니다.",
+  "en": "The data come from one point in time, so they say nothing about cause and effect. It means any effect of this app has to be looked at alongside average mood.",
+  "bt": "데이터가 한 시점의 것이어서 인과관계에 대해서는 아무것도 말해 주지 않습니다. 이는 이 앱에 어떤 효과가 있든 평균 기분과 함께 살펴봐야 한다는 뜻입니다."
+ },
+ {
+  "key": "about.refs.thompson.cite",
+  "ko": "Thompson, Springstein, & Boden (2021). Gaining clarity about emotion differentiation. Social and Personality Psychology Compass, 15.",
+  "en": "Thompson, Springstein, & Boden (2021). Gaining clarity about emotion differentiation. Social and Personality Psychology Compass, 15.",
+  "bt": "Thompson, Springstein, & Boden (2021). Gaining clarity about emotion differentiation. Social and Personality Psychology Compass, 15."
+ },
+ {
+  "key": "about.refs.thompson.kind",
+  "ko": "리뷰 · 원문 확인",
+  "en": "Review · full text read",
+  "bt": "문헌 고찰 · 전문 읽음"
+ },
+ {
+  "key": "about.refs.thompson.found",
+  "ko": "감정 구별을 재는 흔한 방법이, 여러 감정을 동시에 느끼는 것을 낮은 구별로 셀 수 있다고 지적했습니다.",
+  "en": "Common ways of measuring how finely people tell emotions apart can count feeling several emotions at once as telling them apart poorly.",
+  "bt": "사람들이 감정을 얼마나 세밀하게 구분하는지를 재는 흔한 측정 방법들은, 여러 감정을 동시에 느끼는 것을 감정을 잘 구분하지 못하는 것으로 셀 수 있습니다."
+ },
+ {
+  "key": "about.refs.thompson.limit",
+  "ko": "이 앱은 여러 표현을 함께 고르는 것을 자연스럽게 봅니다. 연구의 지표를 이 앱에 그대로 옮길 수 없는 이유입니다.",
+  "en": "This app treats picking several words together as natural. That is why the research measures cannot be carried over to this app as they are.",
+  "bt": "이 앱은 여러 단어를 함께 고르는 것을 자연스러운 일로 다룹니다. 그래서 연구에서 쓰는 측정 방법을 이 앱에 그대로 가져올 수 없습니다."
+ },
+ {
+  "key": "about.previewSummary",
+  "ko": "어떤 질문이 나오나요 · 미리 보기",
+  "en": "What will I be asked? A preview",
+  "bt": "무엇을 묻게 되나요? 미리 보기"
+ },
+ {
+  "key": "about.previewIntro",
+  "ko": "시작하기 전에 어떤 화면이 나오는지 볼 수 있습니다. 어느 화면에서든 ‘그만하기’를 누를 수 있고, 맞는 답이 없으면 고르지 않아도 됩니다.",
+  "en": "See the screens before you start. You can press Stop on any of them, and you need not pick anything that does not fit.",
+  "bt": "시작하기 전에 화면을 미리 보세요. 어느 화면에서든 그만하기를 누를 수 있고, 맞지 않는 것은 고르지 않아도 됩니다."
+ },
+ {
+  "key": "about.previewQuick",
+  "ko": "빠르게 살펴보기 · 2단계",
+  "en": "Quick look, 2 steps",
+  "bt": "빠르게 보기, 2단계"
+ },
+ {
+  "key": "about.previewDeep",
+  "ko": "조금 더 천천히 살펴보기 · 6단계",
+  "en": "Slow look, 6 steps",
+  "bt": "천천히 보기, 6단계"
+ },
+ {
+  "key": "about.faqSummary",
+  "ko": "자주 묻는 질문",
+  "en": "Common questions",
+  "bt": "자주 묻는 질문"
+ },
+ {
+  "key": "about.faq.ai.q",
+  "ko": "AI가 내 감정을 분석하나요?",
+  "en": "Does AI analyze my emotions?",
+  "bt": "AI가 내 감정을 분석하나요?"
+ },
+ {
+  "key": "about.faq.ai.a",
+  "ko": "아니요. 마지막 요약은 미리 정해 둔 규칙에 따라 내가 고른 것만 다시 정리합니다. 적은 내용을 AI에 보내지 않고, AI가 감정을 추론하지도 않습니다. 이 앱을 만드는 과정에서 AI 도구의 도움을 받은 것과는 별개입니다.",
+  "en": "No. The closing summary follows fixed rules and only restates what you chose. What you write is not sent to an AI, and no AI infers your emotions. That AI tools helped build this app is a separate matter.",
+  "bt": "아니요. 마지막 요약은 정해진 규칙에 따라 만들어지며, 고른 것을 다시 보여 줄 뿐입니다. 쓴 내용은 AI로 보내지지 않고, 어떤 AI도 감정을 추론하지 않습니다. 이 앱을 만드는 데 AI 도구가 도움을 준 것은 별개의 문제입니다."
+ },
+ {
+  "key": "about.faq.judge.q",
+  "ko": "감정을 맞혀 주나요?",
+  "en": "Does it tell me what I am feeling?",
+  "bt": "내가 무엇을 느끼고 있는지 알려 주나요?"
+ },
+ {
+  "key": "about.faq.judge.a",
+  "ko": "아니요. 앱은 무엇이 ‘진짜 감정’인지 판정하지 않고, 점수도 매기지 않습니다. 단어는 출발점일 뿐이고, 이름은 직접 고르거나 내 말로 적습니다.",
+  "en": "No. The app does not decide what your “real emotion” is, and it gives no score. The words are only a starting point; you pick the name or write your own.",
+  "bt": "아니요. 앱은 무엇이 당신의 “진짜 감정”인지 정하지 않으며, 점수도 매기지 않습니다. 단어는 출발점일 뿐이고, 이름은 직접 고르거나 스스로 적으면 됩니다."
+ },
+ {
+  "key": "about.faq.storage.q",
+  "ko": "기록은 어디에 저장되나요?",
+  "en": "Where are my entries saved?",
+  "bt": "내 기록은 어디에 저장되나요?"
+ },
+ {
+  "key": "about.faq.storage.a",
+  "ko": "지금 쓰는 브라우저 안에만 저장됩니다. 적은 내용은 서버로 보내지 않습니다. 브라우저 데이터를 지우면 함께 사라지고, 암호화된 저장소는 아닙니다. 지난 기록 화면에서 파일로 내보내거나(원하면 암호로 잠가서) 모두 지울 수 있습니다.",
+  "en": "Only in the browser you are using. What you write is not sent to a server. Clearing your browser data removes it, and the storage is not encrypted. From past entries you can export them to a file (locked with a passphrase if you like) or delete them all.",
+  "bt": "지금 사용 중인 브라우저에만 저장됩니다. 쓴 내용은 서버로 보내지지 않습니다. 브라우저 데이터를 지우면 함께 지워지고, 저장 공간은 암호화되어 있지 않습니다. 지난 기록에서 기록을 파일로 내보내거나(원하면 암호 문구로 잠글 수 있음) 모두 삭제할 수 있습니다."
+ },
+ {
+  "key": "about.faq.maker.q",
+  "ko": "만든 사람이 내 기록을 볼 수 있나요?",
+  "en": "Can the maker see my records?",
+  "bt": "만든 사람이 내 기록을 볼 수 있나요?"
+ },
+ {
+  "key": "about.faq.maker.a",
+  "ko": "아니요. 이 앱은 적은 내용을 어디에도 보내지 않아서 만든 사람도 볼 수 없습니다. 방문 통계, 광고, 추적 쿠키도 쓰지 않습니다. 다만 사이트를 올려 둔 호스팅 업체(Vercel)는 여느 웹사이트처럼 접속 기록(IP 주소, 브라우저 종류, 시각)을 처리합니다. 그 기록에 앱에 적은 내용은 들어 있지 않습니다.",
+  "en": "No. The app sends what you write nowhere, so the maker cannot see it either. It uses no visit statistics, ads or tracking cookies. The hosting company (Vercel) handles access logs (IP address, browser type, time), as for any website; those logs contain nothing you wrote in the app.",
+  "bt": "아니요. 앱은 쓴 내용을 어디로도 보내지 않으므로, 만든 사람도 볼 수 없습니다. 방문 통계, 광고, 추적 쿠키도 쓰지 않습니다. 여느 웹사이트와 마찬가지로 호스팅 회사(Vercel)가 접속 기록(IP 주소, 브라우저 종류, 시간)을 처리하며, 이 기록에는 앱에 쓴 내용이 전혀 들어 있지 않습니다."
+ },
+ {
+  "key": "about.faq.often.q",
+  "ko": "얼마나 자주 해야 하나요?",
+  "en": "How often should I use it?",
+  "bt": "얼마나 자주 사용해야 하나요?"
+ },
+ {
+  "key": "about.faq.often.a",
+  "ko": "정해진 횟수는 없습니다. 쓰지 않는 날도 괜찮습니다. 몇 번을 써야 도움이 되는지는 연구로도 아직 모릅니다.",
+  "en": "There is no set number. Days without it are fine too. Research does not yet know how much use it takes to help.",
+  "bt": "정해진 횟수는 없습니다. 사용하지 않는 날이 있어도 괜찮습니다. 얼마나 사용해야 도움이 되는지는 연구로도 아직 알지 못합니다."
+ },
+ {
+  "key": "about.faq.worse.q",
+  "ko": "하다가 더 복잡해지거나 불편해지면요?",
+  "en": "What if it gets more tangled or uncomfortable?",
+  "bt": "더 얽히거나 불편해지면 어떻게 하나요?"
+ },
+ {
+  "key": "about.faq.worse.a",
+  "ko": "언제든 ‘그만하기’를 누르면 됩니다. 생각을 계속 되짚는 것이 오히려 힘들게 할 때도 있습니다. 마지막 단계에서 ‘더 불편해짐’이라고 남길 수도 있습니다.",
+  "en": "Press Stop at any time. Going over things again and again can sometimes make it harder. At the last step you can also note that it felt more uncomfortable.",
+  "bt": "언제든 그만하기를 누르세요. 같은 것을 되풀이해 곱씹다 보면 오히려 더 힘들어질 때가 있습니다. 마지막 단계에서 더 불편해졌다고 적어 둘 수도 있습니다."
+ },
+ {
+  "key": "about.faq.body.q",
+  "ko": "몸에서 아무것도 느껴지지 않으면요?",
+  "en": "What if I notice nothing in my body?",
+  "bt": "몸에서 아무것도 알아차리지 못하면 어떻게 하나요?"
+ },
+ {
+  "key": "about.faq.body.a",
+  "ko": "그것도 괜찮습니다. 이 단계는 건너뛰어도 됩니다.",
+  "en": "That is fine too. You can skip the step.",
+  "bt": "그것도 괜찮습니다. 그 단계는 건너뛰어도 됩니다."
+ },
+ {
+  "key": "about.faq.effect.q",
+  "ko": "효과가 있나요?",
+  "en": "Does it work?",
+  "bt": "효과가 있나요?"
+ },
+ {
+  "key": "about.faq.effect.a",
+  "ko": "아직 모릅니다. 감정을 구별하는 연습 뒤에 구별하는 정도가 늘었다는 연구는 있지만, 그것이 삶에 도움이 되는지, 이 앱으로도 그런지는 확인되지 않았습니다.",
+  "en": "We do not know yet. Some studies found that people told emotions apart more finely after practice, but whether that helps in life, or whether this app does the same, has not been shown.",
+  "bt": "아직 모릅니다. 몇몇 연구에서는 연습 후 사람들이 감정을 더 세밀하게 구분했지만, 그것이 삶에 도움이 되는지, 또는 이 앱도 같은 결과를 내는지는 밝혀지지 않았습니다."
+ },
+ {
+  "key": "whyThis.summary",
+  "ko": "왜 감정을 조금 더 자세히 살펴볼까요?",
+  "en": "Why look at an emotion more closely?",
+  "bt": "왜 감정을 더 가까이 들여다보나요?"
+ },
+ {
+  "key": "whyThis.enough",
+  "ko": "“기분이 좋다 / 나쁘다” 정도로 충분한 순간도 많습니다. 늘 자세히 볼 필요는 없습니다.",
+  "en": "Often “I feel good” or “I feel bad” is enough. There is no need to look closely every time.",
+  "bt": "“기분이 좋다”나 “기분이 나쁘다”로 충분할 때가 많습니다. 매번 자세히 들여다볼 필요는 없습니다."
+ },
+ {
+  "key": "whyThis.distinguish",
+  "ko": "다만 때로는 비슷해 보이는 경험을 조금 더 구별해보면, 지금 무엇이 필요한지 고르는 데 도움이 되기도 합니다. 같은 답답함이라도 쉬는 것이 필요할 때와, 하고 싶은 말을 정리하는 것이 필요할 때가 다르기 때문입니다.",
+  "en": "Sometimes, though, telling apart experiences that seem alike can help you choose what you need right now. Feeling stuck can call for rest one time, and for sorting out what you want to say another time.",
+  "bt": "하지만 때로는 비슷해 보이는 경험을 구분하면 지금 무엇이 필요한지 고르는 데 도움이 될 수 있습니다. 꽉 막힌 느낌이 들 때, 어떤 때는 휴식이 필요하고 또 어떤 때는 하고 싶은 말을 정리하는 것이 필요할 수 있습니다."
+ },
+ {
+  "key": "whyThis.research",
+  "ko": "감정을 세밀하게 구별하는 정도(emotional granularity)는 여러 연구에서 정서조절이나 일상 기능과 관련되어 있다고 보고되었습니다. 다만 <b>granularity 자체가 건강을 보장하지도, 정신건강을 재는 지표도 아닙니다.</b> 대부분 상관 연구이고, 이 앱의 효과를 검증한 것도 아닙니다.",
+  "en": "Several studies have reported that how finely people tell their emotions apart (emotional granularity) is related to emotion regulation and everyday functioning. But <b>granularity does not guarantee health, and it is not a measure of mental health.</b> Most of these studies are correlational, and none of them tested this app.",
+  "bt": "여러 연구에서 사람들이 자신의 감정을 얼마나 세밀하게 구분하는지(감정 입자도)가 감정 조절 및 일상 기능과 관련이 있다고 보고했습니다. 하지만 <b>입자도가 건강을 보장하지는 않으며, 정신 건강의 척도도 아닙니다.</b> 이 연구들은 대부분 상관 연구이고, 이 앱을 검증한 연구는 하나도 없습니다."
+ },
+ {
+  "key": "whyThis.principle",
+  "ko": "목표는 최대한 세밀하게 분석하는 것이 아니라, <b>지금 무엇을 할지 정하는 데 필요한 만큼만</b> 구별하는 것입니다.",
+  "en": "The aim is not to analyze in as much detail as possible, but to tell things apart <b>only as far as it helps you decide what to do now</b>.",
+  "bt": "목표는 가능한 한 자세하게 분석하는 것이 아니라, <b>지금 무엇을 할지 정하는 데 도움이 되는 만큼만</b> 구분하는 것입니다."
+ },
+ {
+  "key": "whyWords.summary",
+  "ko": "감정 이름에도 하나의 정답이 있을까요?",
+  "en": "Is there one right name for an emotion?",
+  "bt": "감정에는 정답인 이름이 하나 있을까요?"
+ },
+ {
+  "key": "whyWords.shaped",
+  "ko": "우리가 감정을 표현하는 방식은 몸의 느낌과 상황뿐 아니라, 살아온 경험과 언어, 관계와 문화의 영향을 받습니다. 같은 경험도 사람이나 공동체에 따라 조금 다르게 나누고 부를 수 있어요.",
+  "en": "How we put emotions into words is shaped not only by what we feel in the body and by the situation, but also by our history, our language, our relationships and our culture. The same experience can be divided and named a little differently by different people and communities.",
+  "bt": "우리가 감정을 말로 표현하는 방식은 몸으로 느끼는 것과 상황뿐 아니라, 우리의 역사, 언어, 관계, 문화에 의해서도 만들어집니다. 같은 경험이라도 사람과 공동체에 따라 조금씩 다르게 나누고 이름 붙일 수 있습니다."
+ },
+ {
+  "key": "whyWords.notJudging",
+  "ko": "그래서 이 앱은 당신의 ‘진짜 감정’을 찾아내려 하지 않습니다. 대신 지금 경험을 이해하는 데 도움이 되는 말을 함께 찾아봅니다. 여기 있는 단어들은 완전한 목록이 아니라 <b>출발점</b>이고, <b>내 말로 적는 것이 예외가 아니라 정상적인 길</b>입니다.",
+  "en": "So this app does not try to find your “true emotion.” Instead, it helps you look for words that help you understand what you are experiencing now. The words here are a <b>starting point</b>, not a complete list, and <b>writing in your own words is a normal path, not an exception</b>.",
+  "bt": "그래서 이 앱은 당신의 “진짜 감정”을 찾으려 하지 않습니다. 대신 지금 겪고 있는 것을 이해하는 데 도움이 되는 말을 찾도록 돕습니다. 여기 있는 단어들은 완전한 목록이 아니라 <b>출발점</b>이며, <b>자신의 말로 적는 것은 예외가 아니라 정상적인 경로</b>입니다."
+ },
+ {
+  "key": "whyWords.principle",
+  "ko": "언어를 가로질러 비교적 널리 통하는 것은 <b>불쾌함–유쾌함</b>과 <b>가라앉음–활성됨</b> 같은 넓은 방향입니다. 반면 그 안을 어떤 단어로 나누는지는 언어와 문화에 따라 달라질 수 있습니다. 그래서 이 앱은 방향은 함께 짚어보고, <b>이름은 당신이 고릅니다.</b>",
+  "en": "What holds fairly widely across languages are broad directions such as <b>unpleasant–pleasant</b> and <b>low–activated</b>. How the space within them is divided into words can differ between languages and cultures. So this app looks at the direction with you, and <b>you choose the name.</b>",
+  "bt": "여러 언어에 걸쳐 비교적 폭넓게 성립하는 것은 <b>불쾌–유쾌</b>, <b>낮음–활성화</b> 같은 큰 방향입니다. 그 안의 공간을 단어로 어떻게 나누는지는 언어와 문화에 따라 다를 수 있습니다. 그래서 이 앱은 방향은 함께 살펴보고, <b>이름은 당신이 고릅니다.</b>"
+ },
+ {
+  "key": "whyWords.deeperSummary",
+  "ko": "조금 더 — 감정이 사회적으로 만들어진다는 말",
+  "en": "A little more: what it means to say emotions are socially made",
+  "bt": "조금 더: 감정이 사회적으로 만들어진다는 말의 의미"
+ },
+ {
+  "key": "whyWords.deeperReal",
+  "ko": "감정이 사회적으로 구성된다는 것은 감정이 가짜라는 뜻이 아닙니다. 한 과학적 관점에서는 몸과 뇌의 변화가 실제로 존재하면서도, 사람들이 공유하고 배운 감정 개념이 그 경험에 의미와 기능을 부여한다고 봅니다.",
+  "en": "Saying that emotions are socially constructed does not mean they are fake. In one scientific view, changes in the body and brain are real, and the emotion concepts people share and learn give those experiences meaning and function.",
+  "bt": "감정이 사회적으로 구성된다는 말은 감정이 가짜라는 뜻이 아닙니다. 한 과학적 관점에서는 몸과 뇌의 변화는 실제이며, 사람들이 공유하고 배우는 감정 개념이 그 경험에 의미와 기능을 부여한다고 봅니다."
+ },
+ {
+  "key": "whyWords.deeperMoney",
+  "ko": "화폐의 가치가 종이의 물리적 성질만으로 설명되지 않지만 실제로 우리 삶에서 작동하는 것과 비슷한 비유를 생각해볼 수 있습니다.",
+  "en": "One comparison: the value of money cannot be explained by the physical properties of paper alone, yet it really works in our lives.",
+  "bt": "비유 하나: 돈의 가치는 종이의 물리적 성질만으로는 설명할 수 없지만, 우리 삶에서 실제로 작동합니다."
+ },
+ {
+  "key": "whyWords.deeperOpen",
+  "ko": "다만 이것은 <b>하나의 이론적 입장이고</b>, 감정이 얼마나 보편적이고 얼마나 문화적으로 구성되는지는 <b>여전히 연구 중</b>입니다.",
+  "en": "But this is <b>one theoretical position</b>, and how universal emotions are, and how much they are shaped by culture, is <b>still being studied</b>.",
+  "bt": "다만 이것은 <b>하나의 이론적 입장</b>이며, 감정이 얼마나 보편적인지, 문화에 의해 얼마나 형성되는지는 <b>아직 연구 중</b>입니다."
+ },
+ {
+  "key": "affectPad.top",
+  "ko": "에너지가 올라온 느낌",
+  "en": "Energy rising",
+  "bt": "에너지가 올라감"
+ },
+ {
+  "key": "affectPad.bottom",
+  "ko": "가라앉은 느낌",
+  "en": "Low, settled",
+  "bt": "낮고 차분함"
+ },
+ {
+  "key": "affectPad.left",
+  "ko": "불쾌함",
+  "en": "Unpleasant",
+  "bt": "불쾌"
+ },
+ {
+  "key": "affectPad.right",
+  "ko": "유쾌함",
+  "en": "Pleasant",
+  "bt": "유쾌"
+ },
+ {
+  "key": "affectPad.ariaLabel",
+  "ko": "불쾌함과 유쾌함, 가라앉음과 활성됨 사이에서 현재 경험에 가까운 곳 선택. 방향키로도 움직일 수 있습니다.",
+  "en": "Choose the spot closest to what you are experiencing now, between unpleasant and pleasant, and between low and activated. You can also move it with the arrow keys.",
+  "bt": "불쾌와 유쾌 사이, 낮음과 활성화 사이에서 지금 겪고 있는 것에 가장 가까운 지점을 고르세요. 화살표 키로도 움직일 수 있습니다."
+ },
+ {
+  "key": "affectBands.quickValence.0",
+  "ko": "불쾌함 쪽",
+  "en": "On the unpleasant side",
+  "bt": "불쾌한 쪽"
+ },
+ {
+  "key": "affectBands.quickValence.1",
+  "ko": "조금 불쾌함 쪽",
+  "en": "A little unpleasant",
+  "bt": "조금 불쾌함"
+ },
+ {
+  "key": "affectBands.quickValence.2",
+  "ko": "중간",
+  "en": "In between",
+  "bt": "그 사이"
+ },
+ {
+  "key": "affectBands.quickValence.3",
+  "ko": "조금 유쾌함 쪽",
+  "en": "A little pleasant",
+  "bt": "조금 유쾌함"
+ },
+ {
+  "key": "affectBands.quickValence.4",
+  "ko": "유쾌함 쪽",
+  "en": "On the pleasant side",
+  "bt": "유쾌한 쪽"
+ },
+ {
+  "key": "affectBands.quickActivation.0",
+  "ko": "가라앉은 느낌",
+  "en": "Low, settled",
+  "bt": "낮고 차분함"
+ },
+ {
+  "key": "affectBands.quickActivation.1",
+  "ko": "조금 가라앉은 느낌",
+  "en": "A little low",
+  "bt": "조금 낮음"
+ },
+ {
+  "key": "affectBands.quickActivation.2",
+  "ko": "중간",
+  "en": "In between",
+  "bt": "그 사이"
+ },
+ {
+  "key": "affectBands.quickActivation.3",
+  "ko": "에너지가 올라온 느낌",
+  "en": "Energy rising",
+  "bt": "에너지가 올라감"
+ },
+ {
+  "key": "affectBands.quickActivation.4",
+  "ko": "에너지가 많이 올라온 느낌",
+  "en": "A lot of energy rising",
+  "bt": "에너지가 많이 올라감"
+ },
+ {
+  "key": "affectBands.valence.0",
+  "ko": "매우 불쾌",
+  "en": "Very unpleasant",
+  "bt": "매우 불쾌함"
+ },
+ {
+  "key": "affectBands.valence.1",
+  "ko": "불쾌",
+  "en": "Unpleasant",
+  "bt": "불쾌함"
+ },
+ {
+  "key": "affectBands.valence.2",
+  "ko": "중간",
+  "en": "In between",
+  "bt": "그 사이"
+ },
+ {
+  "key": "affectBands.valence.3",
+  "ko": "유쾌",
+  "en": "Pleasant",
+  "bt": "유쾌함"
+ },
+ {
+  "key": "affectBands.valence.4",
+  "ko": "매우 유쾌",
+  "en": "Very pleasant",
+  "bt": "매우 유쾌함"
+ },
+ {
+  "key": "affectBands.activation.0",
+  "ko": "가라앉음",
+  "en": "Low",
+  "bt": "낮음"
+ },
+ {
+  "key": "affectBands.activation.1",
+  "ko": "조금 가라앉음",
+  "en": "A little low",
+  "bt": "조금 낮음"
+ },
+ {
+  "key": "affectBands.activation.2",
+  "ko": "중간",
+  "en": "In between",
+  "bt": "그 사이"
+ },
+ {
+  "key": "affectBands.activation.3",
+  "ko": "활성됨",
+  "en": "Activated",
+  "bt": "활성화됨"
+ },
+ {
+  "key": "affectBands.activation.4",
+  "ko": "많이 활성됨",
+  "en": "Very activated",
+  "bt": "매우 활성화됨"
+ },
+ {
+  "key": "contextSource.event",
+  "ko": "실제 사건",
+  "en": "Something that happened",
+  "bt": "일어난 일"
+ },
+ {
+  "key": "contextSource.memory",
+  "ko": "기억",
+  "en": "A memory",
+  "bt": "기억"
+ },
+ {
+  "key": "contextSource.anticipation",
+  "ko": "예상",
+  "en": "Something expected",
+  "bt": "예상되는 일"
+ },
+ {
+  "key": "contextSource.thought",
+  "ko": "생각",
+  "en": "A thought",
+  "bt": "생각"
+ },
+ {
+  "key": "entry.title",
+  "ko": "지금 이 경험을\n조금 들여다보고 싶나요?",
+  "en": "Would you like to look\na little closer at this experience?",
+  "bt": "이 경험을\n조금 더 가까이 들여다볼까요?"
+ },
+ {
+  "key": "entry.lede",
+  "ko": "서두르지 않아도 됩니다.\n지금은 생각을 더 하지 않는 편이 낫다면 기록하지 않아도 됩니다.",
+  "en": "There is no hurry.\nIf it is better not to think more about it right now, you do not have to record anything.",
+  "bt": "서두르지 않아도 돼요.\n지금은 더 생각하지 않는 편이 낫다면, 아무것도 기록하지 않아도 돼요."
+ },
+ {
+  "key": "entry.observe",
+  "ko": "조금 살펴보고 싶어요",
+  "en": "I’d like to look a little",
+  "bt": "조금 들여다보고 싶어요"
+ },
+ {
+  "key": "entry.unsure",
+  "ko": "잘 모르겠어요",
+  "en": "I’m not sure",
+  "bt": "잘 모르겠어요"
+ },
+ {
+  "key": "entry.stop",
+  "ko": "지금은 그만 생각하고 싶어요",
+  "en": "I’d rather stop thinking about it for now",
+  "bt": "지금은 그만 생각하고 싶어요"
+ },
+ {
+  "key": "entry.resumeTitle",
+  "ko": "이어 쓰지 않은 기록이 있어요",
+  "en": "You have an unfinished entry",
+  "bt": "마치지 않은 기록이 있어요"
+ },
+ {
+  "key": "entry.resumeBody",
+  "ko": "이전 진행 상황을 이 기기에서 불러옵니다.",
+  "en": "Picks up where you left off, from this device.",
+  "bt": "이 기기에서, 멈췄던 곳부터 이어서 해요."
+ },
+ {
+  "key": "entry.resume",
+  "ko": "이어하기",
+  "en": "Continue",
+  "bt": "이어서 하기"
+ },
+ {
+  "key": "entryMini.eyebrow",
+  "ko": "짧은 확인",
+  "en": "A quick check",
+  "bt": "간단한 확인"
+ },
+ {
+  "key": "entryMini.title",
+  "ko": "지금 몸은 어떤 쪽에\n가까운가요?",
+  "en": "How is your body\nright now?",
+  "bt": "지금 몸은\n어떤가요?"
+ },
+ {
+  "key": "entryMini.lede",
+  "ko": "그리고 이것을 생각하는 것이 지금 도움이 될 것 같나요?",
+  "en": "And do you think thinking about this would help right now?",
+  "bt": "그리고 지금 이것에 대해 생각해 보는 게 도움이 될 것 같나요?"
+ },
+ {
+  "key": "entryMini.yes",
+  "ko": "조금 살펴보는 것이 도움될 것 같아요",
+  "en": "I think looking a little would help",
+  "bt": "조금 들여다보면 도움이 될 것 같아요"
+ },
+ {
+  "key": "entryMini.unsure",
+  "ko": "잘 모르겠어요",
+  "en": "I’m not sure",
+  "bt": "잘 모르겠어요"
+ },
+ {
+  "key": "entryMini.no",
+  "ko": "지금은 도움이 되지 않을 것 같아요",
+  "en": "I don’t think it would help right now",
+  "bt": "지금은 도움이 안 될 것 같아요"
+ },
+ {
+  "key": "quickAffect.basis",
+  "ko": "지금 이 순간을 기준으로",
+  "en": "As of this moment",
+  "bt": "지금 이 순간 기준"
+ },
+ {
+  "key": "quickAffect.step",
+  "ko": "빠른 확인",
+  "en": "Quick look",
+  "bt": "빠르게 보기"
+ },
+ {
+  "key": "quickAffect.title",
+  "ko": "지금은 어느 쪽에 가까운가요?",
+  "en": "Which way is it leaning right now?",
+  "bt": "지금은 어느 쪽으로 기울어 있나요?"
+ },
+ {
+  "key": "quickAffect.hint",
+  "ko": "정확한 좌표를 고를 필요 없이, ‘이쯤’이라고 느껴지는 곳을 한 번 눌러보세요.",
+  "en": "No need to pick an exact point. Tap once wherever feels about right.",
+  "bt": "정확한 지점을 고를 필요는 없어요. 대략 맞다 싶은 곳을 한 번 탭하세요."
+ },
+ {
+  "key": "words.more",
+  "ko": "비슷한 표현 더 보기",
+  "en": "Show similar words",
+  "bt": "비슷한 단어 보기"
+ },
+ {
+  "key": "words.similar",
+  "ko": "비슷한 표현",
+  "en": "Similar words",
+  "bt": "비슷한 단어"
+ },
+ {
+  "key": "words.mine",
+  "ko": "내가 적은 말",
+  "en": "My own words",
+  "bt": "내 말"
+ },
+ {
+  "key": "words.meaningLabel",
+  "ko": "‘{label}’은 지금 나에게 어떤 느낌을 담고 있나요?",
+  "en": "What does “{label}” hold for you right now?",
+  "bt": "지금 당신에게 “{label}”에는 무엇이 담겨 있나요?"
+ },
+ {
+  "key": "words.optional",
+  "ko": "(선택)",
+  "en": "(optional)",
+  "bt": "(선택)"
+ },
+ {
+  "key": "words.meaningPlaceholder",
+  "ko": "적지 않아도 됩니다",
+  "en": "You can leave this empty",
+  "bt": "비워 두어도 돼요"
+ },
+ {
+  "key": "words.notListed",
+  "ko": "여기 없는 말이 더 가깝다면",
+  "en": "If a word that is not here fits better",
+  "bt": "여기 없는 단어가 더 잘 맞는다면"
+ },
+ {
+  "key": "words.add",
+  "ko": "추가",
+  "en": "Add",
+  "bt": "추가"
+ },
+ {
+  "key": "words.startingPoint",
+  "ko": "이 목록은 완전한 목록이 아니라 출발점입니다. 내 말로 적는 것도 똑같이 정상적인 길이에요.",
+  "en": "This is a starting point, not a complete list. Writing your own word is an equally normal path.",
+  "bt": "이것은 완전한 목록이 아니라 출발점이에요. 자신의 단어를 직접 적는 것도 똑같이 정상적인 경로예요."
+ },
+ {
+  "key": "quickCandidates.basis",
+  "ko": "방금 누른 곳을 기준으로",
+  "en": "Based on where you just tapped",
+  "bt": "방금 탭한 곳을 바탕으로"
+ },
+ {
+  "key": "quickCandidates.step",
+  "ko": "가능한 표현",
+  "en": "Possible words",
+  "bt": "후보 단어"
+ },
+ {
+  "key": "quickCandidates.title",
+  "ko": "지금 경험을 표현할 때 가까울 수도 있는 말입니다.",
+  "en": "Words that might come close to what you are experiencing.",
+  "bt": "지금 겪고 있는 것에 가까울 수도 있는 단어들이에요."
+ },
+ {
+  "key": "quickCandidates.hint",
+  "ko": "감정을 판정하는 결과가 아닙니다. 여러 개를 골라도 되고, 맞지 않으면 고르지 않아도 됩니다.",
+  "en": "This is not a verdict on your emotion. You can pick several, or none if nothing fits.",
+  "bt": "감정에 대한 판정이 아니에요. 여러 개를 고를 수도 있고, 맞는 게 없으면 하나도 고르지 않아도 돼요."
+ },
+ {
+  "key": "quickCandidates.decline.none-close",
+  "ko": "가까운 말이 없음",
+  "en": "No word comes close",
+  "bt": "가까운 단어가 없어요"
+ },
+ {
+  "key": "quickCandidates.decline.unsure",
+  "ko": "잘 모르겠음",
+  "en": "Not sure",
+  "bt": "잘 모르겠어요"
+ },
+ {
+  "key": "quickCandidates.declined.none-close",
+  "ko": "가까운 말이 없다고 기록했습니다. 이대로 끝내도 되고, 천천히 더 살펴봐도 됩니다.",
+  "en": "Recorded that no word comes close. You can finish here, or take more time.",
+  "bt": "가까운 단어가 없다고 기록했어요. 여기서 마치거나, 시간을 더 들여 볼 수 있어요."
+ },
+ {
+  "key": "quickCandidates.declined.unsure",
+  "ko": "잘 모르겠다고 기록했습니다. 이대로 끝내도 되고, 천천히 더 살펴봐도 됩니다.",
+  "en": "Recorded that you are not sure. You can finish here, or take more time.",
+  "bt": "잘 모르겠다고 기록했어요. 여기서 마치거나, 시간을 더 들여 볼 수 있어요."
+ },
+ {
+  "key": "quickCandidates.finish",
+  "ko": "여기까지",
+  "en": "Finish here",
+  "bt": "여기서 마치기"
+ },
+ {
+  "key": "quickCandidates.coach",
+  "ko": "표현 사이의 차이 살펴보기",
+  "en": "Compare similar words",
+  "bt": "비슷한 단어 비교하기"
+ },
+ {
+  "key": "quickCandidates.deep",
+  "ko": "조금 더 천천히 들여다보기",
+  "en": "Take it more slowly",
+  "bt": "좀 더 천천히 하기"
+ },
+ {
+  "key": "quickCandidates.coachNote",
+  "ko": "예시 상황으로 해보는 짧은 연습입니다. 지금 고른 표현은 그대로 남습니다. 예시는 일부 후보에만 준비되어 있습니다.",
+  "en": "A short practice with an example situation. The words you picked stay as they are. Examples exist for only some words.",
+  "bt": "예시 상황으로 하는 짧은 연습이에요. 고른 단어는 그대로 남아요. 예시는 일부 단어에만 있어요."
+ },
+ {
+  "key": "coach.step",
+  "ko": "예시로 연습하기",
+  "en": "Practice with an example",
+  "bt": "예시로 연습하기"
+ },
+ {
+  "key": "coach.notice",
+  "ko": "<b>예시 상황으로 해보는 표현 연습입니다.</b> 당신의 실제 일이나 지금 감정을 기록하는 단계가 아니고, 앞에서 고른 내 표현은 바뀌지 않습니다.",
+  "en": "<b>This is word practice with an example situation.</b> It does not record your own experience or what you feel now, and it does not change the words you picked earlier.",
+  "bt": "<b>예시 상황으로 하는 단어 연습이에요.</b> 내 경험이나 지금 느끼는 것을 기록하지 않으며, 앞에서 고른 단어도 바꾸지 않아요."
+ },
+ {
+  "key": "coach.leave",
+  "ko": "예시 연습 그만하고 요약으로",
+  "en": "Stop the practice and go to the summary",
+  "bt": "연습을 그만두고 요약으로 가기"
+ },
+ {
+  "key": "coach.exampleZone",
+  "ko": "예시 상황",
+  "en": "Example situation",
+  "bt": "예시 상황"
+ },
+ {
+  "key": "coach.mineZone",
+  "ko": "내 선택",
+  "en": "My choices",
+  "bt": "내 선택"
+ },
+ {
+  "key": "coach.noSetTitle",
+  "ko": "아직 비교해볼 세트가 없습니다.",
+  "en": "There is no example to compare yet.",
+  "bt": "아직 비교할 예시가 없어요."
+ },
+ {
+  "key": "coach.noSetHint",
+  "ko": "고른 표현에 맞는 예시가 아직 준비되지 않았습니다.",
+  "en": "No example has been written for the words you picked yet.",
+  "bt": "고른 단어에 대한 예시가 아직 작성되지 않았어요."
+ },
+ {
+  "key": "coach.appraisalHint",
+  "ko": "같은 예시라도 사람마다, 또 어떤 관계와 상황인지에 따라 눈에 들어오는 것이 다를 수 있어요. 정답을 맞히는 문제가 아닙니다.",
+  "en": "Different people notice different things in the same example, depending on the relationship and the situation. There is no right answer to find.",
+  "bt": "같은 예시에서도 관계와 상황에 따라 사람마다 알아차리는 것이 달라요. 찾아야 할 정답은 없어요."
+ },
+ {
+  "key": "coach.appraisalPickNote",
+  "ko": "여러 개를 골라도 되고, 하나도 고르지 않아도 됩니다.",
+  "en": "You can pick several, or none.",
+  "bt": "여러 개를 고르거나, 하나도 고르지 않아도 돼요."
+ },
+ {
+  "key": "coach.ownAppraisalLabel",
+  "ko": "이 예시에서 눈에 띈 다른 것을 내 말로 적기",
+  "en": "Something else you noticed in this example, in your own words",
+  "bt": "이 예시에서 알아차린 다른 것을 내 말로"
+ },
+ {
+  "key": "coach.ownAppraisalPlaceholder",
+  "ko": "예: 대답을 기다리는 시간이 길었다",
+  "en": "e.g. The wait for an answer was long",
+  "bt": "예: 답을 기다리는 시간이 길었다"
+ },
+ {
+  "key": "coach.wordsTitle",
+  "ko": "이 예시에서 가까울 수 있는 표현이 있나요?",
+  "en": "Are there words that might fit this example?",
+  "bt": "이 예시에 맞을 수도 있는 단어가 있나요?"
+ },
+ {
+  "key": "coach.wordsHint",
+  "ko": "아래 표현에는 순서나 정답이 없습니다. 이 세 가지가 이 예시를 나누는 유일한 방법도 아니어서, 다른 말을 직접 적는 것도 똑같은 선택입니다.",
+  "en": "These words have no order and no right answer. They are not the only way to divide this example either, so writing a different word is an equally good choice.",
+  "bt": "이 단어들에는 순서도 정답도 없어요. 이 예시를 나누는 유일한 방법도 아니니, 다른 단어를 적는 것도 똑같이 좋은 선택이에요."
+ },
+ {
+  "key": "coach.recap",
+  "ko": "눈에 띈 것 · {observations}",
+  "en": "What you noticed · {observations}",
+  "bt": "알아차린 것 · {observations}"
+ },
+ {
+  "key": "coach.wordsGroup",
+  "ko": "이 예시에서 가까울 수 있는 표현",
+  "en": "Words that might fit this example",
+  "bt": "이 예시에 맞을 수도 있는 단어"
+ },
+ {
+  "key": "coach.ownWordLabel",
+  "ko": "내 말로 표현하기",
+  "en": "In my own words",
+  "bt": "내 말로"
+ },
+ {
+  "key": "coach.ownWordPlaceholder",
+  "ko": "예: 김이 새는 느낌",
+  "en": "e.g. Like the air going out of it",
+  "bt": "예: 바람이 빠져나가는 것처럼"
+ },
+ {
+  "key": "coach.wordsPickNote",
+  "ko": "여러 개를 골라도, 하나도 고르지 않아도 됩니다.",
+  "en": "You can pick several, or none.",
+  "bt": "여러 개를 고르거나, 하나도 고르지 않아도 돼요."
+ },
+ {
+  "key": "coach.noteEyebrow",
+  "ko": "예시로 연습하기 · 짧은 참고",
+  "en": "Practice with an example · A short note",
+  "bt": "예시로 연습하기 · 짧은 메모"
+ },
+ {
+  "key": "coach.noteTitle",
+  "ko": "단어는 정답표가 아니라\n살펴보는 도구입니다.",
+  "en": "Words are not an answer key.\nThey are tools for looking.",
+  "bt": "단어는 정답지가 아니에요.\n들여다보기 위한 도구예요."
+ },
+ {
+  "key": "coach.noteAside",
+  "ko": "참고 설명",
+  "en": "Note",
+  "bt": "참고"
+ },
+ {
+  "key": "coach.resultZone",
+  "ko": "예시 연습 결과",
+  "en": "Practice result",
+  "bt": "연습 결과"
+ },
+ {
+  "key": "coach.observationsFromExample",
+  "ko": "예시에서 눈에 띈 것",
+  "en": "What you noticed in the example",
+  "bt": "예시에서 알아차린 것"
+ },
+ {
+  "key": "coach.observationsUnknown",
+  "ko": "이 단계에서 고른 관찰",
+  "en": "What you picked at this step",
+  "bt": "이 단계에서 고른 것"
+ },
+ {
+  "key": "coach.expressionsFromExample",
+  "ko": "예시에 가까울 수 있는 표현",
+  "en": "Words that might fit the example",
+  "bt": "예시에 맞을 수도 있는 단어"
+ },
+ {
+  "key": "coach.expressionsUnknown",
+  "ko": "이 단계에서 고른 표현",
+  "en": "Words picked at this step",
+  "bt": "이 단계에서 고른 단어"
+ },
+ {
+  "key": "coach.footnoteFromExample",
+  "ko": "예시 연습의 결과입니다. 앞에서 고른 내 표현을 바꾸지 않고, 요약에도 쓰이지 않습니다.",
+  "en": "This is the result of the example practice. It does not change the words you picked earlier and is not used in your summary.",
+  "bt": "예시 연습의 결과예요. 앞에서 고른 단어를 바꾸지 않으며 요약에도 쓰이지 않아요."
+ },
+ {
+  "key": "coach.footnoteUnknown",
+  "ko": "이 기록이 예시 연습으로 저장되었는지는 확인할 수 없습니다. 앞에서 고른 내 표현을 바꾸지 않고, 요약에도 쓰이지 않습니다.",
+  "en": "We cannot tell whether this entry was saved as example practice. It does not change the words you picked earlier and is not used in your summary.",
+  "bt": "이 기록이 예시 연습으로 저장되었는지 알 수 없어요. 앞에서 고른 단어를 바꾸지 않으며 요약에도 쓰이지 않아요."
+ },
+ {
+  "key": "coach.backToSummary",
+  "ko": "요약으로 돌아가기",
+  "en": "Back to the summary",
+  "bt": "요약으로 돌아가기"
+ },
+ {
+  "key": "coach.escapes.several",
+  "ko": "여러 개",
+  "en": "Several",
+  "bt": "여러 개"
+ },
+ {
+  "key": "coach.escapes.none",
+  "ko": "어느 것도 아님",
+  "en": "None of these",
+  "bt": "이 중에는 없음"
+ },
+ {
+  "key": "coach.escapes.unsure",
+  "ko": "잘 모르겠음",
+  "en": "Not sure",
+  "bt": "잘 모르겠음"
+ },
+ {
+  "key": "coach.appraisalEscapes.none",
+  "ko": "어느 것도 아니다.",
+  "en": "None of these.",
+  "bt": "이 중에는 없어요."
+ },
+ {
+  "key": "coach.appraisalEscapes.unsure",
+  "ko": "잘 모르겠다.",
+  "en": "I’m not sure.",
+  "bt": "잘 모르겠어요."
+ },
+ {
+  "key": "quickSummary.eyebrow",
+  "ko": "빠른 확인",
+  "en": "Quick look",
+  "bt": "빠르게 보기"
+ },
+ {
+  "key": "quickSummary.title",
+  "ko": "여기까지 살펴보았습니다.",
+  "en": "This is as far as you went.",
+  "bt": "여기까지 오셨어요."
+ },
+ {
+  "key": "quickSummary.affect",
+  "ko": "전체적인 느낌",
+  "en": "Overall feeling",
+  "bt": "전반적인 느낌"
+ },
+ {
+  "key": "quickSummary.words",
+  "ko": "가까웠던 말",
+  "en": "Words that came close",
+  "bt": "가까웠던 단어"
+ },
+ {
+  "key": "quickSummary.granularity",
+  "ko": "더 살펴본 표현",
+  "en": "Words looked at more closely",
+  "bt": "더 자세히 살펴본 단어"
+ },
+ {
+  "key": "quickSummary.contrast",
+  "ko": "상황 속 차이",
+  "en": "Difference in the situation",
+  "bt": "상황에서의 차이"
+ },
+ {
+  "key": "quickSummary.footnote",
+  "ko": "이것은 감정의 판정이 아니라, 지금 경험을 표현해볼 수 있는 작은 단서입니다.",
+  "en": "This is not a verdict on your emotion. It is a small clue for putting what you are experiencing into words.",
+  "bt": "이것은 감정에 대한 판정이 아니에요. 지금 겪고 있는 것을 말로 표현하기 위한 작은 단서예요."
+ },
+ {
+  "key": "quickSummary.deep",
+  "ko": "조금 더 천천히 들여다보기",
+  "en": "Take it more slowly",
+  "bt": "좀 더 천천히 해 보기"
+ },
+ {
+  "key": "quickSummary.support",
+  "ko": "그래서 지금 무엇이 필요할지 살펴보기",
+  "en": "So what might you need now?",
+  "bt": "그렇다면 지금 무엇이 필요할까요?"
+ },
+ {
+  "key": "body.basis",
+  "ko": "지금 이 순간 몸에서 알아차린 것만",
+  "en": "Only what you notice in your body right now",
+  "bt": "지금 몸에서 알아차리는 것만"
+ },
+ {
+  "key": "body.step",
+  "ko": "몸",
+  "en": "Body",
+  "bt": "몸"
+ },
+ {
+  "key": "body.title",
+  "ko": "먼저, 몸에서는 무엇이 느껴지나요?",
+  "en": "First, what do you notice in your body?",
+  "bt": "먼저, 몸에서 무엇이 느껴지나요?"
+ },
+ {
+  "key": "body.hint",
+  "ko": "감정 이름을 찾기 전에 지금 몸에서 알아차릴 수 있는 것부터 봅니다. 자세를 고쳐 앉을 필요는 없습니다 — 지금 이 순간 알아차린 것이면 충분합니다.",
+  "en": "Before looking for a name for the emotion, start with what you can notice in your body right now. No need to change how you are sitting. What you notice in this moment is enough.",
+  "bt": "감정의 이름을 찾기 전에, 지금 몸에서 알아차릴 수 있는 것부터 시작해요. 앉은 자세를 바꿀 필요는 없어요. 지금 이 순간 알아차리는 것으로 충분해요."
+ },
+ {
+  "key": "body.more",
+  "ko": "다른 몸의 느낌 보기",
+  "en": "Show other body sensations",
+  "bt": "다른 몸 감각 보기"
+ },
+ {
+  "key": "body.customLabel",
+  "ko": "다른 느낌이 있다면 적어도 됩니다",
+  "en": "If there is something else, you can write it",
+  "bt": "다른 것이 있다면 적어도 돼요"
+ },
+ {
+  "key": "body.customPlaceholder",
+  "ko": "예: 손이 차가움",
+  "en": "e.g. Cold hands",
+  "bt": "예: 손이 차가움"
+ },
+ {
+  "key": "affect.basis",
+  "ko": "지금 이 순간을 기준으로",
+  "en": "As of this moment",
+  "bt": "지금 이 순간 기준"
+ },
+ {
+  "key": "affect.step",
+  "ko": "전체적인 느낌",
+  "en": "Overall feeling",
+  "bt": "전반적인 느낌"
+ },
+ {
+  "key": "affect.title",
+  "ko": "조금 더 살펴본 지금은 어느 쪽에 가까운가요?",
+  "en": "Now that you have looked a little closer, which way is it leaning?",
+  "bt": "조금 더 가까이 들여다본 지금, 어느 쪽으로 기울어 있나요?"
+ },
+ {
+  "key": "affect.hint",
+  "ko": "빠른 확인에서 표시한 곳이 먼저 놓여 있습니다. 그대로 두어도 되고 옮겨도 됩니다.",
+  "en": "The spot you marked in the quick look is already placed. You can leave it or move it.",
+  "bt": "빠르게 보기에서 표시한 지점이 이미 놓여 있어요. 그대로 두거나 옮길 수 있어요."
+ },
+ {
+  "key": "affect.hintFresh",
+  "ko": "지금에 가장 가까운 곳을 한 번 눌러 주세요. 잘 모르겠으면 건너뛰어도 됩니다.",
+  "en": "Tap once on the spot closest to right now. If you are not sure, you can skip this.",
+  "bt": "지금과 가장 가까운 지점을 한 번 탭하세요. 잘 모르겠다면 건너뛰어도 돼요."
+ },
+ {
+  "key": "context.basis",
+  "ko": "떠오른 일 하나만",
+  "en": "Just the one thing that came to mind",
+  "bt": "떠오른 한 가지만"
+ },
+ {
+  "key": "context.step",
+  "ko": "상황",
+  "en": "Situation",
+  "bt": "상황"
+ },
+ {
+  "key": "context.title",
+  "ko": "무슨 일이 있었나요?",
+  "en": "What happened?",
+  "bt": "무슨 일이 있었나요?"
+ },
+ {
+  "key": "context.hint",
+  "ko": "사실만 간단히 적어도 충분합니다.",
+  "en": "A few plain facts are enough.",
+  "bt": "있는 그대로의 사실 몇 가지면 충분해요."
+ },
+ {
+  "key": "context.placeholder",
+  "ko": "지금 떠오르는 일을 적어보세요",
+  "en": "Write what comes to mind",
+  "bt": "떠오르는 것을 적어 보세요"
+ },
+ {
+  "key": "context.privacyHint",
+  "ko": "다른 사람의 이름은 ‘친구’, ‘팀장’처럼 바꿔 적어도 됩니다. 기록은 이 기기에 남고, 파일로 내보내면 그 파일에도 그대로 들어갑니다.",
+  "en": "You can write “a friend” or “my manager” instead of someone’s name. The record stays on this device, and an exported file holds it as written.",
+  "bt": "누군가의 이름 대신 “친구”나 “내 상사”라고 적어도 돼요. 기록은 이 기기에 남고, 내보낸 파일에는 적은 그대로 담겨요."
+ },
+ {
+  "key": "context.sourceQuestion",
+  "ko": "이것은 무엇에 가까운가요?",
+  "en": "Which is this closest to?",
+  "bt": "이것은 어느 쪽에 가장 가깝나요?"
+ },
+ {
+  "key": "meaning.basis",
+  "ko": "그 일이 있던 순간을 기준으로",
+  "en": "As of the moment it happened",
+  "bt": "그 일이 있었던 순간 기준"
+ },
+ {
+  "key": "meaning.step",
+  "ko": "중요했던 것",
+  "en": "What mattered",
+  "bt": "중요했던 것"
+ },
+ {
+  "key": "meaning.title",
+  "ko": "그 순간 무엇이 중요했던 것 같나요?",
+  "en": "What seemed to matter in that moment?",
+  "bt": "그 순간에는 무엇이 중요했던 것 같나요?"
+ },
+ {
+  "key": "meaning.hint",
+  "ko": "정답을 찾는 질문이 아닙니다. 가까운 것을 골라도, 잘 모르겠다고 해도 됩니다.",
+  "en": "There is no right answer. You can pick what comes close, or say you are not sure.",
+  "bt": "정답은 없어요. 가까운 것을 고르거나, 잘 모르겠다고 해도 돼요."
+ },
+ {
+  "key": "emotion.basis",
+  "ko": "지금까지 적은 경험을 기준으로",
+  "en": "Based on what you have written so far",
+  "bt": "지금까지 적은 내용을 바탕으로"
+ },
+ {
+  "key": "emotion.step",
+  "ko": "가까운 표현",
+  "en": "Words that come close",
+  "bt": "가까운 단어"
+ },
+ {
+  "key": "emotion.title",
+  "ko": "지금까지 적은 경험에 가까운 단어가 있나요?",
+  "en": "Is there a word that comes close to what you have written so far?",
+  "bt": "지금까지 적은 것과 가까운 단어가 있나요?"
+ },
+ {
+  "key": "emotion.hint",
+  "ko": "이 단어들은 정답이 아니라, 지금 경험을 표현해보는 임시 후보입니다.",
+  "en": "These words are not right answers. They are provisional options for putting the experience into words.",
+  "bt": "이 단어들은 정답이 아니에요. 경험을 말로 옮기기 위한 잠정적인 선택지예요."
+ },
+ {
+  "key": "emotion.escapes.several",
+  "ko": "여러 개",
+  "en": "Several",
+  "bt": "여러 개"
+ },
+ {
+  "key": "emotion.escapes.unsure",
+  "ko": "잘 모르겠음",
+  "en": "Not sure",
+  "bt": "잘 모르겠어요"
+ },
+ {
+  "key": "outcome.basis",
+  "ko": "처음 시작했을 때와 비교해서",
+  "en": "Compared with when you started",
+  "bt": "처음 시작했을 때와 비교해서"
+ },
+ {
+  "key": "outcome.step",
+  "ko": "도움 여부",
+  "en": "Did it help",
+  "bt": "도움이 됐는지"
+ },
+ {
+  "key": "outcome.title",
+  "ko": "처음보다 지금 경험이 조금 더 분명해졌나요?",
+  "en": "Compared with the start, is the experience a little clearer now?",
+  "bt": "처음과 비교해, 지금 그 경험이 조금 더 분명해졌나요?"
+ },
+ {
+  "key": "outcome.hint",
+  "ko": "더 복잡해지거나 불편해졌다면 그렇게 알려주어도 됩니다.",
+  "en": "If it has become more tangled or more uncomfortable, you can say so.",
+  "bt": "더 뒤엉켰거나 더 불편해졌다면, 그렇다고 말해도 돼요."
+ },
+ {
+  "key": "outcome.clarity.much_clearer",
+  "ko": "많이 더 분명해짐",
+  "en": "Much clearer",
+  "bt": "훨씬 분명해졌어요"
+ },
+ {
+  "key": "outcome.clarity.clearer",
+  "ko": "조금 더 분명해짐",
+  "en": "A little clearer",
+  "bt": "조금 분명해졌어요"
+ },
+ {
+  "key": "outcome.clarity.same",
+  "ko": "비슷함",
+  "en": "About the same",
+  "bt": "비슷해요"
+ },
+ {
+  "key": "outcome.clarity.more_complex",
+  "ko": "더 복잡해짐",
+  "en": "More tangled",
+  "bt": "더 뒤엉켰어요"
+ },
+ {
+  "key": "outcome.clarity.more_distressed",
+  "ko": "더 불편해짐",
+  "en": "More uncomfortable",
+  "bt": "더 불편해졌어요"
+ },
+ {
+  "key": "outcome.usefulnessQuestion",
+  "ko": "이 기록은 지금 도움이 되었나요?",
+  "en": "Was this entry helpful just now?",
+  "bt": "방금 이 기록이 도움이 되었나요?"
+ },
+ {
+  "key": "outcome.usefulness.helpful",
+  "ko": "도움됨",
+  "en": "Helpful",
+  "bt": "도움이 됐어요"
+ },
+ {
+  "key": "outcome.usefulness.unsure",
+  "ko": "잘 모르겠음",
+  "en": "Not sure",
+  "bt": "잘 모르겠어요"
+ },
+ {
+  "key": "outcome.usefulness.unhelpful",
+  "ko": "도움되지 않음",
+  "en": "Not helpful",
+  "bt": "도움이 안 됐어요"
+ },
+ {
+  "key": "outcome.notePlaceholder",
+  "ko": "덧붙이고 싶은 한 줄 (선택)",
+  "en": "Anything to add, in one line (optional)",
+  "bt": "덧붙일 말이 있다면 한 줄로 (선택)"
+ },
+ {
+  "key": "summary.eyebrow",
+  "ko": "이번 기록에서",
+  "en": "In this entry",
+  "bt": "이번 기록에서"
+ },
+ {
+  "key": "summary.title",
+  "ko": "여기까지 살펴보았습니다.",
+  "en": "This is as far as you went.",
+  "bt": "여기까지 오셨어요."
+ },
+ {
+  "key": "summary.quickAffect",
+  "ko": "처음 빠른 확인",
+  "en": "First quick look",
+  "bt": "처음 빠르게 보기"
+ },
+ {
+  "key": "summary.body",
+  "ko": "몸",
+  "en": "Body",
+  "bt": "몸"
+ },
+ {
+  "key": "summary.affect",
+  "ko": "전체적인 느낌",
+  "en": "Overall feeling",
+  "bt": "전반적인 느낌"
+ },
+ {
+  "key": "summary.context",
+  "ko": "상황",
+  "en": "Situation",
+  "bt": "상황"
+ },
+ {
+  "key": "summary.concerns",
+  "ko": "중요했던 것",
+  "en": "What mattered",
+  "bt": "중요했던 것"
+ },
+ {
+  "key": "summary.words",
+  "ko": "가까웠던 말",
+  "en": "Words that came close",
+  "bt": "가까웠던 단어"
+ },
+ {
+  "key": "summary.footnote",
+  "ko": "감정의 정답을 찾은 것이 아니라, 지금 경험을 표현할 수 있는 몇 가지 단서를 남겼습니다.",
+  "en": "This did not find the right answer about your emotion. It left a few clues for putting the experience into words.",
+  "bt": "이것이 감정에 대한 정답을 찾은 것은 아니에요. 경험을 말로 옮기기 위한 단서를 몇 가지 남겼어요."
+ },
+ {
+  "key": "summary.support",
+  "ko": "그래서 지금 무엇이 필요할까요?",
+  "en": "So what might you need now?",
+  "bt": "그렇다면 지금 무엇이 필요할까요?"
+ },
+ {
+  "key": "synthesisSection.title",
+  "ko": "지금까지의 경험을\n이렇게 정리해볼 수 있어요",
+  "en": "Here is one way to put\nwhat you have noticed together",
+  "bt": "알아차린 것을\n한데 엮어 보는 한 가지 방법이에요"
+ },
+ {
+  "key": "synthesisSection.observed",
+  "ko": "관찰한 것",
+  "en": "What you noted",
+  "bt": "적어 둔 것"
+ },
+ {
+  "key": "synthesisSection.meaning",
+  "ko": "연결해서 생각해볼 수 있는 것",
+  "en": "Connections you could think about",
+  "bt": "생각해 볼 수 있는 연결"
+ },
+ {
+  "key": "synthesisSection.unknown",
+  "ko": "아직 알기 어려운 것",
+  "en": "What is still hard to tell",
+  "bt": "아직 알기 어려운 것"
+ },
+ {
+  "key": "synthesisSection.questions",
+  "ko": "다음에 생각해볼 질문",
+  "en": "Questions to think about next",
+  "bt": "다음에 생각해 볼 질문"
+ },
+ {
+  "key": "synthesisSection.fitQuestion",
+  "ko": "이 설명이 지금 경험과 얼마나 맞나요?",
+  "en": "How well does this fit what you are experiencing?",
+  "bt": "이것이 지금 겪고 있는 것과 얼마나 잘 맞나요?"
+ },
+ {
+  "key": "synthesisSection.fit.close",
+  "ko": "꽤 맞아요",
+  "en": "Fits well",
+  "bt": "잘 맞아요"
+ },
+ {
+  "key": "synthesisSection.fit.partly",
+  "ko": "일부만 맞아요",
+  "en": "Fits partly",
+  "bt": "일부 맞아요"
+ },
+ {
+  "key": "synthesisSection.fit.unsure",
+  "ko": "잘 모르겠어요",
+  "en": "I’m not sure",
+  "bt": "잘 모르겠어요"
+ },
+ {
+  "key": "synthesisSection.correctionPlaceholder",
+  "ko": "지금 경험을 내 말로 다시 적어보세요",
+  "en": "Write the experience again in your own words",
+  "bt": "경험을 내 말로 다시 적어 보세요"
+ },
+ {
+  "key": "synthesisSection.correct",
+  "ko": "내 말로 고쳐보기",
+  "en": "Rewrite in my own words",
+  "bt": "내 말로 다시 쓰기"
+ },
+ {
+  "key": "synthesisSection.keep",
+  "ko": "이 기록에 남기기",
+  "en": "Keep this in the entry",
+  "bt": "이 내용을 기록에 남기기"
+ },
+ {
+  "key": "synthesisSection.cancel",
+  "ko": "취소",
+  "en": "Cancel",
+  "bt": "취소"
+ },
+ {
+  "key": "synthesis.lead",
+  "ko": "당신이 고른 내용을 연결하면 이렇게 정리해볼 수 있습니다.",
+  "en": "Putting together what you chose, it could be summed up like this.",
+  "bt": "고른 것들을 모아 보면, 이렇게 정리할 수 있어요."
+ },
+ {
+  "key": "synthesis.caveat",
+  "ko": "이것은 해석이나 진단이 아니라, 당신이 고른 내용을 이어 붙이고 그 사이의 관계만 짚은 것입니다. 맞지 않으면 아래에서 고쳐 쓸 수 있습니다.",
+  "en": "This is not an interpretation or a diagnosis. It only joins what you chose and points out how those pieces relate. If it does not fit, you can rewrite it below.",
+  "bt": "이것은 해석이나 진단이 아니에요. 고른 것들을 이어 붙이고, 그 조각들이 서로 어떻게 관련되는지 짚어 줄 뿐이에요. 맞지 않는다면 아래에서 다시 쓸 수 있어요."
+ },
+ {
+  "key": "synthesis.notEnough",
+  "ko": "지금 기록만으로는 연결해볼 만한 정보가 충분하지 않습니다.",
+  "en": "There is not enough in this entry yet to connect things.",
+  "bt": "이번 기록에는 아직 서로 연결할 만한 내용이 충분하지 않아요."
+ },
+ {
+  "key": "synthesis.observed.quickAffect",
+  "ko": "빠른 확인에서 전체적인 느낌을 {text}{~text|으로/로} 표시했습니다.",
+  "en": "In the quick look, you marked the overall feeling as {text}.",
+  "bt": "빠르게 보기에서 전반적인 느낌을 {text}(으)로 표시했어요."
+ },
+ {
+  "key": "synthesis.observed.body",
+  "ko": "몸에서는 {list}{~last|을/를} 알아차렸다고 적었습니다.",
+  "en": "In your body, you noticed {list}.",
+  "bt": "몸에서 {list}을(를) 알아차렸어요."
+ },
+ {
+  "key": "synthesis.observed.deepAffect",
+  "ko": "전체적인 느낌은 {text} 쪽으로 표시했습니다.",
+  "en": "You marked the overall feeling as {text}.",
+  "bt": "전반적인 느낌을 {text}(으)로 표시했어요."
+ },
+ {
+  "key": "synthesis.observed.context",
+  "ko": "상황으로는 “{event}”라고 적었고, 이것은 {source}에 가깝다고 표시했습니다.",
+  "en": "For the situation, you wrote “{event},” and marked it as closest to {source}.",
+  "bt": "상황으로는 “{event}”라고 적었고, {source}에 가장 가깝다고 표시했어요."
+ },
+ {
+  "key": "synthesis.observed.concerns",
+  "ko": "그때 중요했던 것으로는 {list}{~last|을/를} 골랐습니다.",
+  "en": "For what mattered at the time, you chose {list}.",
+  "bt": "그때 중요했던 것으로 {list}을(를) 골랐어요."
+ },
+ {
+  "key": "synthesis.observed.emotion",
+  "ko": "지금 경험에 가까운 말로는 {list}{~last|을/를} 골랐습니다.",
+  "en": "For words close to what you are experiencing, you chose {list}.",
+  "bt": "지금 겪고 있는 것과 가까운 단어로 {list}을(를) 골랐어요."
+ },
+ {
+  "key": "synthesis.observed.quickEmotion",
+  "ko": "가까운 말로는 {list}{~last|을/를} 골랐습니다.",
+  "en": "For words that came close, you chose {list}.",
+  "bt": "가까웠던 단어로 {list}을(를) 골랐어요."
+ },
+ {
+  "key": "synthesis.observed.declined.none-close",
+  "ko": "제시된 후보에는 가까운 말이 없다고 표시했습니다.",
+  "en": "Among the words offered, you marked that none came close.",
+  "bt": "제시된 단어 중에는 가까운 것이 없다고 표시했어요."
+ },
+ {
+  "key": "synthesis.observed.declined.unsure",
+  "ko": "제시된 후보에는 잘 모르겠다고 표시했습니다.",
+  "en": "Among the words offered, you marked that you were not sure.",
+  "bt": "제시된 단어 중에서 잘 모르겠다고 표시했어요."
+ },
+ {
+  "key": "synthesis.observed.affectBeforeAfter",
+  "ko": "처음 빠른 확인에서는 {quick} 쪽이었고, 조금 더 살펴본 뒤에는 {deep}{~deep|으로/로} 표시했습니다.",
+  "en": "In the first quick look it was {quick}, and after looking a little closer you marked it as {deep}.",
+  "bt": "처음 빠르게 볼 때는 {quick}(이)었고, 조금 더 가까이 본 뒤에는 {deep}(으)로 표시했어요."
+ },
+ {
+  "key": "synthesis.meaning.concernOverlap",
+  "ko": "고른 표현과 그때 중요했다고 한 것이 모두 ‘{tags}’ 쪽을 가리킵니다. 같은 곳을 두 번 짚은 셈입니다.",
+  "en": "The words you chose and what you said mattered both point toward “{tags}.” You touched the same place twice.",
+  "bt": "고른 단어와 중요했다고 말한 것이 모두 “{tags}” 쪽을 가리켜요. 같은 곳을 두 번 짚은 셈이에요."
+ },
+ {
+  "key": "synthesis.meaning.wordsShifted",
+  "ko": "빠르게 봤을 때는 {quick}, 자세히 본 뒤에는 {deep}{~deepLast|을/를} 골랐습니다. 같은 순간을 두 번 다르게 표현해본 셈입니다.",
+  "en": "At a quick look you chose {quick}, and after looking closely you chose {deep}. You put the same moment into words two different ways.",
+  "bt": "빠르게 볼 때는 {quick}을(를) 골랐고, 자세히 본 뒤에는 {deep}을(를) 골랐어요. 같은 순간을 두 가지 다른 방식으로 말로 옮겼어요."
+ },
+ {
+  "key": "synthesis.meaning.severalKinds",
+  "ko": "{words}처럼 한 갈래로 묶이지 않는 표현을 함께 골랐습니다. 여러 결이 같이 있는 경험일 수 있습니다.",
+  "en": "You chose {words}, words that do not fall into one group. It may be an experience with several strands at once.",
+  "bt": "{words}을(를) 골랐는데, 한 묶음에 속하지 않는 단어들이에요. 여러 갈래가 동시에 얽힌 경험일 수도 있어요."
+ },
+ {
+  "key": "synthesis.meaning.notHappeningNow",
+  "ko": "이 기록은 지금 벌어지고 있는 일이 아니라 {source}에 대한 것이라고 표시했습니다.",
+  "en": "You marked that this entry is about {source}, not something happening right now.",
+  "bt": "이 기록은 지금 일어나고 있는 일이 아니라 {source}에 관한 것이라고 표시했어요."
+ },
+ {
+  "key": "synthesis.unknown.noContext",
+  "ko": "어떤 일이 있었는지는 이 기록에 적히지 않았습니다.",
+  "en": "This entry does not say what happened.",
+  "bt": "이 기록에는 무슨 일이 있었는지 나와 있지 않아요."
+ },
+ {
+  "key": "synthesis.unknown.noConcern",
+  "ko": "그 순간 무엇이 중요했는지는 아직 적히지 않았습니다.",
+  "en": "It does not yet say what mattered in that moment.",
+  "bt": "그 순간 무엇이 중요했는지는 아직 나와 있지 않아요."
+ },
+ {
+  "key": "synthesis.unknown.contextDependent",
+  "ko": "{list}{~last|을/를} 상황에 따라 다르게 경험되는 표현입니다. 지금 어느 쪽에 가까운지는 이 기록만으로 정해지지 않습니다.",
+  "en": "{list} can be experienced differently depending on the situation. This entry alone does not settle which way it leans now.",
+  "bt": "{list}은(는) 상황에 따라 다르게 경험될 수 있어요. 이 기록만으로는 지금 어느 쪽으로 기우는지 정해지지 않아요."
+ },
+ {
+  "key": "synthesis.unknown.affectUnknown",
+  "ko": "전체적인 느낌은 잘 모르겠다고 표시했습니다.",
+  "en": "You marked that you were not sure about the overall feeling.",
+  "bt": "전반적인 느낌은 잘 모르겠다고 표시했어요."
+ },
+ {
+  "key": "synthesis.questions.concern",
+  "ko": "그 순간 가장 중요했던 것은 무엇이었나요?",
+  "en": "What mattered most in that moment?",
+  "bt": "그 순간 가장 중요했던 것은 무엇이었나요?"
+ },
+ {
+  "key": "synthesis.questions.context",
+  "ko": "무슨 일이 있었는지 한 줄로 적는다면 어떻게 될까요?",
+  "en": "If you wrote what happened in one line, what would it be?",
+  "bt": "무슨 일이 있었는지 한 줄로 적는다면, 뭐라고 적을까요?"
+ },
+ {
+  "key": "synthesis.questions.compare",
+  "ko": "{first}과 {second} 중 어느 쪽이 조금 더 가까웠나요?",
+  "en": "Between {first} and {second}, which came a little closer?",
+  "bt": "{first}와(과) {second} 중에서 어느 쪽이 조금 더 가까웠나요?"
+ },
+ {
+  "key": "synthesis.questions.changed",
+  "ko": "빠르게 봤을 때와 지금 사이에 무엇이 달라졌을까요?",
+  "en": "What might have changed between the quick look and now?",
+  "bt": "빠르게 보기와 지금 사이에 무엇이 달라졌을까요?"
+ },
+ {
+  "key": "synthesis.questions.body",
+  "ko": "그때 몸에서는 무엇이 느껴졌나요?",
+  "en": "What did you notice in your body at the time?",
+  "bt": "그때 몸에서 무엇을 알아차렸나요?"
+ },
+ {
+  "key": "synthesis.questions.sameWord",
+  "ko": "비슷한 상황에서도 {word}이라는 말을 쓰나요?",
+  "en": "Would you use the word {word} in a similar situation too?",
+  "bt": "비슷한 상황에서도 {word}(이)라는 단어를 쓸 것 같나요?"
+ },
+ {
+  "key": "synthesis.questions.fallback",
+  "ko": "지금 이것을 살펴보는 것이 도움이 되었나요?",
+  "en": "Did looking at this help just now?",
+  "bt": "방금 이것을 살펴본 것이 도움이 되었나요?"
+ },
+ {
+  "key": "need.step",
+  "ko": "지금 필요한 것",
+  "en": "What you need now",
+  "bt": "지금 필요한 것"
+ },
+ {
+  "key": "need.title",
+  "ko": "지금 가장 필요한 방향은 어느 쪽에 가까운가요?",
+  "en": "Which direction feels most needed right now?",
+  "bt": "지금은 어느 방향이 가장 필요하게 느껴지나요?"
+ },
+ {
+  "key": "need.hint",
+  "ko": "앱이 정해주지 않습니다. 하나를 골라보고, 다른 쪽이 궁금하면 언제든 바꿔도 됩니다.",
+  "en": "The app does not decide this. Pick one, and switch any time if another one makes you curious.",
+  "bt": "이것은 앱이 정하지 않아요. 하나를 고르고, 다른 것이 궁금해지면 언제든 바꿔도 돼요."
+ },
+ {
+  "key": "need.routeDeep",
+  "ko": "조금 더 천천히 살펴보기",
+  "en": "Take it more slowly",
+  "bt": "좀 더 천천히 해 보기"
+ },
+ {
+  "key": "need.routeCoach",
+  "ko": "비슷한 표현의 차이를 살펴보기",
+  "en": "Compare similar words",
+  "bt": "비슷한 단어 비교하기"
+ },
+ {
+  "key": "need.routeNone",
+  "ko": "고른 표현에 맞는 상황 비교가 아직 준비되지 않았습니다. 다른 방향을 눌러보셔도 됩니다.",
+  "en": "There is no situation comparison for the words you picked yet. You can try another direction.",
+  "bt": "고른 단어에 대해서는 아직 상황 비교가 없어요. 다른 방향을 시도해 볼 수 있어요."
+ },
+ {
+  "key": "need.exit",
+  "ko": "그대로 두어도 됩니다. 여기서 마쳐도 기록은 남습니다.",
+  "en": "You can leave it as it is. If you stop here, the entry is still kept.",
+  "bt": "그대로 두어도 괜찮아요. 여기서 멈춰도 기록은 그대로 남아요."
+ },
+ {
+  "key": "need.varies",
+  "ko": "같은 경험이라도 필요한 것은 그때그때 다를 수 있습니다. 편안하거나 벅찬 경험이라면 문제를 풀기보다 머물러 느끼는 쪽이 맞을 수도 있습니다.",
+  "en": "Even with the same experience, what you need can change from time to time. If the experience is calm or full, staying with it may suit you better than solving something.",
+  "bt": "같은 경험이라도 필요한 것은 그때그때 달라질 수 있어요. 경험이 차분하거나 충만하다면, 무언가를 해결하기보다 그 경험에 머무는 편이 더 맞을 수도 있어요."
+ },
+ {
+  "key": "need.backToSummary",
+  "ko": "← 요약으로 돌아가기",
+  "en": "← Back to the summary",
+  "bt": "← 요약으로 돌아가기"
+ },
+ {
+  "key": "need.finish",
+  "ko": "여기까지",
+  "en": "Finish here",
+  "bt": "여기서 마치기"
+ },
+ {
+  "key": "talkToSomeone.question",
+  "ko": "이 경험을 사람에게 말해 볼 생각이 있나요?",
+  "en": "Are you thinking of telling a person about this?",
+  "bt": "이 일을 누군가에게 이야기할 생각이 있나요?"
+ },
+ {
+  "key": "talkToSomeone.hint",
+  "ko": "답하지 않아도 됩니다. 어느 답이든 괜찮고, 나중에 바꿔도 됩니다.",
+  "en": "You need not answer. Any answer is fine, and you can change it later.",
+  "bt": "답하지 않아도 돼요. 어떤 답이든 괜찮고, 나중에 바꿀 수 있어요."
+ },
+ {
+  "key": "talkToSomeone.answers.yes",
+  "ko": "예",
+  "en": "Yes",
+  "bt": "네"
+ },
+ {
+  "key": "talkToSomeone.answers.no",
+  "ko": "아니오",
+  "en": "No",
+  "bt": "아니요"
+ },
+ {
+  "key": "talkToSomeone.answers.not-yet",
+  "ko": "아직",
+  "en": "Not yet",
+  "bt": "아직은"
+ },
+ {
+  "key": "talkToSomeone.saved",
+  "ko": "이 기록에 남겨 두었습니다.",
+  "en": "Kept with this record.",
+  "bt": "이 기록과 함께 보관했어요."
+ },
+ {
+  "key": "talkToSomeone.recordLabel",
+  "ko": "사람에게 말해 볼 생각",
+  "en": "Thinking of telling a person",
+  "bt": "누군가에게 이야기할 생각"
+ },
+ {
+  "key": "records.eyebrow",
+  "ko": "지난 기록",
+  "en": "Past entries",
+  "bt": "지난 기록"
+ },
+ {
+  "key": "records.title",
+  "ko": "이전에 적은 것들",
+  "en": "What you wrote before",
+  "bt": "전에 적은 것"
+ },
+ {
+  "key": "records.empty",
+  "ko": "아직 남긴 기록이 없습니다.",
+  "en": "There are no entries yet.",
+  "bt": "아직 기록이 없어요."
+ },
+ {
+  "key": "records.noWords",
+  "ko": "고른 표현 없음",
+  "en": "No words chosen",
+  "bt": "고른 단어 없음"
+ },
+ {
+  "key": "records.needLine",
+  "ko": "필요했던 방향 · {label}",
+  "en": "Direction you needed · {label}",
+  "bt": "필요했던 방향 · {label}"
+ },
+ {
+  "key": "records.responsesLine",
+  "ko": "해보기로 한 것 · {labels}",
+  "en": "What you planned to try · {labels}",
+  "bt": "해 보려고 한 것 · {labels}"
+ },
+ {
+  "key": "records.backToStart",
+  "ko": "← 처음으로",
+  "en": "← Back to the start",
+  "bt": "← 처음으로 돌아가기"
+ },
+ {
+  "key": "records.depth.quick",
+  "ko": "빠른 확인",
+  "en": "Quick look",
+  "bt": "빠르게 보기"
+ },
+ {
+  "key": "records.depth.quick+deep",
+  "ko": "빠른 확인 + 자세히",
+  "en": "Quick look + closer look",
+  "bt": "빠르게 보기 + 자세히 보기"
+ },
+ {
+  "key": "records.depth.deep",
+  "ko": "자세히",
+  "en": "Closer look",
+  "bt": "자세히 보기"
+ },
+ {
+  "key": "recordTransfer.title",
+  "ko": "기록 옮기기와 지우기",
+  "en": "Move or delete entries",
+  "bt": "기록 옮기기 또는 삭제하기"
+ },
+ {
+  "key": "recordTransfer.intro",
+  "ko": "로그인 없이 다른 기기로 기록을 옮기거나 따로 보관할 때 씁니다. 모든 처리는 이 기기의 브라우저 안에서만 일어납니다.",
+  "en": "Use this to move entries to another device or keep a copy, without logging in. Everything happens inside the browser on this device.",
+  "bt": "로그인 없이 기록을 다른 기기로 옮기거나 사본을 보관할 때 사용해요. 모든 과정은 이 기기의 브라우저 안에서 이루어져요."
+ },
+ {
+  "key": "recordTransfer.exportNote",
+  "ko": "암호를 정하지 않으면, 내보낸 파일에는 적은 내용이 그대로 들어 있고 암호화되지 않습니다.",
+  "en": "Without a passphrase, the exported file holds what you wrote as it is and is not encrypted.",
+  "bt": "암호 문구가 없으면, 내보낸 파일에는 적은 내용이 그대로 담기며 암호화되지 않아요."
+ },
+ {
+  "key": "recordTransfer.exportShareNote",
+  "ko": "파일을 다른 사람에게 보내면 그 사람도 적은 내용을 모두 읽을 수 있습니다. 기록에 다른 사람 이야기가 있다면 한 번 더 생각해 주세요.",
+  "en": "Anyone you send the file to can read everything in it. If your records mention other people, think twice.",
+  "bt": "파일을 받은 사람은 누구나 그 안의 모든 내용을 읽을 수 있어요. 기록에 다른 사람이 언급되어 있다면 한 번 더 생각해 보세요."
+ },
+ {
+  "key": "recordTransfer.exportScope",
+  "ko": "완료한 기록과 중단한 기록 {count}개를 내보냅니다. 작성 중인 기록은 넣지 않습니다.",
+  "en": "Exports {count} finished and stopped entries. Unfinished entries are not included.",
+  "bt": "완료한 기록과 중단한 기록 {count}개를 내보내요. 끝내지 않은 기록은 포함되지 않아요."
+ },
+ {
+  "key": "recordTransfer.export",
+  "ko": "파일로 내보내기",
+  "en": "Export to a file",
+  "bt": "파일로 내보내기"
+ },
+ {
+  "key": "recordTransfer.exportEmpty",
+  "ko": "내보낼 기록이 없습니다.",
+  "en": "There are no entries to export.",
+  "bt": "내보낼 기록이 없어요."
+ },
+ {
+  "key": "recordTransfer.exported",
+  "ko": "파일 {name}을 내려받았습니다.",
+  "en": "Downloaded {name}.",
+  "bt": "{name}을(를) 내려받았어요."
+ },
+ {
+  "key": "recordTransfer.import",
+  "ko": "파일에서 가져오기",
+  "en": "Import from a file",
+  "bt": "파일에서 가져오기"
+ },
+ {
+  "key": "recordTransfer.importFileLabel",
+  "ko": "가져올 기록 파일 고르기",
+  "en": "Choose an entries file to import",
+  "bt": "가져올 기록 파일 선택"
+ },
+ {
+  "key": "recordTransfer.importSummary",
+  "ko": "이 파일에는 기록이 {total}개 있습니다. 그중 이미 이 기기에 있는 기록은 {duplicates}개이고, 기록 모양이 아닌 항목은 {invalid}개입니다.",
+  "en": "This file has {total} entries. {duplicates} of them are already on this device, and {invalid} items are not in the shape of an entry.",
+  "bt": "이 파일에는 기록이 {total}개 있어요. 그중 {duplicates}개는 이미 이 기기에 있고, {invalid}개 항목은 기록 형식이 아니에요."
+ },
+ {
+  "key": "recordTransfer.importRule",
+  "ko": "이미 있는 기록은 그대로 두고, 새 기록 {add}개만 더합니다.",
+  "en": "Entries already here stay as they are. Only {add} new entries will be added.",
+  "bt": "이미 있는 기록은 그대로 유지돼요. 새 기록 {add}개만 추가돼요."
+ },
+ {
+  "key": "recordTransfer.importNothingNew",
+  "ko": "더할 새 기록이 없습니다. 아무것도 바꾸지 않았습니다.",
+  "en": "There are no new entries to add. Nothing was changed.",
+  "bt": "추가할 새 기록이 없어요. 아무것도 바뀌지 않았어요."
+ },
+ {
+  "key": "recordTransfer.importConfirm",
+  "ko": "가져오기",
+  "en": "Import",
+  "bt": "가져오기"
+ },
+ {
+  "key": "recordTransfer.importCancel",
+  "ko": "취소",
+  "en": "Cancel",
+  "bt": "취소"
+ },
+ {
+  "key": "recordTransfer.imported",
+  "ko": "기록 {added}개를 가져왔습니다. 이미 있던 기록 {duplicates}개와 모양이 맞지 않는 항목 {invalid}개는 건너뛰었습니다.",
+  "en": "Imported {added} entries. Skipped {duplicates} already here and {invalid} items not in the shape of an entry.",
+  "bt": "기록 {added}개를 가져왔어요. 이미 있던 {duplicates}개와 기록 형식이 아닌 항목 {invalid}개는 건너뛰었어요."
+ },
+ {
+  "key": "recordTransfer.importCancelled",
+  "ko": "가져오기를 취소했습니다. 아무것도 바꾸지 않았습니다.",
+  "en": "Import canceled. Nothing was changed.",
+  "bt": "가져오기를 취소했어요. 아무것도 바뀌지 않았어요."
+ },
+ {
+  "key": "recordTransfer.errors.too-large",
+  "ko": "파일이 너무 큽니다. 5MB까지 가져올 수 있습니다. 아무것도 저장하지 않았습니다.",
+  "en": "The file is too large. Files up to 5 MB can be imported. Nothing was saved.",
+  "bt": "파일이 너무 커요. 5 MB까지의 파일만 가져올 수 있어요. 아무것도 저장되지 않았어요."
+ },
+ {
+  "key": "recordTransfer.errors.not-json",
+  "ko": "파일을 읽을 수 없습니다. 내용이 깨졌거나 JSON 파일이 아닙니다. 아무것도 저장하지 않았습니다.",
+  "en": "The file could not be read. It may be damaged, or it is not a JSON file. Nothing was saved.",
+  "bt": "파일을 읽을 수 없었어요. 손상되었을 수도 있고, 아니면 JSON 파일이 아니에요. 아무것도 저장되지 않았어요."
+ },
+ {
+  "key": "recordTransfer.errors.unknown-format",
+  "ko": "감정 관찰실에서 내보낸 기록 파일이 아닙니다. 아무것도 저장하지 않았습니다.",
+  "en": "This is not an entries file exported from Emotion Observatory. Nothing was saved.",
+  "bt": "감정 관찰실에서 내보낸 기록 파일이 아니에요. 아무것도 저장되지 않았어요."
+ },
+ {
+  "key": "recordTransfer.errors.unsupported-version",
+  "ko": "이 앱이 아직 읽을 수 없는 판의 기록 파일입니다. 아무것도 저장하지 않았습니다.",
+  "en": "This entries file is from a version this app cannot read yet. Nothing was saved.",
+  "bt": "이 기록 파일은 이 앱이 아직 읽을 수 없는 버전이에요. 아무것도 저장되지 않았어요."
+ },
+ {
+  "key": "recordTransfer.errors.no-records",
+  "ko": "파일 안에 기록 목록이 없습니다. 아무것도 저장하지 않았습니다.",
+  "en": "The file has no list of entries. Nothing was saved.",
+  "bt": "파일에 기록 목록이 없어요. 아무것도 저장되지 않았어요."
+ },
+ {
+  "key": "recordTransfer.errors.unreadable",
+  "ko": "파일을 여는 중에 문제가 생겼습니다. 아무것도 저장하지 않았습니다.",
+  "en": "Something went wrong while opening the file. Nothing was saved.",
+  "bt": "파일을 여는 중에 문제가 생겼어요. 아무것도 저장되지 않았어요."
+ },
+ {
+  "key": "recordTransfer.lock.legend",
+  "ko": "암호로 잠그기 (선택)",
+  "en": "Lock with a passphrase (optional)",
+  "bt": "암호 문구로 잠그기 (선택)"
+ },
+ {
+  "key": "recordTransfer.lock.hint",
+  "ko": "암호를 정하면 내보낸 파일이 잠겨, 그 암호를 아는 사람만 열 수 있습니다. 비워 두면 지금처럼 잠그지 않고 내보냅니다.",
+  "en": "With a passphrase the exported file is locked, and only someone who knows it can open the file. Leave it empty to export unlocked, as before.",
+  "bt": "암호 문구를 정하면 내보낸 파일이 잠기고, 그 암호 문구를 아는 사람만 파일을 열 수 있어요. 비워 두면 이전처럼 잠그지 않고 내보내요."
+ },
+ {
+  "key": "recordTransfer.lock.passphrase",
+  "ko": "암호 (8자 이상)",
+  "en": "Passphrase (8 characters or more)",
+  "bt": "암호 문구 (8자 이상)"
+ },
+ {
+  "key": "recordTransfer.lock.confirm",
+  "ko": "암호 한 번 더",
+  "en": "Passphrase again",
+  "bt": "암호 문구 다시 입력"
+ },
+ {
+  "key": "recordTransfer.lock.warning",
+  "ko": "암호를 잊으면 이 파일은 누구도 열 수 없습니다. 만든 사람도 열 수 없습니다. 암호는 어디에도 저장되지 않습니다.",
+  "en": "If you forget the passphrase, no one can open this file, the maker included. The passphrase is not stored anywhere.",
+  "bt": "암호 문구를 잊으면 만든 사람을 포함해 누구도 이 파일을 열 수 없어요. 암호 문구는 어디에도 저장되지 않아요."
+ },
+ {
+  "key": "recordTransfer.lock.tooShort",
+  "ko": "암호는 8자 이상이어야 합니다.",
+  "en": "The passphrase needs at least 8 characters.",
+  "bt": "암호 문구는 8자 이상이어야 해요."
+ },
+ {
+  "key": "recordTransfer.lock.mismatch",
+  "ko": "두 번 적은 암호가 다릅니다.",
+  "en": "The two passphrases differ.",
+  "bt": "두 암호 문구가 서로 달라요."
+ },
+ {
+  "key": "recordTransfer.lock.exportLocked",
+  "ko": "암호로 잠가 내보내기",
+  "en": "Export locked",
+  "bt": "잠가서 내보내기"
+ },
+ {
+  "key": "recordTransfer.lock.locking",
+  "ko": "파일을 잠그는 중입니다…",
+  "en": "Locking the file…",
+  "bt": "파일을 잠그는 중…"
+ },
+ {
+  "key": "recordTransfer.lock.exported",
+  "ko": "암호로 잠근 파일 {name}을 내려받았습니다.",
+  "en": "Downloaded the locked file {name}.",
+  "bt": "잠긴 파일 {name}을(를) 내려받았어요."
+ },
+ {
+  "key": "recordTransfer.lock.failed",
+  "ko": "파일을 잠그지 못했습니다. 아무것도 내려받지 않았습니다.",
+  "en": "Could not lock the file. Nothing was downloaded.",
+  "bt": "파일을 잠글 수 없었어요. 아무것도 내려받지 않았어요."
+ },
+ {
+  "key": "recordTransfer.lock.unlockQuestion",
+  "ko": "암호로 잠긴 기록 파일입니다. 내보낼 때 정한 암호를 적어 주세요.",
+  "en": "This records file is locked. Enter the passphrase chosen when it was exported.",
+  "bt": "이 기록 파일은 잠겨 있어요. 내보낼 때 정한 암호 문구를 입력하세요."
+ },
+ {
+  "key": "recordTransfer.lock.unlockLabel",
+  "ko": "파일 암호",
+  "en": "File passphrase",
+  "bt": "파일 암호 문구"
+ },
+ {
+  "key": "recordTransfer.lock.unlock",
+  "ko": "열기",
+  "en": "Open",
+  "bt": "열기"
+ },
+ {
+  "key": "recordTransfer.lock.unlocking",
+  "ko": "파일을 여는 중입니다…",
+  "en": "Opening the file…",
+  "bt": "파일을 여는 중…"
+ },
+ {
+  "key": "recordTransfer.lock.unlockCancel",
+  "ko": "취소",
+  "en": "Cancel",
+  "bt": "취소"
+ },
+ {
+  "key": "recordTransfer.lock.errors.wrong-passphrase",
+  "ko": "암호가 맞지 않거나 파일이 손상되었습니다. 아무것도 저장하지 않았습니다.",
+  "en": "The passphrase is wrong or the file is damaged. Nothing was saved.",
+  "bt": "암호 문구가 틀렸거나 파일이 손상되었어요. 아무것도 저장되지 않았어요."
+ },
+ {
+  "key": "recordTransfer.lock.errors.damaged",
+  "ko": "잠긴 파일의 모양이 맞지 않습니다. 아무것도 저장하지 않았습니다.",
+  "en": "The locked file is not in the expected shape. Nothing was saved.",
+  "bt": "잠긴 파일이 예상한 형식이 아니에요. 아무것도 저장되지 않았어요."
+ },
+ {
+  "key": "recordTransfer.lock.errors.unsupported-version",
+  "ko": "이 앱이 아직 열 수 없는 판의 잠긴 파일입니다. 아무것도 저장하지 않았습니다.",
+  "en": "This locked file is from a version this app cannot open yet. Nothing was saved.",
+  "bt": "이 잠긴 파일은 이 앱이 아직 열 수 없는 버전이에요. 아무것도 저장되지 않았어요."
+ },
+ {
+  "key": "recordTransfer.deleteAll",
+  "ko": "이 기기의 기록 모두 지우기",
+  "en": "Delete all entries on this device",
+  "bt": "이 기기의 모든 기록 삭제"
+ },
+ {
+  "key": "recordTransfer.deleteAllConfirmTitle",
+  "ko": "이 기기의 기록을 모두 지울까요?",
+  "en": "Delete all entries on this device?",
+  "bt": "이 기기의 모든 기록을 삭제할까요?"
+ },
+ {
+  "key": "recordTransfer.deleteAllConfirmBody",
+  "ko": "완료한 기록, 중단한 기록, 작성 중인 기록을 모두 이 기기에서 지웁니다. 지운 기록은 되돌릴 수 없습니다. 지우기 전에 위의 「파일로 내보내기」로 파일을 받아 둘 수 있습니다.",
+  "en": "This deletes finished, stopped and unfinished entries from this device. Deleted entries cannot be brought back. Before deleting, you can save a copy with “Export to a file” above.",
+  "bt": "이 기기에서 완료한 기록, 중단한 기록, 끝내지 않은 기록을 삭제해요. 삭제한 기록은 되돌릴 수 없어요. 삭제하기 전에 위의 “파일로 내보내기”로 사본을 저장할 수 있어요."
+ },
+ {
+  "key": "recordTransfer.deleteAllConfirm",
+  "ko": "모두 지우기",
+  "en": "Delete all",
+  "bt": "모두 삭제"
+ },
+ {
+  "key": "recordTransfer.deleteAllCancel",
+  "ko": "취소",
+  "en": "Cancel",
+  "bt": "취소"
+ },
+ {
+  "key": "recordTransfer.deletedAll",
+  "ko": "이 기기의 기록을 모두 지웠습니다.",
+  "en": "All entries on this device have been deleted.",
+  "bt": "이 기기의 모든 기록을 삭제했어요."
+ },
+ {
+  "key": "recordDetail.depth",
+  "ko": "살펴본 정도",
+  "en": "How far you went",
+  "bt": "어디까지 했는지"
+ },
+ {
+  "key": "recordDetail.quickAffect",
+  "ko": "빠른 확인",
+  "en": "Quick look",
+  "bt": "빠르게 보기"
+ },
+ {
+  "key": "recordDetail.deepAffect",
+  "ko": "자세히 본 뒤",
+  "en": "After a closer look",
+  "bt": "더 가까이 본 뒤"
+ },
+ {
+  "key": "recordDetail.words",
+  "ko": "가까웠던 말",
+  "en": "Words that came close",
+  "bt": "가까웠던 단어"
+ },
+ {
+  "key": "recordDetail.personalMeaning",
+  "ko": "‘{label}’은",
+  "en": "“{label}” meant",
+  "bt": "“{label}”이(가) 뜻한 것"
+ },
+ {
+  "key": "recordDetail.context",
+  "ko": "상황",
+  "en": "Situation",
+  "bt": "상황"
+ },
+ {
+  "key": "recordDetail.need",
+  "ko": "필요했던 방향",
+  "en": "Direction you needed",
+  "bt": "필요했던 방향"
+ },
+ {
+  "key": "recordDetail.responses",
+  "ko": "해보기로 한 것",
+  "en": "What you planned to try",
+  "bt": "해 보려고 한 것"
+ },
+ {
+  "key": "recordDetail.followUpTitle",
+  "ko": "그 뒤에는 어땠나요",
+  "en": "How did it go afterward",
+  "bt": "그 뒤로 어땠나요"
+ },
+ {
+  "key": "recordDetail.triedQuestion",
+  "ko": "그때 골랐던 것을 실제로 해봤나요?",
+  "en": "Did you actually try what you picked?",
+  "bt": "고른 것을 실제로 해 봤나요?"
+ },
+ {
+  "key": "recordDetail.helpedQuestion",
+  "ko": "조금이라도 도움이 됐나요?",
+  "en": "Did it help, even a little?",
+  "bt": "조금이라도 도움이 되었나요?"
+ },
+ {
+  "key": "recordDetail.followUpCaveat",
+  "ko": "평가가 아닙니다. “아니요”도 그대로 정상적인 답입니다. 이 답으로 방법을 추천하거나 점수를 매기지 않습니다.",
+  "en": "This is not an evaluation. “No” is a normal answer too. Your answer is not used to recommend anything or to give a score.",
+  "bt": "이것은 평가가 아니에요. “아니요”도 평범한 답이에요. 답한 내용은 무언가를 추천하거나 점수를 매기는 데 쓰이지 않아요."
+ },
+ {
+  "key": "recordDetail.backToList",
+  "ko": "← 목록으로",
+  "en": "← Back to the list",
+  "bt": "← 목록으로 돌아가기"
+ },
+ {
+  "key": "recordDetail.toStart",
+  "ko": "처음으로",
+  "en": "Back to the start",
+  "bt": "처음으로 돌아가기"
+ },
+ {
+  "key": "recordDetail.tried.yes",
+  "ko": "해봤어요",
+  "en": "I tried it",
+  "bt": "해 봤어요"
+ },
+ {
+  "key": "recordDetail.tried.partly",
+  "ko": "일부만 해봤어요",
+  "en": "I tried some of it",
+  "bt": "일부 해 봤어요"
+ },
+ {
+  "key": "recordDetail.tried.no",
+  "ko": "아니요",
+  "en": "No",
+  "bt": "아니요"
+ },
+ {
+  "key": "recordDetail.helped.yes",
+  "ko": "도움이 됐어요",
+  "en": "It helped",
+  "bt": "도움이 됐어요"
+ },
+ {
+  "key": "recordDetail.helped.somewhat",
+  "ko": "조금은요",
+  "en": "A little",
+  "bt": "조금"
+ },
+ {
+  "key": "recordDetail.helped.no",
+  "ko": "아니요",
+  "en": "No",
+  "bt": "아니요"
+ },
+ {
+  "key": "recordDetail.helped.unsure",
+  "ko": "잘 모르겠어요",
+  "en": "I’m not sure",
+  "bt": "잘 모르겠어요"
+ },
+ {
+  "key": "worsened.eyebrow",
+  "ko": "여기까지",
+  "en": "That is enough for now",
+  "bt": "지금은 이걸로 충분해요"
+ },
+ {
+  "key": "worsened.title",
+  "ko": "더 불편해졌다고\n남겨 주셨습니다",
+  "en": "You noted that you feel\nmore uncomfortable",
+  "bt": "더 불편하다고\n적어 주셨어요"
+ },
+ {
+  "key": "worsened.lede",
+  "ko": "여기서 더 살펴보지 않아도 됩니다. 이번에는 이렇게 마쳐도 괜찮습니다.",
+  "en": "You do not need to look any further. It is fine to stop here this time.",
+  "bt": "더 살펴보지 않아도 돼요. 이번에는 여기서 멈춰도 괜찮아요."
+ },
+ {
+  "key": "worsened.finish",
+  "ko": "여기서 마치기",
+  "en": "Stop here",
+  "bt": "여기서 멈추기"
+ },
+ {
+  "key": "worsened.kept",
+  "ko": "남긴 기록은 ‘지난 기록 보기’에서 확인하거나 지울 수 있습니다.",
+  "en": "You can see or delete this entry under “See past entries.”",
+  "bt": "이 기록은 “지난 기록 보기”에서 보거나 삭제할 수 있어요."
+ },
+ {
+  "key": "worsened.showHelp",
+  "ko": "도움받을 수 있는 곳 보기",
+  "en": "See where to find help",
+  "bt": "도움받을 수 있는 곳 보기"
+ },
+ {
+  "key": "stopped.eyebrow",
+  "ko": "여기까지",
+  "en": "Stopping here",
+  "bt": "여기서 멈춰요"
+ },
+ {
+  "key": "stopped.title",
+  "ko": "지금은 더 살펴보지\n않아도 됩니다.",
+  "en": "You don’t have to\nlook any further right now.",
+  "bt": "지금은 더\n살펴보지 않아도 돼요."
+ },
+ {
+  "key": "stopped.lede",
+  "ko": "경험에서 조금 거리를 두는 것도 선택입니다. 이 기록은 완료된 기록이 아니라, 중단한 기록으로 이 기기에 남습니다.",
+  "en": "Stepping back from an experience is a choice too. This entry stays on this device as a stopped entry, not a finished one.",
+  "bt": "경험에서 한 걸음 물러서는 것도 하나의 선택이에요. 이 기록은 완료된 기록이 아닌 중단된 기록으로 이 기기에 남아요."
+ },
+ {
+  "key": "stopped.home",
+  "ko": "기록실로 돌아가기",
+  "en": "Back to the start",
+  "bt": "처음으로 돌아가기"
+ },
+ {
+  "key": "stopped.delete",
+  "ko": "이 기록을 지우기",
+  "en": "Delete this entry",
+  "bt": "이 기록 삭제하기"
+ },
+ {
+  "key": "stopped.entryNote",
+  "ko": "물 한 잔, 잠깐 걷기, 다른 일로 주의를 옮기기처럼 지금 가능한 것을 선택해보세요.",
+  "en": "Choose something you can do now, such as a glass of water, a short walk, or turning your attention to something else.",
+  "bt": "물 한 잔, 짧은 산책, 다른 곳으로 주의 돌리기처럼 지금 할 수 있는 것을 골라 보세요."
+ },
+ {
+  "key": "stopModal.eyebrow",
+  "ko": "잠깐 확인할게요",
+  "en": "A quick check",
+  "bt": "잠깐 확인"
+ },
+ {
+  "key": "stopModal.title",
+  "ko": "지금 더 생각하는 것이\n도움이 되고 있나요?",
+  "en": "Is thinking more about this\nhelping right now?",
+  "bt": "이것에 대해 더 생각하는 것이\n지금 도움이 되고 있나요?"
+ },
+ {
+  "key": "stopModal.body",
+  "ko": "여기까지 알아차린 것으로 충분할 수 있습니다.",
+  "en": "What you have noticed so far may be enough.",
+  "bt": "지금까지 알아차린 것으로 충분할 수도 있어요."
+ },
+ {
+  "key": "stopModal.keepGoing",
+  "ko": "계속 살펴보기",
+  "en": "Keep looking",
+  "bt": "계속 살펴보기"
+ },
+ {
+  "key": "stopModal.stop",
+  "ko": "여기서 그만하기",
+  "en": "Stop here",
+  "bt": "여기서 멈추기"
+ }
+]

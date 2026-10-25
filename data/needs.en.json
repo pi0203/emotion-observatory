@@ -1,5 +1,5 @@
 {
-  "note": "Reviewed by the owner on 2026-10-19 (docs/I18N_PLAN.md §4). The list picked when answering “Which direction feels most needed right now?” at the end of a session. It is a direction the user tries on for now; the app never says “this is what you really need.”",
+  "note": "Reviewed by the owner on 2026-10-19 (docs/I18N_PLAN.md §4), then revised the same day after a blind back-translation and visitor, translator and linguist reviews (docs/EN_REVIEW_2026_10_19.md). The list picked when answering “Which direction feels most needed right now?” at the end of a session. It is a direction the user tries on for now; the app never says “this is what you really need.”",
   "fieldNotes": {
     "responses": "Things that can actually be tried in that direction after closing the app. Limited to two to four, with an option not to do anything at the end.",
     "because": "Why these options are showing. The only basis is the need the user picked. No claims about psychological mechanisms and no prescriptive wording.",
@@ -10,8 +10,8 @@
   "needs": [
     {
       "id": "pace",
-      "label": "Adjusting the pace of body and mind a little",
-      "because": "Because you chose “Adjusting the pace of body and mind,” here are a few small things to try with your body right now.",
+      "label": "Easing the pace of body and mind a little",
+      "because": "Because you chose “Easing the pace of body and mind,” here are a few small things to try with your body right now.",
       "responses": [
         {
           "id": "feel-now",
@@ -99,7 +99,7 @@
         },
         {
           "id": "repeatable",
-          "label": "Think about whether these conditions could come together again"
+          "label": "Think about whether you could set up these conditions again"
         }
       ],
       "group": "Looking closer"
@@ -108,7 +108,7 @@
       "id": "understand",
       "label": "Understanding this experience a little more",
       "route": true,
-      "because": "Because you chose “Understanding a little more,” this leads to a place in the app for looking a little further.",
+      "because": "Because you chose “Understanding a little more,” this opens the slow look, where you can look a little further.",
       "group": "Looking closer"
     },
     {
@@ -185,8 +185,8 @@
     },
     {
       "id": "solve",
-      "label": "Deciding on a step for the actual problem",
-      "because": "Because you chose “Deciding on a step,” here are ways to start without making it big.",
+      "label": "Choosing a next step on the problem itself",
+      "because": "Because you chose “Choosing a next step,” here are ways to start small.",
       "responses": [
         {
           "id": "smallest",
@@ -198,7 +198,7 @@
         },
         {
           "id": "conditions",
-          "label": "Check the conditions or the deadline"
+          "label": "Check what is required, or the deadline"
         },
         {
           "id": "solve-stop",

@@ -1,5 +1,5 @@
 {
-  "note": "Reviewed by the owner on 2026-10-19 (docs/I18N_PLAN.md §4). Sets for practicing the differences between similar words inside an example situation. They do not record the user’s actual events or current feelings. They do not teach definitions, and there is no right answer. Written for English rather than translated from the Korean sets; the set and appraisal ids are kept so code and records refer to them the same way.",
+  "note": "Reviewed by the owner on 2026-10-19 (docs/I18N_PLAN.md §4), then revised the same day after a blind back-translation and visitor, translator and linguist reviews (docs/EN_REVIEW_2026_10_19.md). Sets for practicing the differences between similar words inside an example situation. They do not record the user’s actual events or current feelings. They do not teach definitions, and there is no right answer. Written for English rather than translated from the Korean sets; the set and appraisal ids are kept so code and records refer to them the same way.",
   "guardrail": "There is no mapping between the appraisals chosen and the words. Whichever ones are chosen, the text that follows is the same and only quotes the sentences the user picked. The wording itself matters even more: an appraisal describes what was observed in the situation, not how the emotion feels. No appraisal may read like the definition of one word, and each one has to fit several words. That is why several can be picked and the user can write their own.",
   "fieldNotes": {
     "words": "The words compared in this set. None of them is the right answer, and they appear in the same order and the same form whichever appraisal was picked.",
@@ -23,7 +23,7 @@
         },
         {
           "id": "unheard",
-          "text": "What I said went by as if I had never said it."
+          "text": "It was as if I had never said anything."
         },
         {
           "id": "open-ended",
@@ -34,7 +34,7 @@
           "text": "It seemed like I was the only one making an effort."
         }
       ],
-      "note": "Words like “annoyed,” “frustrated,” and “wronged” can each come close to these things in different ways. The same situation differs from person to person, and several words can fit at once."
+      "note": "Words like “annoyed,” “frustrated,” and “wronged” can each come close to these things in different ways. In the same situation, this can differ from person to person, and several words can fit at once."
     },
     {
       "id": "calm-relief-content",
@@ -56,14 +56,14 @@
         },
         {
           "id": "nothing-urgent",
-          "text": "There was nothing I had to hurry to do."
+          "text": "There was nothing I needed to rush off and do."
         },
         {
           "id": "quiet",
-          "text": "It was quiet around me, and nothing interrupted."
+          "text": "It was quiet, and nothing interrupted me."
         }
       ],
-      "note": "Words like “calm,” “relieved,” and “content” can each come close to these things in different ways. The same moment differs from person to person, and several words can fit at once."
+      "note": "Words like “calm,” “relieved,” and “content” can each come close to these things in different ways. In the same moment, this can differ from person to person, and several words can fit at once."
     }
   ]
 }

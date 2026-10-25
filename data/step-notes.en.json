@@ -1,10 +1,10 @@
 {
-  "note": "Reviewed by the owner on 2026-10-19 (docs/I18N_PLAN.md §4). One sentence shown right after a choice at each step. It does not teach any emotion theory as the right answer, and it makes no judgment or diagnosis. It must stay within the four premises in PRODUCT_SPEC P7.",
+  "note": "Reviewed by the owner on 2026-10-19 (docs/I18N_PLAN.md §4), then revised the same day after a blind back-translation and visitor, translator and linguist reviews (docs/EN_REVIEW_2026_10_19.md). One sentence shown right after a choice at each step. It does not teach any emotion theory as the right answer, and it makes no judgment or diagnosis. It must stay within the four premises in PRODUCT_SPEC P7.",
   "steps": {
     "body": "What you notice in your body is not a fixed answer but a snapshot of this moment. It can feel different as movement, posture, breathing, time, or the situation changes.",
-    "affect": "Rather than judging your emotion, this choice is used to narrow down the words that might come close to what you are experiencing now.",
+    "affect": "This choice does not judge your emotion. It is only used to narrow down the words that might come close to what you are experiencing now.",
     "context": "The same feeling in the body can be experienced differently depending on the situation it came up in.",
     "meaning": "Looking at what mattered can make the difference between similar emotions a little clearer.",
-    "emotion": "This word is not a conclusion. It is a provisional way to describe what you are experiencing now, and it is fine if it changes."
+    "emotion": "This word is not a conclusion. It is a tentative way to describe what you are experiencing now, and it is fine if it changes."
   }
 }

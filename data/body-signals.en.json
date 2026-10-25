@@ -1,5 +1,5 @@
 {
-  "note": "Reviewed by the owner on 2026-10-19 (docs/I18N_PLAN.md §4). A list for picking what can be noticed in the body right now. Body sensations are not translated into emotions: a racing heart does not mean anxiety, and the same sensation can be experienced differently depending on the situation.",
+  "note": "Reviewed by the owner on 2026-10-19 (docs/I18N_PLAN.md §4), then revised the same day after a blind back-translation and visitor, translator and linguist reviews (docs/EN_REVIEW_2026_10_19.md). A list for picking what can be noticed in the body right now. Body sensations are not translated into emotions: a racing heart does not mean anxiety, and the same sensation can be experienced differently depending on the situation.",
   "fieldNotes": {
     "region": "Groups the sensations by part of the body so they are easier to scan. Not a classification of sensations.",
     "firstTier": "The few shown first. The rest open by region under “Show other body sensations.”",
@@ -11,7 +11,7 @@
     "Muscles and posture",
     "Stomach and gut",
     "Temperature and skin",
-    "Energy and weight",
+    "Energy and heaviness",
     "Movement and stillness"
   ],
   "items": [
@@ -25,7 +25,7 @@
       "firstTier": true
     },
     {
-      "label": "easy breathing",
+      "label": "breathing comes easily",
       "region": "Breathing and chest"
     },
     {
@@ -43,11 +43,11 @@
       "firstTier": true
     },
     {
-      "label": "steady, calm heartbeat",
+      "label": "steady heartbeat",
       "region": "Heartbeat"
     },
     {
-      "label": "pounding heart",
+      "label": "heart pounding or fluttering",
       "region": "Heartbeat"
     },
     {
@@ -89,7 +89,7 @@
       "region": "Stomach and gut"
     },
     {
-      "label": "stomach at ease",
+      "label": "settled stomach",
       "region": "Stomach and gut",
       "firstTier": true
     },
@@ -112,26 +112,26 @@
       "firstTier": true
     },
     {
-      "label": "tingling or prickly",
+      "label": "tingling or tickly",
       "region": "Temperature and skin"
     },
     {
       "label": "body feels heavy",
-      "region": "Energy and weight",
+      "region": "Energy and heaviness",
       "firstTier": true
     },
     {
       "label": "strength draining away",
-      "region": "Energy and weight"
+      "region": "Energy and heaviness"
     },
     {
       "label": "energy building up",
-      "region": "Energy and weight",
+      "region": "Energy and heaviness",
       "firstTier": true
     },
     {
       "label": "body feels light",
-      "region": "Energy and weight"
+      "region": "Energy and heaviness"
     },
     {
       "label": "fidgety",
@@ -143,7 +143,7 @@
       "region": "Movement and stillness"
     },
     {
-      "label": "steady and grounded",
+      "label": "holding steady",
       "region": "Movement and stillness"
     },
     {

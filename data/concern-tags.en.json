@@ -1,5 +1,5 @@
 {
-  "note": "Reviewed by the owner on 2026-10-19 (docs/I18N_PLAN.md §4). Loosely links each concern option to the contextTags in the vocabulary. It does not claim a cause or a right answer; it is used only to check whether two things the user chose point to the same place. Overlap does not mean causation. Keys are the sentences in concerns.en.json, and values are contextTags used in emotions.en.json.",
+  "note": "Reviewed by the owner on 2026-10-19 (docs/I18N_PLAN.md §4), then revised the same day after a blind back-translation and visitor, translator and linguist reviews (docs/EN_REVIEW_2026_10_19.md). Loosely links each concern option to the contextTags in the vocabulary. It does not claim a cause or a right answer; it is used only to check whether two things the user chose point to the same place. Overlap does not mean causation. Keys are the sentences in concerns.en.json, and values are contextTags used in emotions.en.json.",
   "map": {
     "I wanted to be respected": [
       "relationships",
@@ -11,7 +11,7 @@
     "I wanted to feel safe": [
       "safety"
     ],
-    "I wanted to be recognized": [
+    "I wanted to be acknowledged": [
       "being evaluated",
       "self-judgment",
       "achievement"
@@ -20,7 +20,7 @@
       "relationships",
       "closeness"
     ],
-    "I wanted to make my own choices": [
+    "I wanted to protect my right to choose": [
       "boundaries",
       "choices"
     ],

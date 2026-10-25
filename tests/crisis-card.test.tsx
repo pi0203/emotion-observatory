@@ -4,7 +4,8 @@ import { afterEach, beforeEach, describe, expect, it } from "vitest";
 import { cleanup, render, screen, within } from "@testing-library/react";
 import Home from "../app/(ko)/page";
 import { ko, type Messages } from "../lib/i18n/messages.ko";
-import { en, pendingReview, reviewStatus } from "../lib/i18n/messages.en";
+import { en, enOnly, pendingReview, reviewStatus } from "../lib/i18n/messages.en";
+import EmotionApp from "../app/emotion-app";
 
 /**
  * The crisis card at the bottom of the landing. The three Korean lines must be
@@ -89,15 +90,25 @@ describe("crisis card wording (owner, 2026-10-13)", () => {
     expect(en.crisis.youth1388).toMatch(/\(ages 9 to 24\)$/);
   });
 
-  it("opens English only with nothing left pending, and still does not draw the outside-Korea line", () => {
+  it("opens English only with nothing left pending", () => {
     // reviewed by the owner with the rest of the English on 2026-10-19
-    expect(en.crisis.emergency).toBe("If you are hurt or in immediate danger, call <b>119</b> (ambulance) or <b>112</b> (police) right away.");
+    expect(en.crisis.emergency).toBe("If you are physically hurt or in immediate danger, call <b>119</b> (ambulance) or <b>112</b> (police) right away.");
     // English cannot be marked reviewed while a sentence is still waiting for the owner.
     if (reviewStatus === "reviewed") expect(pendingReview.keys).toEqual([]);
-    // the outside-Korea sentence is a separate decision (SAFETY.md): written, but used nowhere
-    expect(pendingReview.outsideKorea).toBe("If you are outside Korea, please contact your local emergency number.");
-    const app = readFileSync(join(__dirname, "../app/emotion-app.tsx"), "utf8");
-    expect(app).not.toMatch(/outsideKorea/);
+  });
+
+  it("tells English readers outside Korea to call their local emergency number, right after 119/112 (owner, 2026-10-19)", () => {
+    render(<EmotionApp locale="en" />);
+    const card = screen.getAllByRole("complementary", { name: en.crisis.title })[0];
+    const lines = [...card.querySelectorAll("p")].map((p) => p.textContent);
+    expect(lines[0]).toMatch(/119.*112/);
+    expect(lines[1]).toBe(enOnly.outsideKorea);
+    expect(enOnly.outsideKorea).toMatch(/outside Korea/);
+  });
+
+  it("does not add that line to the Korean card", () => {
+    render(<Home />);
+    expect(document.body.textContent).not.toMatch(/outside Korea/);
   });
 
   it("uses no warning colour and no icon", () => {

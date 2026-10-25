@@ -1,0 +1,506 @@
+[
+ {
+  "key": "crisis.outsideKorea",
+  "current": "If you are outside Korea, please contact your local emergency number.",
+  "problem": "Placed right after the 119/112 line, it only covers emergencies. The counseling lines below it (109, 1577-0199, 1388) are never labeled as South Korea only, so a visitor abroad who needs to talk, but is not in immediate danger, may dial a number that will not connect and gets no alternative. “Contact a number” is also slightly off; “call” is clearer for a stressed reader.",
+  "severity": "high",
+  "category": 6,
+  "suggestion": "All numbers on this card are for South Korea. If you are outside Korea, call your local emergency number, or find a crisis line in your country at findahelpline.com. (Check the link before adding it.)"
+ },
+ {
+  "key": "crisis.intro",
+  "current": "If you need someone to talk to, there are counseling lines open 24 hours.",
+  "problem": "Does not say the lines are in South Korea, and does not name thoughts of suicide directly, so a reader having them has to infer the card is meant for them.",
+  "severity": "medium",
+  "category": 6,
+  "suggestion": "If you’re having thoughts of suicide, or just need someone to talk to, you can call these counseling lines in South Korea."
+ },
+ {
+  "key": "worsened.eyebrow",
+  "current": "That is enough for now",
+  "problem": "Shown right after someone says they feel worse. “That’s enough” is also what people say to tell someone off, so it can read as a reprimand rather than permission to stop.",
+  "severity": "medium",
+  "category": 3,
+  "suggestion": "Pausing here"
+ },
+ {
+  "key": "worsened.lede",
+  "current": "You do not need to look any further. It is fine to stop here this time.",
+  "problem": "Uncontracted wording sounds stiff and cold on the screen for someone who feels worse. “This time” hints they should try again next time, which reads like a nudge to come back.",
+  "severity": "medium",
+  "category": 3,
+  "suggestion": "You don’t need to look any further. It’s okay to stop here."
+ },
+ {
+  "key": "quickSummary.title, summary.title",
+  "current": "This is as far as you went.",
+  "problem": "Reads like “you only got this far,” a judgment on stopping short. It appears at the end of every session.",
+  "severity": "medium",
+  "category": 3,
+  "suggestion": "Here’s what you noted."
+ },
+ {
+  "key": "summary.footnote",
+  "current": "This did not find the right answer about your emotion. It left a few clues for putting the experience into words.",
+  "problem": "Sounds like the tool tried and failed. “Left a few clues” is odd. The quick summary already has a clearer version.",
+  "severity": "medium",
+  "category": 2,
+  "suggestion": "This isn’t a verdict on your emotion. It’s a few clues for putting the experience into words."
+ },
+ {
+  "key": "about.refsSummary",
+  "current": "Six studies behind it",
+  "problem": "“Behind it” implies the studies back the app, while the same section says no study tested it. Reads as an evidence claim in a heading people may skim.",
+  "severity": "medium",
+  "category": 6,
+  "suggestion": "Six studies related to the ideas here"
+ },
+ {
+  "key": "about.faq.often.a",
+  "current": "There is no set number. Days without it are fine too. Research does not yet know how much use it takes to help.",
+  "problem": "“How much use it takes to help” assumes it does help, which conflicts with “not shown to help” elsewhere. “Research does not know” is also odd phrasing.",
+  "severity": "medium",
+  "category": 6,
+  "suggestion": "There’s no set number, and days without it are fine. Research hasn’t shown how often, or whether, using a tool like this helps."
+ },
+ {
+  "key": "about.faq.worse.a",
+  "current": "Press Stop at any time. Going over things again and again can sometimes make it harder. At the last step you can also note that it felt more uncomfortable.",
+  "problem": "“Make it harder” and “it felt” are vague (make what harder?). A worried reader needs this said plainly.",
+  "severity": "medium",
+  "category": 1,
+  "suggestion": "Press Stop at any time. Going over the same thing again and again can sometimes make you feel worse. At the last step, you can also note that you feel more uncomfortable."
+ },
+ {
+  "key": "common.saveFailed",
+  "current": "This browser is not saving the record. Its storage may be full, or the browser may be blocking it. You can go on, but closing this screen will lose this record. Exporting old records to a file and deleting them on the records screen frees space.",
+  "problem": "Four dense sentences at a stressful moment (possible data loss). “Closing this screen will lose this record” is awkward, “the records screen” is not a name used anywhere, and it says “record” where the rest of the app says “entry.”",
+  "severity": "medium",
+  "category": 5,
+  "suggestion": "This entry isn’t being saved. The browser’s storage may be full or blocked. You can keep going, but the entry will be lost when you close this page. To free up space, export old entries to a file, then delete them under “See past entries.”"
+ },
+ {
+  "key": "landing.badgeDeep, landing.deep, about.what, about.previewDeep, quickCandidates.deep, quickSummary.deep, need.routeDeep, records.depth.*, recordDetail.deepAffect",
+  "current": "“Slow · 6 steps” / “Take it more slowly” / “The slow look” / “Slow look, 6 steps” / “Closer look” / “After a closer look”",
+  "problem": "The 6-step mode has four names. “Take it more slowly” also does not tell the visitor that it starts a 6-step flow, and “Slow” as a badge sounds like a drawback.",
+  "severity": "medium",
+  "category": 4,
+  "suggestion": "Use “Closer look” everywhere: badge “Closer look · 6 steps · about 3 to 5 minutes”; buttons “Take a closer look (6 steps)”; preview “Closer look, 6 steps”; about.what “The closer look has six steps, from your body to the words.”; records “Quick look + closer look.” (Optionally make the quick button “Take a quick look (2 steps)” to match.)"
+ },
+ {
+  "key": "common.notRecorded, context.privacyHint, talkToSomeone.saved, about.faq.maker.q, recordTransfer.exportShareNote, recordTransfer.lock.unlockQuestion, outcome.usefulnessQuestion",
+  "current": "“The record stays on this device” / “Kept with this record.” / “Can the maker see my records?” / “If your records mention other people” / “This records file is locked.” / “Was this entry helpful just now?”",
+  "problem": "Most of the app says “entry” (See past entries, unfinished entry), but these switch to “record/records,” so a visitor may wonder if they are different things. “Was this entry helpful” uses “entry” for the activity itself, which reads oddly.",
+  "severity": "medium",
+  "category": 4,
+  "suggestion": "Use “entry/entries” throughout: “The entry stays on this device…”; “Saved with this entry.”; “Can the maker see my entries?”; “If your entries mention other people, think twice.”; “This entries file is locked.”; and for the outcome question “Did this help just now?”"
+ },
+ {
+  "key": "entryMini.eyebrow, stopModal.eyebrow",
+  "current": "A quick check",
+  "problem": "Too close to the “Quick look” mode name, so the pause prompt can read like a third mode or a test.",
+  "severity": "medium",
+  "category": 4,
+  "suggestion": "entryMini.eyebrow: “Before you start”; stopModal.eyebrow: “A short pause”"
+ },
+ {
+  "key": "affectPad.top, affectPad.bottom, affectPad.ariaLabel, affectBands.activation.*, whyWords.principle",
+  "current": "“Energy rising” / “Low, settled”; bands “Low,” “A little low,” “Activated,” “Very activated”; “low–activated”",
+  "problem": "In everyday English “low” means sad (“feeling low”), so people may read the bottom of the pad as “down” rather than low energy. “Activated” is psychology jargon, and the top and bottom labels are not parallel.",
+  "severity": "medium",
+  "category": 7,
+  "suggestion": "Pad: top “High energy,” bottom “Low energy, settled.” Bands: “Very low energy,” “Somewhat low energy,” “In between,” “Somewhat high energy,” “Very high energy.” Aria: “…between unpleasant and pleasant, and between low energy and high energy. You can also move it with the arrow keys.” whyWords: “unpleasant–pleasant and low energy–high energy.”"
+ },
+ {
+  "key": "affectBands.quickValence.0, affectBands.quickValence.4, affectBands.quickActivation.*",
+  "current": "“On the unpleasant side” / “On the pleasant side” / “Energy rising” / “A lot of energy rising”",
+  "problem": "“On the unpleasant side” means “somewhat unpleasant” in English, so the end of the scale sounds as mild as the next step, “A little unpleasant.” “A lot of energy rising” is awkward and shares the “low” problem above.",
+  "severity": "medium",
+  "category": 1,
+  "suggestion": "Valence: “Mostly unpleasant,” “A little unpleasant,” “In between,” “A little pleasant,” “Mostly pleasant.” Activation: “Low energy,” “Somewhat low energy,” “In between,” “Somewhat high energy,” “High energy.”"
+ },
+ {
+  "key": "entryMini.title, entryMini.lede, entryMini.yes, entryMini.no",
+  "current": "“How is your body\\nright now?” / “And do you think thinking about this would help right now?” / “I think looking a little would help” / “I don’t think it would help right now”",
+  "problem": "The title asks a question the buttons never answer (they answer the lede). “Do you think thinking” is clunky, and “looking a little” trails off.",
+  "severity": "medium",
+  "category": 1,
+  "suggestion": "Title: “Take a moment to notice\\nhow your body feels.” Lede: “Would it help to think about this right now?” Buttons: “Yes, a closer look might help” / “I’m not sure” / “Not right now”"
+ },
+ {
+  "key": "entry.lede",
+  "current": "There is no hurry.\\nIf it is better not to think more about it right now, you do not have to record anything.",
+  "problem": "“If it is better not to think more about it” is impersonal translationese; the uncontracted form reads stiff.",
+  "severity": "medium",
+  "category": 2,
+  "suggestion": "There’s no rush.\\nIf you’d rather not think about it right now, you don’t have to record anything."
+ },
+ {
+  "key": "entry.observe",
+  "current": "I’d like to look a little",
+  "problem": "Trails off; sounds unfinished as a button label.",
+  "severity": "medium",
+  "category": 2,
+  "suggestion": "I’d like to look a little closer"
+ },
+ {
+  "key": "quickAffect.title, affect.title",
+  "current": "“Which way is it leaning right now?” / “Now that you have looked a little closer, which way is it leaning?”",
+  "problem": "“It” is never defined, so the visitor has to guess what is leaning. “Leaning” also suggests opinions or choices.",
+  "severity": "medium",
+  "category": 1,
+  "suggestion": "“Where does your overall feeling sit right now?” / “Now that you’ve looked a little closer, where does your overall feeling sit?”"
+ },
+ {
+  "key": "need.title, records.needLine, recordDetail.need",
+  "current": "“Which direction feels most needed right now?” / “Direction you needed · {label}”",
+  "problem": "“Direction” is abstract translationese; a visitor will not know what kind of answer is expected. The summary’s own question (“So what might you need now?”) is clearer.",
+  "severity": "medium",
+  "category": 2,
+  "suggestion": "“What do you feel you need most right now?” / records: “What you needed · {label}”"
+ },
+ {
+  "key": "words.meaningLabel",
+  "current": "What does “{label}” hold for you right now?",
+  "problem": "“Hold for you” is not natural English for this question.",
+  "severity": "medium",
+  "category": 2,
+  "suggestion": "What does “{label}” mean for you right now?"
+ },
+ {
+  "key": "words.startingPoint, whyWords.notJudging",
+  "current": "“Writing your own word is an equally normal path.” / “writing in your own words is a normal path, not an exception”",
+  "problem": "“A normal path” is translationese and sounds a bit like reassurance from a form.",
+  "severity": "medium",
+  "category": 2,
+  "suggestion": "“This is a starting point, not a complete list. Using your own word is just as good as picking one here.” / whyWords: “<b>using your own words is just as normal as picking from the list</b>”"
+ },
+ {
+  "key": "common.provisionalNote, emotion.hint, stepNotes.emotion",
+  "current": "“A provisional set of words · Only what you choose is recorded” / “They are provisional options…” / “It is a provisional way to describe…”",
+  "problem": "“Provisional” is formal and legal sounding; many teens and stressed readers will not parse it.",
+  "severity": "medium",
+  "category": 2,
+  "suggestion": "Note: “These words are just a starting point · Only what you choose is saved.” emotion.hint: “There are no right answers here. These words are just options for putting the experience into words.” stepNotes.emotion: “This word isn’t a conclusion. It’s just one way to describe what you’re experiencing now, and it’s fine if it changes.”"
+ },
+ {
+  "key": "quickCandidates.coach, need.routeCoach",
+  "current": "Compare similar words",
+  "problem": "The button opens a practice with a made-up example situation, not a comparison of words. The label does not say what happens.",
+  "severity": "medium",
+  "category": 1,
+  "suggestion": "Practice with an example"
+ },
+ {
+  "key": "emotion.escapes.several, coach.escapes.several",
+  "current": "Several",
+  "problem": "On its own, “Several” as an option does not say what it means (several what?).",
+  "severity": "medium",
+  "category": 1,
+  "suggestion": "Several fit"
+ },
+ {
+  "key": "contextSource.anticipation",
+  "current": "Something expected",
+  "problem": "Ambiguous: could mean “something I saw coming” rather than something still in the future.",
+  "severity": "medium",
+  "category": 1,
+  "suggestion": "Something coming up"
+ },
+ {
+  "key": "synthesis.meaning.concernOverlap",
+  "current": "The words you chose and what you said mattered both point toward “{tags}.” You touched the same place twice.",
+  "problem": "“You touched the same place twice” is a literal translation that sounds odd, even a little physical, in English.",
+  "severity": "medium",
+  "category": 2,
+  "suggestion": "The words you chose and what you said mattered both point toward “{tags}.”"
+ },
+ {
+  "key": "needs.pace.label, needs.pace.because",
+  "current": "Adjusting the pace of body and mind a little",
+  "problem": "“The pace of body and mind” is translationese; it is unclear whether it means slowing down or speeding up.",
+  "severity": "medium",
+  "category": 2,
+  "suggestion": "Label: “Easing body and mind a little.” Because: Because you chose “Easing body and mind,” here are a few small things to try with your body right now."
+ },
+ {
+  "key": "need.varies",
+  "current": "Even with the same experience, what you need can change from time to time. If the experience is calm or full, staying with it may suit you better than solving something.",
+  "problem": "“Calm or full” is unclear (full of what?), and “solving something” is awkward.",
+  "severity": "medium",
+  "category": 1,
+  "suggestion": "What you need can change from one time to the next, even for a similar experience. If the moment feels calm or good, staying with it may suit you better than trying to fix anything."
+ },
+ {
+  "key": "stopped.entryNote",
+  "current": "Choose something you can do now, such as a glass of water, a short walk, or turning your attention to something else.",
+  "problem": "A bare command on the stop screen sounds a little bossy. The list is not parallel (“a glass of water” is not something you do).",
+  "severity": "medium",
+  "category": 3,
+  "suggestion": "If you like, do something small now, like drinking a glass of water, taking a short walk, or turning your attention to something else."
+ },
+ {
+  "key": "bodyRegions[5]",
+  "current": "Energy and weight",
+  "problem": "“Weight” in a body checklist reads as body weight, which is a loaded topic, especially for teenagers. It is meant as feeling heavy or light.",
+  "severity": "medium",
+  "category": 7,
+  "suggestion": "Energy and heaviness"
+ },
+ {
+  "key": "meta.description",
+  "current": "A small self-observation tool for slowly telling apart your body, the situation, and what it meant.",
+  "problem": "You cannot “tell apart your body.” This is the line shown in search results and link previews, so it is often a visitor’s first impression.",
+  "severity": "medium",
+  "category": 2,
+  "suggestion": "A small self-observation tool for slowly sorting out what you notice in your body, what happened, and what it meant to you."
+ },
+ {
+  "key": "(global: on-screen copy)",
+  "current": "“You do not need…,” “There is no hurry,” “This is not a test…,” “It is fine…” next to “I’d,” “don’t,” “I’m”",
+  "problem": "Most on-screen text avoids contractions, which makes it read stiff and formal, and some strings already use them, so the voice is mixed. Serial commas are also inconsistent (“finished, stopped and unfinished” vs “the body, the situation, what mattered, and the words”).",
+  "severity": "low",
+  "category": 3,
+  "suggestion": "Use contractions in flow and button text (don’t, isn’t, it’s, you’re, there’s). Keep full forms only in the research notes. Use the serial comma throughout, e.g. “finished, stopped, and unfinished entries.”"
+ },
+ {
+  "key": "landing.lede",
+  "current": "You can take a quick look, or take your time telling things apart.",
+  "problem": "“Telling things apart” is vague on the first screen; it is unclear what things.",
+  "severity": "low",
+  "category": 1,
+  "suggestion": "You can take a quick look, or take your time and look more closely."
+ },
+ {
+  "key": "about.what",
+  "current": "A self-observation tool for looking at what you are experiencing in parts: the body, the situation, what mattered, and the words for it.",
+  "problem": "“In parts” is unnatural here.",
+  "severity": "low",
+  "category": 2,
+  "suggestion": "A self-observation tool for looking at what you’re going through piece by piece: your body, the situation, what mattered, and the words for it."
+ },
+ {
+  "key": "about.faq.ai.a",
+  "current": "That AI tools helped build this app is a separate matter.",
+  "problem": "Starting a sentence with a “That…” clause is stiff and hard to parse.",
+  "severity": "low",
+  "category": 2,
+  "suggestion": "AI tools were used in building the app, but the app itself doesn’t use AI."
+ },
+ {
+  "key": "about.faq.storage.a",
+  "current": "From past entries you can export them to a file (locked with a passphrase if you like) or delete them all.",
+  "problem": "“From past entries” reads as “out of your entries,” not the name of a screen.",
+  "severity": "low",
+  "category": 1,
+  "suggestion": "On the “See past entries” screen, you can export them to a file (with an optional passphrase lock) or delete them all."
+ },
+ {
+  "key": "about.faq.maker.a",
+  "current": "It uses no visit statistics, ads or tracking cookies. The hosting company (Vercel) handles access logs (IP address, browser type, time), as for any website; those logs contain nothing you wrote in the app.",
+  "problem": "“Visit statistics” and “as for any website” are unnatural; the long sentence is hard to follow.",
+  "severity": "low",
+  "category": 2,
+  "suggestion": "It uses no analytics, ads, or tracking cookies. Like any website, its hosting company (Vercel) keeps basic access logs (IP address, browser type, time). Those logs contain nothing you write in the app."
+ },
+ {
+  "key": "about.previewIntro, talkToSomeone.hint",
+  "current": "“you need not pick anything that does not fit.” / “You need not answer.”",
+  "problem": "“Need not” is old-fashioned and formal.",
+  "severity": "low",
+  "category": 2,
+  "suggestion": "“you don’t have to pick anything that doesn’t fit.” / “You don’t have to answer. Any answer is fine, and you can change it later.”"
+ },
+ {
+  "key": "talkToSomeone.question, talkToSomeone.recordLabel",
+  "current": "“Are you thinking of telling a person about this?” / “Thinking of telling a person”",
+  "problem": "“A person” is unnatural; English speakers say “someone.”",
+  "severity": "low",
+  "category": 2,
+  "suggestion": "“Are you thinking of telling someone about this?” / “Thinking of telling someone”"
+ },
+ {
+  "key": "quickSummary.contrast",
+  "current": "Difference in the situation",
+  "problem": "Unclear what is being compared or which situation is meant.",
+  "severity": "low",
+  "category": 1,
+  "suggestion": "What you noticed in the example"
+ },
+ {
+  "key": "context.privacyHint",
+  "current": "The record stays on this device, and an exported file holds it as written.",
+  "problem": "“Holds it as written” is awkward, and the export warning is buried.",
+  "severity": "low",
+  "category": 2,
+  "suggestion": "You can write “a friend” or “my manager” instead of a name. The entry stays on this device, but if you export it, the file includes exactly what you wrote."
+ },
+ {
+  "key": "quickAffect.basis, affect.basis, meaning.basis",
+  "current": "“As of this moment” / “As of the moment it happened”",
+  "problem": "“As of” is business or report language (“as of Monday”).",
+  "severity": "low",
+  "category": 2,
+  "suggestion": "“Right now” / “In the moment it happened”"
+ },
+ {
+  "key": "coach.wordsHint",
+  "current": "These words have no order and no right answer. They are not the only way to divide this example either, so writing a different word is an equally good choice.",
+  "problem": "“Divide this example” is unnatural; the sentence is long.",
+  "severity": "low",
+  "category": 2,
+  "suggestion": "These words are in no particular order, and there’s no right answer. They aren’t the only way to describe this example, so writing a different word is just as good."
+ },
+ {
+  "key": "synthesis.unknown.contextDependent",
+  "current": "This entry alone does not settle which way it leans now.",
+  "problem": "“Which way it leans” is vague.",
+  "severity": "low",
+  "category": 1,
+  "suggestion": "{list} can feel different depending on the situation. This entry alone doesn’t show what it was like this time."
+ },
+ {
+  "key": "need.routeNone",
+  "current": "There is no situation comparison for the words you picked yet. You can try another direction.",
+  "problem": "“Situation comparison” is internal jargon; elsewhere it is called practice with an example.",
+  "severity": "low",
+  "category": 4,
+  "suggestion": "There’s no example practice for the words you picked yet. You can try another option."
+ },
+ {
+  "key": "recordTransfer.importSummary, recordTransfer.imported",
+  "current": "“{invalid} items are not in the shape of an entry”",
+  "problem": "“Not in the shape of” is translationese.",
+  "severity": "low",
+  "category": 2,
+  "suggestion": "“…and {invalid} items couldn’t be read as entries.” / “Imported {added} entries. Skipped {duplicates} already here and {invalid} that couldn’t be read.”"
+ },
+ {
+  "key": "recordTransfer.lock.hint",
+  "current": "Leave it empty to export unlocked, as before.",
+  "problem": "“As before” is confusing for a first-time user (before what?).",
+  "severity": "low",
+  "category": 1,
+  "suggestion": "With a passphrase, only someone who knows it can open the file. Leave it blank to export without a lock."
+ },
+ {
+  "key": "stepNotes.affect",
+  "current": "Rather than judging your emotion, this choice is used to narrow down the words that might come close to what you are experiencing now.",
+  "problem": "Dangling modifier (“the choice” is not what avoids judging); long for the reader.",
+  "severity": "low",
+  "category": 2,
+  "suggestion": "This choice doesn’t judge your emotion. It only helps narrow down the words that might come close to what you’re experiencing now."
+ },
+ {
+  "key": "coachSets[*].note",
+  "current": "The same situation differs from person to person, and several words can fit at once.",
+  "problem": "Illogical as written: the situation is the same; it is the experience of it that differs.",
+  "severity": "low",
+  "category": 2,
+  "suggestion": "The same situation can feel different to different people, and several words can fit at once. (Calm set: “The same moment can feel different to different people…”)"
+ },
+ {
+  "key": "emotionWords.giddy.appraisalHints",
+  "current": "body reacting before the moment comes",
+  "problem": "“Giddy” means light-headed, almost silly excitement; the hint describes anticipatory nerves, so word and hint do not match.",
+  "severity": "low",
+  "category": 7,
+  "suggestion": "light-headed with excitement"
+ },
+ {
+  "key": "emotionWords.wistful.appraisalHints",
+  "current": "wishing it had gone a bit differently",
+  "problem": "“Wistful” is a soft longing for something past; the hint is closer to regret and overlaps with “regretful.”",
+  "severity": "low",
+  "category": 7,
+  "suggestion": "a soft longing for something that has passed"
+ },
+ {
+  "key": "emotionWords.annoyed.appraisalHints",
+  "current": "“keep getting interrupted” / “small things getting under the skin”",
+  "problem": "The first does not match the noun-phrase style of other hints; the idiom is “under my skin.”",
+  "severity": "low",
+  "category": 2,
+  "suggestion": "“being interrupted again and again” / “small things getting under my skin”"
+ },
+ {
+  "key": "emotionWords.drained.appraisalHints",
+  "current": "little energy left after holding on",
+  "problem": "“Holding on” is vague and, for a distressed reader, echoes crisis language (“hold on”).",
+  "severity": "low",
+  "category": 7,
+  "suggestion": "little energy left after pushing through"
+ },
+ {
+  "key": "emotionWords.small",
+  "current": "small / feeling little and unimportant",
+  "problem": "“Small” alone reads as a size word; the idiom is “feeling small.” “Feeling little” in the hint is odd.",
+  "severity": "low",
+  "category": 7,
+  "suggestion": "Label “feeling small,” hint “as if I don’t count for much”"
+ },
+ {
+  "key": "emotionWords.surprised.appraisalHints, emotionWords.in awe.appraisalHints",
+  "current": "“meeting something not expected” / “meeting something much bigger”",
+  "problem": "“Meeting something” is translationese.",
+  "severity": "low",
+  "category": 2,
+  "suggestion": "“something unexpected happened” / “being in the presence of something much bigger”"
+ },
+ {
+  "key": "concerns[3]",
+  "current": "I wanted to be recognized",
+  "problem": "Ambiguous: “recognized” can mean being identified (spotted) as well as acknowledged.",
+  "severity": "low",
+  "category": 1,
+  "suggestion": "I wanted to be acknowledged"
+ },
+ {
+  "key": "needs.solve.label, needs.solve.because",
+  "current": "“Deciding on a step for the actual problem” / “here are ways to start without making it big.”",
+  "problem": "“For the actual problem” and “without making it big” are unnatural.",
+  "severity": "low",
+  "category": 2,
+  "suggestion": "“Choosing a next step on the problem itself” / Because: Because you chose “Choosing a next step,” here are ways to start small."
+ },
+ {
+  "key": "needs.understand.because",
+  "current": "this leads to a place in the app for looking a little further.",
+  "problem": "“A place in the app” is vague; the visitor cannot tell where they will go.",
+  "severity": "low",
+  "category": 1,
+  "suggestion": "Because you chose “Understanding a little more,” here are two ways to look a little further."
+ },
+ {
+  "key": "common.helpShort",
+  "current": "Help",
+  "problem": "A bare “Help” button usually means app help or FAQ; a visitor looking for crisis lines may skip it, and one looking for instructions lands on crisis numbers.",
+  "severity": "low",
+  "category": 1,
+  "suggestion": "Get help"
+ },
+ {
+  "key": "about.refsClosing",
+  "current": "Using it now and then for 10 to 30 seconds is far less use than in any study above.",
+  "problem": "“Far less use than in any study” is clumsy.",
+  "severity": "low",
+  "category": 2,
+  "suggestion": "Using it now and then for 10 to 30 seconds is far less than what people did in any of these studies."
+ },
+ {
+  "key": "quickCandidates.declined.none-close, quickCandidates.declined.unsure",
+  "current": "Recorded that no word comes close. You can finish here, or take more time.",
+  "problem": "“Recorded that…” is telegraphic, like a log line.",
+  "severity": "low",
+  "category": 2,
+  "suggestion": "Noted: none of these words come close. You can finish here or take more time. / Noted: you’re not sure. You can finish here or take more time."
+ },
+ {
+  "key": "stopped.lede",
+  "current": "Stepping back from an experience is a choice too. This entry stays on this device as a stopped entry, not a finished one.",
+  "problem": "“A stopped entry, not a finished one” is system talk on a screen meant to be gentle.",
+  "severity": "low",
+  "category": 3,
+  "suggestion": "Stepping back is a choice too. This entry is saved on this device, marked as stopped."
+ }
+]

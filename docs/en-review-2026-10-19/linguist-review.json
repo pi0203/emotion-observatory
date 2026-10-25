@@ -1,0 +1,306 @@
+[
+  {
+    "item": "hard on myself",
+    "file": "emotions.en.json",
+    "problem": "Fails the \"I feel ___\" frame. \"I feel hard on myself\" is ungrammatical; the idiom is \"I'm being hard on myself.\" The alias \"blaming myself\" fails the same way (\"I feel blaming myself\"). It is the only label that breaks the frame.",
+    "evidence": "Korean source 자책 (hint: 원인을 자신에게서 찾음). The English hint \"looking for the cause in myself\" is fine; the label is the problem. The summary sentence \"you chose hard on myself, guilty\" also reads oddly.",
+    "severity": "high",
+    "suggestion": "Relabel as \"down on myself\" (\"I'm feeling down on myself\" is common) or \"self-critical\". Keep \"hard on myself\" and \"blaming myself\" as search aliases only. If the shared word \"down\" with the \"down\" chip bothers you, use \"self-critical\"."
+  },
+  {
+    "item": "admiring",
+    "file": "emotions.en.json",
+    "problem": "\"I feel admiring\" is unidiomatic. English expresses this with a verb or noun (\"I admire her\", \"I look up to him\", \"full of admiration\"). It also overlaps with impressed and in awe, and its aliases \"respect\" and \"looking up to someone\" fail the frame.",
+    "evidence": "Korean source 존경 (respect). It is not in Warriner (\"admire\" is: V 7.35). The neighbors are already impressed and in awe, which carry the same meaning in adjective form.",
+    "severity": "medium",
+    "suggestion": "Fold it into \"impressed\" (aliases: admiring, admiration, respect, look up to). Use the freed slot for a missing core word (jealous/envious, see below). If 존경 needs its own chip, \"respect for someone\" works as a phrase chip, but it is weaker in the frame."
+  },
+  {
+    "item": "trusting",
+    "file": "emotions.en.json",
+    "problem": "\"I feel trusting\" is rare, and \"trusting\" mostly describes a trait (\"a trusting person\" = credulous). The hint \"someone can be relied on\" points to the very common feeling word \"safe\", which the list lacks as a label.",
+    "evidence": "Korean source 신뢰. \"safe\" in Warriner: V 7.70, A 3.14. concerns.en.json has \"I wanted to feel safe\" and contextTag \"safety\", but no emotion chip is called safe.",
+    "severity": "medium",
+    "suggestion": "Relabel as \"safe\" (aliases: secure, trusting, safe with someone), positive/low. Optionally move \"secure\" over from supported."
+  },
+  {
+    "item": "small",
+    "file": "emotions.en.json",
+    "problem": "Polysemous. As an isolated chip the size sense dominates. \"I feel small\" is a real idiom, but it is mostly used with a cause (\"she made me feel small\"), and it reads oddly in summaries (\"you chose small\").",
+    "evidence": "Warriner \"small\" V 5.76 / A 3.43, near neutral and on the pleasant side, which shows that raters read it as a size word. Korean 초라함 = shabby, pitiful, not measuring up, often next to others.",
+    "severity": "medium",
+    "suggestion": "Relabel as \"inadequate\" (Warriner V 2.57) or the phrase \"not good enough\"; keep \"small\" and \"insignificant\" as aliases. \"insecure\" (V 2.30) is a reasonable neighbor or alias."
+  },
+  {
+    "item": "empty",
+    "file": "emotions.en.json",
+    "problem": "Overshoots 허전함. Korean 허전함 is an everyday, mild sense of something missing (the house after guests leave, the day after a project ends). English \"I feel empty\" is heavier and existential, and it is the DSM-5 wording for depressed mood (\"feels sad, empty, hopeless\"). The negative-low cluster sad / empty / down / helpless can read like a symptom list. It also has a literal hunger sense.",
+    "evidence": "Korean source 허전함 (alias 공허함). Warriner \"empty\" V 3.78 / A 2.25. Its alias \"hollow\" is just as heavy.",
+    "severity": "medium",
+    "suggestion": "Use a milder phrase chip: \"a bit empty\" or \"like something's missing\" (alias \"missing someone\"). Keep \"empty\" and \"hollow\" as aliases for people who do mean the heavier state."
+  },
+  {
+    "item": "wistful",
+    "file": "emotions.en.json",
+    "problem": "Literary register, and the meaning is pulled the wrong way. \"Wistful\" is a soft longing for something past or out of reach. The hint \"wishing it had gone a bit differently\" and the neighbors disappointed/regretful describe 아쉬움 (a pity, so close, sorry it's over), which English speakers will not read into \"wistful\".",
+    "evidence": "Korean source 아쉬움. Not in Warriner, whose 13,915 lemmas cover common vocabulary. hurt and empty both list wistful as a neighbor, which only makes sense from the Korean side.",
+    "severity": "medium",
+    "suggestion": "Either keep \"wistful\" but rewrite the hint as \"longing for something past or out of reach\" and add \"nostalgic\" (Warriner V 6.68, contextDependent) as alias or neighbor. Or cover 아쉬움 through aliases on disappointed and regretful (\"a little disappointed\", \"sorry it's over\", \"so close\"). English has no single everyday adjective for 아쉬움."
+  },
+  {
+    "item": "helpless",
+    "file": "emotions.en.json",
+    "problem": "Doesn't match 무기력 and is misplaced as low activation. 무기력 is listless, lethargic, unmotivated. English \"helpless\" means unable to act or protect in a situation, and it is often acute and distressed (\"I felt helpless watching her\"). It also carries clinical weight (learned helplessness).",
+    "evidence": "Korean source 무기력 (low). Warriner \"helpless\" A 4.91, higher than guilty 4.65 and hurt 4.72, which the app puts at medium.",
+    "severity": "medium",
+    "suggestion": "Relabel as \"unmotivated\" (a clean opposite of the 의욕 item \"motivated\") or \"listless\" (Warriner V 3.84 / A 3.33); aliases: flat, powerless, what's the point. If \"helpless\" is kept, move it to medium activation."
+  },
+  {
+    "item": "on edge",
+    "file": "emotions.en.json",
+    "problem": "Pulled toward anxiety. English \"on edge\" mainly means nervous or jumpy in anticipation. The hint \"small things set off a big reaction\" describes irritability (Korean 예민함), which English expresses as irritable, touchy or snappy. In practice the chip duplicates tense/nervous (both are already neighbors).",
+    "evidence": "Korean source 예민함 (friction family). The aliases \"touchy\" and \"edgy\" are closer to the intended sense than the label. Warriner \"irritable\" V 2.85 / A 6.37.",
+    "severity": "medium",
+    "suggestion": "Relabel as \"irritable\" (or \"touchy\"); keep \"on edge\" and \"edgy\" as aliases. \"irritable\" is a PANAS item, but a single common word does not make the list scale-like."
+  },
+  {
+    "item": "giddy",
+    "file": "emotions.en.json",
+    "problem": "Regional polysemy. In UK/Commonwealth English, \"I feel giddy\" commonly means dizzy or lightheaded, a body sensation. In US English it means silly, lighthearted excitement. The alias \"butterflies\" more often names pre-performance nerves.",
+    "evidence": "Korean source 설렘 (fluttery, pleasant anticipation, often romantic or before a trip). Warriner \"giddy\" V 6.17 / A 5.32 (US raters). English has no exact equivalent for 설렘.",
+    "severity": "medium",
+    "suggestion": "Keep \"giddy\" if the audience is mainly North American, but add aliases \"heart fluttering\" and \"good nerves\" (or \"butterflies, the good kind\"). For an international audience consider \"fluttery\" or the colloquial \"nervous-excited\"."
+  },
+  {
+    "item": "absorbed",
+    "file": "emotions.en.json",
+    "problem": "\"I feel absorbed\" is unnatural without a complement (\"absorbed in a book\"), and the bare word suggests liquid being soaked up. The alias \"in flow\" is psychology jargon.",
+    "evidence": "Not in Warriner (\"absorb\" V 5.50, a physical sense). English-only item with no Korean counterpart.",
+    "severity": "medium",
+    "suggestion": "Relabel as \"focused\" (\"I feel focused\" is very common); aliases: absorbed, in the zone. Drop \"in flow\" or keep it hidden."
+  },
+  {
+    "item": "wronged (coverage of 억울함)",
+    "file": "emotions.en.json",
+    "problem": "Reasonable but partial and formal. \"I feel wronged\" is understood but sounds legalistic. It misses the core of 억울함: being blamed or misjudged for something you didn't do and being unable to set the record straight.",
+    "evidence": "Korean source 억울함 (hints: 부당하게 대우받음 / 내 잘못이 아님). The English alias \"treated unfairly\" is good. The very common English chip \"misunderstood\" is absent, although concerns.en.json has \"I wanted to be understood\".",
+    "severity": "medium",
+    "suggestion": "Keep \"wronged\", but add aliases \"unfairly blamed\", \"misjudged\" and \"hard done by\" (UK). Add a separate chip \"misunderstood\" (negative/medium; neighbors wronged, frustrated, hurt, lonely)."
+  },
+  {
+    "item": "hurt (coverage of 서운함/섭섭함)",
+    "file": "emotions.en.json",
+    "problem": "Reasonable but too strong and too broad. 서운함/섭섭함 is a mild relational letdown (someone close didn't give the care or recognition I expected). \"hurt\" also covers betrayal and physical pain.",
+    "evidence": "Korean source 서운함 (alias 섭섭함), hints about an expected response that didn't come. \"let down\" sits on disappointed, not on hurt. Warriner \"unappreciated\" V 2.65.",
+    "severity": "medium",
+    "suggestion": "Keep \"hurt\" and add aliases \"a little hurt\", \"let down by someone\", \"taken for granted\" and \"unappreciated\" (keep \"slighted\"). In the hint, \"felt less important to someone\" is a good cue."
+  },
+  {
+    "item": "stuck (coverage of 막막함)",
+    "file": "emotions.en.json",
+    "problem": "\"Stuck\" means blocked progress, which is closer to 답답함/frustrated. 막막함 is the bewildered sense of facing something vast with no idea where to begin, often about the future. English says \"I feel lost\" or \"at a loss\".",
+    "evidence": "Korean source 막막함 (hint: 어디서부터 해야 할지 모르겠음). The English hint \"not knowing where to start\" and the alias \"at a loss\" fit \"lost\" better than the label.",
+    "severity": "medium",
+    "suggestion": "Add or relabel as \"lost\" (aliases: at a loss, don't know where to start). Keep \"stuck\" for blocked progress, either as its own chip or as an alias of frustrated."
+  },
+  {
+    "item": "못마땅함 (no English counterpart)",
+    "file": "ko-source/emotions.ko.json vs emotions.en.json",
+    "problem": "This is the only Korean item with no English chip: mild disapproval or displeasure that something or someone falls short of one's standard. English readers fall back on annoyed or disgusted, which are a different kind of experience.",
+    "evidence": "Korean 못마땅함 (alias 언짢음; hint 기준에 맞지 않는다고 느낌; neighbors 혐오, 분개, 짜증). In English, outraged's neighbors substitute disgusted. Warriner: dissatisfied V 3.25 / A 4.82, displeased V 3.41 / A 4.22.",
+    "severity": "medium",
+    "suggestion": "Add \"displeased\" or \"dissatisfied\" (negative/medium) with aliases \"disapproving\", \"unimpressed\" and \"not happy with it\"; neighbors annoyed, disappointed, disgusted, outraged."
+  },
+  {
+    "item": "surprised",
+    "file": "emotions.en.json",
+    "problem": "Valence and family placement conflict with ordinary usage. Surprise is bivalent (\"unpleasantly surprised\", shocked, startled). The norm V 6.57 reflects the word as a stimulus. \"self-transcendent\" is an odd family for surprise. contextDependent:true softens this, but the stored valence is still positive.",
+    "evidence": "Warriner: surprised V 6.57 / A 5.95, startled V 4.53. Korean 놀라움 has the same placement, so the issue is inherited.",
+    "severity": "medium",
+    "suggestion": "Set valence to neutral (like zoned out) and keep contextDependent; move it to a family such as \"the unexpected\" with flustered. Add aliases \"amazed\" and \"startled\"."
+  },
+  {
+    "item": "discouraged (activation)",
+    "file": "emotions.en.json / out/norms-check.tsv",
+    "problem": "Placed at medium activation, but both the norms and ordinary usage put it at low: deflated, the energy gone out of you. Users who mark low energy may not be offered it.",
+    "evidence": "Warriner A 3.38, lower than sad (3.49), which the app puts at low. Its alias \"defeated\" is also low-energy.",
+    "severity": "medium",
+    "suggestion": "Move to low activation."
+  },
+  {
+    "item": "neighbors carried over from Korean that don't hold in English",
+    "file": "emotions.en.json",
+    "problem": "Several neighbor links mirror Korean pairings that are natural in Korean but semantically off in English. If neighbors feed \"Show similar words\", users see them.",
+    "evidence": "scared↔flustered (flustered is agitated confusion, not fear; 당황 has a startle component that \"flustered\" lacks). hurt→wistful and empty→wistful (아쉬움 logic). proud↔moved and delighted→moved (뿌듯함/감동 logic). sad↔compassionate. happy↔interested (즐거움↔흥미). eager→delighted. Flustered is also in the \"threat\" family with scared.",
+    "severity": "medium",
+    "suggestion": "scared → nervous, worried, on edge. flustered → embarrassed, confused, overwhelmed (and move it out of the threat family). hurt → disappointed, lonely, wronged, upset. proud → satisfied, confident, accomplished. happy → delighted, amused, content. eager → excited, hopeful, motivated. sad → down, lonely, disappointed, hurt."
+  },
+  {
+    "item": "missing: upset",
+    "file": "emotions.en.json",
+    "problem": "One of the most frequent English negative feeling words, and the one people use before they can differentiate (part hurt, part angry, part sad). Its absence is conspicuous for general adult users.",
+    "evidence": "It is not a label or an alias. Warriner \"upset\" V 2.45 / A 4.49.",
+    "severity": "medium",
+    "suggestion": "Add \"upset\" (negative/medium; neighbors hurt, sad, angry, frustrated, disappointed). It is a PANAS item, but one shared basic word is harmless."
+  },
+  {
+    "item": "missing: jealous / envious",
+    "file": "emotions.en.json (and ko-source/emotions.ko.json)",
+    "problem": "Social-comparison emotions are missing in both languages (no 질투/부러움 either), although the lists have contextTags like \"in front of others\" and items like small/초라함 that sit right next to envy.",
+    "evidence": "Warriner: jealous V 2.38 / A 5.90, envious V 3.52 / A 5.10. Neither is a label or an alias.",
+    "severity": "medium",
+    "suggestion": "Add \"jealous\" (alias \"envious\", or two chips if room); negative/medium; neighbors small/inadequate, hurt, annoyed. Use the slots freed by admiring and by merging loving/affectionate to keep the list near 73."
+  },
+  {
+    "item": "granularity appraisals echo single words' appraisalHints",
+    "file": "granularity.en.json",
+    "problem": "The guardrail says no appraisal may read like the definition of one word, yet several appraisals paraphrase one word's appraisalHint almost directly, which turns the practice into an answer key.",
+    "evidence": "\"There was nothing I had to hurry to do\" ≈ calm's hint \"no need to hurry\". \"Something that had been on my mind eased a little\" ≈ relieved's hint \"a worry has passed\". \"It felt like I had done as much as I meant to\" ≈ satisfied/content's hints \"this is good enough\" / \"nothing more needed\". \"It seemed like I was the only one making an effort\" ≈ wronged's \"not being given a fair deal\". \"What I said went by as if I had never said it\" ≈ frustrated's \"not getting through to someone\".",
+    "severity": "medium",
+    "suggestion": "Reword the appraisals as plain scene facts that each fit at least two words, e.g., \"The task had been due today\" (relieved/content), \"No messages came in for a while\" (calm/relieved), \"They said 'sure' and then nothing changed\" (annoyed/frustrated/wronged). Or reword the hints so they don't share wording with the appraisals."
+  },
+  {
+    "item": "unhurried",
+    "file": "emotions.en.json",
+    "problem": "\"I feel unhurried\" is rare; the word describes pace rather than a feeling.",
+    "evidence": "Korean source 여유 (room, time, ease of mind). Not in Warriner. Its aliases \"leisurely\" and \"laid-back\" also fit \"I feel ___\" poorly or describe a personality.",
+    "severity": "low",
+    "suggestion": "Relabel as \"at ease\" (move it from relaxed's aliases) or \"unrushed\"; aliases: no rush, breathing room."
+  },
+  {
+    "item": "unburdened",
+    "file": "emotions.en.json",
+    "problem": "Understood but literary. Everyday speech says \"I feel lighter\", \"free\" or \"a weight off my shoulders\".",
+    "evidence": "Korean source 홀가분함. Not in Warriner; \"free\" V 8.25. Its alias \"lighter\" is the more natural label.",
+    "severity": "low",
+    "suggestion": "Relabel as \"lighter\" (aliases: unburdened, free, a weight off my shoulders). It stays distinct from the body chip \"body feels light\" because it is phrased as a feeling."
+  },
+  {
+    "item": "content / down / moved (polysemy)",
+    "file": "emotions.en.json",
+    "problem": "All three work in \"I feel ___\" but are ambiguous as isolated chips or in summary sentences. \"content\" can be read as the noun (CONtent, as in web content). \"down\" can be read as a direction or as the slang \"I'm down\" (= willing). \"moved\" can be read as relocated.",
+    "evidence": "Warriner \"content\" V 6.70 / A 3.17 (it was rated, so the adjective reading is available). \"moved\" and \"down\" are not in the norms as feeling words.",
+    "severity": "low",
+    "suggestion": "Keep all three; they are the most natural everyday words. If chips ever appear without the \"I feel\" frame, consider \"contented\" (or \"at peace\"), \"feeling down\" in summaries, and \"moved (touched)\"."
+  },
+  {
+    "item": "loving / affectionate / compassionate (trait reading, thin contrast)",
+    "file": "emotions.en.json",
+    "problem": "\"loving\" and \"compassionate\" read first as personality traits (\"a loving mother\"); people more often say \"I feel love\" or \"I feel for them\". The English contrast between loving and affectionate is thin.",
+    "evidence": "Korean sources 사랑 / 다정함 / 연민. Warriner: compassion V 7.90, sympathetic V 6.67 / A 3.29, fond V 6.79.",
+    "severity": "low",
+    "suggestion": "Merge affectionate into loving (aliases: affectionate, fond, tender) to free a slot. For compassionate, add the aliases \"sympathetic\" and \"feeling for someone\"."
+  },
+  {
+    "item": "frustrated (coverage of 답답함)",
+    "file": "emotions.en.json",
+    "problem": "A good core match for not getting through or being blocked, but it misses the stifled, cooped-up, suffocating sense of 답답함. The alias \"fed up\" leans toward \"had enough\".",
+    "evidence": "Korean source 답답함 (hints: 말이 통하지 않음 / 움직일 수 없음). The body chip \"tight chest\" covers the somatic side.",
+    "severity": "low",
+    "suggestion": "Add aliases \"stifled\", \"boxed in\" and \"exasperated\"."
+  },
+  {
+    "item": "activation inconsistencies in the negative band",
+    "file": "emotions.en.json / out/norms-check.tsv",
+    "problem": "annoyed is high while frustrated is medium, although ordinary usage makes annoyed the milder of the two. worried is medium while nervous and tense are high, although worried has the highest norm arousal of the three. impatient is high on a modest norm.",
+    "evidence": "Warriner A: annoyed 5.29 vs frustrated 5.40; worried 5.81 vs nervous 5.51, tense 5.32; impatient 4.61.",
+    "severity": "low",
+    "suggestion": "Move annoyed to medium, or move frustrated to high. Keeping worried at medium is defensible (rumination), so treat that one as a known norm conflict."
+  },
+  {
+    "item": "missing obvious neighbors",
+    "file": "emotions.en.json",
+    "problem": "Some natural English comparisons are absent. inspired is listed as a neighbor by only one word (curious).",
+    "evidence": "inspired↔motivated not linked; surprised lacks amazed/startled; scared lacks nervous/worried; drained lacks stressed/overwhelmed; grateful lacks supported/relieved; wistful lacks nostalgic; lonely lacks hurt/left out.",
+    "severity": "low",
+    "suggestion": "Add these links when revising the neighbors."
+  },
+  {
+    "item": "missing common aliases",
+    "file": "emotions.en.json",
+    "problem": "High-frequency synonyms that users may type or look for are missing from the aliases.",
+    "evidence": "annoyed lacks \"irritated\" (Warriner irritate V 3.19). scared lacks \"afraid\" (V 2.25). drained lacks \"tired\" (V 4.29). happy/delighted lack \"glad\" and \"joyful\" (V 7.55 / 8.21). happy lacks \"enjoying it\"/\"having fun\" (the Korean source 즐거움 is enjoyment). awkward/embarrassed lack \"shy\"/\"bashful\" (Korean 쑥스러움).",
+    "severity": "low",
+    "suggestion": "Add these as aliases. Only promote one to a label if a slot frees up."
+  },
+  {
+    "item": "aliases that are slang or fail the frame",
+    "file": "emotions.en.json",
+    "problem": "If aliases are ever displayed, several read badly. \"spaced out\" has a drug connotation. \"pumped\", \"bugged\" and \"grossed out\" are informal US slang. \"looking forward\", \"looking up to someone\", \"trust\" and \"respect\" do not fit \"I feel ___\".",
+    "evidence": "Aliases on zoned out, excited, annoyed, disgusted, eager, admiring and trusting.",
+    "severity": "low",
+    "suggestion": "Keep them for search matching only, or replace with \"spacey\", \"fired up\", \"irritated\", \"revolted\", \"looking forward to it\" and \"full of admiration\"."
+  },
+  {
+    "item": "practice set friction-unfair-stuck",
+    "file": "granularity.en.json",
+    "problem": "The contrast is real in English: annoyed is irritation at a repeated nuisance, frustrated is being blocked or not getting through, wronged is unfairness. But for \"someone kept ignoring my request\", English speakers would more naturally say \"disrespected\" or \"ignored\" than \"wronged\". One appraisal is a calque.",
+    "evidence": "\"What I said went by as if I had never said it\" (from Korean 없는 것처럼 지나갔다).",
+    "severity": "low",
+    "suggestion": "Reword to \"It was as if I had never said anything.\" Optionally swap \"wronged\" for \"disrespected\" in this set, or make the event more clearly unfair (e.g., \"…and then I was blamed when it wasn't done\")."
+  },
+  {
+    "item": "practice set calm-relief-content",
+    "file": "granularity.en.json",
+    "problem": "Natural scene with a real contrast: calm = low arousal, relieved = a worry removed, content = nothing more wanted. Two lines are slightly stiff.",
+    "evidence": "\"There was nothing I had to hurry to do.\" \"It was quiet around me, and nothing interrupted.\"",
+    "severity": "low",
+    "suggestion": "\"There was nothing I needed to rush off and do.\" \"It was quiet, and nothing interrupted me.\" Using \"content\" here rather than \"satisfied\" is a good English choice for idle sitting."
+  },
+  {
+    "item": "tingling or prickly",
+    "file": "body-signals.en.json",
+    "problem": "\"prickly\" is a common idiom for irritable or touchy (\"in a prickly mood\"), so the body chip carries an emotion meaning, against the file's own note.",
+    "evidence": "Korean source 찌릿하거나 간질거림 (zingy or tickly).",
+    "severity": "low",
+    "suggestion": "\"tingling or itchy skin\", or \"tingling or prickling skin\"."
+  },
+  {
+    "item": "steady and grounded",
+    "file": "body-signals.en.json",
+    "problem": "\"grounded\" is mainly wellness/therapy jargon for emotional composure (plus punished teens and electrics), so it names a psychological state rather than a sensation.",
+    "evidence": "Korean source 안정적으로 버티는 느낌. The file's note: \"Body sensations are not translated into emotions.\"",
+    "severity": "low",
+    "suggestion": "\"feet planted, body steady\" or \"body feels solid and steady\"."
+  },
+  {
+    "item": "body chips that borrow emotion words",
+    "file": "body-signals.en.json",
+    "problem": "Several body phrases reuse emotion vocabulary or idioms, which blurs the body/emotion separation the app wants. \"steady, calm heartbeat\" uses calm. \"stomach at ease\" uses at ease and is unidiomatic. \"easy breathing\" evokes \"breathing easy\" (= relieved, which is also relieved's alias \"breathing easier\"). \"warm and steady inside\" reads as affection.",
+    "evidence": "calm and relieved are emotion chips; \"at ease\" is an alias of relaxed.",
+    "severity": "low",
+    "suggestion": "\"steady heartbeat\", \"settled stomach\", \"breathing comes easily\", \"warm, settled feeling in the belly\". \"tense neck and shoulders\" is standard and can stay."
+  },
+  {
+    "item": "no throat/eyes signals",
+    "file": "body-signals.en.json",
+    "problem": "Both lists lack a throat or eyes region. \"Lump in the throat\" and \"eyes welling up\" are among the most common English somatic expressions, especially around sadness and being moved.",
+    "evidence": "Seven regions; none covers throat, eyes or face apart from \"flushed face\" and \"face softening\".",
+    "severity": "low",
+    "suggestion": "Optionally add \"tight throat\" and \"eyes welling up\" (\"lump in the throat\" is natural but idiomatic). If tears are left out on purpose, ignore this."
+  },
+  {
+    "item": "overlap with PANAS / PANAS-X / mDES",
+    "file": "emotions.en.json",
+    "problem": "The overlap is noticeable, but given the basic vocabulary it is not a real problem. Without a rating format, instructions, a fixed item set or sum scores, the list does not function as a measure.",
+    "evidence": "8 of the 20 PANAS words are labels (interested, excited, proud, inspired, guilty, scared, ashamed, nervous), plus the alias jittery. Labels or aliases touch 18 of the 20 mDES items; only contempt and hate/distrust are missing, and all three words of mDES \"stressed, nervous, overwhelmed\" are labels. The PANAS-X Serenity items calm, relaxed and at ease are all present.",
+    "severity": "low",
+    "suggestion": "Don't reshape the list around this. Avoid intensity ratings per word, PA/NA totals, and adding PANAS-only words like alert, attentive, determined, strong or hostile. The existing note in emotions.en.json is sufficient."
+  },
+  {
+    "item": "needs labels: pace / solve",
+    "file": "needs.en.json",
+    "problem": "Two labels read as calques.",
+    "evidence": "\"Adjusting the pace of body and mind a little\"; \"Deciding on a step for the actual problem\".",
+    "severity": "low",
+    "suggestion": "\"Easing the pace for a moment\" (or \"Slowing down a little\"); \"Choosing a next step on the problem itself\"."
+  },
+  {
+    "item": "I wanted to be recognized",
+    "file": "concerns.en.json",
+    "problem": "\"recognized\" is polysemous (identified, known by face or fame). The intended sense, 인정받다, is closer to acknowledged or appreciated.",
+    "evidence": "Korean source 인정받고 싶었다.",
+    "severity": "low",
+    "suggestion": "\"I wanted my effort to be acknowledged\" or \"I wanted to be appreciated\"."
+  }
+]

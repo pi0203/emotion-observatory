@@ -1,6 +1,6 @@
 {
   "provisional": true,
-  "note": "Reviewed by the owner on 2026-10-19 (docs/I18N_PLAN.md §4). A UI fixture written before research or review. It was written in English for English speakers, not translated from the Korean list, so its items and counts do not pair with the Korean ones. It does not settle an emotion taxonomy and is not used for psychological classification or automatic inference. Many everyday English emotion words also appear in scales such as PANAS or the mDES; this list does not reproduce any scale’s item set, instructions or rating format, and it is not a measure.",
+  "note": "Reviewed by the owner on 2026-10-19 (docs/I18N_PLAN.md §4), then revised the same day after a blind back-translation and visitor, translator and linguist reviews (docs/EN_REVIEW_2026_10_19.md). A UI fixture written before research or review. It was written in English for English speakers, not translated from the Korean list, so its items and counts do not pair with the Korean ones. It does not settle an emotion taxonomy and is not used for psychological classification or automatic inference. Many everyday English emotion words also appear in scales such as PANAS or the mDES; this list does not reproduce any scale’s item set, instructions or rating format, and it is not a measure.",
   "fieldNotes": {
     "family": "Groupings for exploring only, not a classification of what emotions are.",
     "valence/activation": "Coordinates for narrowing the candidates, not a lookup table that produces an emotion.",
@@ -21,7 +21,7 @@
         "anxious",
         "worried",
         "stressed",
-        "on edge"
+        "irritable"
       ],
       "appraisalHints": [
         "body bracing for what comes next",
@@ -64,7 +64,8 @@
       "label": "annoyed",
       "aliases": [
         "bugged",
-        "irked"
+        "irked",
+        "irritated"
       ],
       "family": "friction",
       "valence": "negative",
@@ -74,11 +75,11 @@
         "frustrated",
         "wronged",
         "impatient",
-        "on edge"
+        "irritable"
       ],
       "appraisalHints": [
-        "keep getting interrupted",
-        "small things getting under the skin"
+        "being interrupted again and again",
+        "small things getting under my skin"
       ],
       "contextTags": [
         "work",
@@ -98,7 +99,8 @@
       "neighbors": [
         "annoyed",
         "outraged",
-        "wronged"
+        "wronged",
+        "displeased"
       ],
       "appraisalHints": [
         "a line was crossed",
@@ -139,7 +141,9 @@
     {
       "label": "wronged",
       "aliases": [
-        "treated unfairly"
+        "treated unfairly",
+        "unfairly blamed",
+        "misjudged"
       ],
       "family": "fairness",
       "valence": "negative",
@@ -189,14 +193,16 @@
     {
       "label": "scared",
       "aliases": [
-        "frightened"
+        "frightened",
+        "afraid"
       ],
       "family": "threat",
       "valence": "negative",
       "activation": "high",
       "neighbors": [
         "anxious",
-        "flustered"
+        "nervous",
+        "worried"
       ],
       "appraisalHints": [
         "danger feels close"
@@ -218,10 +224,10 @@
       "valence": "negative",
       "activation": "high",
       "neighbors": [
-        "scared",
+        "embarrassed",
         "awkward",
-        "surprised",
-        "confused"
+        "confused",
+        "surprised"
       ],
       "appraisalHints": [
         "something unexpected, all at once"
@@ -244,7 +250,8 @@
       "neighbors": [
         "angry",
         "wronged",
-        "disgusted"
+        "disgusted",
+        "displeased"
       ],
       "appraisalHints": [
         "something wrong is happening"
@@ -257,8 +264,9 @@
       "normStatus": "provisional"
     },
     {
-      "label": "on edge",
+      "label": "irritable",
       "aliases": [
+        "on edge",
         "touchy",
         "edgy"
       ],
@@ -310,16 +318,19 @@
     {
       "label": "frustrated",
       "aliases": [
-        "fed up"
+        "fed up",
+        "stifled",
+        "boxed in"
       ],
       "family": "friction",
       "valence": "negative",
       "activation": "medium",
       "neighbors": [
         "annoyed",
-        "stuck",
+        "lost",
         "discouraged",
-        "wronged"
+        "wronged",
+        "displeased"
       ],
       "appraisalHints": [
         "not getting through to someone",
@@ -358,7 +369,10 @@
     {
       "label": "hurt",
       "aliases": [
-        "slighted"
+        "slighted",
+        "a little hurt",
+        "let down by someone",
+        "taken for granted"
       ],
       "family": "social",
       "valence": "negative",
@@ -367,7 +381,7 @@
         "disappointed",
         "lonely",
         "wronged",
-        "wistful"
+        "upset"
       ],
       "appraisalHints": [
         "a hoped-for response did not come",
@@ -388,11 +402,11 @@
       ],
       "family": "blocked",
       "valence": "negative",
-      "activation": "medium",
+      "activation": "low",
       "neighbors": [
         "frustrated",
         "disappointed",
-        "stuck"
+        "lost"
       ],
       "appraisalHints": [
         "effort has not paid off",
@@ -453,7 +467,7 @@
       "activation": "medium",
       "neighbors": [
         "regretful",
-        "hard on myself",
+        "self-critical",
         "ashamed"
       ],
       "appraisalHints": [
@@ -473,9 +487,9 @@
       "activation": "medium",
       "neighbors": [
         "embarrassed",
-        "hard on myself",
+        "self-critical",
         "guilty",
-        "small"
+        "inadequate"
       ],
       "appraisalHints": [
         "as if who I am is the problem"
@@ -488,9 +502,11 @@
       "normStatus": "provisional"
     },
     {
-      "label": "hard on myself",
+      "label": "self-critical",
       "aliases": [
-        "blaming myself"
+        "hard on myself",
+        "blaming myself",
+        "down on myself"
       ],
       "family": "self-evaluation",
       "valence": "negative",
@@ -520,7 +536,8 @@
       "activation": "medium",
       "neighbors": [
         "outraged",
-        "annoyed"
+        "annoyed",
+        "displeased"
       ],
       "appraisalHints": [
         "wanting to keep away from it"
@@ -528,6 +545,54 @@
       "contextTags": [
         "values",
         "keeping distance"
+      ],
+      "provisional": true,
+      "normStatus": "provisional"
+    },
+    {
+      "label": "upset",
+      "family": "friction",
+      "valence": "negative",
+      "activation": "medium",
+      "neighbors": [
+        "hurt",
+        "sad",
+        "angry",
+        "frustrated",
+        "disappointed"
+      ],
+      "appraisalHints": [
+        "something got to me, and it is hard to say exactly how"
+      ],
+      "contextTags": [
+        "relationships",
+        "expectations"
+      ],
+      "provisional": true,
+      "normStatus": "provisional"
+    },
+    {
+      "label": "displeased",
+      "aliases": [
+        "dissatisfied",
+        "disapproving",
+        "not happy with it"
+      ],
+      "family": "friction",
+      "valence": "negative",
+      "activation": "medium",
+      "neighbors": [
+        "annoyed",
+        "disappointed",
+        "disgusted",
+        "outraged"
+      ],
+      "appraisalHints": [
+        "it does not meet the standard I expected"
+      ],
+      "contextTags": [
+        "fairness",
+        "expectations"
       ],
       "provisional": true,
       "normStatus": "provisional"
@@ -542,7 +607,7 @@
       "activation": "medium",
       "neighbors": [
         "flustered",
-        "stuck",
+        "lost",
         "zoned out",
         "worried",
         "overwhelmed"
@@ -567,7 +632,7 @@
       "activation": "medium",
       "neighbors": [
         "stressed",
-        "stuck",
+        "lost",
         "worried",
         "confused"
       ],
@@ -584,7 +649,8 @@
     {
       "label": "disappointed",
       "aliases": [
-        "let down"
+        "let down",
+        "sorry it’s over"
       ],
       "family": "loss",
       "valence": "negative",
@@ -614,7 +680,7 @@
       "activation": "low",
       "neighbors": [
         "sad",
-        "empty",
+        "a bit empty",
         "hurt"
       ],
       "appraisalHints": [
@@ -637,11 +703,11 @@
       "valence": "negative",
       "activation": "low",
       "neighbors": [
+        "down",
         "lonely",
-        "empty",
         "disappointed",
-        "compassionate",
-        "down"
+        "upset",
+        "a bit empty"
       ],
       "appraisalHints": [
         "something precious is gone"
@@ -654,9 +720,11 @@
       "normStatus": "provisional"
     },
     {
-      "label": "empty",
+      "label": "a bit empty",
       "aliases": [
-        "hollow"
+        "empty",
+        "hollow",
+        "like something is missing"
       ],
       "family": "loss",
       "valence": "negative",
@@ -664,8 +732,8 @@
       "neighbors": [
         "lonely",
         "sad",
-        "wistful",
-        "down"
+        "down",
+        "wistful"
       ],
       "appraisalHints": [
         "something that was there has gone"
@@ -685,10 +753,10 @@
       "neighbors": [
         "disappointed",
         "regretful",
-        "empty"
+        "a bit empty"
       ],
       "appraisalHints": [
-        "wishing it had gone a bit differently"
+        "a soft longing for something that has passed or slipped away"
       ],
       "contextTags": [
         "chances",
@@ -705,7 +773,7 @@
       "neighbors": [
         "guilty",
         "wistful",
-        "hard on myself"
+        "self-critical"
       ],
       "appraisalHints": [
         "wishing I had done it differently"
@@ -715,12 +783,17 @@
         "the past"
       ],
       "provisional": true,
-      "normStatus": "provisional"
+      "normStatus": "provisional",
+      "aliases": [
+        "sorry it went that way"
+      ]
     },
     {
-      "label": "stuck",
+      "label": "lost",
       "aliases": [
-        "at a loss"
+        "stuck",
+        "at a loss",
+        "not knowing where to start"
       ],
       "family": "blocked",
       "valence": "negative",
@@ -734,7 +807,7 @@
       ],
       "appraisalHints": [
         "not knowing where to start",
-        "no way to move things forward"
+        "something feels too big to take on"
       ],
       "contextTags": [
         "beginnings",
@@ -747,18 +820,19 @@
       "label": "drained",
       "aliases": [
         "worn out",
-        "exhausted"
+        "exhausted",
+        "tired"
       ],
       "family": "depletion",
       "valence": "negative",
       "activation": "low",
       "neighbors": [
-        "helpless",
-        "stuck",
+        "unmotivated",
+        "lost",
         "discouraged"
       ],
       "appraisalHints": [
-        "little energy left after holding on"
+        "little energy left after pushing through"
       ],
       "contextTags": [
         "repetition",
@@ -768,19 +842,23 @@
       "normStatus": "provisional"
     },
     {
-      "label": "helpless",
+      "label": "unmotivated",
       "aliases": [
-        "powerless"
+        "helpless",
+        "powerless",
+        "listless",
+        "flat"
       ],
       "family": "depletion",
       "valence": "negative",
       "activation": "low",
       "neighbors": [
         "drained",
-        "stuck",
+        "lost",
         "down"
       ],
       "appraisalHints": [
+        "no drive to do anything",
         "as if nothing will make a difference"
       ],
       "contextTags": [
@@ -801,8 +879,8 @@
       "activation": "low",
       "neighbors": [
         "sad",
-        "empty",
-        "helpless",
+        "a bit empty",
+        "unmotivated",
         "lonely"
       ],
       "appraisalHints": [
@@ -816,21 +894,23 @@
       "normStatus": "provisional"
     },
     {
-      "label": "small",
+      "label": "inadequate",
       "aliases": [
-        "insignificant"
+        "small",
+        "insignificant",
+        "not good enough"
       ],
       "family": "self-evaluation",
       "valence": "negative",
       "activation": "low",
       "neighbors": [
         "ashamed",
-        "hard on myself",
+        "self-critical",
         "embarrassed",
         "disappointed"
       ],
       "appraisalHints": [
-        "feeling little and unimportant"
+        "feeling as if I do not measure up"
       ],
       "contextTags": [
         "self-judgment",
@@ -944,9 +1024,9 @@
       "valence": "positive",
       "activation": "high",
       "neighbors": [
-        "interested",
         "excited",
-        "delighted",
+        "hopeful",
+        "motivated",
         "giddy"
       ],
       "appraisalHints": [
@@ -963,7 +1043,8 @@
       "label": "giddy",
       "aliases": [
         "fluttery",
-        "butterflies"
+        "butterflies (the good kind)",
+        "heart fluttering"
       ],
       "family": "interest",
       "valence": "positive",
@@ -1016,7 +1097,7 @@
         "flustered"
       ],
       "appraisalHints": [
-        "meeting something not expected"
+        "something unexpected happened"
       ],
       "contextTags": [
         "the unexpected",
@@ -1024,7 +1105,11 @@
       ],
       "provisional": true,
       "contextDependent": true,
-      "normStatus": "provisional"
+      "normStatus": "provisional",
+      "aliases": [
+        "amazed",
+        "startled"
+      ]
     },
     {
       "label": "interested",
@@ -1039,7 +1124,7 @@
         "energized",
         "happy",
         "curious",
-        "absorbed"
+        "focused"
       ],
       "appraisalHints": [
         "wanting to know more"
@@ -1061,9 +1146,9 @@
       "activation": "medium",
       "neighbors": [
         "delighted",
-        "interested",
-        "excited",
-        "amused"
+        "amused",
+        "content",
+        "excited"
       ],
       "appraisalHints": [
         "liking what is happening now"
@@ -1109,9 +1194,8 @@
       "activation": "medium",
       "neighbors": [
         "satisfied",
-        "delighted",
-        "moved",
-        "confident"
+        "confident",
+        "delighted"
       ],
       "appraisalHints": [
         "having pulled something off"
@@ -1296,7 +1380,7 @@
       "activation": "medium",
       "neighbors": [
         "in awe",
-        "admiring",
+        "full of admiration",
         "moved"
       ],
       "appraisalHints": [
@@ -1319,7 +1403,7 @@
       "activation": "medium",
       "neighbors": [
         "impressed",
-        "admiring",
+        "full of admiration",
         "moved"
       ],
       "appraisalHints": [
@@ -1337,7 +1421,8 @@
     {
       "label": "compassionate",
       "aliases": [
-        "sympathetic"
+        "sympathetic",
+        "feeling for someone"
       ],
       "family": "connection",
       "valence": "positive",
@@ -1393,7 +1478,8 @@
       "neighbors": [
         "energized",
         "eager",
-        "confident"
+        "confident",
+        "inspired"
       ],
       "appraisalHints": [
         "wanting to give it a try"
@@ -1406,10 +1492,10 @@
       "normStatus": "provisional"
     },
     {
-      "label": "absorbed",
+      "label": "focused",
       "aliases": [
-        "in the zone",
-        "in flow"
+        "absorbed",
+        "in the zone"
       ],
       "family": "interest",
       "valence": "positive",
@@ -1431,9 +1517,7 @@
     },
     {
       "label": "relaxed",
-      "aliases": [
-        "at ease"
-      ],
+      "aliases": [],
       "family": "ease",
       "valence": "positive",
       "activation": "low",
@@ -1466,7 +1550,7 @@
         "relaxed",
         "relieved",
         "content",
-        "unhurried"
+        "at ease"
       ],
       "appraisalHints": [
         "no need to hurry"
@@ -1489,7 +1573,7 @@
         "calm",
         "relaxed",
         "satisfied",
-        "unburdened"
+        "lighter"
       ],
       "appraisalHints": [
         "a worry has passed"
@@ -1559,7 +1643,7 @@
         "connected",
         "relaxed",
         "loving",
-        "admiring",
+        "full of admiration",
         "supported"
       ],
       "appraisalHints": [
@@ -1573,8 +1657,9 @@
       "normStatus": "provisional"
     },
     {
-      "label": "admiring",
+      "label": "full of admiration",
       "aliases": [
+        "admiring",
         "respect",
         "looking up to someone"
       ],
@@ -1587,7 +1672,7 @@
         "trusting"
       ],
       "appraisalHints": [
-        "holding someone’s ways in high regard"
+        "holding someone’s way of doing things in high regard"
       ],
       "contextTags": [
         "relationships",
@@ -1618,9 +1703,10 @@
       "normStatus": "provisional"
     },
     {
-      "label": "unhurried",
+      "label": "at ease",
       "aliases": [
-        "leisurely",
+        "unhurried",
+        "no rush",
         "laid-back"
       ],
       "family": "ease",
@@ -1665,9 +1751,11 @@
       "normStatus": "provisional"
     },
     {
-      "label": "unburdened",
+      "label": "lighter",
       "aliases": [
-        "lighter"
+        "unburdened",
+        "free",
+        "a weight off my shoulders"
       ],
       "family": "relief",
       "valence": "positive",
@@ -1675,7 +1763,7 @@
       "neighbors": [
         "relieved",
         "refreshed",
-        "unhurried"
+        "at ease"
       ],
       "appraisalHints": [
         "having set down something heavy"

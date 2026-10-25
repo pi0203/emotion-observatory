@@ -1,0 +1,702 @@
+[
+ {
+  "key": "crisis.emergency",
+  "type": "A",
+  "severity": "high",
+  "ko": "몸을 다쳤거나 지금 당장 위험하다면 <b>119</b>(구급) 또는 <b>112</b>(경찰)에 바로 연락하세요.",
+  "en": "If you are hurt or in immediate danger, call <b>119</b> (ambulance) or <b>112</b> (police) right away.",
+  "bt": "다쳤거나 당장 위험한 상황이라면 바로 <b>119</b>(구급) 또는 <b>112</b>(경찰)에 전화하세요.",
+  "problem": "Korean limits the first condition to physical injury (몸을 다쳤거나). English “hurt” also reads as emotionally hurt, which widens when to call 119/112. The back-translation dropped 몸.",
+  "fixEn": "If you are physically hurt or in immediate danger, call <b>119</b> (ambulance) or <b>112</b> (police) right away."
+ },
+ {
+  "key": "about.not",
+  "type": "A",
+  "severity": "high",
+  "ko": "의료 도구나 위기 상담 도구가 아니고, 감정에 점수를 매기거나 판정하지 않습니다. <b>감정 구별이나 정신건강을 나아지게 한다는 효과는 아직 검증되지 않았습니다.</b>",
+  "en": "It is not a medical tool or a crisis service, and it does not score or judge emotions. <b>It has not been shown to help with telling emotions apart or with mental health.</b>",
+  "bt": "의료 도구나 위기 지원 서비스가 아니며, 감정에 점수를 매기거나 감정을 판단하지 않습니다. <b>감정을 구분하는 데나 정신 건강에 도움이 된다는 것은 입증되지 않았습니다.</b>",
+  "problem": "Principle sentence lost strength markers. Korean says the effect is “not yet” verified (아직 검증되지 않았습니다) and names the claimed effect as making things better (나아지게 한다). English drops “yet” and turns it into a vague “help with … mental health.”",
+  "fixEn": "It is not a medical tool or a crisis service, and it does not score or judge emotions. <b>It has not yet been shown to help people tell emotions apart better or to benefit mental health.</b>"
+ },
+ {
+  "key": "about.refsClosing",
+  "type": "A",
+  "severity": "high",
+  "ko": "<b>이 앱을 직접 시험한 연구는 아직 없습니다.</b> 이 앱처럼 가끔, 10~30초씩 쓰는 방식은 위 어느 연구보다도 훨씬 적게 쓰는 것입니다. 위 연구들은 앱의 생각이 어디쯤 서 있는지 보여 줄 뿐입니다.",
+  "en": "<b>No study has tested this app.</b> Using it now and then for 10 to 30 seconds is far less use than in any study above. These studies only show where the ideas behind the app stand.",
+  "bt": "<b>이 앱을 검증한 연구는 없습니다.</b> 가끔 10~30초씩 사용하는 것은 위의 어떤 연구에서보다도 훨씬 적은 사용량입니다. 이 연구들은 앱의 바탕이 된 아이디어가 어디쯤에 있는지를 보여 줄 뿐입니다.",
+  "problem": "Bold principle sentence drops 아직 (yet) and 직접 (this app itself, directly). English “No study has tested this app.” reads as a permanent state and loses the contrast with the studies on related methods.",
+  "fixEn": "<b>No study has tested this app itself yet.</b> Using it now and then for 10 to 30 seconds is far less use than in any study above. These studies only show where the ideas behind the app stand."
+ },
+ {
+  "key": "summary.footnote",
+  "type": "B",
+  "severity": "high",
+  "ko": "감정의 정답을 찾은 것이 아니라, 지금 경험을 표현할 수 있는 몇 가지 단서를 남겼습니다.",
+  "en": "This did not find the right answer about your emotion. It left a few clues for putting the experience into words.",
+  "bt": "이것이 감정에 대한 정답을 찾은 것은 아니에요. 경험을 말로 옮기기 위한 단서를 몇 가지 남겼어요.",
+  "problem": "“This did not find the right answer” reads as a failed attempt (back-translator flagged it). Korean frames it as “this was not about finding a right answer; you left clues,” which is a core principle. 지금 (now) also dropped.",
+  "fixEn": "This was not about finding a right answer about your emotion. You left a few clues for putting what you are experiencing now into words."
+ },
+ {
+  "key": "about.refsSummary",
+  "type": "A",
+  "severity": "medium",
+  "ko": "참고한 연구 6편",
+  "en": "Six studies behind it",
+  "bt": "이 도구의 바탕이 된 연구 여섯 편",
+  "problem": "참고한 연구 means studies consulted. “Six studies behind it” suggests the studies back the app, which overstates support (refsClosing says none tested the app, and Fugate found no clear change).",
+  "fixEn": "Six studies consulted"
+ },
+ {
+  "key": "landing.badgeBoundary",
+  "type": "D",
+  "severity": "medium",
+  "ko": "비의료 자기관찰",
+  "en": "Non-medical self-monitoring",
+  "bt": "비의료적 자기 모니터링",
+  "problem": "자기관찰 is “self-observation” everywhere else. “Self-monitoring” is a clinical-intervention term (it is literally in the Widdershoven depression-treatment study title), so the non-medical badge picks up treatment language.",
+  "fixEn": "Non-medical self-observation"
+ },
+ {
+  "key": "whyWords.notJudging",
+  "type": "D",
+  "severity": "medium",
+  "ko": "그래서 이 앱은 당신의 ‘진짜 감정’을 찾아내려 하지 않습니다. 대신 지금 경험을 이해하는 데 도움이 되는 말을 함께 찾아봅니다. 여기 있는 단어들은 완전한 목록이 아니라 <b>출발점</b>이고, <b>내 말로 적는 것이 예외가 아니라 정상적인 길</b>입니다.",
+  "en": "So this app does not try to find your “true emotion.” Instead, it helps you look for words that help you understand what you are experiencing now. The words here are a <b>starting point</b>, not a complete list, and <b>writing in your own words is a normal path, not an exception</b>.",
+  "bt": "그래서 이 앱은 당신의 “진짜 감정”을 찾으려 하지 않습니다. 대신 지금 겪고 있는 것을 이해하는 데 도움이 되는 말을 찾도록 돕습니다. 여기 있는 단어들은 완전한 목록이 아니라 <b>출발점</b>이며, <b>자신의 말로 적는 것은 예외가 아니라 정상적인 경로</b>입니다.",
+  "problem": "진짜 감정 is “real emotion” in about.faq.judge.a but “true emotion” here. Also 함께 찾아봅니다 (looks with you) became “helps you look,” with a repeated “help … help.”",
+  "fixEn": "So this app does not try to find your “real emotion.” Instead, it looks with you for words that help you understand what you are experiencing now. The words here are a <b>starting point</b>, not a complete list, and <b>writing in your own words is a normal path, not an exception</b>."
+ },
+ {
+  "key": "common.saveFailed",
+  "type": "D",
+  "severity": "medium",
+  "ko": "이 브라우저에 기록을 저장하지 못하고 있습니다. 저장 공간이 가득 찼거나 브라우저가 저장을 막고 있을 수 있습니다. 계속할 수는 있지만, 이 화면을 닫으면 지금 기록은 남지 않습니다. 지난 기록 화면에서 오래된 기록을 파일로 내보내고 지우면 공간이 생깁니다.",
+  "en": "This browser is not saving the record. Its storage may be full, or the browser may be blocking it. You can go on, but closing this screen will lose this record. Exporting old records to a file and deleting them on the records screen frees space.",
+  "bt": "이 브라우저에 기록이 저장되지 않고 있어요. 저장 공간이 가득 찼거나 브라우저가 저장을 막고 있을 수 있어요. 계속 진행할 수는 있지만, 이 화면을 닫으면 이 기록은 사라져요. 기록 화면에서 예전 기록을 파일로 내보낸 뒤 삭제하면 공간이 생겨요.",
+  "problem": "Data-loss warning uses “record/records” and points to “the records screen,” but 기록 is “entry” elsewhere and the screen is called “Past entries.” Back-translator also found the scope of “on the records screen” unclear.",
+  "fixEn": "This browser is not saving this entry. Its storage may be full, or the browser may be blocking it. You can go on, but if you close this screen, this entry will not be kept. You can free up space on the Past entries screen by exporting older entries to a file and then deleting them."
+ },
+ {
+  "key": "about.faq.storage.a",
+  "type": "B",
+  "severity": "medium",
+  "ko": "지금 쓰는 브라우저 안에만 저장됩니다. 적은 내용은 서버로 보내지 않습니다. 브라우저 데이터를 지우면 함께 사라지고, 암호화된 저장소는 아닙니다. 지난 기록 화면에서 파일로 내보내거나(원하면 암호로 잠가서) 모두 지울 수 있습니다.",
+  "en": "Only in the browser you are using. What you write is not sent to a server. Clearing your browser data removes it, and the storage is not encrypted. From past entries you can export them to a file (locked with a passphrase if you like) or delete them all.",
+  "bt": "지금 사용 중인 브라우저에만 저장됩니다. 쓴 내용은 서버로 보내지지 않습니다. 브라우저 데이터를 지우면 함께 지워지고, 저장 공간은 암호화되어 있지 않습니다. 지난 기록에서 기록을 파일로 내보내거나(원하면 암호 문구로 잠글 수 있음) 모두 삭제할 수 있습니다.",
+  "problem": "“From past entries you can export them” was read as “from among older entries.” Korean means on the Past entries screen, covering all entries. “removes it” also has no clear referent.",
+  "fixEn": "Only in the browser you are using. What you write is not sent to a server. Clearing your browser data removes your entries, and the storage is not encrypted. On the Past entries screen, you can export them to a file (locked with a passphrase if you like) or delete them all."
+ },
+ {
+  "key": "contextSource.anticipation",
+  "type": "B",
+  "severity": "medium",
+  "ko": "예상",
+  "en": "Something expected",
+  "bt": "예상되는 일",
+  "problem": "“Something expected” can mean “something I had expected (not a surprise).” Korean 예상 means something anticipated, still ahead. The value later fills synthesis.meaning.notHappeningNow.",
+  "fixEn": "Something anticipated"
+ },
+ {
+  "key": "quickSummary.title",
+  "type": "C",
+  "severity": "medium",
+  "ko": "여기까지 살펴보았습니다.",
+  "en": "This is as far as you went.",
+  "bt": "여기까지 오셨어요.",
+  "problem": "“This is as far as you went.” can sound like falling short (back-translator flagged it). Korean 여기까지 살펴보았습니다 is a neutral wrap-up.",
+  "fixEn": "Here is what you looked at."
+ },
+ {
+  "key": "summary.title",
+  "type": "C",
+  "severity": "medium",
+  "ko": "여기까지 살펴보았습니다.",
+  "en": "This is as far as you went.",
+  "bt": "여기까지 오셨어요.",
+  "problem": "Same as quickSummary.title. “As far as you went” can read as stopping short, not a neutral wrap-up.",
+  "fixEn": "Here is what you looked at."
+ },
+ {
+  "key": "quickSummary.deep",
+  "type": "B",
+  "severity": "medium",
+  "ko": "조금 더 천천히 들여다보기",
+  "en": "Take it more slowly",
+  "bt": "좀 더 천천히 해 보기",
+  "problem": "“Take it more slowly” reads as pacing advice, not a button that opens the six-step slower look (back-translator flagged). It also doesn’t match the mode name “slow look.”",
+  "fixEn": "Take a slower look"
+ },
+ {
+  "key": "need.routeDeep",
+  "type": "B",
+  "severity": "medium",
+  "ko": "조금 더 천천히 살펴보기",
+  "en": "Take it more slowly",
+  "bt": "좀 더 천천히 해 보기",
+  "problem": "In the list of needs, “Take it more slowly” reads as advice to slow down rather than a route into the slower six-step look.",
+  "fixEn": "Take a slower look"
+ },
+ {
+  "key": "need.varies",
+  "type": "B",
+  "severity": "medium",
+  "ko": "같은 경험이라도 필요한 것은 그때그때 다를 수 있습니다. 편안하거나 벅찬 경험이라면 문제를 풀기보다 머물러 느끼는 쪽이 맞을 수도 있습니다.",
+  "en": "Even with the same experience, what you need can change from time to time. If the experience is calm or full, staying with it may suit you better than solving something.",
+  "bt": "같은 경험이라도 필요한 것은 그때그때 달라질 수 있어요. 경험이 차분하거나 충만하다면, 무언가를 해결하기보다 그 경험에 머무는 편이 더 맞을 수도 있어요.",
+  "problem": "“calm or full” is unclear: “full” could mean satisfied, overwhelmed, or literally full. Korean 편안하거나 벅찬 means at ease or deeply moved (overflowing).",
+  "fixEn": "Even with the same experience, what you need can change from time to time. If the experience feels comfortable or deeply moving, staying with it may suit you better than solving something."
+ },
+ {
+  "key": "worsened.eyebrow",
+  "type": "C",
+  "severity": "medium",
+  "ko": "여기까지",
+  "en": "That is enough for now",
+  "bt": "지금은 이걸로 충분해요",
+  "problem": "Korean 여기까지 is a neutral “this far.” “That is enough for now” can sound curt, as if the app is making the call for the user (back-translator flagged “stop now” reading).",
+  "fixEn": "Finishing here"
+ },
+ {
+  "key": "worsened.finish",
+  "type": "D",
+  "severity": "medium",
+  "ko": "여기서 마치기",
+  "en": "Stop here",
+  "bt": "여기서 멈추기",
+  "problem": "Korean 마치기 means finish (this screen comes after the last step and links home, and the entry is kept). “Stop here” echoes the Stop action, which saves a “stopped” entry. Elsewhere 여기서 마치기/여기까지 is “Finish here.”",
+  "fixEn": "Finish here"
+ },
+ {
+  "key": "stopped.entryNote",
+  "type": "C",
+  "severity": "medium",
+  "ko": "물 한 잔, 잠깐 걷기, 다른 일로 주의를 옮기기처럼 지금 가능한 것을 선택해보세요.",
+  "en": "Choose something you can do now, such as a glass of water, a short walk, or turning your attention to something else.",
+  "bt": "물 한 잔, 짧은 산책, 다른 곳으로 주의 돌리기처럼 지금 할 수 있는 것을 골라 보세요.",
+  "problem": "Korean 선택해보세요 is a gentle suggestion. The bare imperative “Choose …” reads as an instruction on a stop screen. Also “a glass of water” is not an action.",
+  "fixEn": "You could choose something that is possible right now, like having a glass of water, taking a short walk, or turning your attention to something else."
+ },
+ {
+  "key": "recordTransfer.exportScope",
+  "type": "B",
+  "severity": "medium",
+  "ko": "완료한 기록과 중단한 기록 {count}개를 내보냅니다. 작성 중인 기록은 넣지 않습니다.",
+  "en": "Exports {count} finished and stopped entries. Unfinished entries are not included.",
+  "bt": "완료한 기록과 중단한 기록 {count}개를 내보내요. 끝내지 않은 기록은 포함되지 않아요.",
+  "problem": "“Unfinished entries are not included” contradicts itself, because stopped entries are also unfinished. Korean separates 중단한 (stopped) from 작성 중인 (in progress). Back-translator also could not tell if {count} is a total.",
+  "fixEn": "Exports {count} entries, both finished and stopped. An entry still in progress is not included."
+ },
+ {
+  "key": "recordTransfer.lock.warning",
+  "type": "B",
+  "severity": "medium",
+  "ko": "암호를 잊으면 이 파일은 누구도 열 수 없습니다. 만든 사람도 열 수 없습니다. 암호는 어디에도 저장되지 않습니다.",
+  "en": "If you forget the passphrase, no one can open this file, the maker included. The passphrase is not stored anywhere.",
+  "bt": "암호 문구를 잊으면 만든 사람을 포함해 누구도 이 파일을 열 수 없어요. 암호 문구는 어디에도 저장되지 않아요.",
+  "problem": "“the maker included” can be read as the person who made the file (the user). Korean 만든 사람 means the app’s maker, as in the FAQ.",
+  "fixEn": "If you forget the passphrase, no one can open this file, not even the app’s maker. The passphrase is not stored anywhere."
+ },
+ {
+  "key": "recordTransfer.lock.exportLocked",
+  "type": "B",
+  "severity": "medium",
+  "ko": "암호로 잠가 내보내기",
+  "en": "Export locked",
+  "bt": "잠가서 내보내기",
+  "problem": "“Export locked” reads like a status (export is locked or disabled). Korean is a button: lock with the passphrase and export.",
+  "fixEn": "Lock and export"
+ },
+ {
+  "key": "content:body-signals.regions[5]",
+  "type": "B",
+  "severity": "medium",
+  "ko": "에너지·무게",
+  "en": "Energy and weight",
+  "bt": "기운과 무게감",
+  "problem": "“Energy and weight” can read as body weight, which is a sensitive topic in this context. Korean 무게 here means a sense of heaviness or lightness (items: heavy, light, draining, building up).",
+  "fixEn": "Energy and heaviness"
+ },
+ {
+  "key": "crisis.title",
+  "type": "A",
+  "severity": "low",
+  "ko": "긴급 지원 및 위기 상담 안내",
+  "en": "Emergency and crisis support",
+  "bt": "응급 및 위기 지원",
+  "problem": "Korean is a guide to emergency help and crisis counseling lines (상담 … 안내). “Emergency and crisis support” can read as if the app provides crisis support, which about.not says it does not.",
+  "fixEn": "Emergency help and crisis lines"
+ },
+ {
+  "key": "about.faq.maker.a",
+  "type": "A",
+  "severity": "low",
+  "ko": "아니요. 이 앱은 적은 내용을 어디에도 보내지 않아서 만든 사람도 볼 수 없습니다. 방문 통계, 광고, 추적 쿠키도 쓰지 않습니다. 다만 사이트를 올려 둔 호스팅 업체(Vercel)는 여느 웹사이트처럼 접속 기록(IP 주소, 브라우저 종류, 시각)을 처리합니다. 그 기록에 앱에 적은 내용은 들어 있지 않습니다.",
+  "en": "No. The app sends what you write nowhere, so the maker cannot see it either. It uses no visit statistics, ads or tracking cookies. The hosting company (Vercel) handles access logs (IP address, browser type, time), as for any website; those logs contain nothing you wrote in the app.",
+  "bt": "아니요. 앱은 쓴 내용을 어디로도 보내지 않으므로, 만든 사람도 볼 수 없습니다. 방문 통계, 광고, 추적 쿠키도 쓰지 않습니다. 여느 웹사이트와 마찬가지로 호스팅 회사(Vercel)가 접속 기록(IP 주소, 브라우저 종류, 시간)을 처리하며, 이 기록에는 앱에 쓴 내용이 전혀 들어 있지 않습니다.",
+  "problem": "Korean 다만 marks the hosting logs as an exception to “nobody sees anything.” English drops the contrast. Also missing a serial comma (house US style).",
+  "fixEn": "No. The app sends what you write nowhere, so the maker cannot see it either. It uses no visit statistics, ads, or tracking cookies. That said, the hosting company (Vercel) handles access logs (IP address, browser type, time), as for any website; those logs contain nothing you wrote in the app."
+ },
+ {
+  "key": "about.faq.maker.q",
+  "type": "D",
+  "severity": "low",
+  "ko": "만든 사람이 내 기록을 볼 수 있나요?",
+  "en": "Can the maker see my records?",
+  "bt": "만든 사람이 내 기록을 볼 수 있나요?",
+  "problem": "기록 is “entry” elsewhere; “records” here.",
+  "fixEn": "Can the maker see my entries?"
+ },
+ {
+  "key": "about.faq.effect.a",
+  "type": "C",
+  "severity": "low",
+  "ko": "아직 모릅니다. 감정을 구별하는 연습 뒤에 구별하는 정도가 늘었다는 연구는 있지만, 그것이 삶에 도움이 되는지, 이 앱으로도 그런지는 확인되지 않았습니다.",
+  "en": "We do not know yet. Some studies found that people told emotions apart more finely after practice, but whether that helps in life, or whether this app does the same, has not been shown.",
+  "bt": "아직 모릅니다. 몇몇 연구에서는 연습 후 사람들이 감정을 더 세밀하게 구분했지만, 그것이 삶에 도움이 되는지, 또는 이 앱도 같은 결과를 내는지는 밝혀지지 않았습니다.",
+  "problem": "“We do not know yet” makes the app speak as “we.” Korean has no subject.",
+  "fixEn": "That is not known yet. Some studies found that people told emotions apart more finely after practice, but whether that helps in life, or whether this app does the same, has not been shown."
+ },
+ {
+  "key": "about.faq.worse.a",
+  "type": "C",
+  "severity": "low",
+  "ko": "언제든 ‘그만하기’를 누르면 됩니다. 생각을 계속 되짚는 것이 오히려 힘들게 할 때도 있습니다. 마지막 단계에서 ‘더 불편해짐’이라고 남길 수도 있습니다.",
+  "en": "Press Stop at any time. Going over things again and again can sometimes make it harder. At the last step you can also note that it felt more uncomfortable.",
+  "bt": "언제든 그만하기를 누르세요. 같은 것을 되풀이해 곱씹다 보면 오히려 더 힘들어질 때가 있습니다. 마지막 단계에서 더 불편해졌다고 적어 둘 수도 있습니다.",
+  "problem": "Korean 누르면 됩니다 is “you can just press.” English opens with a bare command.",
+  "fixEn": "You can press Stop at any time. Going over things again and again can sometimes make it harder. At the last step you can also note that it felt more uncomfortable."
+ },
+ {
+  "key": "about.previewIntro",
+  "type": "C",
+  "severity": "low",
+  "ko": "시작하기 전에 어떤 화면이 나오는지 볼 수 있습니다. 어느 화면에서든 ‘그만하기’를 누를 수 있고, 맞는 답이 없으면 고르지 않아도 됩니다.",
+  "en": "See the screens before you start. You can press Stop on any of them, and you need not pick anything that does not fit.",
+  "bt": "시작하기 전에 화면을 미리 보세요. 어느 화면에서든 그만하기를 누를 수 있고, 맞지 않는 것은 고르지 않아도 됩니다.",
+  "problem": "Korean 볼 수 있습니다 (you can see) became the command “See the screens.” “need not” is stiff.",
+  "fixEn": "You can see the screens before you start. You can press Stop on any of them, and you don’t have to pick anything if nothing fits."
+ },
+ {
+  "key": "whyWords.shaped",
+  "type": "B",
+  "severity": "low",
+  "ko": "우리가 감정을 표현하는 방식은 몸의 느낌과 상황뿐 아니라, 살아온 경험과 언어, 관계와 문화의 영향을 받습니다. 같은 경험도 사람이나 공동체에 따라 조금 다르게 나누고 부를 수 있어요.",
+  "en": "How we put emotions into words is shaped not only by what we feel in the body and by the situation, but also by our history, our language, our relationships and our culture. The same experience can be divided and named a little differently by different people and communities.",
+  "bt": "우리가 감정을 말로 표현하는 방식은 몸으로 느끼는 것과 상황뿐 아니라, 우리의 역사, 언어, 관계, 문화에 의해서도 만들어집니다. 같은 경험이라도 사람과 공동체에 따라 조금씩 다르게 나누고 이름 붙일 수 있습니다.",
+  "problem": "“our history” was back-translated as collective history (역사). Korean 살아온 경험 is personal life experience. Also missing serial comma.",
+  "fixEn": "How we put emotions into words is shaped not only by what we feel in the body and by the situation, but also by our life experience, our language, our relationships, and our culture. The same experience can be divided and named a little differently by different people and communities."
+ },
+ {
+  "key": "meta.shareImageAlt",
+  "type": "D",
+  "severity": "low",
+  "ko": "감정 관찰실 — 지금의 경험을 조금 더 알아보기. 감정을 맞히는 검사가 아닌 자기관찰 도구.",
+  "en": "Emotion Observatory: a closer look at what you are experiencing now. A self-observation tool, not a test that names your emotion.",
+  "bt": "감정 관측소: 지금 겪고 있는 것을 좀 더 가까이 들여다보기. 감정에 이름을 붙여 주는 테스트가 아니라 자기 관찰 도구입니다.",
+  "problem": "감정을 맞히는 검사 is “a test that guesses your emotions” on the landing page but “names your emotion” here, which also clashes with “you choose the name.”",
+  "fixEn": "Emotion Observatory: a closer look at what you are experiencing now. A self-observation tool, not a test that guesses your emotions."
+ },
+ {
+  "key": "landing.deep",
+  "type": "D",
+  "severity": "low",
+  "ko": "조금 더 천천히 살펴보기",
+  "en": "Take it more slowly",
+  "bt": "좀 더 천천히 하기",
+  "problem": "Mode button. “Take it more slowly” reads as pacing advice and differs from the mode name “slow look.”",
+  "fixEn": "Take a slower look"
+ },
+ {
+  "key": "quickCandidates.deep",
+  "type": "D",
+  "severity": "low",
+  "ko": "조금 더 천천히 들여다보기",
+  "en": "Take it more slowly",
+  "bt": "좀 더 천천히 하기",
+  "problem": "Same mode-name inconsistency as quickSummary.deep.",
+  "fixEn": "Take a slower look"
+ },
+ {
+  "key": "records.depth.deep",
+  "type": "D",
+  "severity": "low",
+  "ko": "자세히",
+  "en": "Closer look",
+  "bt": "자세히 보기",
+  "problem": "The same six-step mode is “slow look” in about.what and previewDeep but “closer look” here (and in records.depth.quick+deep → “Quick look + slow look”).",
+  "fixEn": "Slow look"
+ },
+ {
+  "key": "landing.resume",
+  "type": "D",
+  "severity": "low",
+  "ko": "지난 기록 이어하기",
+  "en": "Continue an unfinished entry",
+  "bt": "마치지 않은 기록 이어서 하기",
+  "problem": "이어하던/작성 중인 기록 is “unfinished entry,” which overlaps with stopped entries (also not finished). Same for landing.draftConfirm.title/body.",
+  "fixEn": "Continue an entry in progress"
+ },
+ {
+  "key": "entry.resumeTitle",
+  "type": "D",
+  "severity": "low",
+  "ko": "이어 쓰지 않은 기록이 있어요",
+  "en": "You have an unfinished entry",
+  "bt": "마치지 않은 기록이 있어요",
+  "problem": "“unfinished” overlaps with “stopped” entries. Use “in progress” for 이어 쓰지 않은/작성 중인 기록.",
+  "fixEn": "You have an entry in progress"
+ },
+ {
+  "key": "entry.resumeBody",
+  "type": "B",
+  "severity": "low",
+  "ko": "이전 진행 상황을 이 기기에서 불러옵니다.",
+  "en": "Picks up where you left off, from this device.",
+  "bt": "이 기기에서, 멈췄던 곳부터 이어서 해요.",
+  "problem": "“from this device” attaches unclearly (back-translator flagged it). Korean: the earlier progress is loaded from this device.",
+  "fixEn": "Your earlier progress is loaded from this device."
+ },
+ {
+  "key": "entry.observe",
+  "type": "C",
+  "severity": "low",
+  "ko": "조금 살펴보고 싶어요",
+  "en": "I’d like to look a little",
+  "bt": "조금 들여다보고 싶어요",
+  "problem": "“I’d like to look a little” sounds unfinished in English.",
+  "fixEn": "I’d like to look a little closer"
+ },
+ {
+  "key": "entryMini.eyebrow",
+  "type": "D",
+  "severity": "low",
+  "ko": "짧은 확인",
+  "en": "A quick check",
+  "bt": "간단한 확인",
+  "problem": "“A quick check” collides with the “Quick look” mode and matches stopModal.eyebrow word for word, even though the Korean differs (짧은 확인 vs 잠깐 확인할게요).",
+  "fixEn": "A short check-in"
+ },
+ {
+  "key": "entryMini.title",
+  "type": "A",
+  "severity": "low",
+  "ko": "지금 몸은 어떤 쪽에\n가까운가요?",
+  "en": "How is your body\nright now?",
+  "bt": "지금 몸은\n어떤가요?",
+  "problem": "Korean asks which side the body is closer to (a choice on the pad). “How is your body right now?” is an open question.",
+  "fixEn": "Which way is your body\nleaning right now?"
+ },
+ {
+  "key": "entryMini.lede",
+  "type": "B",
+  "severity": "low",
+  "ko": "그리고 이것을 생각하는 것이 지금 도움이 될 것 같나요?",
+  "en": "And do you think thinking about this would help right now?",
+  "bt": "그리고 지금 이것에 대해 생각해 보는 게 도움이 될 것 같나요?",
+  "problem": "“do you think thinking” is clumsy, and “this” has no clear referent after a body question (back-translator flagged it).",
+  "fixEn": "And does it feel like thinking about this would help right now?"
+ },
+ {
+  "key": "entryMini.yes",
+  "type": "C",
+  "severity": "low",
+  "ko": "조금 살펴보는 것이 도움될 것 같아요",
+  "en": "I think looking a little would help",
+  "bt": "조금 들여다보면 도움이 될 것 같아요",
+  "problem": "“looking a little” sounds unfinished.",
+  "fixEn": "I think looking a little closer would help"
+ },
+ {
+  "key": "stopModal.eyebrow",
+  "type": "D",
+  "severity": "low",
+  "ko": "잠깐 확인할게요",
+  "en": "A quick check",
+  "bt": "잠깐 확인",
+  "problem": "Same English as entryMini.eyebrow (“A quick check”) for different Korean. “Quick” also clashes with the Quick look mode name.",
+  "fixEn": "Checking in for a moment"
+ },
+ {
+  "key": "worsened.showHelp",
+  "type": "D",
+  "severity": "low",
+  "ko": "도움받을 수 있는 곳 보기",
+  "en": "See where to find help",
+  "bt": "도움받을 수 있는 곳 보기",
+  "problem": "도움받을 수 있는 곳 is “Where to get help” in common.helpLink but “find help” here.",
+  "fixEn": "See where to get help"
+ },
+ {
+  "key": "stopped.home",
+  "type": "A",
+  "severity": "low",
+  "ko": "기록실로 돌아가기",
+  "en": "Back to the start",
+  "bt": "처음으로 돌아가기",
+  "problem": "Korean says 기록실로 돌아가기 (back to the records room), English says “Back to the start.” The code links to “/”, so the English matches behavior and the Korean is the outlier. No English change; consider changing the Korean to 처음으로 돌아가기.",
+  "fixEn": "Back to the start"
+ },
+ {
+  "key": "recordTransfer.intro",
+  "type": "A",
+  "severity": "low",
+  "ko": "로그인 없이 다른 기기로 기록을 옮기거나 따로 보관할 때 씁니다. 모든 처리는 이 기기의 브라우저 안에서만 일어납니다.",
+  "en": "Use this to move entries to another device or keep a copy, without logging in. Everything happens inside the browser on this device.",
+  "bt": "로그인 없이 기록을 다른 기기로 옮기거나 사본을 보관할 때 사용해요. 모든 과정은 이 기기의 브라우저 안에서 이루어져요.",
+  "problem": "Privacy line drops 만 (only): “all processing happens only in this device’s browser.”",
+  "fixEn": "Use this to move entries to another device or keep a copy, without logging in. All of this happens only inside the browser on this device."
+ },
+ {
+  "key": "recordTransfer.exportShareNote",
+  "type": "C",
+  "severity": "low",
+  "ko": "파일을 다른 사람에게 보내면 그 사람도 적은 내용을 모두 읽을 수 있습니다. 기록에 다른 사람 이야기가 있다면 한 번 더 생각해 주세요.",
+  "en": "Anyone you send the file to can read everything in it. If your records mention other people, think twice.",
+  "bt": "파일을 받은 사람은 누구나 그 안의 모든 내용을 읽을 수 있어요. 기록에 다른 사람이 언급되어 있다면 한 번 더 생각해 보세요.",
+  "problem": "“think twice” is a curt warning idiom. Korean 한 번 더 생각해 주세요 is a polite request. Also “records” instead of “entries.”",
+  "fixEn": "Anyone you send the file to can read everything in it. If your entries mention other people, please give it a second thought."
+ },
+ {
+  "key": "recordTransfer.deleteAllConfirmBody",
+  "type": "B",
+  "severity": "low",
+  "ko": "완료한 기록, 중단한 기록, 작성 중인 기록을 모두 이 기기에서 지웁니다. 지운 기록은 되돌릴 수 없습니다. 지우기 전에 위의 「파일로 내보내기」로 파일을 받아 둘 수 있습니다.",
+  "en": "This deletes finished, stopped and unfinished entries from this device. Deleted entries cannot be brought back. Before deleting, you can save a copy with “Export to a file” above.",
+  "bt": "이 기기에서 완료한 기록, 중단한 기록, 끝내지 않은 기록을 삭제해요. 삭제한 기록은 되돌릴 수 없어요. 삭제하기 전에 위의 “파일로 내보내기”로 사본을 저장할 수 있어요.",
+  "problem": "“finished, stopped and unfinished entries” overlaps, because stopped entries are also unfinished. Use “in progress” for 작성 중인.",
+  "fixEn": "This deletes all entries from this device: finished, stopped, and in progress. Deleted entries cannot be brought back. Before deleting, you can save a copy with “Export to a file” above."
+ },
+ {
+  "key": "recordTransfer.lock.hint",
+  "type": "B",
+  "severity": "low",
+  "ko": "암호를 정하면 내보낸 파일이 잠겨, 그 암호를 아는 사람만 열 수 있습니다. 비워 두면 지금처럼 잠그지 않고 내보냅니다.",
+  "en": "With a passphrase the exported file is locked, and only someone who knows it can open the file. Leave it empty to export unlocked, as before.",
+  "bt": "암호 문구를 정하면 내보낸 파일이 잠기고, 그 암호 문구를 아는 사람만 파일을 열 수 있어요. 비워 두면 이전처럼 잠그지 않고 내보내요.",
+  "problem": "“as before” reads as “as previously.” Korean 지금처럼 means the same as the regular export.",
+  "fixEn": "With a passphrase, the exported file is locked, and only someone who knows the passphrase can open it. If you leave it empty, the file is exported unlocked, like a regular export."
+ },
+ {
+  "key": "recordTransfer.lock.unlockQuestion",
+  "type": "D",
+  "severity": "low",
+  "ko": "암호로 잠긴 기록 파일입니다. 내보낼 때 정한 암호를 적어 주세요.",
+  "en": "This records file is locked. Enter the passphrase chosen when it was exported.",
+  "bt": "이 기록 파일은 잠겨 있어요. 내보낼 때 정한 암호 문구를 입력하세요.",
+  "problem": "“records file” vs “entries file” in the other import messages.",
+  "fixEn": "This entries file is locked with a passphrase. Enter the passphrase that was set when it was exported."
+ },
+ {
+  "key": "context.privacyHint",
+  "type": "D",
+  "severity": "low",
+  "ko": "다른 사람의 이름은 ‘친구’, ‘팀장’처럼 바꿔 적어도 됩니다. 기록은 이 기기에 남고, 파일로 내보내면 그 파일에도 그대로 들어갑니다.",
+  "en": "You can write “a friend” or “my manager” instead of someone’s name. The record stays on this device, and an exported file holds it as written.",
+  "bt": "누군가의 이름 대신 “친구”나 “내 상사”라고 적어도 돼요. 기록은 이 기기에 남고, 내보낸 파일에는 적은 그대로 담겨요.",
+  "problem": "“The record” should be “entry,” and “holds it as written” is vague about what the export contains.",
+  "fixEn": "You can write “a friend” or “my manager” instead of someone’s name. The entry stays on this device, and if you export it, the file contains it exactly as written."
+ },
+ {
+  "key": "talkToSomeone.question",
+  "type": "C",
+  "severity": "low",
+  "ko": "이 경험을 사람에게 말해 볼 생각이 있나요?",
+  "en": "Are you thinking of telling a person about this?",
+  "bt": "이 일을 누군가에게 이야기할 생각이 있나요?",
+  "problem": "“telling a person” sounds stiff, and “Are you thinking of” suggests a plan already made. Korean 말해 볼 생각이 있나요 asks about willingness. If changed, align recordLabel (“Considering telling someone”).",
+  "fixEn": "Would you consider telling someone about this experience?"
+ },
+ {
+  "key": "talkToSomeone.hint",
+  "type": "C",
+  "severity": "low",
+  "ko": "답하지 않아도 됩니다. 어느 답이든 괜찮고, 나중에 바꿔도 됩니다.",
+  "en": "You need not answer. Any answer is fine, and you can change it later.",
+  "bt": "답하지 않아도 돼요. 어떤 답이든 괜찮고, 나중에 바꿀 수 있어요.",
+  "problem": "“You need not answer” is stiff and formal. Korean is a soft 답하지 않아도 됩니다.",
+  "fixEn": "You don’t have to answer. Any answer is fine, and you can change it later."
+ },
+ {
+  "key": "talkToSomeone.saved",
+  "type": "D",
+  "severity": "low",
+  "ko": "이 기록에 남겨 두었습니다.",
+  "en": "Kept with this record.",
+  "bt": "이 기록과 함께 보관했어요.",
+  "problem": "“record” instead of “entry,” and the subject is missing (back-translator could not tell whether the answer or the entry was kept).",
+  "fixEn": "Your answer is kept with this entry."
+ },
+ {
+  "key": "coach.footnoteUnknown",
+  "type": "C",
+  "severity": "low",
+  "ko": "이 기록이 예시 연습으로 저장되었는지는 확인할 수 없습니다. 앞에서 고른 내 표현을 바꾸지 않고, 요약에도 쓰이지 않습니다.",
+  "en": "We cannot tell whether this entry was saved as example practice. It does not change the words you picked earlier and is not used in your summary.",
+  "bt": "이 기록이 예시 연습으로 저장되었는지 알 수 없어요. 앞에서 고른 단어를 바꾸지 않으며 요약에도 쓰이지 않아요.",
+  "problem": "“We cannot tell” makes the app speak as “we.” Korean has no subject.",
+  "fixEn": "It is not possible to tell whether this entry was saved as example practice. It does not change the words you picked earlier and is not used in your summary."
+ },
+ {
+  "key": "coach.appraisalHint",
+  "type": "A",
+  "severity": "low",
+  "ko": "같은 예시라도 사람마다, 또 어떤 관계와 상황인지에 따라 눈에 들어오는 것이 다를 수 있어요. 정답을 맞히는 문제가 아닙니다.",
+  "en": "Different people notice different things in the same example, depending on the relationship and the situation. There is no right answer to find.",
+  "bt": "같은 예시에서도 관계와 상황에 따라 사람마다 알아차리는 것이 달라요. 찾아야 할 정답은 없어요.",
+  "problem": "Hedge dropped: Korean 다를 수 있어요 (can differ) became a flat “notice different things.” The person and the relationship/situation are also merged.",
+  "fixEn": "What stands out in the same example can differ from person to person, and with the relationship and the situation. There is no right answer to find."
+ },
+ {
+  "key": "synthesis.observed.body",
+  "type": "A",
+  "severity": "low",
+  "ko": "몸에서는 {list}{~last|을/를} 알아차렸다고 적었습니다.",
+  "en": "In your body, you noticed {list}.",
+  "bt": "몸에서 {list}을(를) 알아차렸어요.",
+  "problem": "Korean keeps a reporting frame (알아차렸다고 적었습니다, you wrote that you noticed). English states it as a fact, unlike the neighboring lines (“you marked,” “you chose”).",
+  "fixEn": "For your body, you noted {list}."
+ },
+ {
+  "key": "synthesis.meaning.concernOverlap",
+  "type": "B",
+  "severity": "low",
+  "ko": "고른 표현과 그때 중요했다고 한 것이 모두 ‘{tags}’ 쪽을 가리킵니다. 같은 곳을 두 번 짚은 셈입니다.",
+  "en": "The words you chose and what you said mattered both point toward “{tags}.” You touched the same place twice.",
+  "bt": "고른 단어와 중요했다고 말한 것이 모두 “{tags}” 쪽을 가리켜요. 같은 곳을 두 번 짚은 셈이에요.",
+  "problem": "“You touched the same place twice” is unclear (converging vs repeating, per back-translator). It also drops the softener 셈 (in a way).",
+  "fixEn": "The words you chose and what you said mattered both point toward “{tags}.” In a way, you pointed to the same place twice."
+ },
+ {
+  "key": "affect.hintFresh",
+  "type": "B",
+  "severity": "low",
+  "ko": "지금에 가장 가까운 곳을 한 번 눌러 주세요. 잘 모르겠으면 건너뛰어도 됩니다.",
+  "en": "Tap once on the spot closest to right now. If you are not sure, you can skip this.",
+  "bt": "지금과 가장 가까운 지점을 한 번 탭하세요. 잘 모르겠다면 건너뛰어도 돼요.",
+  "problem": "“closest to right now” leaves out what is being compared (back-translator flagged it).",
+  "fixEn": "Tap once on the spot closest to how it is right now. If you are not sure, you can skip this."
+ },
+ {
+  "key": "contextSource.event",
+  "type": "B",
+  "severity": "low",
+  "ko": "실제 사건",
+  "en": "Something that happened",
+  "bt": "일어난 일",
+  "problem": "“Something that happened” overlaps with “A memory.” Korean 실제 사건 means an actual event.",
+  "fixEn": "An actual event"
+ },
+ {
+  "key": "affectPad.bottom",
+  "type": "B",
+  "severity": "low",
+  "ko": "가라앉은 느낌",
+  "en": "Low, settled",
+  "bt": "낮고 차분함",
+  "problem": "“settled” adds a calm, pleasant tint to the activation pole (back-translator chose 차분함). Korean 가라앉은 is two-sided (calmed or sunk). A neutral term pairs better with “Energy rising.” Same for affectBands.quickActivation.0.",
+  "fixEn": "Low energy"
+ },
+ {
+  "key": "need.hint",
+  "type": "C",
+  "severity": "low",
+  "ko": "앱이 정해주지 않습니다. 하나를 골라보고, 다른 쪽이 궁금하면 언제든 바꿔도 됩니다.",
+  "en": "The app does not decide this. Pick one, and switch any time if another one makes you curious.",
+  "bt": "이것은 앱이 정하지 않아요. 하나를 고르고, 다른 것이 궁금해지면 언제든 바꿔도 돼요.",
+  "problem": "Korean 골라보고 is a gentle “try picking.” “Pick one” is a command.",
+  "fixEn": "The app does not decide this. You can pick one and switch any time if another one makes you curious."
+ },
+ {
+  "key": "about.refs.dejonckheere.found",
+  "type": "A",
+  "severity": "low",
+  "ko": "감정을 구별하는 정도와 우울의 관계는 상당 부분 평균 기분과 겹쳤습니다. 평균 기분을 함께 고려하면 더해지는 설명은 작았습니다.",
+  "en": "Much of the link between telling emotions apart and depression overlapped with average mood. Once average mood was taken into account, little was added.",
+  "bt": "감정 구분과 우울 사이 연관성의 상당 부분이 평균 기분과 겹쳤습니다. 평균 기분을 고려하고 나면 더해지는 것은 거의 없었습니다.",
+  "problem": "“little was added” is vague and a bit stronger than Korean 더해지는 설명은 작았습니다 (the added explanation was small).",
+  "fixEn": "Much of the link between telling emotions apart and depression overlapped with average mood. Once average mood was taken into account, it explained only a little more."
+ },
+ {
+  "key": "words.more",
+  "type": "A",
+  "severity": "low",
+  "ko": "비슷한 표현 더 보기",
+  "en": "Show similar words",
+  "bt": "비슷한 단어 보기",
+  "problem": "더 (more) dropped. “Show similar words” suggests the first similar words, not more of them.",
+  "fixEn": "Show more similar words"
+ },
+ {
+  "key": "content:needs.*.responses (all)",
+  "type": "C",
+  "severity": "low",
+  "ko": "호흡이나 자세를 억지로 교정하기보다 지금 몸을 잠깐 느껴보기",
+  "en": "Notice your body for a moment, without forcing your breathing or posture to change",
+  "bt": "호흡이나 자세를 억지로 바꾸려 하지 말고, 잠시 몸을 살펴보세요",
+  "problem": "Korean response options are neutral noun phrases (…하기, …해보기), offered as choices. English uses bare imperatives (“Notice…”, “Pick…”, “Write…”), which read as instructions and later show as “What you planned to try · Notice your body…”. Consider -ing forms across all responses.",
+  "fixEn": "Noticing your body for a moment, without forcing your breathing or posture to change"
+ },
+ {
+  "key": "content:needs.conditions.responses.repeatable",
+  "type": "A",
+  "severity": "low",
+  "ko": "다음에도 만들 수 있는 조건인지 생각해보기",
+  "en": "Think about whether these conditions could come together again",
+  "bt": "이런 조건이 다시 갖춰질 수 있을지 생각해 보세요",
+  "problem": "Korean asks whether these are conditions you can create again (agency). English makes it passive (“could come together”).",
+  "fixEn": "Think about whether you could set up these conditions again"
+ },
+ {
+  "key": "content:concerns[5]",
+  "type": "A",
+  "severity": "low",
+  "ko": "내 선택권을 지키고 싶었다",
+  "en": "I wanted to make my own choices",
+  "bt": "내 일은 내가 선택하고 싶었어요",
+  "problem": "내 선택권을 지키고 싶었다 means protecting your right to choose (tags: boundaries, choices). “make my own choices” loses the defending sense. If changed, update the matching key in concern-tags.en.json.",
+  "fixEn": "I wanted to protect my right to choose"
+ },
+ {
+  "key": "content:body-signals.items[7]",
+  "type": "A",
+  "severity": "low",
+  "ko": "가슴이 두근거림",
+  "en": "pounding heart",
+  "bt": "심장이 쿵쾅거린다",
+  "problem": "두근거림 also covers fluttering (excitement, anticipation). “pounding” is narrower and more intense.",
+  "fixEn": "heart pounding or fluttering"
+ },
+ {
+  "key": "content:body-signals.items[22]",
+  "type": "A",
+  "severity": "low",
+  "ko": "찌릿하거나 간질거림",
+  "en": "tingling or prickly",
+  "bt": "찌릿하거나 따끔거린다",
+  "problem": "간질거림 is tickly or itchy. “prickly” is closer to 따끔 (stinging), as the back-translation shows.",
+  "fixEn": "tingling or tickly"
+ },
+ {
+  "key": "content:body-signals.items[29]",
+  "type": "A",
+  "severity": "low",
+  "ko": "안정적으로 버티는 느낌",
+  "en": "steady and grounded",
+  "bt": "안정되고 중심이 잡힌 느낌",
+  "problem": "안정적으로 버티는 느낌 is holding steady. “grounded” adds a therapy-flavored meaning (centered) that the back-translation picked up (중심이 잡힌).",
+  "fixEn": "holding steady"
+ },
+ {
+  "key": "content:granularity.sets[*].note",
+  "type": "B",
+  "severity": "low",
+  "ko": "이런 것들을 표현할 때 짜증, 억울함, 답답함 같은 말이 서로 다르게 가까울 수 있습니다. 같은 상황이라도 사람에 따라 다르고, 여러 말이 동시에 가까울 수도 있습니다.",
+  "en": "Words like “annoyed,” “frustrated,” and “wronged” can each come close to these things in different ways. The same situation differs from person to person, and several words can fit at once.",
+  "bt": "‘짜증 난다’, ‘답답하다’, ‘억울하다’ 같은 말은 저마다 다른 방식으로 이런 것들에 가까울 수 있어요. 같은 상황도 사람마다 다르고, 여러 단어가 한꺼번에 맞을 수도 있어요.",
+  "problem": "“The same situation differs from person to person” says the situation itself differs. Korean: even in the same situation, this differs by person. Same in calm-relief-content (“The same moment differs…”).",
+  "fixEn": "Words like “annoyed,” “frustrated,” and “wronged” can each come close to these things in different ways. In the same situation, this can differ from person to person, and several words can fit at once."
+ }
+]
