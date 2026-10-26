@@ -794,14 +794,15 @@ function SummaryScreen({ session, onFeedback, onTalk, onSupport }: { session: Em
   const play = useFirstReveal(`${session.id}:summary`);
   if (deep?.outcome?.clarity === "more_distressed") return <WorsenedScreen />;
   const quickAffect = session.quickCheck?.affect;
-  const rows: [string, string][] = [];
+  const rows: [string, string?][] = [];
   if (quickAffect) rows.push([t("summary.quickAffect"), quickAffect.unknown ? t("common.unsure") : `${quickValence(quickAffect.valence, t.locale)} · ${quickActivation(quickAffect.activation, t.locale)}`]);
+  // a skipped step stays in the list, quietly, as 비워 둠; 잘 모르겠음 is an answer and keeps its own row text
   rows.push(
-    [t("summary.body"), (deep?.body ?? []).map((item) => item.label).join(" · ") || t("common.notRecorded")],
-    [t("summary.affect"), deepAffectValue(t, deep?.affect)],
-    [t("summary.context"), deep?.context?.eventText || t("common.notRecorded")],
-    [t("summary.concerns"), (deep?.concerns ?? []).join(" · ") || t("common.notRecorded")],
-    [t("summary.words"), (deep?.emotionCandidates ?? []).map((item) => item.label).join(" · ") || t("common.notRecorded")],
+    [t("summary.body"), (deep?.body ?? []).map((item) => item.label).join(" · ") || undefined],
+    [t("summary.affect"), deep?.affect?.unknown || hasAffectPoint(deep?.affect) ? deepAffectValue(t, deep?.affect) : undefined],
+    [t("summary.context"), deep?.context?.eventText || undefined],
+    [t("summary.concerns"), (deep?.concerns ?? []).join(" · ") || undefined],
+    [t("summary.words"), (deep?.emotionCandidates ?? []).map((item) => item.label).join(" · ") || undefined],
   );
   const d = revealDelays(rows.length);
   return <Screen className={`reveal-screen${play ? " reveal" : ""}`}>
@@ -809,7 +810,7 @@ function SummaryScreen({ session, onFeedback, onTalk, onSupport }: { session: Em
     <h1 className="reveal-title reveal-step" style={delay(d.title)}>{t("summary.title")}</h1>
     {/* the point from the slower look; the quick one stays in its row, so two dots never read as a path */}
     <MiniPad affect={deep?.affect} />
-    <div className="summary-card reveal-step" style={delay(d.card)}>{rows.map(([label, value], index) => <SummaryRow key={label} label={label} value={value} style={delay(d.rows[index])} />)}</div>
+    <div className="summary-card reveal-step" style={delay(d.card)}>{rows.map(([label, value], index) => <SummaryRow key={label} label={label} value={value ?? t("summary.leftEmpty")} empty={value === undefined} style={delay(d.rows[index])} />)}</div>
     <p className="summary-footnote reveal-step" style={delay(d.rest)}>{t("summary.footnote")}</p>
     <div className="reveal-rest reveal-step" style={delay(d.rest)}>
       <SynthesisSection session={session} onFeedback={onFeedback} />
@@ -1254,7 +1255,7 @@ function Navigation({ onNext, onSkip = onNext, disabled = false, note }: { onNex
   return <><StepNote note={note} /><div className="navigation"><button className="skip-button" onClick={onSkip}>{t("common.skip")}</button><button className="primary-button" disabled={disabled} onClick={onNext}>{t("common.next")} <span>→</span></button></div></>;
 }
 function StepNote({ note }: { note?: string }) { return note ? <p className="step-note" role="note">{note}</p> : null; }
-function SummaryRow({ label, value, style }: { label: string; value: string; style?: CSSProperties }) { return <div className="summary-row reveal-step" style={style}><span>{label}</span><strong>{value}</strong></div>; }
+function SummaryRow({ label, value, empty = false, style }: { label: string; value: string; empty?: boolean; style?: CSSProperties }) { return <div className={`summary-row reveal-step${empty ? " is-empty" : ""}`} style={style}><span>{label}</span><strong>{value}</strong></div>; }
 function quickAffectSuggestion(session: EmotionSession): AffectPoint | undefined {
   const affect = session.quickCheck?.affect;
   if (!affect || affect.unknown) return undefined;
