@@ -35,7 +35,8 @@ export const ko = {
     progress: "진행 {step}",
     unsure: "잘 모르겠음",
     notChosen: "고르지 않음",
-    notRecorded: "기록하지 않음",
+    // a step the person skipped: their choice to leave it, not a missing record
+    leftEmpty: "비워 둠",
     backToStart: "처음으로 돌아가기",
     ownWordsPlaceholder: "내 말로 적기",
     provisionalNote: "임시 단어 모음 · 스스로 고른 표현만 기록됩니다",
@@ -388,8 +389,6 @@ export const ko = {
     context: "상황",
     concerns: "중요했던 것",
     words: "가까웠던 말",
-    // a step the person skipped: their choice to leave it, not a missing record
-    leftEmpty: "비워 둠",
     footnote: "감정의 정답을 찾은 것이 아니라, 지금 경험을 표현할 수 있는 몇 가지 단서를 남겼습니다.",
     support: "그래서 지금 무엇이 필요할까요?",
   },

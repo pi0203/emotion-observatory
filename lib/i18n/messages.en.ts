@@ -68,7 +68,7 @@ export const en: Messages = {
     progress: "Step {step}",
     unsure: "Not sure",
     notChosen: "Nothing chosen",
-    notRecorded: "Not recorded",
+    leftEmpty: "Left blank",
     backToStart: "Back to the start",
     ownWordsPlaceholder: "In my own words",
     provisionalNote: "A starter set of words · Only what you choose is kept",
@@ -417,8 +417,6 @@ export const en: Messages = {
     context: "Situation",
     concerns: "What mattered",
     words: "Words that came close",
-    // unchanged until reviewed; proposed “Left blank” (docs/CROSS_PROJECT_2026_10_26.md f)
-    leftEmpty: "Not recorded",
     footnote: "This was not about finding a right answer about your emotion. You left a few clues for putting what you are experiencing now into words.",
     support: "So what might you need now?",
   },
