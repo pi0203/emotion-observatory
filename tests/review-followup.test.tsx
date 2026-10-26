@@ -46,7 +46,8 @@ describe("a skipped overall feeling", () => {
     fireEvent.click(button(ko.outcome.usefulness.helpful));
     fireEvent.click(button(ko.common.next));
     const row = screen.getByText(ko.summary.affect).parentElement!;
-    expect(row.querySelector("strong")?.textContent).toBe(ko.common.notRecorded);
+    // left empty, quietly (2026-10-26: 비워 둠 replaced 기록하지 않음 on this screen)
+    expect(row.querySelector("strong")?.textContent).toBe(ko.common.leftEmpty);
   });
 
   it("is left out of the observed lines and the before/after comparison", () => {

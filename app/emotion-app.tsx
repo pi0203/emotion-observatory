@@ -794,14 +794,15 @@ function SummaryScreen({ session, onFeedback, onTalk, onSupport }: { session: Em
   const play = useFirstReveal(`${session.id}:summary`);
   if (deep?.outcome?.clarity === "more_distressed") return <WorsenedScreen />;
   const quickAffect = session.quickCheck?.affect;
-  const rows: [string, string][] = [];
+  const rows: [string, string?][] = [];
   if (quickAffect) rows.push([t("summary.quickAffect"), quickAffect.unknown ? t("common.unsure") : `${quickValence(quickAffect.valence, t.locale)} · ${quickActivation(quickAffect.activation, t.locale)}`]);
+  // a skipped step stays in the list, quietly, as 비워 둠; 잘 모르겠음 is an answer and keeps its own row text
   rows.push(
-    [t("summary.body"), (deep?.body ?? []).map((item) => item.label).join(" · ") || t("common.notRecorded")],
+    [t("summary.body"), (deep?.body ?? []).map((item) => item.label).join(" · ") || undefined],
     [t("summary.affect"), deepAffectValue(t, deep?.affect)],
-    [t("summary.context"), deep?.context?.eventText || t("common.notRecorded")],
-    [t("summary.concerns"), (deep?.concerns ?? []).join(" · ") || t("common.notRecorded")],
-    [t("summary.words"), (deep?.emotionCandidates ?? []).map((item) => item.label).join(" · ") || t("common.notRecorded")],
+    [t("summary.context"), deep?.context?.eventText || undefined],
+    [t("summary.concerns"), (deep?.concerns ?? []).join(" · ") || undefined],
+    [t("summary.words"), (deep?.emotionCandidates ?? []).map((item) => item.label).join(" · ") || undefined],
   );
   const d = revealDelays(rows.length);
   return <Screen className={`reveal-screen${play ? " reveal" : ""}`}>
@@ -809,7 +810,7 @@ function SummaryScreen({ session, onFeedback, onTalk, onSupport }: { session: Em
     <h1 className="reveal-title reveal-step" style={delay(d.title)}>{t("summary.title")}</h1>
     {/* the point from the slower look; the quick one stays in its row, so two dots never read as a path */}
     <MiniPad affect={deep?.affect} />
-    <div className="summary-card reveal-step" style={delay(d.card)}>{rows.map(([label, value], index) => <SummaryRow key={label} label={label} value={value} style={delay(d.rows[index])} />)}</div>
+    <div className="summary-card reveal-step" style={delay(d.card)}>{rows.map(([label, value], index) => <SummaryRow key={label} label={label} value={value ?? t("common.leftEmpty")} empty={value === undefined} style={delay(d.rows[index])} />)}</div>
     <p className="summary-footnote reveal-step" style={delay(d.rest)}>{t("summary.footnote")}</p>
     <div className="reveal-rest reveal-step" style={delay(d.rest)}>
       <SynthesisSection session={session} onFeedback={onFeedback} />
@@ -1170,9 +1171,10 @@ function RecordDetail({ session, onFollowUp, onBack }: { session: EmotionSession
     <div className="summary-card">
       <SummaryRow label={t("recordDetail.depth")} value={item.depthLabel} />
       {session.quickCheck?.affect && <SummaryRow label={t("recordDetail.quickAffect")} value={session.quickCheck.affect.unknown ? t("common.unsure") : `${quickValence(session.quickCheck.affect.valence, t.locale)} · ${quickActivation(session.quickCheck.affect.activation, t.locale)}`} />}
-      {deep?.affect && <SummaryRow label={t("recordDetail.deepAffect")} value={deepAffectValue(t, deep.affect)} />}
+      {deep?.affect && <LeftEmptyRow label={t("recordDetail.deepAffect")} value={deepAffectValue(t, deep.affect)} />}
       {session.talkToSomeone && <SummaryRow label={t("talkToSomeone.recordLabel")} value={t(`talkToSomeone.answers.${session.talkToSomeone.answer}`)} />}
-      <SummaryRow label={t("recordDetail.words")} value={item.words.join(" · ") || t("common.notChosen")} />
+      {/* 가까운 말이 없음 · 잘 모르겠음 from the quick look are answers; only no words and no answer is 비워 둠 */}
+      <LeftEmptyRow label={t("recordDetail.words")} value={item.words.join(" · ") || (deep?.emotionCandidates?.length ? "" : quickResponseLabel(t, session.quickCheck?.candidateResponse)) || undefined} />
       {item.personalMeanings.map((entry) => <SummaryRow key={entry.label} label={t("recordDetail.personalMeaning", { label: entry.label })} value={entry.meaning} />)}
       {deep?.context?.eventText && <SummaryRow label={t("recordDetail.context")} value={deep.context.eventText} />}
       {item.needLabel && <SummaryRow label={t("recordDetail.need")} value={item.needLabel} />}
@@ -1254,16 +1256,18 @@ function Navigation({ onNext, onSkip = onNext, disabled = false, note }: { onNex
   return <><StepNote note={note} /><div className="navigation"><button className="skip-button" onClick={onSkip}>{t("common.skip")}</button><button className="primary-button" disabled={disabled} onClick={onNext}>{t("common.next")} <span>→</span></button></div></>;
 }
 function StepNote({ note }: { note?: string }) { return note ? <p className="step-note" role="note">{note}</p> : null; }
-function SummaryRow({ label, value, style }: { label: string; value: string; style?: CSSProperties }) { return <div className="summary-row reveal-step" style={style}><span>{label}</span><strong>{value}</strong></div>; }
+/** A row whose value may be a skipped step: shown quietly as 비워 둠. */
+function LeftEmptyRow({ label, value }: { label: string; value?: string }) { const t = useT(); return <SummaryRow label={label} value={value ?? t("common.leftEmpty")} empty={value === undefined} />; }
+function SummaryRow({ label, value, empty = false, style }: { label: string; value: string; empty?: boolean; style?: CSSProperties }) { return <div className={`summary-row reveal-step${empty ? " is-empty" : ""}`} style={style}><span>{label}</span><strong>{value}</strong></div>; }
 function quickAffectSuggestion(session: EmotionSession): AffectPoint | undefined {
   const affect = session.quickCheck?.affect;
   if (!affect || affect.unknown) return undefined;
   return { valence: affect.valence, activation: affect.activation };
 }
-/** 잘 모르겠음 stays its own answer; a skipped pad reads as not recorded, never as the middle. */
+/** 잘 모르겠음 stays its own answer; a skipped pad is left empty (undefined), never the middle. */
 function deepAffectValue(t: Translate, affect?: AffectPoint) {
   if (affect?.unknown) return t("common.unsure");
-  if (!hasAffectPoint(affect)) return t("common.notRecorded");
+  if (!hasAffectPoint(affect)) return undefined;
   return `${scaleLabel(affect!.valence, t.locale)} · ${activationLabel(affect!.activation, t.locale)}`;
 }
 function quickResponseLabel(t: Translate, response?: QuickNonSelection) { return response ? t(`quickCandidates.decline.${response}`) : ""; }

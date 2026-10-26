@@ -35,7 +35,8 @@ export const ko = {
     progress: "진행 {step}",
     unsure: "잘 모르겠음",
     notChosen: "고르지 않음",
-    notRecorded: "기록하지 않음",
+    // a step the person skipped: their choice to leave it, not a missing record
+    leftEmpty: "비워 둠",
     backToStart: "처음으로 돌아가기",
     ownWordsPlaceholder: "내 말로 적기",
     provisionalNote: "임시 단어 모음 · 스스로 고른 표현만 기록됩니다",

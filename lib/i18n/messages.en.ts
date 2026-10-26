@@ -68,7 +68,7 @@ export const en: Messages = {
     progress: "Step {step}",
     unsure: "Not sure",
     notChosen: "Nothing chosen",
-    notRecorded: "Not recorded",
+    leftEmpty: "Left blank",
     backToStart: "Back to the start",
     ownWordsPlaceholder: "In my own words",
     provisionalNote: "A starter set of words · Only what you choose is kept",
