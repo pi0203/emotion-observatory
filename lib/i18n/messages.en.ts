@@ -108,7 +108,7 @@ export const en: Messages = {
     intro: "If you need someone to talk to, these counseling lines in South Korea are open 24 hours.",
     lifeline109: "Suicide Prevention Counseling Line (24 hours)",
     num109: "109",
-    mental1577: "Mental Health Crisis Counseling Line (24 hours)",
+    mental1577: "Mental Health Counseling Line (24 hours)",
     num1577: "1577-0199",
     youth1388: "Youth Counseling Line (ages 9 to 24)",
     num1388: "1388",
