@@ -32,6 +32,11 @@
   --backdrop: rgba(17, 26, 61, .4);
   --shadow: rgba(17, 26, 61, .14);
   --axis: #B5C5F5;          /* the affect pad's centre lines (same as --line in light) */
+  /* Where a record line came from (2026-10-30): a band at its left, with a text label; the three
+     also differ in line style (solid, dashed, double), so colour is never the only sign. 3:1 on card and paper. */
+  --source-mine: #2543D1;   /* what the person pressed or wrote */
+  --source-app: #2F7D52;    /* what the app worked out or rephrased */
+  --source-later: #A2481F;  /* what was added later */
   /* Tones (owner's choice B, 2026-10-19; it widens the 2026-10-12 rule above): each step gets its own
      quiet paper, after the homepage's per-page backgrounds, and the landing gets colour points. Coral
      may now appear as a small dot and peach as a surface; red warning colour is still never used. */
@@ -78,6 +83,9 @@
     --backdrop: rgba(0, 0, 0, .55);
     --shadow: rgba(0, 0, 0, .45);
     --axis: #5F70C0;          /* 3.29:1 on --card, 3.86:1 on --paper */
+    --source-mine: #8CA2FF;
+    --source-app: #7FD1A6;
+    --source-later: #FF9C78;
     --tone-blue-paper: #0F1633;   --tone-blue-card: #192250;   --tone-blue-line: #2E3B7A;   --tone-blue-blob: #26356B;
     --tone-lilac-paper: #18142F;  --tone-lilac-card: #241E46;  --tone-lilac-line: #463C7A;  --tone-lilac-blob: #3B3266;  --tone-lilac-ink: #B9A8F5;
     --tone-mint-paper: #0D1D19;   --tone-mint-card: #16302A;   --tone-mint-line: #2D5A49;   --tone-mint-blob: #1F4A3A;   --tone-mint-ink: #7FD1A6;
@@ -446,3 +454,15 @@ html, body { transition: background-color .5s ease; }
 @media (max-width: 560px) { .even-actions > .secondary-button { width: 100%; } }
 /* before 단어 보기: the own-words field comes first, right under the question (2026-10-30) */
 .own-word-block.own-word-first { margin-top: 28px; }
+
+/* Record detail: where each line came from (2026-10-30). Band style and the label carry it as well as colour. */
+.with-sources .summary-row.has-source { position: relative; padding-left: 16px; }
+.with-sources .summary-row.has-source::before { content: ""; position: absolute; left: 0; top: 14px; bottom: 14px; border-left: 4px solid var(--source-mine); }
+.with-sources .summary-row.source-app::before { border-left: 4px dashed var(--source-app); }
+.with-sources .summary-row.source-later::before { border-left: 4px double var(--source-later); }
+.source-label { grid-column: 2; display: block; margin-top: -10px; color: var(--muted); font: 500 var(--t-aside) var(--font-sans); font-style: normal; }
+.source-legend { display: flex; flex-wrap: wrap; gap: 6px 18px; margin: 18px 0 0; padding: 0; list-style: none; color: var(--muted); font: var(--t-aside) var(--font-sans); }
+.source-legend li { display: inline-flex; align-items: center; gap: 8px; }
+.source-legend li::before { content: ""; display: inline-block; height: 14px; border-left: 4px solid var(--source-mine); }
+.source-legend li.source-app::before { border-left: 4px dashed var(--source-app); }
+.source-legend li.source-later::before { border-left: 4px double var(--source-later); }

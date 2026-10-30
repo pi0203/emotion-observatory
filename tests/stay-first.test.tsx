@@ -3,6 +3,7 @@ import { cleanup, fireEvent, render, screen, within } from "@testing-library/rea
 import Home from "../app/(ko)/page";
 import { ko } from "../lib/i18n/messages.ko";
 import { getStorageAdapter } from "../lib/storage-adapter";
+import { getStorageKeys } from "../lib/storage";
 import { revealWords, startDeep, startQuick } from "./helpers/start";
 
 /**
@@ -127,5 +128,63 @@ describe("words are thought of before they are seen", () => {
     expect(screen.getByRole("heading", { level: 1 }).textContent).toBe(ko.emotion.title);
     expect(draft()?.deepReflection?.wordsRevealed?.at).toBeTruthy();
     expect(draft()?.quickCheck?.wordsRevealed).toBeUndefined();
+  });
+});
+
+describe("each line of a past record says where it came from", () => {
+  const record = {
+    id: "source-1", createdAt: "2026-10-30T02:00:00.000Z", completedAt: "2026-10-30T02:07:00.000Z", status: "completed",
+    stage: "summary", entry: "quick", locale: "ko",
+    quickCheck: {
+      affect: { valence: 0.2, activation: 0.8 }, candidatePool: [{ label: "짜증", source: "suggested" }],
+      selected: [{ label: "짜증", source: "suggested" }], wordsRevealed: { at: "2026-10-30T02:01:00.000Z" }, endedAt: "2026-10-30T02:02:00.000Z",
+    },
+    deepReflection: {
+      startedAt: "2026-10-30T02:02:00.000Z", body: [{ label: "어깨가 뭉침" }], concerns: ["존중받고 싶었다"],
+      context: { eventText: "회의에서 말이 끊겼다", source: "event" },
+      emotionCandidates: [{ label: "억울함", source: "suggested" }, { label: "뒤통수 맞은 느낌", source: "custom" }],
+      outcome: { clarity: "clearer", usefulness: "helpful" },
+    },
+  };
+  beforeEach(() => {
+    window.localStorage.clear();
+    window.localStorage.setItem(getStorageKeys().COMPLETED_KEY, JSON.stringify([record]));
+  });
+  afterEach(cleanup);
+
+  const rowOf = (label: string, value: string) => [...document.querySelectorAll(".summary-row")]
+    .find((row) => row.querySelector("span")?.textContent === label && row.querySelector("strong")?.textContent === value) as HTMLElement;
+
+  it("bands and labels every line: pressed, worked out by the app, written, or picked from the list", () => {
+    render(<Home />);
+    fireEvent.click(screen.getByRole("button", { name: ko.landing.records }));
+    fireEvent.click(document.querySelector(".record-row")!);
+    expect(screen.getByRole("list", { name: ko.recordDetail.legend.title })).toBeTruthy();
+    const rows = [...document.querySelectorAll(".with-sources .summary-row")];
+    expect(rows.every((row) => row.classList.contains("has-source") && row.querySelector(".source-label"))).toBe(true);
+
+    const expectSource = (row: HTMLElement, kind: string, label: string) => {
+      expect(row, label).toBeTruthy();
+      expect(row.className).toContain(`source-${kind}`);
+      expect(row.querySelector(".source-label")!.textContent).toBe(label);
+    };
+    expectSource(rowOf(ko.recordDetail.depth, ko.records.depth["quick+deep"]), "app", ko.recordDetail.source.depth);
+    expectSource(rowOf(ko.recordDetail.quickSpot, ko.recordDetail.spotValue), "mine", ko.recordDetail.source.pressed);
+    // the spot and the sentence the app made of it are two lines, never one mixed line
+    const sentence = [...document.querySelectorAll(".summary-row")].find((row) => row.querySelector("span")?.textContent === ko.recordDetail.quickAffect) as HTMLElement;
+    expectSource(sentence, "app", ko.recordDetail.source.sentence);
+    expectSource(rowOf(ko.recordDetail.words, "억울함"), "mine", ko.recordDetail.source.picked);
+    expectSource(rowOf(ko.recordDetail.words, "뒤통수 맞은 느낌"), "mine", ko.recordDetail.source.wrote);
+    expectSource(rowOf(ko.recordDetail.body, "어깨가 뭉침"), "mine", ko.recordDetail.source.pressed);
+    expectSource(rowOf(ko.recordDetail.context, "회의에서 말이 끊겼다"), "mine", ko.recordDetail.source.wrote);
+    expectSource(rowOf(ko.recordDetail.concerns, "존중받고 싶었다"), "mine", ko.recordDetail.source.pressed);
+  });
+
+  it("says a list word was picked after 단어 보기 when the list was opened with it", () => {
+    window.localStorage.setItem(getStorageKeys().COMPLETED_KEY, JSON.stringify([{ ...record, deepReflection: undefined, stage: "quick-summary" }]));
+    render(<Home />);
+    fireEvent.click(screen.getByRole("button", { name: ko.landing.records }));
+    fireEvent.click(document.querySelector(".record-row")!);
+    expect(rowOf(ko.recordDetail.words, "짜증").querySelector(".source-label")!.textContent).toBe(ko.recordDetail.source.pickedAfterReveal);
   });
 });

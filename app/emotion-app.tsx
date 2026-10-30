@@ -10,7 +10,7 @@ type DeepOutcome = NonNullable<DeepReflection["outcome"]>;
 import { getStorageAdapter } from "../lib/storage-adapter";
 import { applyImport, buildExport, downloadExport, downloadJson, exportFileName, MAX_IMPORT_BYTES, parseImport, planImport, readFileText, type ImportError, type ImportPlan } from "../lib/record-transfer";
 import { isLockedText, lockedFileName, lockExport, MIN_PASSPHRASE_LENGTH, unlockExport } from "../lib/record-crypto";
-import { formatWhen, helpedOptions, summarise, triedOptions } from "../lib/records";
+import { concernLines, formatWhen, helpedOptions, summarise, triedOptions, wordLines, type SourceKind, type WordHow } from "../lib/records";
 import { migrateLegacyStorage } from "../lib/migrations";
 import { expandCandidates, filterQuickCandidates } from "../lib/quick-check";
 import { activationLabel, hasAffectPoint, quickActivation, quickValence, scaleLabel } from "../lib/affect-labels";
@@ -1186,25 +1186,51 @@ function RecordTransfer({ count, onChanged }: { count: number; onChanged: () => 
   </section>;
 }
 
+/**
+ * A past record, line by line, each with the band and label of where it came
+ * from (owner's decision 2026-10-30): what the person pressed or wrote, what the
+ * app worked out from it, and what was added later. Colour is never the only sign.
+ */
 function RecordDetail({ session, onFollowUp, onBack }: { session: EmotionSession; onFollowUp: (followUp: { tried?: "yes" | "partly" | "no"; helped?: "yes" | "somewhat" | "no" | "unsure" }) => void; onBack: () => void }) {
   const t = useT();
   const item = summarise(session, t.locale);
   const followUp = session.support?.followUp;
   const deep = session.deepReflection;
+  const quickAffect = session.quickCheck?.affect;
+  const mine = (how: "pressed" | "wrote" | "skipped" | WordHow): RowSource => ({ kind: "mine", label: t(`recordDetail.source.${how}`) });
+  const app = (what: "sentence" | "depth"): RowSource => ({ kind: "app", label: t(`recordDetail.source.${what}`) });
+  const lines = wordLines(session);
+  const quickResponse = deep?.emotionCandidates?.length ? "" : quickResponseLabel(t, session.quickCheck?.candidateResponse);
+  const endedUnsure = Boolean(quickAffect?.unknown && !deep);
   return <Screen>
     <p className="eyebrow">{t("records.eyebrow")}</p>
     <h1>{formatWhen(item.at, t.locale)}</h1>
-    <div className="summary-card">
-      <SummaryRow label={t("recordDetail.depth")} value={item.depthLabel} />
-      {session.quickCheck?.affect && <SummaryRow label={t("recordDetail.quickAffect")} value={quickAffectValue(t, session.quickCheck.affect)} />}
-      {deep?.affect && <LeftEmptyRow label={t("recordDetail.deepAffect")} value={deepAffectValue(t, deep.affect)} />}
-      {session.talkToSomeone && <SummaryRow label={t("talkToSomeone.recordLabel")} value={t(`talkToSomeone.answers.${session.talkToSomeone.answer}`)} />}
+    <SourceLegend />
+    <div className="summary-card with-sources">
+      <SummaryRow label={t("recordDetail.depth")} value={item.depthLabel} source={app("depth")} />
+      {quickAffect && (quickAffect.unknown
+        ? <SummaryRow label={t("recordDetail.quickAffect")} value={t("quickAffect.unknown")} source={mine("pressed")} />
+        : <>
+            <SummaryRow label={t("recordDetail.quickSpot")} value={t("recordDetail.spotValue")} source={mine("pressed")} />
+            <SummaryRow label={t("recordDetail.quickAffect")} value={quickAffectValue(t, quickAffect)} source={app("sentence")} />
+          </>)}
+      {deep?.body && deep.body.length > 0 && <SummaryRow label={t("recordDetail.body")} value={deep.body.map((entry) => entry.label).join(" · ")} source={mine(deep.body.some((entry) => entry.custom) ? "wrote" : "pressed")} />}
+      {deep?.affect && (hasAffectPoint(deep.affect)
+        ? <>
+            <SummaryRow label={t("recordDetail.deepSpot")} value={t("recordDetail.spotValue")} source={mine("pressed")} />
+            <SummaryRow label={t("recordDetail.deepAffect")} value={deepAffectValue(t, deep.affect)!} source={app("sentence")} />
+          </>
+        : <LeftEmptyRow label={t("recordDetail.deepAffect")} value={deepAffectValue(t, deep.affect)} source={mine(deep.affect.unknown ? "pressed" : "skipped")} />)}
+      {deep?.context?.eventText && <SummaryRow label={t("recordDetail.context")} value={deep.context.eventText} source={mine("wrote")} />}
+      {concernLines(session).map((line) => <SummaryRow key={line.how} label={t("recordDetail.concerns")} value={line.items.join(" · ")} source={mine(line.how)} />)}
       {/* 가까운 말이 없음 · 잘 모르겠음 from the quick look are answers; only no words and no answer is 비워 둠 */}
-      {!(session.quickCheck?.affect?.unknown && !deep) && <LeftEmptyRow label={t("recordDetail.words")} value={item.words.join(" · ") || (deep?.emotionCandidates?.length ? "" : quickResponseLabel(t, session.quickCheck?.candidateResponse)) || undefined} />}
-      {item.personalMeanings.map((entry) => <SummaryRow key={entry.label} label={t("recordDetail.personalMeaning", { label: entry.label })} value={entry.meaning} />)}
-      {deep?.context?.eventText && <SummaryRow label={t("recordDetail.context")} value={deep.context.eventText} />}
-      {item.needLabel && <SummaryRow label={t("recordDetail.need")} value={item.needLabel} />}
-      {item.responseLabels.length > 0 && <SummaryRow label={t("recordDetail.responses")} value={item.responseLabels.join(" / ")} />}
+      {!endedUnsure && (lines.length
+        ? lines.map((line) => <SummaryRow key={line.how} label={t("recordDetail.words")} value={line.words.join(" · ")} source={mine(line.how)} />)
+        : <LeftEmptyRow label={t("recordDetail.words")} value={quickResponse || undefined} source={mine(quickResponse ? "pressed" : "skipped")} />)}
+      {item.personalMeanings.map((entry) => <SummaryRow key={entry.label} label={t("recordDetail.personalMeaning", { label: entry.label })} value={entry.meaning} source={mine("wrote")} />)}
+      {session.talkToSomeone && <SummaryRow label={t("talkToSomeone.recordLabel")} value={t(`talkToSomeone.answers.${session.talkToSomeone.answer}`)} source={mine("pressed")} />}
+      {item.needLabel && <SummaryRow label={t("recordDetail.need")} value={item.needLabel} source={mine("pressed")} />}
+      {item.responseLabels.length > 0 && <SummaryRow label={t("recordDetail.responses")} value={item.responseLabels.join(" / ")} source={mine("pressed")} />}
     </div>
 
     {item.canFollowUp && <section className="synthesis">
@@ -1283,8 +1309,19 @@ function Navigation({ onNext, onSkip = onNext, disabled = false, note }: { onNex
 }
 function StepNote({ note }: { note?: string }) { return note ? <p className="step-note" role="note">{note}</p> : null; }
 /** A row whose value may be a skipped step: shown quietly as 비워 둠. */
-function LeftEmptyRow({ label, value }: { label: string; value?: string }) { const t = useT(); return <SummaryRow label={label} value={value ?? t("common.leftEmpty")} empty={value === undefined} />; }
-function SummaryRow({ label, value, empty = false, style }: { label: string; value: string; empty?: boolean; style?: CSSProperties }) { return <div className={`summary-row reveal-step${empty ? " is-empty" : ""}`} style={style}><span>{label}</span><strong>{value}</strong></div>; }
+function LeftEmptyRow({ label, value, source }: { label: string; value?: string; source?: RowSource }) { const t = useT(); return <SummaryRow label={label} value={value ?? t("common.leftEmpty")} empty={value === undefined} source={source} />; }
+/** Where a record line came from: a band at its left edge and a short label under it (record detail only). */
+type RowSource = { kind: SourceKind; label: string };
+function SummaryRow({ label, value, empty = false, style, source }: { label: string; value: string; empty?: boolean; style?: CSSProperties; source?: RowSource }) {
+  return <div className={`summary-row reveal-step${empty ? " is-empty" : ""}${source ? ` has-source source-${source.kind}` : ""}`} style={style}><span>{label}</span><strong>{value}</strong>{source && <em className="source-label">{source.label}</em>}</div>;
+}
+/** The three bands, named once above the record. */
+function SourceLegend() {
+  const t = useT();
+  return <ul className="source-legend" aria-label={t("recordDetail.legend.title")}>
+    {(["mine", "app", "later"] as const).map((kind) => <li key={kind} className={`source-${kind}`}>{t(`recordDetail.legend.${kind}`)}</li>)}
+  </ul>;
+}
 function quickAffectSuggestion(session: EmotionSession): AffectPoint | undefined {
   const affect = session.quickCheck?.affect;
   if (!affect || affect.unknown) return undefined;
