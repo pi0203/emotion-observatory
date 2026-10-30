@@ -48,17 +48,13 @@ export const ko = {
     listSeparator: ", ",
   },
   landing: {
-    title: "지금의 경험을\n조금 더 알아보기",
-    lede: "감정을 맞히는 검사가 아닙니다.\n빠르게 살펴보거나, 천천히 구별해볼 수 있습니다.",
-    badgeQuick: "빠르게 · 2단계 · 10~30초쯤",
-    badgeDeep: "천천히 · 6단계 · 3~5분쯤",
-    badgeLocal: "이 브라우저에만 저장 · 암호화 안 됨",
-    badgeBoundary: "비의료 자기관찰",
-    badgesLabel: "관찰 방식과 특징",
-    quick: "빠르게 살펴보기",
-    deep: "조금 더 천천히 살펴보기",
+    // 임시 문구 (2026-10-30): the owner decides the final title and subtitle
+    title: "이름 붙이기 전에, 지금 느껴지는 것을 그대로 남겨 둡니다.",
+    lede: "맞히는 검사가 아닙니다. 1분이면 됩니다.",
+    /** The one way in: the quick look. The slower look opens from inside it. */
+    start: "지금 기록",
     resume: "지난 기록 이어하기",
-    records: "지난 기록 보기",
+    records: "지난 기록",
     storageNote: "기록은 이 브라우저에만 저장되고 암호화되지 않습니다. 같은 기기와 브라우저를 쓰는 사람은 볼 수 있으니 공용 기기에서는 주의해 주세요. 브라우저 데이터를 지우면 함께 사라집니다.",
     storageManage: "기록 보기·지우기",
     draftConfirm: {

@@ -36,7 +36,7 @@ describe("/en route", () => {
   it("shows the English app in a production build, since the owner opened English (2026-10-19)", () => {
     vi.stubEnv("NODE_ENV", "production");
     render(EnglishPage());
-    expect(screen.getByRole("heading", { level: 1 }).textContent).toMatch(/Take a closer look/);
+    expect(screen.getByRole("heading", { level: 1 }).textContent).toMatch(/Before you name it/); // placeholder title since 2026-10-30
     // the only Korean on the English landing is the name of the other language, on the switch
     expect(document.body.textContent?.replace("한국어", "")).not.toMatch(HANGUL);
   });

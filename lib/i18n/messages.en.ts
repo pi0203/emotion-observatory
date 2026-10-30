@@ -80,17 +80,12 @@ export const en: Messages = {
     listSeparator: ", ",
   },
   landing: {
-    title: "Take a closer look\nat what you are experiencing",
-    lede: "This is not a test that guesses your emotions.\nYou can take a quick look, or take your time telling things apart.",
-    badgeQuick: "Quick · 2 steps · about 10 to 30 seconds",
-    badgeDeep: "Slow · 6 steps · about 3 to 5 minutes",
-    badgeLocal: "Saved only in this browser · Not encrypted",
-    badgeBoundary: "Non-medical self-observation",
-    badgesLabel: "Observation features",
-    quick: "Take a quick look",
-    deep: "Take a slower look",
+    // placeholder wording (2026-10-30), as the Korean
+    title: "Before you name it, keep what you feel just as it is.",
+    lede: "This is not a test to get right. It takes about a minute.",
+    start: "Record now",
     resume: "Continue an entry in progress",
-    records: "See past entries",
+    records: "Past entries",
     storageNote: "Entries are saved only in this browser and are not encrypted. Anyone using the same device and browser can see them, so take care on a shared device. Clearing the browser’s data removes them too.",
     storageManage: "See or delete entries",
     draftConfirm: {

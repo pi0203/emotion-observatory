@@ -125,15 +125,16 @@ function App() {
     // the steps keep their minimal top bar so nothing pushes the task down (docs/DESIGN_ALIGNMENT.md §5)
     return <div className="app-shell site-frame">
       <a className="skip-link" href="#main">{t("shell.skipToContent")}</a>
-      <SiteHeader />
+      <SiteHeader onHelp={() => setHelpOpen(true)} />
       <main id="main" tabIndex={-1} className="site-main">
       {openRecord
         ? <RecordDetail session={openRecord} onFollowUp={(followUp) => saveFollowUp(openRecord, followUp)} onBack={() => setOpenRecord(null)} />
         : records
           ? <RecordsScreen records={records} onOpen={setOpenRecord} onBack={() => setRecords(null)} onChanged={() => { setRecords(loadCompleted()); setDraft(loadDraft()); }} />
-          : <LandingScreen onQuick={() => askToStart("quick")} onDeep={() => askToStart("deep")} draft={draft} onResume={resume} onRecords={showRecords} pendingStart={pendingStart} onDiscardAndStart={discardAndStart} onCancelStart={() => setPendingStart(null)} />}
+          : <LandingScreen onStart={() => askToStart("quick")} draft={draft} onResume={resume} onRecords={showRecords} pendingStart={pendingStart} onDiscardAndStart={discardAndStart} onCancelStart={() => setPendingStart(null)} />}
       </main>
       <SiteFooter />
+      {helpOpen && <HelpDialog onClose={() => setHelpOpen(false)} />}
     </div>;
   }
 
@@ -202,8 +203,12 @@ const HOMEPAGE_NAV = [
   { href: `${HOMEPAGE}/map/`, label: "Map" },
 ];
 
-/** The homepage's header: its wordmark and menu, as on eunchanjoe.vercel.app. */
-function SiteHeader() {
+/**
+ * The homepage's header: its wordmark and menu, as on eunchanjoe.vercel.app,
+ * and the same help button the steps carry, so the helplines are one tap away
+ * before anything is started too (SAFETY.md).
+ */
+function SiteHeader({ onHelp }: { onHelp: () => void }) {
   const t = useT();
   return <header className="site-header">
     <a className="site-logo" href={`${HOMEPAGE}/`}>Eunchan Joe</a>
@@ -211,6 +216,7 @@ function SiteHeader() {
       <ul>{HOMEPAGE_NAV.map((item) => <li key={item.href}><a href={item.href}>{item.label}</a></li>)}</ul>
     </nav>
     {/* the other language, only where it is open: development always, production once the owner has reviewed it */}
+    <button className="text-button help-button" aria-label={t("common.helpLink")} onClick={onHelp}><span className="label-wide">{t("common.helpLink")}</span><span className="label-narrow" aria-hidden="true">{t("common.helpShort")}</span></button>
     {englishAvailable() && <a className="lang-switch" href={t.locale === "ko" ? "/en" : "/"} lang={t.locale === "ko" ? "en" : "ko"} hrefLang={t.locale === "ko" ? "en" : "ko"}>{t("shell.otherLanguage")}</a>}
   </header>;
 }
@@ -242,24 +248,24 @@ function EntryScreen({ draft, onStart, onUnsure, onStop, onResume }: { draft: Em
   </Screen>;
 }
 
-function LandingScreen({ onQuick, onDeep, draft, onResume, onRecords, pendingStart, onDiscardAndStart, onCancelStart }: { onQuick: () => void; onDeep: () => void; draft: EmotionSession | null; onResume: () => void; onRecords: () => void; pendingStart: "quick" | "deep" | null; onDiscardAndStart: () => void; onCancelStart: () => void }) {
+/**
+ * One way in (owner's decision 2026-10-30, docs/EVIDENCE_CHAIN.md §7): the first
+ * screen holds a title, a subtitle, 지금 기록 and a small link to past entries.
+ * 지금 기록 is the quick look; the slower look is reached from inside it, at the
+ * end of its second step and on its summary. Everything else sits below the fold.
+ */
+function LandingScreen({ onStart, draft, onResume, onRecords, pendingStart, onDiscardAndStart, onCancelStart }: { onStart: () => void; draft: EmotionSession | null; onResume: () => void; onRecords: () => void; pendingStart: "quick" | "deep" | null; onDiscardAndStart: () => void; onCancelStart: () => void }) {
   const t = useT();
   const confirmTitle = useRef<HTMLParagraphElement>(null);
   // the question takes the focus, so it is read before the choice is made
   useEffect(() => { if (pendingStart) confirmTitle.current?.focus(); }, [pendingStart]);
   return <Screen className="entry-screen">
-    <section className="card hero-card">
+    <section className="card hero-card single-entry">
       {/* a drawing of the pad used in the steps: four quiet colours and one dot (decoration only) */}
       <div className="hero-pad" aria-hidden="true"><span className="hero-dot" /></div>
       <p className="eyebrow">{t("common.appName")}</p>
       <h1>{renderRich(t("landing.title"))}</h1>
       <p className="lede">{renderRich(t("landing.lede"))}</p>
-      <div className="badges" aria-label={t("landing.badgesLabel")}>
-        <span className="badge">⏱️ {t("landing.badgeQuick")}</span>
-        <span className="badge">🌱 {t("landing.badgeDeep")}</span>
-        <span className="badge">💻 {t("landing.badgeLocal")}</span>
-        <span className="badge">🩺 {t("landing.badgeBoundary")}</span>
-      </div>
       {pendingStart
         ? <div className="draft-confirm" role="group" aria-labelledby="draft-confirm-title">
             <p className="synthesis-question" id="draft-confirm-title" ref={confirmTitle} tabIndex={-1}>{t("landing.draftConfirm.title")}</p>
@@ -271,16 +277,16 @@ function LandingScreen({ onQuick, onDeep, draft, onResume, onRecords, pendingSta
             </div>
           </div>
         : <div className="stack-actions">
-            <button className="primary-button" onClick={onQuick}>{t("landing.quick")} <span>→</span></button>
-            <button className="secondary-button" onClick={onDeep}>{t("landing.deep")}</button>
-            {draft && <button className="secondary-button" onClick={onResume}>{t("landing.resume")}</button>}
-            <button className="secondary-button" onClick={onRecords}>{t("landing.records")}</button>
+            <button className="primary-button start-button" onClick={onStart}>{t("landing.start")} <span>→</span></button>
+            <button className="inline-link records-link" onClick={onRecords}>{t("landing.records")}</button>
           </div>}
-      <div className="privacy-note">
-        <span aria-hidden="true">💻</span>
-        <span>{t("landing.storageNote")} <button className="inline-link" onClick={onRecords}>{t("landing.storageManage")}</button></span>
-      </div>
     </section>
+
+    {draft && !pendingStart && <div className="resume-card"><div><strong>{t("entry.resumeTitle")}</strong><span>{t("entry.resumeBody")}</span></div><button className="small-button" onClick={onResume}>{t("landing.resume")}</button></div>}
+    <div className="privacy-note">
+      <span aria-hidden="true">💻</span>
+      <span>{t("landing.storageNote")} <button className="inline-link" onClick={onRecords}>{t("landing.storageManage")}</button></span>
+    </div>
 
     <div className="why-section">
       <WhyThis />

@@ -38,7 +38,8 @@ describe("English review decisions (2026-10-19)", () => {
       // the app never speaks as “we” (the human “how we put emotions into words” is fine)
       expect(text).not.toMatch(/(^|[.!?]\s+)We\b/);
     }
-    for (const key of ["landing", "quickSummary", "quickCandidates", "need"] as const) {
+    // the landing has no slow-look button since 2026-10-30 (one way in)
+    for (const key of ["quickSummary", "quickCandidates", "need"] as const) {
       const deep = (en[key] as { deep?: string; routeDeep?: string }).deep ?? (en[key] as { routeDeep?: string }).routeDeep;
       expect(deep, key).toBe("Take a slower look");
     }

@@ -69,7 +69,8 @@ describe("English messages (stage C draft)", () => {
   });
 
   it("keeps the principle and safety sentences", () => {
-    expect(en.landing.lede).toMatch(/not a test that guesses your emotions/);
+    // placeholder subtitle since 2026-10-30; the principle that it is not a test stays
+    expect(en.landing.lede).toMatch(/not a test/);
     expect(en.whyThis.research).toMatch(/none of them tested this app/);
     expect(en.synthesis.caveat).toMatch(/not an interpretation or a diagnosis/);
     expect(en.recordTransfer.exportNote).toMatch(/not encrypted/);

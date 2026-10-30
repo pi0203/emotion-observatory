@@ -1,6 +1,7 @@
 import { afterEach, beforeEach, describe, expect, it } from "vitest";
 import { cleanup, fireEvent, render, screen, within } from "@testing-library/react";
 import Home from "../app/(ko)/page";
+import { startQuick, startDeep } from "./helpers/start";
 
 const stubGridSize = () => {
   Element.prototype.getBoundingClientRect = function () {
@@ -14,7 +15,7 @@ describe("the helplines are one tap away on every step (SAFETY.md)", () => {
 
   it("offers the help line on the first quick step and opens the same crisis card", () => {
     render(<Home />);
-    fireEvent.click(screen.getByRole("button", { name: /빠르게 살펴보기/ }));
+    startQuick();
     fireEvent.click(screen.getByRole("button", { name: "도움받을 수 있는 곳" }));
     const dialog = screen.getByRole("dialog", { name: "긴급 지원 및 위기 상담 안내" });
     for (const number of ["109", "1577-0199", "1388"]) expect(within(dialog).getByText(number)).toBeInTheDocument();
@@ -23,7 +24,7 @@ describe("the helplines are one tap away on every step (SAFETY.md)", () => {
 
   it("closes with Escape or the close button and leaves the step as it was", () => {
     render(<Home />);
-    fireEvent.click(screen.getByRole("button", { name: /빠르게 살펴보기/ }));
+    startQuick();
     const pad = screen.getByRole("application", { name: /불쾌함과 유쾌함/ });
     fireEvent.click(screen.getByRole("button", { name: "도움받을 수 있는 곳" }));
     fireEvent.keyDown(window, { key: "Escape" });
@@ -36,7 +37,7 @@ describe("the helplines are one tap away on every step (SAFETY.md)", () => {
 
   it("is present on the deep steps too", () => {
     render(<Home />);
-    fireEvent.click(screen.getByRole("button", { name: /조금 더 천천히 살펴보기/ }));
+    startDeep();
     expect(screen.getByRole("button", { name: "도움받을 수 있는 곳" })).toBeInTheDocument();
   });
 });
@@ -47,7 +48,7 @@ describe("other people in what I write", () => {
 
   it("tells the person they may replace names, under the what-happened box", () => {
     render(<Home />);
-    fireEvent.click(screen.getByRole("button", { name: /조금 더 천천히 살펴보기/ }));
+    startDeep();
     fireEvent.click(screen.getByRole("button", { name: /조금 살펴보고 싶어요/ })); // entry gate
     fireEvent.click(screen.getByRole("button", { name: "건너뛰기" }));                 // body
     fireEvent.click(screen.getByRole("button", { name: "건너뛰기" }));                 // affect

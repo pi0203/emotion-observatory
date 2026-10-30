@@ -6,6 +6,7 @@ import { isLockedText, KDF_ITERATIONS, LOCKED_FORMAT, lockedFileName, lockExport
 import type { EmotionSession } from "../lib/session-types";
 import { getStorageKeys } from "../lib/storage";
 import { getStorageAdapter } from "../lib/storage-adapter";
+import { ko } from "../lib/i18n/messages.ko";
 
 // a small iteration count keeps the tests fast; the app uses KDF_ITERATIONS
 const FAST = 1000;
@@ -64,7 +65,7 @@ describe("records screen with a passphrase", () => {
   const storage = getStorageAdapter();
   beforeEach(() => { window.localStorage.clear(); window.localStorage.setItem(getStorageKeys().COMPLETED_KEY, JSON.stringify([record("here")])); });
   afterEach(cleanup);
-  const openRecords = () => { render(<Home />); fireEvent.click(screen.getByRole("button", { name: "지난 기록 보기" })); };
+  const openRecords = () => { render(<Home />); fireEvent.click(screen.getByRole("button", { name: ko.landing.records })); };
   const pick = (contents: string) => fireEvent.change(screen.getByLabelText("가져올 기록 파일 고르기"), { target: { files: [new File([contents], "records.json", { type: "application/json" })] } });
 
   it("keeps the plain export when the fields are empty, and warns before a locked one", () => {

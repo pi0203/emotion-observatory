@@ -1,6 +1,8 @@
 import { afterEach, beforeEach, describe, expect, it } from "vitest";
 import { cleanup, fireEvent, render, screen, within } from "@testing-library/react";
 import Home from "../app/(ko)/page";
+import { startQuick, startDeep } from "./helpers/start";
+import { ko } from "../lib/i18n/messages.ko";
 
 // jsdom reports a zero-sized box, which would make the affect tap produce NaN.
 const stubGridSize = () => {
@@ -11,7 +13,7 @@ const stubGridSize = () => {
 
 const openQuickCheck = () => {
   render(<Home />);
-  fireEvent.click(screen.getByRole("button", { name: /빠르게 살펴보기/ }));
+  startQuick();
 };
 
 const tapUnpleasantActivated = () => {
@@ -155,7 +157,7 @@ describe("quick check screens", () => {
 
   it("uses the same continuous pad for the deep pass, not a 1-5 scale", () => {
     render(<Home />);
-    fireEvent.click(screen.getByRole("button", { name: /조금 더 천천히 살펴보기/ }));
+    startDeep();
     fireEvent.click(screen.getByRole("button", { name: /조금 살펴보고 싶어요/ }));
     fireEvent.click(screen.getByRole("button", { name: "건너뛰기" })); // body
 
@@ -167,7 +169,7 @@ describe("quick check screens", () => {
 
   it("does not put the whole vocabulary on the deep emotion step either", () => {
     render(<Home />);
-    fireEvent.click(screen.getByRole("button", { name: /조금 더 천천히 살펴보기/ }));
+    startDeep();
     fireEvent.click(screen.getByRole("button", { name: /조금 살펴보고 싶어요/ }));
     fireEvent.click(screen.getByRole("button", { name: "건너뛰기" })); // body
     fireEvent.click(screen.getByRole("button", { name: /다음/ }));     // affect
@@ -182,7 +184,7 @@ describe("quick check screens", () => {
 
   it("holds the step rationale back until the user has chosen something", () => {
     render(<Home />);
-    fireEvent.click(screen.getByRole("button", { name: /조금 더 천천히 살펴보기/ }));
+    startDeep();
     fireEvent.click(screen.getByRole("button", { name: /조금 살펴보고 싶어요/ }));
 
     const note = "몸의 느낌은 고정된 정답이 아니라 지금 순간의 snapshot입니다. 움직임, 자세, 호흡, 시간, 상황이 달라지면 다르게 느껴질 수 있어요.";
@@ -205,7 +207,7 @@ describe("quick check screens", () => {
     cleanup();
 
     render(<Home />);
-    fireEvent.click(screen.getByRole("button", { name: "지난 기록 보기" }));
+    fireEvent.click(screen.getByRole("button", { name: ko.landing.records }));
     expect(screen.getByText("이전에 적은 것들")).toBeTruthy();
     expect(screen.getByText(/누군가에게 표현할 준비하기/)).toBeTruthy();
 
@@ -233,7 +235,7 @@ describe("quick check screens", () => {
 
   it("opens the body step with a dozen sensations covering comfort as well as strain", () => {
     render(<Home />);
-    fireEvent.click(screen.getByRole("button", { name: /조금 더 천천히 살펴보기/ }));
+    startDeep();
     fireEvent.click(screen.getByRole("button", { name: /조금 살펴보고 싶어요/ }));
 
     expect(document.querySelectorAll(".chip").length).toBeLessThanOrEqual(12);
@@ -247,8 +249,9 @@ describe("quick check screens", () => {
 
   it("lets a step be undone without losing what was already entered", () => {
     render(<Home />);
-    fireEvent.click(screen.getByRole("button", { name: /조금 더 천천히 살펴보기/ }));
-    expect(screen.queryByRole("button", { name: /한 단계 뒤로/ })).toBeNull();
+    startDeep();
+    // reached from the quick look since 2026-10-30, so the gate can step back to its summary
+    expect(screen.getByRole("button", { name: /한 단계 뒤로/ })).toBeTruthy();
 
     fireEvent.click(screen.getByRole("button", { name: /조금 살펴보고 싶어요/ }));
     fireEvent.click(screen.getByRole("button", { name: "몸이 무거움" }));

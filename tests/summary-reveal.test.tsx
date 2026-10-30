@@ -2,6 +2,7 @@ import { afterEach, beforeEach, describe, expect, it } from "vitest";
 import { cleanup, fireEvent, render, screen } from "@testing-library/react";
 import { readFileSync } from "node:fs";
 import Home from "../app/(ko)/page";
+import { startQuick } from "./helpers/start";
 
 const stubGridSize = () => {
   Element.prototype.getBoundingClientRect = function () {
@@ -11,7 +12,7 @@ const stubGridSize = () => {
 
 const toQuickSummary = (unsure = false) => {
   render(<Home />);
-  fireEvent.click(screen.getByRole("button", { name: /빠르게 살펴보기/ }));
+  startQuick();
   if (unsure) {
     // 잘 모르겠음 on the pad finishes the quick look straight away
     fireEvent.click(screen.getByRole("button", { name: "잘 모르겠음" }));
