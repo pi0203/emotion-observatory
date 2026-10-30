@@ -255,6 +255,8 @@ export const ko = {
     step: "가능한 표현",
     title: "지금 경험을 표현할 때 가까울 수도 있는 말입니다.",
     hint: "감정을 판정하는 결과가 아닙니다. 여러 개를 골라도 되고, 맞지 않으면 고르지 않아도 됩니다.",
+    /** Shown only after a spot in the unpleasant, high-energy corner (lib/quick-check PAUSE_LINE_CORNER). */
+    pause: "지금은 여기까지만 남겨도 됩니다.",
     decline: {
       "none-close": "가까운 말이 없음",
       unsure: "잘 모르겠음",
@@ -329,6 +331,8 @@ export const ko = {
     basis: "지금 이 순간 몸에서 알아차린 것만",
     step: "몸",
     title: "먼저, 몸에서는 무엇이 느껴지나요?",
+    // under the title: stopping is fine, and 그만하기 is already in the top bar (2026-10-30)
+    pause: "몸을 살피는 게 불편하면 여기서 멈춰도 됩니다. 멈춘 기록도 그대로 남습니다.",
     hint: "감정 이름을 찾기 전에 지금 몸에서 알아차릴 수 있는 것부터 봅니다. 자세를 고쳐 앉을 필요는 없습니다 — 지금 이 순간 알아차린 것이면 충분합니다.",
     more: "다른 몸의 느낌 보기",
     customLabel: "다른 느낌이 있다면 적어도 됩니다",

@@ -12,7 +12,7 @@ import { applyImport, buildExport, downloadExport, downloadJson, exportFileName,
 import { isLockedText, lockedFileName, lockExport, MIN_PASSPHRASE_LENGTH, unlockExport } from "../lib/record-crypto";
 import { concernLines, formatDay, formatWhen, helpedOptions, summarise, triedOptions, wordLines, type SourceKind, type WordHow } from "../lib/records";
 import { migrateLegacyStorage } from "../lib/migrations";
-import { expandCandidates, filterQuickCandidates } from "../lib/quick-check";
+import { expandCandidates, filterQuickCandidates, showsPauseLine } from "../lib/quick-check";
 import { activationLabel, hasAffectPoint, quickActivation, quickValence, scaleLabel } from "../lib/affect-labels";
 import { buildSynthesis, hasSynthesis } from "../lib/synthesis";
 import { requireContent, type LocaleContent } from "../lib/content";
@@ -168,6 +168,8 @@ function App() {
       </header>
 
       {saveFailed && <p className="save-warning" role="status">{t("common.saveFailed")}</p>}
+      {/* the person's own spot in the unpleasant, high-energy corner (lib/quick-check PAUSE_LINE_CORNER): one plain line at the top of the second step, no warning colour, nothing else changes */}
+      {session.stage === "quick-candidates" && showsPauseLine(session.quickCheck?.affect) && <p className="pause-line pause-line-banner">{t("quickCandidates.pause")}</p>}
 
       {progress[session.stage] && (
         <div className="progress-row" aria-label={t("common.progress", { step: progress[session.stage] })}>
@@ -748,7 +750,7 @@ function BodyScreen({ initial, onNext }: { initial: BodyObservation[]; onNext: (
     .filter((group) => group.labels.length);
 
   return <Screen>
-    <StepHeading step={t("body.step")} title={t("body.title")} hint={t("body.hint")} basis={t("body.basis")} />
+    <StepHeading step={t("body.step")} title={t("body.title")} pause={t("body.pause")} hint={t("body.hint")} basis={t("body.basis")} />
     <div className="chip-grid">{first.map((item) => chip(item.label))}</div>
     {!showAll && <button className="reveal-button" onClick={() => setShowAll(true)}>{t("body.more")}</button>}
     {showAll && rest.map((group) => <div key={group.region}>
@@ -1368,7 +1370,8 @@ function StopModal({ onClose, onStop }: { onClose: () => void; onStop: () => voi
 
 function Screen({ children, className = "" }: { children: React.ReactNode; className?: string }) { return <section className={`screen ${className}`}>{children}</section>; }
 /** The basis band, when given, says which moment the question is about, before the question itself. */
-function StepHeading({ step, title, hint, basis }: { step: string; title: string; hint: string; basis?: string }) { return <><p className="eyebrow">{step}</p>{basis && <p className="step-basis">{basis}</p>}<h1>{title}</h1><p className="hint">{hint}</p></>; }
+/** `pause`, when given, sits right under the title: that stopping here is fine (the body step, 2026-10-30). */
+function StepHeading({ step, title, hint, basis, pause }: { step: string; title: string; hint: string; basis?: string; pause?: string }) { return <><p className="eyebrow">{step}</p>{basis && <p className="step-basis">{basis}</p>}<h1>{title}</h1>{pause && <p className="pause-line">{pause}</p>}<p className="hint">{hint}</p></>; }
 function Navigation({ onNext, onSkip = onNext, disabled = false, note }: { onNext: () => void; onSkip?: () => void; disabled?: boolean; note?: string }) {
   const t = useT();
   return <><StepNote note={note} /><div className="navigation"><button className="skip-button" onClick={onSkip}>{t("common.skip")}</button><button className="primary-button" disabled={disabled} onClick={onNext}>{t("common.next")} <span>→</span></button></div></>;

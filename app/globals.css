@@ -121,6 +121,8 @@ button:focus-visible, a:focus-visible, input:focus-visible, textarea:focus-visib
 h1 { margin: 0; font-family: var(--font-serif), serif; font-size: var(--t-scene); font-weight: 400; line-height: 1.25; letter-spacing: -.022em; }
 h2 { font-family: var(--font-serif), serif; font-size: var(--t-lead); font-weight: 400; line-height: 1.3; }
 .lede, .hint { margin: 20px 0 0; color: var(--muted); font-size: var(--t-body); line-height: 1.7; }
+/* 「멈춰도 됩니다」 lines (2026-10-30): plain muted text, no warning colour. The quick one sits at the top of the step, on the step's own width */
+.pause-line { margin: 14px 0 0; color: var(--muted); font-size: var(--t-small); line-height: 1.6; }.pause-line-banner { width: 100%; max-width: 560px; margin: 36px auto 0; }.pause-line-banner + .screen { padding-top: 24px; }
 .hint { max-width: 460px; font-size: var(--t-body); }
 .stack-actions { display: grid; gap: 12px; width: 100%; max-width: 100%; margin-top: 32px; }
 .primary-button, .secondary-button, .small-button { display: inline-flex; align-items: center; justify-content: center; gap: 14px; min-height: 52px; border-radius: 12px; padding: 15px 22px; text-decoration: none; border: 1px solid var(--accent); font: 600 var(--t-small) var(--font-sans); transition: border-color .15s ease, background-color .15s ease, color .15s ease, box-shadow .15s ease, transform .15s ease; }

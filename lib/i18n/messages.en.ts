@@ -282,6 +282,7 @@ export const en: Messages = {
     step: "Possible words",
     title: "Words that might come close to what you are experiencing.",
     hint: "This is not a verdict on your emotion. You can pick several, or none if nothing fits.",
+    pause: "You can leave it at this for now.",
     decline: {
       "none-close": "No word comes close",
       unsure: "Not sure",
@@ -354,6 +355,7 @@ export const en: Messages = {
     basis: "Only what you notice in your body right now",
     step: "Body",
     title: "First, what do you notice in your body?",
+    pause: "If paying attention to your body is uncomfortable, you can stop here. What you have recorded so far is kept.",
     hint: "Before looking for a name for the emotion, start with what you can notice in your body right now. No need to change how you are sitting. What you notice in this moment is enough.",
     more: "Show other body sensations",
     customLabel: "If there is something else, you can write it",
