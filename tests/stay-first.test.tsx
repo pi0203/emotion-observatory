@@ -4,6 +4,9 @@ import Home from "../app/(ko)/page";
 import { ko } from "../lib/i18n/messages.ko";
 import { getStorageAdapter } from "../lib/storage-adapter";
 import { getStorageKeys } from "../lib/storage";
+import { sessionReducer, type EmotionSession } from "../lib/session-types";
+import { buildExport, parseImport, serializeExport } from "../lib/record-transfer";
+import { INPUT_LIMITS } from "../lib/limits";
 import { revealWords, startDeep, startQuick } from "./helpers/start";
 
 /**
@@ -154,6 +157,9 @@ describe("each line of a past record says where it came from", () => {
 
   const rowOf = (label: string, value: string) => [...document.querySelectorAll(".summary-row")]
     .find((row) => row.querySelector("span")?.textContent === label && row.querySelector("strong")?.textContent === value) as HTMLElement;
+  // the words sit in the 이름 layer, dated with the day of the record
+  const nameOf = (value: string) => [...document.querySelectorAll(".names-layer .summary-row")]
+    .find((row) => row.querySelector("strong")?.textContent === value) as HTMLElement;
 
   it("bands and labels every line: pressed, worked out by the app, written, or picked from the list", () => {
     render(<Home />);
@@ -173,8 +179,8 @@ describe("each line of a past record says where it came from", () => {
     // the spot and the sentence the app made of it are two lines, never one mixed line
     const sentence = [...document.querySelectorAll(".summary-row")].find((row) => row.querySelector("span")?.textContent === ko.recordDetail.quickAffect) as HTMLElement;
     expectSource(sentence, "app", ko.recordDetail.source.sentence);
-    expectSource(rowOf(ko.recordDetail.words, "억울함"), "mine", ko.recordDetail.source.picked);
-    expectSource(rowOf(ko.recordDetail.words, "뒤통수 맞은 느낌"), "mine", ko.recordDetail.source.wrote);
+    expectSource(nameOf("억울함"), "mine", ko.recordDetail.source.picked);
+    expectSource(nameOf("뒤통수 맞은 느낌"), "mine", ko.recordDetail.source.wrote);
     expectSource(rowOf(ko.recordDetail.body, "어깨가 뭉침"), "mine", ko.recordDetail.source.pressed);
     expectSource(rowOf(ko.recordDetail.context, "회의에서 말이 끊겼다"), "mine", ko.recordDetail.source.wrote);
     expectSource(rowOf(ko.recordDetail.concerns, "존중받고 싶었다"), "mine", ko.recordDetail.source.pressed);
@@ -185,6 +191,86 @@ describe("each line of a past record says where it came from", () => {
     render(<Home />);
     fireEvent.click(screen.getByRole("button", { name: ko.landing.records }));
     fireEvent.click(document.querySelector(".record-row")!);
-    expect(rowOf(ko.recordDetail.words, "짜증").querySelector(".source-label")!.textContent).toBe(ko.recordDetail.source.pickedAfterReveal);
+    expect(nameOf("짜증").querySelector(".source-label")!.textContent).toBe(ko.recordDetail.source.pickedAfterReveal);
+  });
+});
+
+describe("names are written over, never in place of", () => {
+  const done: EmotionSession = {
+    id: "named-1", createdAt: "2026-10-30T02:00:00.000Z", completedAt: "2026-10-30T02:03:00.000Z", status: "completed",
+    stage: "quick-summary", entry: "quick", locale: "ko",
+    quickCheck: { affect: { unknown: true }, candidatePool: [], selected: [], endedAt: "2026-10-30T02:03:00.000Z" },
+  };
+  const add = (session: EmotionSession, label: string, id = session.id) => sessionReducer(session, { type: "ADD_LABEL_LATER", id, label });
+
+  it("only adds at the end of a finished record, leaving the moment's own layer as it was", () => {
+    const once = add(done, "  서운함 ");
+    const twice = add(once, "실망");
+    expect(twice.labelsLater?.map((entry) => entry.label)).toEqual(["서운함", "실망"]);
+    expect(twice.labelsLater?.[0]).toEqual(once.labelsLater?.[0]);
+    expect(Number.isNaN(Date.parse(twice.labelsLater![1].at))).toBe(false);
+    expect(twice.quickCheck).toEqual(done.quickCheck);
+    expect(twice.status).toBe("completed");
+    expect(twice.history).toEqual(done.history);
+    // a stopped record takes one too; a draft, another record or an empty name does not
+    expect(add({ ...done, status: "stopped" }, "멍함").labelsLater).toHaveLength(1);
+    expect(add({ ...done, status: "draft" }, "멍함")).toEqual({ ...done, status: "draft" });
+    expect(add(done, "멍함", "someone-else")).toBe(done);
+    expect(add(done, "   ")).toBe(done);
+    expect(add(done, "가".repeat(INPUT_LIMITS.word + 10)).labelsLater![0].label).toHaveLength(INPUT_LIMITS.word);
+  });
+
+  it("keeps the names through an export and an import, and refuses a malformed list", () => {
+    const named = add(done, "서운함");
+    const parsed = parseImport(serializeExport(buildExport([named])));
+    expect(parsed.ok && parsed.records[0].labelsLater).toEqual(named.labelsLater);
+    const broken = parseImport(serializeExport(buildExport([{ ...named, labelsLater: [{ label: 3 }] } as unknown as EmotionSession])));
+    expect(broken.ok && broken.records).toEqual([]);
+  });
+
+  describe("on the record screen", () => {
+    beforeEach(() => {
+      window.localStorage.clear();
+      window.localStorage.setItem(getStorageKeys().COMPLETED_KEY, JSON.stringify([{ ...done, quickCheck: { ...done.quickCheck, affect: { valence: 0.5, activation: 0.5 } } }]));
+    });
+    afterEach(cleanup);
+    const openDetail = () => {
+      render(<Home />);
+      fireEvent.click(screen.getByRole("button", { name: ko.landing.records }));
+    };
+
+    it("shows an unnamed record as an open space, in the list and in the detail, never as none", () => {
+      openDetail();
+      const listed = document.querySelector(".record-row")!;
+      expect(listed.querySelector(".names-not-yet")?.textContent).toBe(ko.records.namesNotYet);
+      expect(listed.textContent).not.toContain("없음");
+      fireEvent.click(listed);
+      const layer = document.querySelector(".names-layer")!;
+      expect(layer.querySelector(".names-empty")?.textContent).toBe(ko.records.namesNotYet);
+      expect(layer.textContent).not.toContain("없음");
+    });
+
+    it("adds today's name below, dated, with nothing suggested, and keeps it", () => {
+      openDetail();
+      fireEvent.click(document.querySelector(".record-row")!);
+      const layer = document.querySelector(".names-layer") as HTMLElement;
+      fireEvent.click(within(layer).getByRole("button", { name: ko.recordDetail.names.add }));
+      expect(layer.querySelectorAll(".chip")).toHaveLength(0);
+      const field = within(layer).getByLabelText(ko.recordDetail.names.fieldLabel) as HTMLInputElement;
+      expect(field.maxLength).toBe(INPUT_LIMITS.word);
+      expect(field.value).toBe("");
+      fireEvent.change(field, { target: { value: "허탈함" } });
+      fireEvent.click(within(layer).getByRole("button", { name: ko.recordDetail.names.save }));
+
+      const row = [...layer.querySelectorAll(".summary-row")].find((item) => item.querySelector("strong")?.textContent === "허탈함")!;
+      expect(row.className).toContain("source-later");
+      expect(row.querySelector(".source-label")!.textContent).toMatch(/^\d{2}\/\d{2} 덧붙임$/);
+      expect(layer.querySelector(".names-empty")).toBeNull();
+      const [saved] = getStorageAdapter().loadCompleted();
+      expect(saved.labelsLater?.map((entry) => entry.label)).toEqual(["허탈함"]);
+      expect(saved.quickCheck?.selected).toEqual([]);
+      // no way to edit or remove it is offered
+      expect(within(layer).queryByRole("button", { name: /지우기|삭제|고치기|수정/ })).toBeNull();
+    });
   });
 });

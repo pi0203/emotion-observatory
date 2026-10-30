@@ -1,5 +1,5 @@
 import { requireContent } from "./content";
-import { formatWhen as formatWhenIn } from "./i18n/dates";
+import { formatDay as formatDayIn, formatWhen as formatWhenIn } from "./i18n/dates";
 import { DEFAULT_LOCALE, localeOf, type Locale } from "./i18n/locale";
 import { getT } from "./i18n/t";
 import { sessionDepth } from "./session-types";
@@ -62,6 +62,7 @@ export const summarise = (session: EmotionSession, uiLocale: Locale = DEFAULT_LO
 };
 
 export const formatWhen = (iso: string, locale: Locale = DEFAULT_LOCALE) => formatWhenIn(iso, locale);
+export const formatDay = (iso: string, locale: Locale = DEFAULT_LOCALE) => formatDayIn(iso, locale);
 
 /**
  * Where a line on the record came from (owner's decision 2026-10-30): what the

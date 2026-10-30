@@ -1,5 +1,6 @@
 import { coachSetFor, currentWords } from "./coach";
 import { DEFAULT_LOCALE, type Locale } from "./i18n/locale";
+import { INPUT_LIMITS } from "./limits";
 
 export type EntryDecision = "observe" | "unsure" | "stop";
 // The user declining to pick a word is a normal answer, not missing data.
@@ -173,6 +174,14 @@ export type EmotionSession = {
    * Korean (`localeOf`), so no stored record needs migrating.
    */
   locale?: Locale;
+  /**
+   * Names given to the moment afterwards, each with the day it was given
+   * (owner's decision 2026-10-30): written over, never written in place of. The
+   * words picked at the time (quickCheck.selected, deepReflection.emotionCandidates)
+   * stay as they were; a later name is added at the end and nothing removes or
+   * edits one. Optional, so no stored record needs migrating.
+   */
+  labelsLater?: { label: string; at: string }[];
 };
 
 export type SessionDepth = "quick" | "quick+deep" | "deep";
@@ -227,7 +236,8 @@ export type SessionAction =
   | { type: "FINISH_COACH" }
   | { type: "CLOSE_COACH" }
   | { type: "BACK" }
-  | { type: "STOP"; reason: "user" | "entry" };
+  | { type: "STOP"; reason: "user" | "entry" }
+  | { type: "ADD_LABEL_LATER"; id: string; label: string };
 
 export const createSession = (entry: SessionEntry = "quick", locale: Locale = DEFAULT_LOCALE): EmotionSession => ({
   id: crypto.randomUUID(),
@@ -287,7 +297,7 @@ const NOT_A_STEP = new Set<SessionAction["type"]>([
   "TOGGLE_QUICK_CANDIDATE", "SET_QUICK_CANDIDATE_RESPONSE", "ADD_QUICK_CUSTOM",
   "SET_SYNTHESIS_FEEDBACK", "SET_TALK_TO_SOMEONE", "CHOOSE_NEED", "TOGGLE_RESPONSE",
   "TOGGLE_COACH_WORD", "SET_COACH_OWN_WORD", "TOGGLE_APPRAISAL", "SET_OWN_APPRAISAL",
-  "SET_PERSONAL_MEANING", "REVEAL_QUICK_WORDS", "REVEAL_DEEP_WORDS", "RESUME", "BACK",
+  "SET_PERSONAL_MEANING", "REVEAL_QUICK_WORDS", "REVEAL_DEEP_WORDS", "ADD_LABEL_LATER", "RESUME", "BACK",
 ]);
 
 const reduce = (state: EmotionSession, action: SessionAction): EmotionSession => {
@@ -449,6 +459,12 @@ const reduce = (state: EmotionSession, action: SessionAction): EmotionSession =>
     }
     case "STOP":
       return { ...state, stage: "stopped", status: "stopped", stopReason: action.reason };
+    case "ADD_LABEL_LATER": {
+      // only onto the finished record it names, and only at the end: the moment's own layer is not touched
+      const label = action.label.trim().slice(0, INPUT_LIMITS.word);
+      if (state.id !== action.id || (state.status !== "completed" && state.status !== "stopped") || !label) return state;
+      return { ...state, labelsLater: [...(state.labelsLater ?? []), { label, at: new Date().toISOString() }] };
+    }
     default:
       return state;
   }

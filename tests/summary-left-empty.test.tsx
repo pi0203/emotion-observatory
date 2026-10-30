@@ -84,24 +84,29 @@ describe("the record detail screen", () => {
   beforeEach(() => window.localStorage.clear());
   afterEach(cleanup);
 
-  it("shows a skipped overall feeling and no words as 비워 둠, quietly", () => {
+  // since 2026-10-30 the words live in the 이름 layer under the card, dated, and a record with none shows an open space, not 비워 둠
+  const firstName = () => document.querySelector(".names-layer .summary-row") as HTMLElement;
+
+  it("shows a skipped overall feeling as 비워 둠, quietly, and no words as an open 이름은 아직", () => {
     openRecord({ entry: "deep", deepReflection: { entryDecision: "observe", body: [], affect: {} } });
-    for (const label of [ko.recordDetail.deepAffect, ko.recordDetail.words]) {
-      expect(row(label).querySelector("strong")?.textContent).toBe(ko.common.leftEmpty);
-      expect(row(label).classList.contains("is-empty")).toBe(true);
-    }
+    expect(row(ko.recordDetail.deepAffect).querySelector("strong")?.textContent).toBe(ko.common.leftEmpty);
+    expect(row(ko.recordDetail.deepAffect).classList.contains("is-empty")).toBe(true);
+    const names = document.querySelector(".names-layer")!;
+    expect(names.querySelector(".names-empty")?.textContent).toBe(ko.records.namesNotYet);
+    expect(names.textContent).not.toMatch(/없음|비워 둠/);
   });
 
   it("keeps 잘 모르겠음 and chosen words as answers", () => {
     openRecord({ entry: "deep", deepReflection: { entryDecision: "observe", body: [], affect: { unknown: true }, emotionCandidates: [{ label: "서운함", source: "suggested" }] } });
     expect(row(ko.recordDetail.deepAffect).querySelector("strong")?.textContent).toBe(ko.common.unsure);
-    expect(row(ko.recordDetail.words).querySelector("strong")?.textContent).toBe("서운함");
-    for (const label of [ko.recordDetail.deepAffect, ko.recordDetail.words]) expect(row(label).classList.contains("is-empty")).toBe(false);
+    expect(firstName().querySelector("strong")?.textContent).toBe("서운함");
+    expect(row(ko.recordDetail.deepAffect).classList.contains("is-empty")).toBe(false);
+    expect(firstName().classList.contains("is-empty")).toBe(false);
   });
 
   it("shows 가까운 말이 없음 from the quick look as an answer, not a blank", () => {
     openRecord({ entry: "quick", quickCheck: { affect: { valence: 0.2, activation: 0.4 }, candidatePool: [], selected: [], candidateResponse: "none-close" } });
-    expect(row(ko.recordDetail.words).querySelector("strong")?.textContent).toBe(ko.quickCandidates.decline["none-close"]);
-    expect(row(ko.recordDetail.words).classList.contains("is-empty")).toBe(false);
+    expect(firstName().querySelector("strong")?.textContent).toBe(ko.quickCandidates.decline["none-close"]);
+    expect(firstName().classList.contains("is-empty")).toBe(false);
   });
 });

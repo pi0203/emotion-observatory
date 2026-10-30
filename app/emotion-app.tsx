@@ -10,7 +10,7 @@ type DeepOutcome = NonNullable<DeepReflection["outcome"]>;
 import { getStorageAdapter } from "../lib/storage-adapter";
 import { applyImport, buildExport, downloadExport, downloadJson, exportFileName, MAX_IMPORT_BYTES, parseImport, planImport, readFileText, type ImportError, type ImportPlan } from "../lib/record-transfer";
 import { isLockedText, lockedFileName, lockExport, MIN_PASSPHRASE_LENGTH, unlockExport } from "../lib/record-crypto";
-import { concernLines, formatWhen, helpedOptions, summarise, triedOptions, wordLines, type SourceKind, type WordHow } from "../lib/records";
+import { concernLines, formatDay, formatWhen, helpedOptions, summarise, triedOptions, wordLines, type SourceKind, type WordHow } from "../lib/records";
 import { migrateLegacyStorage } from "../lib/migrations";
 import { expandCandidates, filterQuickCandidates } from "../lib/quick-check";
 import { activationLabel, hasAffectPoint, quickActivation, quickValence, scaleLabel } from "../lib/affect-labels";
@@ -67,6 +67,14 @@ function App() {
     // written straight to the completed store, which upserts by id; the reducer
     // session is on the landing screen here, so nothing can clobber it
     const next = { ...session, support: { ...(session.support ?? { chosen: [] }), followUp: { ...session.support?.followUp, ...followUp, at: new Date().toISOString() } } };
+    saveCompleted(next);
+    setOpenRecord(next);
+    setRecords(loadCompleted());
+  };
+  // a name given later is added through the reducer, which only ever appends it, and saved like the follow-up
+  const addLabelLater = (session: EmotionSession, label: string) => {
+    const next = sessionReducer(session, { type: "ADD_LABEL_LATER", id: session.id, label });
+    if (next === session) return;
     saveCompleted(next);
     setOpenRecord(next);
     setRecords(loadCompleted());
@@ -128,7 +136,7 @@ function App() {
       <SiteHeader onHelp={() => setHelpOpen(true)} />
       <main id="main" tabIndex={-1} className="site-main">
       {openRecord
-        ? <RecordDetail session={openRecord} onFollowUp={(followUp) => saveFollowUp(openRecord, followUp)} onBack={() => setOpenRecord(null)} />
+        ? <RecordDetail session={openRecord} onFollowUp={(followUp) => saveFollowUp(openRecord, followUp)} onAddLabel={(label) => addLabelLater(openRecord, label)} onBack={() => setOpenRecord(null)} />
         : records
           ? <RecordsScreen records={records} onOpen={setOpenRecord} onBack={() => setRecords(null)} onChanged={() => { setRecords(loadCompleted()); setDraft(loadDraft()); }} />
           : <LandingScreen onStart={() => askToStart("quick")} draft={draft} onResume={resume} onRecords={showRecords} pendingStart={pendingStart} onDiscardAndStart={discardAndStart} onCancelStart={() => setPendingStart(null)} />}
@@ -994,7 +1002,12 @@ function RecordsScreen({ records, onOpen, onBack, onChanged }: { records: Emotio
           const item = summarise(session, t.locale);
           return <button className="record-row" key={item.id} onClick={() => onOpen(session)}>
             <span className="record-when">{formatWhen(item.at, t.locale)}<em>{item.depthLabel}</em></span>
-            <strong>{item.words.join(" · ") || (session.quickCheck?.affect?.unknown && !session.deepReflection ? t("quickAffect.unknown") : t("records.noWords"))}</strong>
+            {(() => {
+              // the moment's own words, else names given later, else the answer given then; a record with none is not lacking
+              const name = item.words.join(" · ") || (session.labelsLater ?? []).map((entry) => entry.label).join(" · ")
+                || (session.quickCheck?.affect?.unknown && !session.deepReflection ? t("quickAffect.unknown") : session.deepReflection?.emotionCandidates?.length ? "" : quickResponseLabel(t, session.quickCheck?.candidateResponse));
+              return name ? <strong>{name}</strong> : <strong className="names-not-yet">{t("records.namesNotYet")}</strong>;
+            })()}
             {item.needLabel && <span className="record-need">{t("records.needLine", { label: item.needLabel })}</span>}
             {item.responseLabels.length > 0 && <span className="record-need">{t("records.responsesLine", { labels: item.responseLabels.join(" / ") })}</span>}
           </button>;
@@ -1191,7 +1204,7 @@ function RecordTransfer({ count, onChanged }: { count: number; onChanged: () => 
  * from (owner's decision 2026-10-30): what the person pressed or wrote, what the
  * app worked out from it, and what was added later. Colour is never the only sign.
  */
-function RecordDetail({ session, onFollowUp, onBack }: { session: EmotionSession; onFollowUp: (followUp: { tried?: "yes" | "partly" | "no"; helped?: "yes" | "somewhat" | "no" | "unsure" }) => void; onBack: () => void }) {
+function RecordDetail({ session, onFollowUp, onAddLabel, onBack }: { session: EmotionSession; onFollowUp: (followUp: { tried?: "yes" | "partly" | "no"; helped?: "yes" | "somewhat" | "no" | "unsure" }) => void; onAddLabel: (label: string) => void; onBack: () => void }) {
   const t = useT();
   const item = summarise(session, t.locale);
   const followUp = session.support?.followUp;
@@ -1223,15 +1236,21 @@ function RecordDetail({ session, onFollowUp, onBack }: { session: EmotionSession
         : <LeftEmptyRow label={t("recordDetail.deepAffect")} value={deepAffectValue(t, deep.affect)} source={mine(deep.affect.unknown ? "pressed" : "skipped")} />)}
       {deep?.context?.eventText && <SummaryRow label={t("recordDetail.context")} value={deep.context.eventText} source={mine("wrote")} />}
       {concernLines(session).map((line) => <SummaryRow key={line.how} label={t("recordDetail.concerns")} value={line.items.join(" · ")} source={mine(line.how)} />)}
-      {/* 가까운 말이 없음 · 잘 모르겠음 from the quick look are answers; only no words and no answer is 비워 둠 */}
-      {!endedUnsure && (lines.length
-        ? lines.map((line) => <SummaryRow key={line.how} label={t("recordDetail.words")} value={line.words.join(" · ")} source={mine(line.how)} />)
-        : <LeftEmptyRow label={t("recordDetail.words")} value={quickResponse || undefined} source={mine(quickResponse ? "pressed" : "skipped")} />)}
       {item.personalMeanings.map((entry) => <SummaryRow key={entry.label} label={t("recordDetail.personalMeaning", { label: entry.label })} value={entry.meaning} source={mine("wrote")} />)}
       {session.talkToSomeone && <SummaryRow label={t("talkToSomeone.recordLabel")} value={t(`talkToSomeone.answers.${session.talkToSomeone.answer}`)} source={mine("pressed")} />}
       {item.needLabel && <SummaryRow label={t("recordDetail.need")} value={item.needLabel} source={mine("pressed")} />}
       {item.responseLabels.length > 0 && <SummaryRow label={t("recordDetail.responses")} value={item.responseLabels.join(" / ")} source={mine("pressed")} />}
     </div>
+
+    <NamesLayer
+      day={formatDay(item.at, t.locale)}
+      // 가까운 말이 없음 · 잘 모르겠음 · 아직 모르겠다 are answers given then, so they are the first line too
+      first={endedUnsure ? [{ key: "unsure", value: t("quickAffect.unknown"), source: mine("pressed") }]
+        : lines.length ? lines.map((line) => ({ key: line.how, value: line.words.join(" · "), source: mine(line.how) }))
+        : quickResponse ? [{ key: "response", value: quickResponse, source: mine("pressed") }] : []}
+      later={session.labelsLater ?? []}
+      onAdd={onAddLabel}
+    />
 
     {item.canFollowUp && <section className="synthesis">
       <p className="tier-label">{t("recordDetail.followUpTitle")}</p>
@@ -1246,6 +1265,45 @@ function RecordDetail({ session, onFollowUp, onBack }: { session: EmotionSession
 
     <div className="navigation"><button className="quiet-button" onClick={onBack}>{t("recordDetail.backToList")}</button><a className="primary-button" href="/">{t("recordDetail.toStart")} <span>→</span></a></div>
   </Screen>;
+}
+
+/**
+ * The names a record has been given: the words of the moment on the first line,
+ * dated, then each name given later, by day (owner's decision 2026-10-30). One
+ * can be added, never edited or removed, and nothing is suggested. A record with
+ * no name yet shows an open, dashed space, never the word for none.
+ */
+function NamesLayer({ day, first, later, onAdd }: { day: string; first: { key: string; value: string; source: RowSource }[]; later: { label: string; at: string }[]; onAdd: (label: string) => void }) {
+  const t = useT();
+  const [adding, setAdding] = useState(false);
+  const [label, setLabel] = useState("");
+  const field = useRef<HTMLInputElement>(null);
+  useEffect(() => { if (adding) field.current?.focus(); }, [adding]);
+  const save = () => { if (!label.trim()) return; onAdd(label); setLabel(""); setAdding(false); };
+  const empty = first.length === 0 && later.length === 0;
+  return <section className="names-layer" aria-labelledby="names-title">
+    <p className="tier-label" id="names-title">{t("recordDetail.names.title")}</p>
+    {empty
+      ? <p className="names-not-yet names-empty">{t("records.namesNotYet")}</p>
+      : <div className="summary-card with-sources">
+          {first.map((line) => <SummaryRow key={line.key} label={day} value={line.value} source={line.source} />)}
+          {later.map((entry, index) => {
+            const date = formatDay(entry.at, t.locale);
+            return <SummaryRow key={`${entry.at}-${index}`} label={date} value={entry.label} source={{ kind: "later", label: t("recordDetail.addedOn", { date }) }} />;
+          })}
+        </div>}
+    {adding
+      ? <div className="own-word-block">
+          <label className="field-label" htmlFor="name-later">{t("recordDetail.names.fieldLabel")}</label>
+          <div className="own-word-row">
+            <input id="name-later" ref={field} className="text-input" maxLength={INPUT_LIMITS.word} value={label} onChange={(event) => setLabel(event.target.value)} onKeyDown={(event) => { if (event.key === "Enter") save(); }} />
+            <button className="small-button" disabled={!label.trim()} onClick={save}>{t("recordDetail.names.save")}</button>
+          </div>
+          <p className="small-note">{t("recordDetail.names.hint")}</p>
+          <div className="quick-option-row"><button className="quiet-button" onClick={() => { setLabel(""); setAdding(false); }}>{t("recordDetail.names.cancel")}</button></div>
+        </div>
+      : <button className="secondary-button names-add" onClick={() => setAdding(true)}>{t("recordDetail.names.add")}</button>}
+  </section>;
 }
 
 function StoppedScreen({ session }: { session: EmotionSession }) { const t = useT(); return <Screen className="entry-screen"><p className="eyebrow">{t("stopped.eyebrow")}</p><h1>{renderRich(t("stopped.title"))}</h1><p className="lede">{t("stopped.lede")}</p><div className="stack-actions"><a className="primary-button centered" href="/">{t("stopped.home")}</a><button className="quiet-button" onClick={() => { removeDraft(); dropCompleted(session.id); window.location.reload(); }}>{t("stopped.delete")}</button></div>{session.stopReason === "entry" && <p className="small-note">{t("stopped.entryNote")}</p>}<HelpReveal /></Screen>; }

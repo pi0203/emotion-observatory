@@ -479,7 +479,8 @@ export const ko = {
     eyebrow: "지난 기록",
     title: "이전에 적은 것들",
     empty: "아직 남긴 기록이 없습니다.",
-    noWords: "고른 표현 없음",
+    // 임시 문구 (2026-10-30): a record with no name yet is not missing anything
+    namesNotYet: "이름은 아직",
     needLine: "필요했던 방향 · {label}",
     responsesLine: "해보기로 한 것 · {labels}",
     backToStart: "← 처음으로",
@@ -491,6 +492,8 @@ export const ko = {
     },
     /** `formatWhen`: the numbers come from Intl in the record's time zone. */
     when: "{year}. {month}. {day}  {hour}:{minute}",
+    /** `formatDay`: the day a later name was given. */
+    day: "{month}/{day}",
   },
   /** Export, import and delete-all, at the foot of the records screen (lib/record-transfer.ts). */
   recordTransfer: {
@@ -553,7 +556,6 @@ export const ko = {
     depth: "살펴본 정도",
     quickAffect: "빠른 확인",
     deepAffect: "자세히 본 뒤",
-    words: "가까웠던 말",
     personalMeaning: "‘{label}’은",
     context: "상황",
     need: "필요했던 방향",
@@ -572,6 +574,16 @@ export const ko = {
       pickedAfterReveal: "단어 보기 뒤 고름",
       sentence: "좌표를 앱이 말로 바꿈",
       depth: "앱이 셈",
+    },
+    addedOn: "{date} 덧붙임",
+    /** The names layer: the words of the moment first, then each name given later, by day (2026-10-30). */
+    names: {
+      title: "이름",
+      add: "+ 오늘 이름 붙이기",
+      fieldLabel: "오늘 붙이는 이름",
+      save: "붙이기",
+      cancel: "취소",
+      hint: "지금 붙인 이름은 오늘 날짜와 함께 아래에 더해집니다. 그때 고른 말은 그대로 남습니다.",
     },
     legend: {
       title: "줄마다 어디서 온 것인지",

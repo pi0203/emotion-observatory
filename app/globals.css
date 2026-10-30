@@ -466,3 +466,10 @@ html, body { transition: background-color .5s ease; }
 .source-legend li::before { content: ""; display: inline-block; height: 14px; border-left: 4px solid var(--source-mine); }
 .source-legend li.source-app::before { border-left: 4px dashed var(--source-app); }
 .source-legend li.source-later::before { border-left: 4px double var(--source-later); }
+/* The names layer (2026-10-30): the moment's words, then names given later; an unnamed record is an open, dashed space */
+.names-layer { margin-top: 34px; }
+.names-layer .summary-card { margin-top: 12px; }
+.names-not-yet { color: var(--muted); font-weight: 500; }
+.names-empty { margin: 12px 0 0; padding: 16px 18px; border: 1.5px dashed var(--line-strong); border-radius: 10px; background: transparent; }
+.record-row .names-not-yet { display: inline-block; padding: 2px 10px; border: 1.5px dashed var(--line-strong); border-radius: 8px; }
+.names-add { margin-top: 14px; min-height: 44px; }
