@@ -10,7 +10,7 @@ type DeepOutcome = NonNullable<DeepReflection["outcome"]>;
 import { getStorageAdapter } from "../lib/storage-adapter";
 import { applyImport, buildExport, downloadExport, downloadJson, exportFileName, MAX_IMPORT_BYTES, parseImport, planImport, readFileText, type ImportError, type ImportPlan } from "../lib/record-transfer";
 import { isLockedText, lockedFileName, lockExport, MIN_PASSPHRASE_LENGTH, unlockExport } from "../lib/record-crypto";
-import { concernLines, formatDay, formatWhen, helpedOptions, summarise, triedOptions, wordLines, type SourceKind, type WordHow } from "../lib/records";
+import { concernLines, formatDay, formatWhen, helpedOptions, recentDays, summarise, triedOptions, wordLines, type SourceKind, type WordHow } from "../lib/records";
 import { migrateLegacyStorage } from "../lib/migrations";
 import { expandCandidates, filterQuickCandidates, showsPauseLine } from "../lib/quick-check";
 import { activationLabel, hasAffectPoint, quickActivation, quickValence, scaleLabel } from "../lib/affect-labels";
@@ -1005,11 +1005,12 @@ function RecordsScreen({ records, onOpen, onBack, onChanged }: { records: Emotio
   return <Screen className="entry-screen">
     <p className="eyebrow">{t("records.eyebrow")}</p>
     <h1>{t("records.title")}</h1>
+    {records.length > 0 && <DayStrip records={records} />}
     {records.length === 0
       ? <p className="lede">{t("records.empty")}</p>
       : <div className="record-list">{records.map((session) => {
           const item = summarise(session, t.locale);
-          return <button className="record-row" key={item.id} onClick={() => onOpen(session)}>
+          return <button className="record-row" id={`record-${item.id}`} key={item.id} onClick={() => onOpen(session)}>
             <span className="record-when">{formatWhen(item.at, t.locale)}<em>{item.depthLabel}</em></span>
             {(() => {
               // the moment's own words, else names given later, else the answer given then; a record with none is not lacking
@@ -1024,6 +1025,31 @@ function RecordsScreen({ records, onOpen, onBack, onChanged }: { records: Emotio
     <RecordTransfer count={records.length} onChanged={onChanged} />
     <div className="navigation"><button className="quiet-button" onClick={onBack}>{t("records.backToStart")}</button><span /></div>
   </Screen>;
+}
+
+/**
+ * The last fourteen days above the list (owner's decision 2026-10-30, second round C):
+ * a dot on a day with a record, an open dashed space on a day without, today at the
+ * right end. It only shows; a dot takes you to that day's first record in the list.
+ * No count, no run of days, and an open day is not coloured as missed.
+ */
+function DayStrip({ records }: { records: EmotionSession[] }) {
+  const t = useT();
+  const days = recentDays(records);
+  const jump = (id: string) => {
+    const row = document.getElementById(`record-${id}`);
+    row?.scrollIntoView?.({ block: "center", behavior: "smooth" });
+    row?.focus();
+  };
+  return <section className="day-strip" aria-labelledby="day-strip-title">
+    <p className="tier-label" id="day-strip-title">{t("records.days.title")}</p>
+    <ol className="day-cells">{days.map((day) => <li key={day.key}>
+      {day.firstId
+        ? <button className="day-cell has-record" aria-label={t("records.days.goTo", { date: formatDay(day.iso, t.locale) })} onClick={() => jump(day.firstId!)}><span className="day-dot" aria-hidden="true" /></button>
+        : <span className="day-cell is-open" aria-hidden="true" />}
+    </li>)}</ol>
+    <div className="day-ends" aria-hidden="true"><span>{formatDay(days[0].iso, t.locale)}</span><span>{t("records.days.today")}</span></div>
+  </section>;
 }
 
 type TransferNote = { kind: "status" | "alert"; text: string };

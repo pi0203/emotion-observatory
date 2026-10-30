@@ -475,3 +475,16 @@ html, body { transition: background-color .5s ease; }
 .names-empty { margin: 12px 0 0; padding: 16px 18px; border: 1.5px dashed var(--line-strong); border-radius: 10px; background: transparent; }
 .record-row .names-not-yet { display: inline-block; padding: 2px 10px; border: 1.5px dashed var(--line-strong); border-radius: 8px; }
 .names-add { margin-top: 14px; min-height: 44px; }
+
+/* the last 14 days above the records list (2026-10-30): a dot on a day with a record, an open dashed space otherwise.
+   Fourteen equal columns always fit the width, so 390px and 375px take one line; each dot is a button whose
+   centre sits more than 24px from the next (WCAG 2.5.8 spacing). No fill marks a day without a record. */
+.day-strip { margin: 28px 0 8px; }
+.day-cells { list-style: none; margin: 10px 0 0; padding: 0; display: grid; grid-template-columns: repeat(14, minmax(0, 1fr)); gap: 2px; }
+.day-cells li { display: flex; }
+.day-cell { flex: 1; min-width: 0; height: 40px; display: flex; align-items: center; justify-content: center; border-radius: 8px; }
+.day-cell.is-open { border: 1px dashed var(--line-strong); background: transparent; height: 38px; }
+.day-cell.has-record { border: 1px solid var(--line); background: var(--card); padding: 0; cursor: pointer; }
+.day-cell.has-record:hover { border-color: var(--accent-ink); }
+.day-dot { width: 10px; height: 10px; border-radius: 50%; background: var(--accent-ink); }
+.day-ends { display: flex; justify-content: space-between; margin-top: 6px; color: var(--muted); font: var(--t-aside) var(--font-sans); }

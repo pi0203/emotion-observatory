@@ -513,6 +513,11 @@ export const en: Messages = {
     needLine: "What you needed · {label}",
     responsesLine: "What you planned to try · {labels}",
     backToStart: "← Back to the start",
+    days: {
+      title: "The last 14 days",
+      today: "Today",
+      goTo: "Go to the entries from {date}",
+    },
     depth: {
       quick: "Quick look",
       "quick+deep": "Quick look + slow look",

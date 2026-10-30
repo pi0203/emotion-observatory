@@ -493,6 +493,12 @@ export const ko = {
     needLine: "필요했던 방향 · {label}",
     responsesLine: "해보기로 한 것 · {labels}",
     backToStart: "← 처음으로",
+    /** The strip of the last 14 days above the list (2026-10-30). No counts, no 안 한 날. */
+    days: {
+      title: "최근 14일",
+      today: "오늘",
+      goTo: "{date} 기록으로 가기",
+    },
     /** How far a record went. Derived from what it holds, never stored. */
     depth: {
       quick: "빠른 확인",
