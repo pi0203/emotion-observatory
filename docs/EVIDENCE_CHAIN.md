@@ -625,7 +625,7 @@ P3 「앱은 감정을 판정하지 않는다」)과 인계 판정에서 왔다.
 - 배럿 core affect, 젠들린 felt sense, EFT unclear felt sense 표지의 원문 서지를 확인하고 읽은 수준을 표시한다.
   읽기 전까지 이 표의 「기댈 자리」 칸은 비워 둔 것과 같다.
   - **(2026-10-30 서지 확인)**:
-    - **Russell & Barrett (1999)** [초록]: Russell, J. A., & Barrett, L. F. (1999). Core affect, prototypical emotional episodes, and other things called emotion: Dissecting the elephant. *Journal of Personality and Social Psychology*, 76(5), 805–819. https://doi.org/10.1037/0022-3514.76.5.805 — core affect(원초적이고 비반성적인 쾌/불쾌×각성)와 원인 귀인·자기범주화(라벨링)를 거치는 prototypical emotional episode를 구분.
+    - **Russell & Barrett (1999)** [미확인]: Russell, J. A., & Barrett, L. F. (1999). Core affect, prototypical emotional episodes, and other things called emotion: Dissecting the elephant. *Journal of Personality and Social Psychology*, 76(5), 805–819. https://doi.org/10.1037/0022-3514.76.5.805 — 서지만 Crossref로 확인했다. 초록이나 원문을 읽은 기록은 아직 없다.
     - **Gendlin (1962, 1981)** [미확인]: 원저를 읽은 기록이 없고 서지를 확인하지 않아 이름만 적는다.
     - **Greenberg, Rice, & Elliott (1993)**, **Elliott 외 (2004)** [미확인]: 원저를 읽은 기록이 없고 서지를 확인하지 않아 이름만 적는다.
 

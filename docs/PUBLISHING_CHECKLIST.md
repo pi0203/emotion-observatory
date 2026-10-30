@@ -109,7 +109,7 @@
 ## 10. 저장·전송·공유 문구와 실제 동작의 대조 · 확인함 (2026-10-30)
 
 2026-10-26 본인 결정으로 더했고, 2026-10-30 전수 대조를 마쳤다. 다른 앱 점검에서 화면에는 「공동 저장」 배지가 있었는데 실제로는 브라우저에만 저장되던 일이 계기다([CROSS_PROJECT_2026_10_26.md](CROSS_PROJECT_2026_10_26.md) a).
-`tests/no-network.test.ts`는 **동작**을 지키고, `tests/storage-transparency-copy.test.ts`가 **문구와 동작의 일치**를 자동 검증한다.
+`tests/no-network.test.ts`는 **동작**을 지키고, `tests/storage-transparency-copy.test.ts`는 **문구에 필요한 표현이 있는지** 검사한다. 실제 동작은 기존 네트워크 차단 테스트가 지킨다.
 
 - [x] 저장·전송·공유에 관한 모든 화면 문구를 실제 동작과 하나씩 대조했다.
   - **첫 화면 (한/영)**: `storageNote`에서 「기록은 이 브라우저에만 저장되고 암호화되지 않습니다 / Saved only in this browser and are not encrypted」, 공용 기기 주의, 브라우저 데이터 삭제 시 함께 사라짐을 명시함.
