@@ -1,6 +1,8 @@
 import { afterEach, beforeEach, describe, expect, it } from "vitest";
 import { cleanup, fireEvent, render, screen, within } from "@testing-library/react";
 import Home from "../app/(ko)/page";
+import { revealWords, startDeep, startQuick } from "./helpers/start";
+import { ko } from "../lib/i18n/messages.ko";
 
 // jsdom reports a zero-sized box, which would make the affect tap produce NaN.
 const stubGridSize = () => {
@@ -11,7 +13,7 @@ const stubGridSize = () => {
 
 const openQuickCheck = () => {
   render(<Home />);
-  fireEvent.click(screen.getByRole("button", { name: /빠르게 살펴보기/ }));
+  startQuick();
 };
 
 const tapUnpleasantActivated = () => {
@@ -40,6 +42,7 @@ describe("quick check screens", () => {
   it("asks what mattered before showing any word", () => {
     openQuickCheck();
     tapUnpleasantActivated();
+    revealWords();
     fireEvent.click(screen.getByRole("button", { name: "짜증" }));
     fireEvent.click(screen.getByRole("button", { name: /표현 사이의 차이 살펴보기/ }));
     // the coach asks what mattered before it shows a single word
@@ -62,6 +65,7 @@ describe("quick check screens", () => {
   it("carries the quick reading into the deep affect step as an editable suggestion", () => {
     openQuickCheck();
     tapUnpleasantActivated();
+    revealWords();
     fireEvent.click(screen.getByRole("button", { name: "긴장" }));
     fireEvent.click(screen.getByRole("button", { name: /여기까지/ }));
     fireEvent.click(screen.getByRole("button", { name: /조금 더 천천히 들여다보기/ }));
@@ -80,6 +84,7 @@ describe("quick check screens", () => {
   it("shows a handful of words first and reveals related ones only when asked", () => {
     openQuickCheck();
     tapUnpleasantActivated();
+    revealWords();
     const firstTier = screen.getAllByRole("button", { name: /^(긴장|초조함|짜증|억울함|답답함)$/ });
     expect(firstTier.length).toBeLessThanOrEqual(5);
     expect(screen.queryByText("비슷한 표현")).toBeNull();
@@ -93,9 +98,9 @@ describe("quick check screens", () => {
     openQuickCheck();
     tapUnpleasantActivated();
 
-    // no clicking through tiers first: the box is there from the start
+    // no clicking through tiers first: the box is there from the start, before any word is shown (2026-10-30)
     const input = screen.getByLabelText("내 말로 적기");
-    expect(screen.getByText(/완전한 목록이 아니라 출발점/)).toBeTruthy();
+    expect(document.querySelectorAll(".chip")).toHaveLength(0);
     fireEvent.change(input, { target: { value: "뒤통수 맞은 느낌" } });
     fireEvent.click(screen.getByRole("button", { name: "추가" }));
 
@@ -121,6 +126,7 @@ describe("quick check screens", () => {
   it("offers a synthesis of the user's own entries on the summary, with a fit rating", () => {
     openQuickCheck();
     tapUnpleasantActivated();
+    revealWords();
     fireEvent.click(screen.getByRole("button", { name: "긴장" }));
     fireEvent.click(screen.getByRole("button", { name: /여기까지/ }));
 
@@ -142,6 +148,7 @@ describe("quick check screens", () => {
   it("keeps the rewrite box out of the way until it is asked for", () => {
     openQuickCheck();
     tapUnpleasantActivated();
+    revealWords();
     fireEvent.click(screen.getByRole("button", { name: "긴장" }));
     fireEvent.click(screen.getByRole("button", { name: /여기까지/ }));
 
@@ -155,7 +162,7 @@ describe("quick check screens", () => {
 
   it("uses the same continuous pad for the deep pass, not a 1-5 scale", () => {
     render(<Home />);
-    fireEvent.click(screen.getByRole("button", { name: /조금 더 천천히 살펴보기/ }));
+    startDeep();
     fireEvent.click(screen.getByRole("button", { name: /조금 살펴보고 싶어요/ }));
     fireEvent.click(screen.getByRole("button", { name: "건너뛰기" })); // body
 
@@ -167,12 +174,13 @@ describe("quick check screens", () => {
 
   it("does not put the whole vocabulary on the deep emotion step either", () => {
     render(<Home />);
-    fireEvent.click(screen.getByRole("button", { name: /조금 더 천천히 살펴보기/ }));
+    startDeep();
     fireEvent.click(screen.getByRole("button", { name: /조금 살펴보고 싶어요/ }));
     fireEvent.click(screen.getByRole("button", { name: "건너뛰기" })); // body
     fireEvent.click(screen.getByRole("button", { name: /다음/ }));     // affect
     fireEvent.click(screen.getByRole("button", { name: "건너뛰기" })); // context
     fireEvent.click(screen.getByRole("button", { name: "건너뛰기" })); // meaning
+    revealWords();
 
     expect(screen.getByText(/가까운 단어가 있나요/)).toBeTruthy();
     const chips = document.querySelectorAll(".chip");
@@ -182,7 +190,7 @@ describe("quick check screens", () => {
 
   it("holds the step rationale back until the user has chosen something", () => {
     render(<Home />);
-    fireEvent.click(screen.getByRole("button", { name: /조금 더 천천히 살펴보기/ }));
+    startDeep();
     fireEvent.click(screen.getByRole("button", { name: /조금 살펴보고 싶어요/ }));
 
     const note = "몸의 느낌은 고정된 정답이 아니라 지금 순간의 snapshot입니다. 움직임, 자세, 호흡, 시간, 상황이 달라지면 다르게 느껴질 수 있어요.";
@@ -197,6 +205,7 @@ describe("quick check screens", () => {
     // a finished session that picked a response
     openQuickCheck();
     tapUnpleasantActivated();
+    revealWords();
     fireEvent.click(screen.getByRole("button", { name: "짜증" }));
     fireEvent.click(screen.getByRole("button", { name: /여기까지/ }));
     fireEvent.click(screen.getByRole("button", { name: /무엇이 필요할지 살펴보기/ }));
@@ -205,7 +214,7 @@ describe("quick check screens", () => {
     cleanup();
 
     render(<Home />);
-    fireEvent.click(screen.getByRole("button", { name: "지난 기록 보기" }));
+    fireEvent.click(screen.getByRole("button", { name: ko.landing.records }));
     expect(screen.getByText("이전에 적은 것들")).toBeTruthy();
     expect(screen.getByText(/누군가에게 표현할 준비하기/)).toBeTruthy();
 
@@ -233,7 +242,7 @@ describe("quick check screens", () => {
 
   it("opens the body step with a dozen sensations covering comfort as well as strain", () => {
     render(<Home />);
-    fireEvent.click(screen.getByRole("button", { name: /조금 더 천천히 살펴보기/ }));
+    startDeep();
     fireEvent.click(screen.getByRole("button", { name: /조금 살펴보고 싶어요/ }));
 
     expect(document.querySelectorAll(".chip").length).toBeLessThanOrEqual(12);
@@ -247,8 +256,9 @@ describe("quick check screens", () => {
 
   it("lets a step be undone without losing what was already entered", () => {
     render(<Home />);
-    fireEvent.click(screen.getByRole("button", { name: /조금 더 천천히 살펴보기/ }));
-    expect(screen.queryByRole("button", { name: /한 단계 뒤로/ })).toBeNull();
+    startDeep();
+    // reached from the quick look since 2026-10-30, so the gate can step back to its summary
+    expect(screen.getByRole("button", { name: /한 단계 뒤로/ })).toBeTruthy();
 
     fireEvent.click(screen.getByRole("button", { name: /조금 살펴보고 싶어요/ }));
     fireEvent.click(screen.getByRole("button", { name: "몸이 무거움" }));
@@ -263,6 +273,7 @@ describe("quick check screens", () => {
   it("offers directions to choose from at the end, and picks none of them", () => {
     openQuickCheck();
     tapUnpleasantActivated();
+    revealWords();
     fireEvent.click(screen.getByRole("button", { name: "긴장" }));
     fireEvent.click(screen.getByRole("button", { name: /여기까지/ }));
     fireEvent.click(screen.getByRole("button", { name: /무엇이 필요할지 살펴보기/ }));

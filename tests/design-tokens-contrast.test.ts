@@ -112,6 +112,13 @@ const EDGES: [string, string, string][] = [
   ["line-strong", "tone-mist-paper", "control borders on the mist step"],
   ["line-strong", "tone-mist-card", "control borders on mist cards"],
   ["accent", "tone-mist-card", "the affect dot on a mist pad"],
+  // the source bands on a record's lines (2026-10-30)
+  ["source-mine", "card", "the band of what the person picked or wrote"],
+  ["source-mine", "paper", "the legend band of what the person picked or wrote"],
+  ["source-app", "card", "the band of what the app worked out"],
+  ["source-app", "paper", "the legend band of what the app worked out"],
+  ["source-later", "card", "the band of what was added later"],
+  ["source-later", "paper", "the legend band of what was added later"],
 ];
 
 describe.each(Object.entries(themes))("%s theme", (_name, tokens) => {

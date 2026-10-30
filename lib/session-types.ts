@@ -1,5 +1,6 @@
 import { coachSetFor, currentWords } from "./coach";
 import { DEFAULT_LOCALE, type Locale } from "./i18n/locale";
+import { INPUT_LIMITS } from "./limits";
 
 export type EntryDecision = "observe" | "unsure" | "stop";
 // The user declining to pick a word is a normal answer, not missing data.
@@ -60,6 +61,13 @@ export type QuickCheck = {
   granularityResponse?: "unsure";
   contrastAnswer?: string;
   microLearningSeen?: boolean;
+  /**
+   * When the offered words were opened with 단어 보기 (2026-10-30). The words are
+   * not shown until asked for, so the person can first put it in their own
+   * words; absent means the list was never opened. Optional, so no stored
+   * record needs migrating.
+   */
+  wordsRevealed?: { at: string };
   endedAt?: string;
 };
 
@@ -81,6 +89,8 @@ export type DeepReflection = {
   };
   concerns: string[];
   emotionCandidates: EmotionSelection[];
+  /** As in QuickCheck: when 단어 보기 opened the word step's list. Absent when it never was. */
+  wordsRevealed?: { at: string };
   outcome?: {
     clarity: "much_clearer" | "clearer" | "same" | "more_complex" | "more_distressed";
     usefulness: "helpful" | "unsure" | "unhelpful";
@@ -164,6 +174,14 @@ export type EmotionSession = {
    * Korean (`localeOf`), so no stored record needs migrating.
    */
   locale?: Locale;
+  /**
+   * Names given to the moment afterwards, each with the day it was given
+   * (owner's decision 2026-10-30): written over, never written in place of. The
+   * words picked at the time (quickCheck.selected, deepReflection.emotionCandidates)
+   * stay as they were; a later name is added at the end and nothing removes or
+   * edits one. Optional, so no stored record needs migrating.
+   */
+  labelsLater?: { label: string; at: string }[];
 };
 
 export type SessionDepth = "quick" | "quick+deep" | "deep";
@@ -188,6 +206,8 @@ export type SessionAction =
   | { type: "SET_QUICK_CANDIDATE_RESPONSE"; response: QuickNonSelection }
   | { type: "ADD_QUICK_CUSTOM"; label: string }
   | { type: "SET_PERSONAL_MEANING"; label: string; meaning: string }
+  | { type: "REVEAL_QUICK_WORDS" }
+  | { type: "REVEAL_DEEP_WORDS" }
   | { type: "OPEN_GRANULARITY" }
   | { type: "CHOOSE_GRANULARITY"; concept: string }
   | { type: "SKIP_GRANULARITY" }
@@ -216,7 +236,8 @@ export type SessionAction =
   | { type: "FINISH_COACH" }
   | { type: "CLOSE_COACH" }
   | { type: "BACK" }
-  | { type: "STOP"; reason: "user" | "entry" };
+  | { type: "STOP"; reason: "user" | "entry" }
+  | { type: "ADD_LABEL_LATER"; id: string; label: string };
 
 export const createSession = (entry: SessionEntry = "quick", locale: Locale = DEFAULT_LOCALE): EmotionSession => ({
   id: crypto.randomUUID(),
@@ -276,7 +297,7 @@ const NOT_A_STEP = new Set<SessionAction["type"]>([
   "TOGGLE_QUICK_CANDIDATE", "SET_QUICK_CANDIDATE_RESPONSE", "ADD_QUICK_CUSTOM",
   "SET_SYNTHESIS_FEEDBACK", "SET_TALK_TO_SOMEONE", "CHOOSE_NEED", "TOGGLE_RESPONSE",
   "TOGGLE_COACH_WORD", "SET_COACH_OWN_WORD", "TOGGLE_APPRAISAL", "SET_OWN_APPRAISAL",
-  "SET_PERSONAL_MEANING", "RESUME", "BACK",
+  "SET_PERSONAL_MEANING", "REVEAL_QUICK_WORDS", "REVEAL_DEEP_WORDS", "ADD_LABEL_LATER", "RESUME", "BACK",
 ]);
 
 const reduce = (state: EmotionSession, action: SessionAction): EmotionSession => {
@@ -315,6 +336,9 @@ const reduce = (state: EmotionSession, action: SessionAction): EmotionSession =>
           item.label === action.label ? { ...item, personalMeaning: action.meaning.trim() || undefined } : item),
       });
     }
+    case "REVEAL_QUICK_WORDS":
+      // the first opening is the one kept: pressing again later does not move the time
+      return state.quickCheck?.wordsRevealed ? state : withQuick(state, { wordsRevealed: { at: new Date().toISOString() } });
     case "SET_QUICK_CANDIDATE_RESPONSE":
       // Stays on the candidate step so the user can still end here or go deeper.
       return withQuick(state, { candidateResponse: action.response, selected: [] });
@@ -354,6 +378,8 @@ const reduce = (state: EmotionSession, action: SessionAction): EmotionSession =>
       return { ...withDeep(state, { context: action.context }), stage: "meaning" };
     case "SET_CONCERNS":
       return { ...withDeep(state, { concerns: action.concerns }), stage: "emotion" };
+    case "REVEAL_DEEP_WORDS":
+      return state.deepReflection?.wordsRevealed ? state : withDeep(state, { wordsRevealed: { at: new Date().toISOString() } });
     case "SET_EMOTIONS":
       return { ...withDeep(state, { emotionCandidates: action.emotionCandidates }), stage: "outcome" };
     case "SET_OUTCOME": {
@@ -433,6 +459,12 @@ const reduce = (state: EmotionSession, action: SessionAction): EmotionSession =>
     }
     case "STOP":
       return { ...state, stage: "stopped", status: "stopped", stopReason: action.reason };
+    case "ADD_LABEL_LATER": {
+      // only onto the finished record it names, and only at the end: the moment's own layer is not touched
+      const label = action.label.trim().slice(0, INPUT_LIMITS.word);
+      if (state.id !== action.id || (state.status !== "completed" && state.status !== "stopped") || !label) return state;
+      return { ...state, labelsLater: [...(state.labelsLater ?? []), { label, at: new Date().toISOString() }] };
+    }
     default:
       return state;
   }

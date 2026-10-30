@@ -88,7 +88,8 @@ describe("starting again with an unfinished entry", () => {
   });
   afterEach(cleanup);
 
-  for (const start of [ko.landing.quick, ko.landing.deep]) {
+  // one way in since 2026-10-30: 지금 기록 (the quick look)
+  for (const start of [ko.landing.start]) {
     it(`asks first for ${start}, and cancelling keeps the entry to continue`, () => {
       render(<Home />);
       fireEvent.click(button(start));
@@ -111,21 +112,22 @@ describe("starting again with an unfinished entry", () => {
   it("starts straight away when there is no unfinished entry", () => {
     window.localStorage.clear();
     render(<Home />);
-    fireEvent.click(button(ko.landing.quick));
+    fireEvent.click(button(ko.landing.start));
     expect(screen.queryByText(ko.landing.draftConfirm.title)).toBeNull();
     expect(screen.getByRole("heading", { level: 1 }).textContent).toBe(ko.quickAffect.title);
   });
 });
 
-describe("the storage note on the first card", () => {
+describe("the storage note under the first card", () => {
   beforeEach(() => window.localStorage.clear());
   afterEach(cleanup);
 
   it("says the entries are not encrypted and links to seeing or deleting them, with no lock", () => {
     render(<Home />);
-    const card = document.querySelector(".hero-card")!;
+    // since 2026-10-30 the note sits just below the one-button first card, and the 암호화 안 됨 badge is gone with the other badges
+    const card = document.querySelector(".privacy-note")!;
+    expect(document.querySelector(".hero-card")!.contains(card)).toBe(false);
     expect(card.textContent).toContain("암호화되지 않습니다");
-    expect(card.textContent).toContain("암호화 안 됨");
     expect(card.textContent).not.toContain("🔒");
     fireEvent.click(button(ko.landing.storageManage));
     expect(screen.getByRole("heading", { level: 1 }).textContent).toBe(ko.records.title);

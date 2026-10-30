@@ -4,6 +4,7 @@ import Home from "../app/(ko)/page";
 import { INPUT_LIMITS } from "../lib/limits";
 import { persistSession, saveCompleted, saveDraft } from "../lib/storage";
 import { createSession } from "../lib/session-types";
+import { startQuick } from "./helpers/start";
 
 const stubGridSize = () => {
   Element.prototype.getBoundingClientRect = function () {
@@ -13,7 +14,7 @@ const stubGridSize = () => {
 
 const openQuickWords = () => {
   render(<Home />);
-  fireEvent.click(screen.getByRole("button", { name: /빠르게 살펴보기/ }));
+  startQuick();
   fireEvent(screen.getByRole("application", { name: /불쾌함과 유쾌함/ }), new MouseEvent("pointerdown", { bubbles: true, clientX: 40, clientY: 30 }));
   fireEvent.click(screen.getByRole("button", { name: /다음/ }));
 };

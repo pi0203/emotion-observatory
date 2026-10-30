@@ -48,17 +48,13 @@ export const ko = {
     listSeparator: ", ",
   },
   landing: {
-    title: "지금의 경험을\n조금 더 알아보기",
-    lede: "감정을 맞히는 검사가 아닙니다.\n빠르게 살펴보거나, 천천히 구별해볼 수 있습니다.",
-    badgeQuick: "빠르게 · 2단계 · 10~30초쯤",
-    badgeDeep: "천천히 · 6단계 · 3~5분쯤",
-    badgeLocal: "이 브라우저에만 저장 · 암호화 안 됨",
-    badgeBoundary: "비의료 자기관찰",
-    badgesLabel: "관찰 방식과 특징",
-    quick: "빠르게 살펴보기",
-    deep: "조금 더 천천히 살펴보기",
+    // the one-way-in title and subtitle (owner kept the proposed wording, 2026-10-30)
+    title: "이름 붙이기 전에, 지금 느껴지는 것을 그대로 남겨 둡니다.",
+    lede: "맞히는 검사가 아닙니다. 1분이면 됩니다.",
+    /** The one way in: the quick look. The slower look opens from inside it. */
+    start: "지금 기록",
     resume: "지난 기록 이어하기",
-    records: "지난 기록 보기",
+    records: "지난 기록",
     storageNote: "기록은 이 브라우저에만 저장되고 암호화되지 않습니다. 같은 기기와 브라우저를 쓰는 사람은 볼 수 있으니 공용 기기에서는 주의해 주세요. 브라우저 데이터를 지우면 함께 사라집니다.",
     storageManage: "기록 보기·지우기",
     draftConfirm: {
@@ -236,6 +232,8 @@ export const ko = {
     step: "빠른 확인",
     title: "지금은 어느 쪽에 가까운가요?",
     hint: "정확한 좌표를 고를 필요 없이, ‘이쯤’이라고 느껴지는 곳을 한 번 눌러보세요.",
+    /** As much an answer as a spot on the pad: the record ends here, finished (2026-10-30). */
+    unknown: "아직 모르겠다",
   },
   words: {
     more: "비슷한 표현 더 보기",
@@ -247,6 +245,10 @@ export const ko = {
     notListed: "여기 없는 말이 더 가깝다면",
     add: "추가",
     startingPoint: "이 목록은 완전한 목록이 아니라 출발점입니다. 내 말로 적는 것도 똑같이 정상적인 길이에요.",
+    // before 단어 보기, on both word steps (owner kept the proposed wording, 2026-10-30)
+    beforeTitle: "지금 느낌을 내 말로 적는다면?",
+    beforeHint: "적지 않아도 됩니다. 단어 목록은 원하면 볼 수 있습니다.",
+    reveal: "단어 보기",
   },
   quickCandidates: {
     basis: "방금 누른 곳을 기준으로",
@@ -477,7 +479,8 @@ export const ko = {
     eyebrow: "지난 기록",
     title: "이전에 적은 것들",
     empty: "아직 남긴 기록이 없습니다.",
-    noWords: "고른 표현 없음",
+    // a record with no name yet is not missing anything (owner kept the proposed wording, 2026-10-30)
+    namesNotYet: "이름은 아직",
     needLine: "필요했던 방향 · {label}",
     responsesLine: "해보기로 한 것 · {labels}",
     backToStart: "← 처음으로",
@@ -489,6 +492,8 @@ export const ko = {
     },
     /** `formatWhen`: the numbers come from Intl in the record's time zone. */
     when: "{year}. {month}. {day}  {hour}:{minute}",
+    /** `formatDay`: the day a later name was given. */
+    day: "{month}/{day}",
   },
   /** Export, import and delete-all, at the foot of the records screen (lib/record-transfer.ts). */
   recordTransfer: {
@@ -551,11 +556,41 @@ export const ko = {
     depth: "살펴본 정도",
     quickAffect: "빠른 확인",
     deepAffect: "자세히 본 뒤",
-    words: "가까웠던 말",
     personalMeaning: "‘{label}’은",
     context: "상황",
     need: "필요했던 방향",
     responses: "해보기로 한 것",
+    quickSpot: "빠른 확인에서 누른 곳",
+    deepSpot: "자세히 본 뒤 누른 곳",
+    spotValue: "패드 위의 한 점",
+    body: "몸",
+    concerns: "중요했던 것",
+    /** The label under each line: where it came from (2026-10-30). Never colour alone. */
+    source: {
+      pressed: "직접 누름",
+      wrote: "직접 씀",
+      skipped: "직접 건너뜀",
+      picked: "목록에서 고름",
+      pickedAfterReveal: "단어 보기 뒤 고름",
+      sentence: "좌표를 앱이 말로 바꿈",
+      depth: "앱이 셈",
+    },
+    addedOn: "{date} 덧붙임",
+    /** The names layer: the words of the moment first, then each name given later, by day (2026-10-30). */
+    names: {
+      title: "이름",
+      add: "+ 오늘 이름 붙이기",
+      fieldLabel: "오늘 붙이는 이름",
+      save: "붙이기",
+      cancel: "취소",
+      hint: "지금 붙인 이름은 오늘 날짜와 함께 아래에 더해집니다. 그때 고른 말은 그대로 남습니다.",
+    },
+    legend: {
+      title: "줄마다 어디서 온 것인지",
+      mine: "직접 고르거나 적은 것",
+      app: "앱이 계산하거나 바꾼 것",
+      later: "나중에 덧붙인 것",
+    },
     followUpTitle: "그 뒤에는 어땠나요",
     triedQuestion: "그때 골랐던 것을 실제로 해봤나요?",
     helpedQuestion: "조금이라도 도움이 됐나요?",

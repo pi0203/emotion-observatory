@@ -2,6 +2,7 @@ import { afterEach, beforeEach, describe, expect, it } from "vitest";
 import { cleanup, fireEvent, render, screen } from "@testing-library/react";
 import { readFileSync } from "node:fs";
 import Home from "../app/(ko)/page";
+import { revealWords, startQuick } from "./helpers/start";
 
 const stubGridSize = () => {
   Element.prototype.getBoundingClientRect = function () {
@@ -11,13 +12,14 @@ const stubGridSize = () => {
 
 const toQuickSummary = (unsure = false) => {
   render(<Home />);
-  fireEvent.click(screen.getByRole("button", { name: /빠르게 살펴보기/ }));
+  startQuick();
   if (unsure) {
     // 잘 모르겠음 on the pad finishes the quick look straight away
-    fireEvent.click(screen.getByRole("button", { name: "잘 모르겠음" }));
+    fireEvent.click(screen.getByRole("button", { name: "아직 모르겠다" }));
   } else {
     fireEvent(screen.getByRole("application", { name: /불쾌함과 유쾌함/ }), new MouseEvent("pointerdown", { bubbles: true, clientX: 40, clientY: 30 }));
     fireEvent.click(screen.getByRole("button", { name: /다음/ }));
+    revealWords();
     fireEvent.click(screen.getByRole("button", { name: "짜증" }));
     fireEvent.click(screen.getByRole("button", { name: /^여기까지$/ }));
   }

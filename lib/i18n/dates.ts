@@ -24,6 +24,14 @@ const formatterFor = (locale: Locale) => {
  * When a record was made. Intl supplies the numbers; the order and punctuation
  * come from the message `records.when`, so Korean reads exactly as before.
  */
+/** The day alone, as a later name is dated: 11/01. */
+export const formatDay = (iso: string, locale: Locale = DEFAULT_LOCALE) => {
+  const date = new Date(iso);
+  if (Number.isNaN(date.getTime())) return "";
+  const parts = Object.fromEntries(formatterFor(locale).formatToParts(date).map((part) => [part.type, part.value]));
+  return getT(locale)("records.day", { month: parts.month, day: parts.day });
+};
+
 export const formatWhen = (iso: string, locale: Locale = DEFAULT_LOCALE) => {
   const date = new Date(iso);
   if (Number.isNaN(date.getTime())) return "";

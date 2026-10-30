@@ -9,6 +9,7 @@ import {
 import type { EmotionSession } from "../lib/session-types";
 import { getStorageKeys } from "../lib/storage";
 import { getStorageAdapter } from "../lib/storage-adapter";
+import { ko } from "../lib/i18n/messages.ko";
 
 const record = (id: string, extra: Partial<EmotionSession> = {}): EmotionSession => ({
   id,
@@ -171,7 +172,7 @@ describe("records screen", () => {
 
   const openRecords = () => {
     render(<Home />);
-    fireEvent.click(screen.getByRole("button", { name: "지난 기록 보기" }));
+    fireEvent.click(screen.getByRole("button", { name: ko.landing.records }));
   };
   const pick = (contents: string, size?: number) => {
     const file = new File([contents], "records.json", { type: "application/json" });

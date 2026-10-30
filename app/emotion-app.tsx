@@ -10,7 +10,7 @@ type DeepOutcome = NonNullable<DeepReflection["outcome"]>;
 import { getStorageAdapter } from "../lib/storage-adapter";
 import { applyImport, buildExport, downloadExport, downloadJson, exportFileName, MAX_IMPORT_BYTES, parseImport, planImport, readFileText, type ImportError, type ImportPlan } from "../lib/record-transfer";
 import { isLockedText, lockedFileName, lockExport, MIN_PASSPHRASE_LENGTH, unlockExport } from "../lib/record-crypto";
-import { formatWhen, helpedOptions, summarise, triedOptions } from "../lib/records";
+import { concernLines, formatDay, formatWhen, helpedOptions, summarise, triedOptions, wordLines, type SourceKind, type WordHow } from "../lib/records";
 import { migrateLegacyStorage } from "../lib/migrations";
 import { expandCandidates, filterQuickCandidates } from "../lib/quick-check";
 import { activationLabel, hasAffectPoint, quickActivation, quickValence, scaleLabel } from "../lib/affect-labels";
@@ -71,6 +71,14 @@ function App() {
     setOpenRecord(next);
     setRecords(loadCompleted());
   };
+  // a name given later is added through the reducer, which only ever appends it, and saved like the follow-up
+  const addLabelLater = (session: EmotionSession, label: string) => {
+    const next = sessionReducer(session, { type: "ADD_LABEL_LATER", id: session.id, label });
+    if (next === session) return;
+    saveCompleted(next);
+    setOpenRecord(next);
+    setRecords(loadCompleted());
+  };
 
   useEffect(() => {
     migrateLegacyStorage();
@@ -125,15 +133,16 @@ function App() {
     // the steps keep their minimal top bar so nothing pushes the task down (docs/DESIGN_ALIGNMENT.md §5)
     return <div className="app-shell site-frame">
       <a className="skip-link" href="#main">{t("shell.skipToContent")}</a>
-      <SiteHeader />
+      <SiteHeader onHelp={() => setHelpOpen(true)} />
       <main id="main" tabIndex={-1} className="site-main">
       {openRecord
-        ? <RecordDetail session={openRecord} onFollowUp={(followUp) => saveFollowUp(openRecord, followUp)} onBack={() => setOpenRecord(null)} />
+        ? <RecordDetail session={openRecord} onFollowUp={(followUp) => saveFollowUp(openRecord, followUp)} onAddLabel={(label) => addLabelLater(openRecord, label)} onBack={() => setOpenRecord(null)} />
         : records
           ? <RecordsScreen records={records} onOpen={setOpenRecord} onBack={() => setRecords(null)} onChanged={() => { setRecords(loadCompleted()); setDraft(loadDraft()); }} />
-          : <LandingScreen onQuick={() => askToStart("quick")} onDeep={() => askToStart("deep")} draft={draft} onResume={resume} onRecords={showRecords} pendingStart={pendingStart} onDiscardAndStart={discardAndStart} onCancelStart={() => setPendingStart(null)} />}
+          : <LandingScreen onStart={() => askToStart("quick")} draft={draft} onResume={resume} onRecords={showRecords} pendingStart={pendingStart} onDiscardAndStart={discardAndStart} onCancelStart={() => setPendingStart(null)} />}
       </main>
       <SiteFooter />
+      {helpOpen && <HelpDialog onClose={() => setHelpOpen(false)} />}
     </div>;
   }
 
@@ -168,7 +177,7 @@ function App() {
       )}
 
       {session.stage === "quick-affect" && <QuickAffectScreen onNext={(affect) => { dispatch({ type: "SET_QUICK_AFFECT", affect }); dispatch({ type: "SET_QUICK_CANDIDATES", candidatePool: filterQuickCandidates({ x: affect.valence ?? 0.5, y: affect.activation ?? 0.5 }, undefined, t.locale) }); }} onUnknown={() => dispatch({ type: "SET_QUICK_UNKNOWN" })} />}
-      {session.stage === "quick-candidates" && <QuickCandidatesScreen pool={session.quickCheck?.candidatePool ?? []} selected={session.quickCheck?.selected ?? []} response={session.quickCheck?.candidateResponse} onToggle={(label) => dispatch({ type: "TOGGLE_QUICK_CANDIDATE", label })} onRespond={(response) => dispatch({ type: "SET_QUICK_CANDIDATE_RESPONSE", response })} onAddCustom={(label) => dispatch({ type: "ADD_QUICK_CUSTOM", label })} onMeaning={(label, meaning) => dispatch({ type: "SET_PERSONAL_MEANING", label, meaning })} onFinish={() => dispatch({ type: "COMPLETE_QUICK" })} onCoach={() => dispatch({ type: "OPEN_GRANULARITY" })} onDeep={() => { dispatch({ type: "COMPLETE_QUICK" }); dispatch({ type: "ENTER_DEEP" }); }} />}
+      {session.stage === "quick-candidates" && <QuickCandidatesScreen pool={session.quickCheck?.candidatePool ?? []} selected={session.quickCheck?.selected ?? []} response={session.quickCheck?.candidateResponse} revealed={Boolean(session.quickCheck?.wordsRevealed)} onReveal={() => dispatch({ type: "REVEAL_QUICK_WORDS" })} onToggle={(label) => dispatch({ type: "TOGGLE_QUICK_CANDIDATE", label })} onRespond={(response) => dispatch({ type: "SET_QUICK_CANDIDATE_RESPONSE", response })} onAddCustom={(label) => dispatch({ type: "ADD_QUICK_CUSTOM", label })} onMeaning={(label, meaning) => dispatch({ type: "SET_PERSONAL_MEANING", label, meaning })} onFinish={() => dispatch({ type: "COMPLETE_QUICK" })} onCoach={() => dispatch({ type: "OPEN_GRANULARITY" })} onDeep={() => { dispatch({ type: "COMPLETE_QUICK" }); dispatch({ type: "ENTER_DEEP" }); }} />}
       {session.stage === "coach-appraisal" && <CoachAppraisalScreen session={session} onToggle={(id) => dispatch({ type: "TOGGLE_APPRAISAL", id })} onOwn={(label) => dispatch({ type: "SET_OWN_APPRAISAL", label })} onNext={() => dispatch({ type: "GO_TO_COACH_WORDS" })} onLeave={() => dispatch({ type: "CLOSE_COACH" })} />}
       {session.stage === "coach-words" && <CoachWordsScreen session={session} onToggle={(label) => dispatch({ type: "TOGGLE_COACH_WORD", label })} onOwnWord={(label) => dispatch({ type: "SET_COACH_OWN_WORD", label })} onNext={() => dispatch({ type: "FINISH_COACH" })} onLeave={() => dispatch({ type: "CLOSE_COACH" })} />}
       {session.stage === "coach-note" && <CoachNoteScreen session={session} onDone={() => dispatch({ type: "CLOSE_COACH" })} />}
@@ -181,7 +190,7 @@ function App() {
       {session.stage === "affect" && <AffectScreen initial={session.deepReflection?.affect ?? quickAffectSuggestion(session)} fromQuick={!session.deepReflection?.affect && Boolean(quickAffectSuggestion(session))} onNext={(affect) => dispatch({ type: "SET_AFFECT", affect })} />}
       {session.stage === "context" && <ContextScreen initial={session.deepReflection?.context} onNext={(context) => dispatch({ type: "SET_CONTEXT", context })} />}
       {session.stage === "meaning" && <MeaningScreen initial={session.deepReflection?.concerns ?? []} onNext={(selected) => dispatch({ type: "SET_CONCERNS", concerns: selected })} />}
-      {session.stage === "emotion" && <EmotionScreen initial={session.deepReflection?.emotionCandidates ?? []} affect={session.deepReflection?.affect} onNext={(selected) => dispatch({ type: "SET_EMOTIONS", emotionCandidates: selected })} />}
+      {session.stage === "emotion" && <EmotionScreen initial={session.deepReflection?.emotionCandidates ?? []} affect={session.deepReflection?.affect} revealed={Boolean(session.deepReflection?.wordsRevealed)} onReveal={() => dispatch({ type: "REVEAL_DEEP_WORDS" })} onNext={(selected) => dispatch({ type: "SET_EMOTIONS", emotionCandidates: selected })} />}
       {session.stage === "outcome" && <OutcomeScreen onNext={(outcome) => dispatch({ type: "SET_OUTCOME", outcome })} />}
       {session.stage === "summary" && <SummaryScreen session={session} onFeedback={(feedback) => dispatch({ type: "SET_SYNTHESIS_FEEDBACK", ...feedback })} onTalk={(answer) => dispatch({ type: "SET_TALK_TO_SOMEONE", answer })} onSupport={() => dispatch({ type: "OPEN_SUPPORT" })} />}
       {session.stage === "support" && <NeedScreen session={session} onNeed={(id) => dispatch({ type: "CHOOSE_NEED", id })} onResponse={(id) => dispatch({ type: "TOGGLE_RESPONSE", id })} onDeep={() => dispatch({ type: "ENTER_DEEP" })} onCoach={() => dispatch({ type: "OPEN_COACH" })} onBack={() => dispatch({ type: "BACK" })} />}
@@ -202,8 +211,12 @@ const HOMEPAGE_NAV = [
   { href: `${HOMEPAGE}/map/`, label: "Map" },
 ];
 
-/** The homepage's header: its wordmark and menu, as on eunchanjoe.vercel.app. */
-function SiteHeader() {
+/**
+ * The homepage's header: its wordmark and menu, as on eunchanjoe.vercel.app,
+ * and the same help button the steps carry, so the helplines are one tap away
+ * before anything is started too (SAFETY.md).
+ */
+function SiteHeader({ onHelp }: { onHelp: () => void }) {
   const t = useT();
   return <header className="site-header">
     <a className="site-logo" href={`${HOMEPAGE}/`}>Eunchan Joe</a>
@@ -211,6 +224,7 @@ function SiteHeader() {
       <ul>{HOMEPAGE_NAV.map((item) => <li key={item.href}><a href={item.href}>{item.label}</a></li>)}</ul>
     </nav>
     {/* the other language, only where it is open: development always, production once the owner has reviewed it */}
+    <button className="text-button help-button" aria-label={t("common.helpLink")} onClick={onHelp}><span className="label-wide">{t("common.helpLink")}</span><span className="label-narrow" aria-hidden="true">{t("common.helpShort")}</span></button>
     {englishAvailable() && <a className="lang-switch" href={t.locale === "ko" ? "/en" : "/"} lang={t.locale === "ko" ? "en" : "ko"} hrefLang={t.locale === "ko" ? "en" : "ko"}>{t("shell.otherLanguage")}</a>}
   </header>;
 }
@@ -242,24 +256,24 @@ function EntryScreen({ draft, onStart, onUnsure, onStop, onResume }: { draft: Em
   </Screen>;
 }
 
-function LandingScreen({ onQuick, onDeep, draft, onResume, onRecords, pendingStart, onDiscardAndStart, onCancelStart }: { onQuick: () => void; onDeep: () => void; draft: EmotionSession | null; onResume: () => void; onRecords: () => void; pendingStart: "quick" | "deep" | null; onDiscardAndStart: () => void; onCancelStart: () => void }) {
+/**
+ * One way in (owner's decision 2026-10-30, docs/EVIDENCE_CHAIN.md §7): the first
+ * screen holds a title, a subtitle, 지금 기록 and a small link to past entries.
+ * 지금 기록 is the quick look; the slower look is reached from inside it, at the
+ * end of its second step and on its summary. Everything else sits below the fold.
+ */
+function LandingScreen({ onStart, draft, onResume, onRecords, pendingStart, onDiscardAndStart, onCancelStart }: { onStart: () => void; draft: EmotionSession | null; onResume: () => void; onRecords: () => void; pendingStart: "quick" | "deep" | null; onDiscardAndStart: () => void; onCancelStart: () => void }) {
   const t = useT();
   const confirmTitle = useRef<HTMLParagraphElement>(null);
   // the question takes the focus, so it is read before the choice is made
   useEffect(() => { if (pendingStart) confirmTitle.current?.focus(); }, [pendingStart]);
   return <Screen className="entry-screen">
-    <section className="card hero-card">
+    <section className="card hero-card single-entry">
       {/* a drawing of the pad used in the steps: four quiet colours and one dot (decoration only) */}
       <div className="hero-pad" aria-hidden="true"><span className="hero-dot" /></div>
       <p className="eyebrow">{t("common.appName")}</p>
       <h1>{renderRich(t("landing.title"))}</h1>
       <p className="lede">{renderRich(t("landing.lede"))}</p>
-      <div className="badges" aria-label={t("landing.badgesLabel")}>
-        <span className="badge">⏱️ {t("landing.badgeQuick")}</span>
-        <span className="badge">🌱 {t("landing.badgeDeep")}</span>
-        <span className="badge">💻 {t("landing.badgeLocal")}</span>
-        <span className="badge">🩺 {t("landing.badgeBoundary")}</span>
-      </div>
       {pendingStart
         ? <div className="draft-confirm" role="group" aria-labelledby="draft-confirm-title">
             <p className="synthesis-question" id="draft-confirm-title" ref={confirmTitle} tabIndex={-1}>{t("landing.draftConfirm.title")}</p>
@@ -271,16 +285,16 @@ function LandingScreen({ onQuick, onDeep, draft, onResume, onRecords, pendingSta
             </div>
           </div>
         : <div className="stack-actions">
-            <button className="primary-button" onClick={onQuick}>{t("landing.quick")} <span>→</span></button>
-            <button className="secondary-button" onClick={onDeep}>{t("landing.deep")}</button>
-            {draft && <button className="secondary-button" onClick={onResume}>{t("landing.resume")}</button>}
-            <button className="secondary-button" onClick={onRecords}>{t("landing.records")}</button>
+            <button className="primary-button start-button" onClick={onStart}>{t("landing.start")} <span>→</span></button>
+            <button className="inline-link records-link" onClick={onRecords}>{t("landing.records")}</button>
           </div>}
-      <div className="privacy-note">
-        <span aria-hidden="true">💻</span>
-        <span>{t("landing.storageNote")} <button className="inline-link" onClick={onRecords}>{t("landing.storageManage")}</button></span>
-      </div>
     </section>
+
+    {draft && !pendingStart && <div className="resume-card"><div><strong>{t("entry.resumeTitle")}</strong><span>{t("entry.resumeBody")}</span></div><button className="small-button" onClick={onResume}>{t("landing.resume")}</button></div>}
+    <div className="privacy-note">
+      <span aria-hidden="true">💻</span>
+      <span>{t("landing.storageNote")} <button className="inline-link" onClick={onRecords}>{t("landing.storageManage")}</button></span>
+    </div>
 
     <div className="why-section">
       <WhyThis />
@@ -460,20 +474,30 @@ function WhyThis() {
   </details>;
 }
 
+/**
+ * 아직 모르겠다 carries the same weight as 다음 (owner's decision 2026-10-30): an
+ * outlined button of the same size, and a record ended here is a finished one.
+ */
 function QuickAffectScreen({ onNext, onUnknown }: { onNext: (affect: AffectPoint) => void; onUnknown: () => void }) {
   const t = useT();
   const [point, setPoint] = useState<{ valence: number; activation: number } | null>(null);
   return <Screen>
     <StepHeading step={t("quickAffect.step")} title={t("quickAffect.title")} hint={t("quickAffect.hint")} basis={t("quickAffect.basis")} />
     <AffectPad onChange={setPoint} />
-    <div className="quick-actions">
-      <button className="quiet-button" onClick={onUnknown}>{t("common.unsure")}</button>
+    <div className="quick-actions even-actions">
+      <button className="secondary-button" onClick={onUnknown}>{t("quickAffect.unknown")}</button>
       <button className="primary-button" disabled={!point} onClick={() => point && onNext(point)}>{t("common.next")} <span>→</span></button>
     </div>
   </Screen>;
 }
 
-function TieredWords({ pool, selectedLabels, ownWords, onToggle, onAddCustom, meanings, onMeaning }: { pool: EmotionSelection[]; selectedLabels: string[]; ownWords: string[]; onToggle: (label: string) => void; onAddCustom: (label: string) => void; meanings?: Record<string, string>; onMeaning?: (label: string, meaning: string) => void }) {
+/**
+ * Words are thought of before they are seen (owner's decision 2026-10-30). Until
+ * 단어 보기 is pressed (`revealed`), no offered word is drawn: only the person's
+ * own-words field and the button. After it, the five nearest words and the
+ * similar ones behind 비슷한 표현 더 보기, as before.
+ */
+function TieredWords({ pool, selectedLabels, ownWords, onToggle, onAddCustom, meanings, onMeaning, revealed, onReveal }: { pool: EmotionSelection[]; selectedLabels: string[]; ownWords: string[]; onToggle: (label: string) => void; onAddCustom: (label: string) => void; meanings?: Record<string, string>; onMeaning?: (label: string, meaning: string) => void; revealed: boolean; onReveal: () => void }) {
   const t = useT();
   const [tier, setTier] = useState<1 | 2>(1);
   const [custom, setCustom] = useState("");
@@ -482,6 +506,25 @@ function TieredWords({ pool, selectedLabels, ownWords, onToggle, onAddCustom, me
   const expanded = expandCandidates([...pool, ...selectedAsItems], undefined, t.locale).filter((item) => !poolLabels.includes(item.label));
   const chip = (label: string) => <button className={`chip ${selectedLabels.includes(label) ? "selected" : ""}`} aria-pressed={selectedLabels.includes(label)} key={label} onClick={() => onToggle(label)}><Mark on={selectedLabels.includes(label)} />{label}</button>;
   const addCustom = () => { onAddCustom(custom); setCustom(""); };
+
+  const mine = ownWords.length > 0 && <>
+    <p className="tier-label">{t("words.mine")}</p>
+    <div className="chip-grid">{ownWords.map((label) => chip(label))}</div>
+    {onMeaning && ownWords.map((label) => <div className="own-meaning" key={label}>
+      <label className="field-label" htmlFor={`meaning-${label}`}>{t("words.meaningLabel", { label })} <em>{t("words.optional")}</em></label>
+      <input id={`meaning-${label}`} className="text-input" maxLength={INPUT_LIMITS.line} defaultValue={meanings?.[label] ?? ""} onChange={(event) => onMeaning(label, event.target.value)} placeholder={t("words.meaningPlaceholder")} />
+    </div>)}
+  </>;
+  const ownRow = <div className="own-word-row">
+    <input className="text-input" maxLength={INPUT_LIMITS.word} value={custom} onChange={(event) => setCustom(event.target.value)} onKeyDown={(event) => { if (event.key === "Enter") addCustom(); }} placeholder={t("common.ownWordsPlaceholder")} aria-label={t("common.ownWordsPlaceholder")} />
+    <button className="small-button" disabled={!custom.trim()} onClick={addCustom}>{t("words.add")}</button>
+  </div>;
+
+  if (!revealed) return <>
+    <div className="own-word-block own-word-first">{ownRow}</div>
+    {mine}
+    <button className="reveal-button" onClick={onReveal}>{t("words.reveal")}</button>
+  </>;
 
   return <>
     <div className="chip-grid">{pool.map((item) => chip(item.label))}</div>
@@ -492,33 +535,23 @@ function TieredWords({ pool, selectedLabels, ownWords, onToggle, onAddCustom, me
       <div className="chip-grid">{expanded.map((item) => chip(item.label))}</div>
     </>}
 
-    {ownWords.length > 0 && <>
-      <p className="tier-label">{t("words.mine")}</p>
-      <div className="chip-grid">{ownWords.map((label) => chip(label))}</div>
-      {onMeaning && ownWords.map((label) => <div className="own-meaning" key={label}>
-        <label className="field-label" htmlFor={`meaning-${label}`}>{t("words.meaningLabel", { label })} <em>{t("words.optional")}</em></label>
-        <input id={`meaning-${label}`} className="text-input" maxLength={INPUT_LIMITS.line} defaultValue={meanings?.[label] ?? ""} onChange={(event) => onMeaning(label, event.target.value)} placeholder={t("words.meaningPlaceholder")} />
-      </div>)}
-    </>}
+    {mine}
 
     <div className="own-word-block">
       <p className="tier-label">{t("words.notListed")}</p>
-      <div className="own-word-row">
-        <input className="text-input" maxLength={INPUT_LIMITS.word} value={custom} onChange={(event) => setCustom(event.target.value)} onKeyDown={(event) => { if (event.key === "Enter") addCustom(); }} placeholder={t("common.ownWordsPlaceholder")} aria-label={t("common.ownWordsPlaceholder")} />
-        <button className="small-button" disabled={!custom.trim()} onClick={addCustom}>{t("words.add")}</button>
-      </div>
+      {ownRow}
       <p className="small-note">{t("words.startingPoint")}</p>
     </div>
   </>;
 }
 
-function QuickCandidatesScreen({ pool, selected, response, onToggle, onRespond, onAddCustom, onMeaning, onFinish, onCoach, onDeep }: { pool: EmotionSelection[]; selected: EmotionSelection[]; response?: QuickNonSelection; onToggle: (label: string) => void; onRespond: (response: QuickNonSelection) => void; onAddCustom: (label: string) => void; onMeaning: (label: string, meaning: string) => void; onFinish: () => void; onCoach: () => void; onDeep: () => void }) {
+function QuickCandidatesScreen({ pool, selected, response, revealed, onReveal, onToggle, onRespond, onAddCustom, onMeaning, onFinish, onCoach, onDeep }: { pool: EmotionSelection[]; selected: EmotionSelection[]; response?: QuickNonSelection; revealed: boolean; onReveal: () => void; onToggle: (label: string) => void; onRespond: (response: QuickNonSelection) => void; onAddCustom: (label: string) => void; onMeaning: (label: string, meaning: string) => void; onFinish: () => void; onCoach: () => void; onDeep: () => void }) {
   const t = useT();
   const canCoach = getCoachSets(t.locale).some((set) => selected.some((item) => set.words.includes(item.label)));
   return <Screen>
-    <StepHeading step={t("quickCandidates.step")} title={t("quickCandidates.title")} hint={t("quickCandidates.hint")} basis={t("quickCandidates.basis")} />
-    <div className="provisional-note">{t("common.provisionalNote")}</div>
-    <TieredWords pool={pool} selectedLabels={selected.map((item) => item.label)} ownWords={selected.filter((item) => item.source === "custom").map((item) => item.label)} onToggle={onToggle} onAddCustom={onAddCustom} meanings={Object.fromEntries(selected.filter((item) => item.personalMeaning).map((item) => [item.label, item.personalMeaning!]))} onMeaning={onMeaning} />
+    <StepHeading step={t("quickCandidates.step")} title={revealed ? t("quickCandidates.title") : t("words.beforeTitle")} hint={revealed ? t("quickCandidates.hint") : t("words.beforeHint")} basis={t("quickCandidates.basis")} />
+    {revealed && <div className="provisional-note">{t("common.provisionalNote")}</div>}
+    <TieredWords revealed={revealed} onReveal={onReveal} pool={pool} selectedLabels={selected.map((item) => item.label)} ownWords={selected.filter((item) => item.source === "custom").map((item) => item.label)} onToggle={onToggle} onAddCustom={onAddCustom} meanings={Object.fromEntries(selected.filter((item) => item.personalMeaning).map((item) => [item.label, item.personalMeaning!]))} onMeaning={onMeaning} />
 
     <div className="quick-option-row">{(["none-close", "unsure"] as const).map((value) => <button className={`secondary-button ${response === value ? "selected" : ""}`} aria-pressed={response === value} key={value} onClick={() => onRespond(value)}><Mark on={response === value} />{t(`quickCandidates.decline.${value}`)}</button>)}</div>
     {response && <p className="small-note">{t(`quickCandidates.declined.${response}`)}</p>}
@@ -667,9 +700,10 @@ function CoachNoteScreen({ session, onDone }: { session: EmotionSession; onDone:
 function QuickSummaryScreen({ session, onDeep, onFeedback, onSupport }: { session: EmotionSession; onDeep: () => void; onFeedback: (feedback: { fit?: SynthesisFit; correction?: string }) => void; onSupport: () => void }) {
   const t = useT();
   const quick = session.quickCheck;
-  const affect = quick?.affect?.unknown ? t("common.unsure") : `${quickValence(quick?.affect?.valence, t.locale)} · ${quickActivation(quick?.affect?.activation, t.locale)}`;
+  const affect = quickAffectValue(t, quick?.affect);
   const words = (quick?.selected ?? []).map((item) => item.label).join(" · ") || quickResponseLabel(t, quick?.candidateResponse) || t("common.notChosen");
-  const rows: [string, string][] = [[t("quickSummary.affect"), affect], [t("quickSummary.words"), words]];
+  // ended at 아직 모르겠다, the words were never asked for, so no row says none were chosen
+  const rows: [string, string][] = quick?.affect?.unknown ? [[t("quickSummary.affect"), affect]] : [[t("quickSummary.affect"), affect], [t("quickSummary.words"), words]];
   if (quick?.granularityResponse === "unsure") rows.push([t("quickSummary.granularity"), t("common.unsure")]);
   if (quick?.contrastAnswer) rows.push([t("quickSummary.contrast"), quick.contrastAnswer]);
   const play = useFirstReveal(`${session.id}:quick-summary`);
@@ -757,7 +791,7 @@ function MeaningScreen({ initial, onNext }: { initial: string[]; onNext: (select
   return <Screen><StepHeading step={t("meaning.step")} title={t("meaning.title")} hint={t("meaning.hint")} basis={t("meaning.basis")} /><div className="choice-list compact">{concerns.map((item) => <button className={selected.includes(item) ? "selected" : ""} aria-pressed={selected.includes(item)} key={item} onClick={() => toggle(item)}><Mark on={selected.includes(item)} />{item}</button>)}</div><input className="text-input" maxLength={INPUT_LIMITS.word} value={custom} onChange={(event) => setCustom(event.target.value)} placeholder={t("common.ownWordsPlaceholder")} /><Navigation note={stepNote(stepNotes, "meaning", selected.length > 0 || custom.trim().length > 0)} onNext={() => onNext([...selected, ...(custom ? [custom] : [])])} /></Screen>;
 }
 
-function EmotionScreen({ initial, affect, onNext }: { initial: EmotionSelection[]; affect?: AffectPoint; onNext: (selected: EmotionSelection[]) => void }) {
+function EmotionScreen({ initial, affect, revealed, onReveal, onNext }: { initial: EmotionSelection[]; affect?: AffectPoint; revealed: boolean; onReveal: () => void; onNext: (selected: EmotionSelection[]) => void }) {
   const t = useT();
   const { stepNotes } = useContent();
   const [selected, setSelected] = useState(initial.map((item) => item.label));
@@ -772,9 +806,9 @@ function EmotionScreen({ initial, affect, onNext }: { initial: EmotionSelection[
   // the deep affect already narrowed the space once; this reuses it rather than listing everything
   const pool = filterQuickCandidates({ x: affect?.valence ?? 0.5, y: affect?.activation ?? 0.5 }, undefined, t.locale);
   return <Screen>
-    <StepHeading step={t("emotion.step")} title={t("emotion.title")} hint={t("emotion.hint")} basis={t("emotion.basis")} />
-    <div className="provisional-note">{t("common.provisionalNote")}</div>
-    <TieredWords pool={pool} selectedLabels={selected} ownWords={ownWords} onToggle={toggle} onAddCustom={addOwnWord} />
+    <StepHeading step={t("emotion.step")} title={revealed ? t("emotion.title") : t("words.beforeTitle")} hint={revealed ? t("emotion.hint") : t("words.beforeHint")} basis={t("emotion.basis")} />
+    {revealed && <div className="provisional-note">{t("common.provisionalNote")}</div>}
+    <TieredWords revealed={revealed} onReveal={onReveal} pool={pool} selectedLabels={selected} ownWords={ownWords} onToggle={toggle} onAddCustom={addOwnWord} />
     <div className="quick-option-row">{[t("emotion.escapes.several"), t("emotion.escapes.unsure")].map((label) => <button className={`secondary-button ${selected.includes(label) ? "selected" : ""}`} aria-pressed={selected.includes(label)} key={label} onClick={() => toggle(label)}><Mark on={selected.includes(label)} />{label}</button>)}</div>
     <Navigation note={stepNote(stepNotes, "emotion", selected.length > 0)} onNext={() => onNext(selected.map((label) => ({ label, source: ownWords.includes(label) ? "custom" as const : "suggested" as const })))} />
   </Screen>;
@@ -795,7 +829,7 @@ function SummaryScreen({ session, onFeedback, onTalk, onSupport }: { session: Em
   if (deep?.outcome?.clarity === "more_distressed") return <WorsenedScreen />;
   const quickAffect = session.quickCheck?.affect;
   const rows: [string, string?][] = [];
-  if (quickAffect) rows.push([t("summary.quickAffect"), quickAffect.unknown ? t("common.unsure") : `${quickValence(quickAffect.valence, t.locale)} · ${quickActivation(quickAffect.activation, t.locale)}`]);
+  if (quickAffect) rows.push([t("summary.quickAffect"), quickAffectValue(t, quickAffect)]);
   // a skipped step stays in the list, quietly, as 비워 둠; 잘 모르겠음 is an answer and keeps its own row text
   rows.push(
     [t("summary.body"), (deep?.body ?? []).map((item) => item.label).join(" · ") || undefined],
@@ -968,7 +1002,12 @@ function RecordsScreen({ records, onOpen, onBack, onChanged }: { records: Emotio
           const item = summarise(session, t.locale);
           return <button className="record-row" key={item.id} onClick={() => onOpen(session)}>
             <span className="record-when">{formatWhen(item.at, t.locale)}<em>{item.depthLabel}</em></span>
-            <strong>{item.words.join(" · ") || t("records.noWords")}</strong>
+            {(() => {
+              // the moment's own words, else names given later, else the answer given then; a record with none is not lacking
+              const name = item.words.join(" · ") || (session.labelsLater ?? []).map((entry) => entry.label).join(" · ")
+                || (session.quickCheck?.affect?.unknown && !session.deepReflection ? t("quickAffect.unknown") : session.deepReflection?.emotionCandidates?.length ? "" : quickResponseLabel(t, session.quickCheck?.candidateResponse));
+              return name ? <strong>{name}</strong> : <strong className="names-not-yet">{t("records.namesNotYet")}</strong>;
+            })()}
             {item.needLabel && <span className="record-need">{t("records.needLine", { label: item.needLabel })}</span>}
             {item.responseLabels.length > 0 && <span className="record-need">{t("records.responsesLine", { labels: item.responseLabels.join(" / ") })}</span>}
           </button>;
@@ -1160,26 +1199,58 @@ function RecordTransfer({ count, onChanged }: { count: number; onChanged: () => 
   </section>;
 }
 
-function RecordDetail({ session, onFollowUp, onBack }: { session: EmotionSession; onFollowUp: (followUp: { tried?: "yes" | "partly" | "no"; helped?: "yes" | "somewhat" | "no" | "unsure" }) => void; onBack: () => void }) {
+/**
+ * A past record, line by line, each with the band and label of where it came
+ * from (owner's decision 2026-10-30): what the person pressed or wrote, what the
+ * app worked out from it, and what was added later. Colour is never the only sign.
+ */
+function RecordDetail({ session, onFollowUp, onAddLabel, onBack }: { session: EmotionSession; onFollowUp: (followUp: { tried?: "yes" | "partly" | "no"; helped?: "yes" | "somewhat" | "no" | "unsure" }) => void; onAddLabel: (label: string) => void; onBack: () => void }) {
   const t = useT();
   const item = summarise(session, t.locale);
   const followUp = session.support?.followUp;
   const deep = session.deepReflection;
+  const quickAffect = session.quickCheck?.affect;
+  const mine = (how: "pressed" | "wrote" | "skipped" | WordHow): RowSource => ({ kind: "mine", label: t(`recordDetail.source.${how}`) });
+  const app = (what: "sentence" | "depth"): RowSource => ({ kind: "app", label: t(`recordDetail.source.${what}`) });
+  const lines = wordLines(session);
+  const quickResponse = deep?.emotionCandidates?.length ? "" : quickResponseLabel(t, session.quickCheck?.candidateResponse);
+  const endedUnsure = Boolean(quickAffect?.unknown && !deep);
   return <Screen>
     <p className="eyebrow">{t("records.eyebrow")}</p>
     <h1>{formatWhen(item.at, t.locale)}</h1>
-    <div className="summary-card">
-      <SummaryRow label={t("recordDetail.depth")} value={item.depthLabel} />
-      {session.quickCheck?.affect && <SummaryRow label={t("recordDetail.quickAffect")} value={session.quickCheck.affect.unknown ? t("common.unsure") : `${quickValence(session.quickCheck.affect.valence, t.locale)} · ${quickActivation(session.quickCheck.affect.activation, t.locale)}`} />}
-      {deep?.affect && <LeftEmptyRow label={t("recordDetail.deepAffect")} value={deepAffectValue(t, deep.affect)} />}
-      {session.talkToSomeone && <SummaryRow label={t("talkToSomeone.recordLabel")} value={t(`talkToSomeone.answers.${session.talkToSomeone.answer}`)} />}
-      {/* 가까운 말이 없음 · 잘 모르겠음 from the quick look are answers; only no words and no answer is 비워 둠 */}
-      <LeftEmptyRow label={t("recordDetail.words")} value={item.words.join(" · ") || (deep?.emotionCandidates?.length ? "" : quickResponseLabel(t, session.quickCheck?.candidateResponse)) || undefined} />
-      {item.personalMeanings.map((entry) => <SummaryRow key={entry.label} label={t("recordDetail.personalMeaning", { label: entry.label })} value={entry.meaning} />)}
-      {deep?.context?.eventText && <SummaryRow label={t("recordDetail.context")} value={deep.context.eventText} />}
-      {item.needLabel && <SummaryRow label={t("recordDetail.need")} value={item.needLabel} />}
-      {item.responseLabels.length > 0 && <SummaryRow label={t("recordDetail.responses")} value={item.responseLabels.join(" / ")} />}
+    <SourceLegend />
+    <div className="summary-card with-sources">
+      <SummaryRow label={t("recordDetail.depth")} value={item.depthLabel} source={app("depth")} />
+      {quickAffect && (quickAffect.unknown
+        ? <SummaryRow label={t("recordDetail.quickAffect")} value={t("quickAffect.unknown")} source={mine("pressed")} />
+        : <>
+            <SummaryRow label={t("recordDetail.quickSpot")} value={t("recordDetail.spotValue")} source={mine("pressed")} />
+            <SummaryRow label={t("recordDetail.quickAffect")} value={quickAffectValue(t, quickAffect)} source={app("sentence")} />
+          </>)}
+      {deep?.body && deep.body.length > 0 && <SummaryRow label={t("recordDetail.body")} value={deep.body.map((entry) => entry.label).join(" · ")} source={mine(deep.body.some((entry) => entry.custom) ? "wrote" : "pressed")} />}
+      {deep?.affect && (hasAffectPoint(deep.affect)
+        ? <>
+            <SummaryRow label={t("recordDetail.deepSpot")} value={t("recordDetail.spotValue")} source={mine("pressed")} />
+            <SummaryRow label={t("recordDetail.deepAffect")} value={deepAffectValue(t, deep.affect)!} source={app("sentence")} />
+          </>
+        : <LeftEmptyRow label={t("recordDetail.deepAffect")} value={deepAffectValue(t, deep.affect)} source={mine(deep.affect.unknown ? "pressed" : "skipped")} />)}
+      {deep?.context?.eventText && <SummaryRow label={t("recordDetail.context")} value={deep.context.eventText} source={mine("wrote")} />}
+      {concernLines(session).map((line) => <SummaryRow key={line.how} label={t("recordDetail.concerns")} value={line.items.join(" · ")} source={mine(line.how)} />)}
+      {item.personalMeanings.map((entry) => <SummaryRow key={entry.label} label={t("recordDetail.personalMeaning", { label: entry.label })} value={entry.meaning} source={mine("wrote")} />)}
+      {session.talkToSomeone && <SummaryRow label={t("talkToSomeone.recordLabel")} value={t(`talkToSomeone.answers.${session.talkToSomeone.answer}`)} source={mine("pressed")} />}
+      {item.needLabel && <SummaryRow label={t("recordDetail.need")} value={item.needLabel} source={mine("pressed")} />}
+      {item.responseLabels.length > 0 && <SummaryRow label={t("recordDetail.responses")} value={item.responseLabels.join(" / ")} source={mine("pressed")} />}
     </div>
+
+    <NamesLayer
+      day={formatDay(item.at, t.locale)}
+      // 가까운 말이 없음 · 잘 모르겠음 · 아직 모르겠다 are answers given then, so they are the first line too
+      first={endedUnsure ? [{ key: "unsure", value: t("quickAffect.unknown"), source: mine("pressed") }]
+        : lines.length ? lines.map((line) => ({ key: line.how, value: line.words.join(" · "), source: mine(line.how) }))
+        : quickResponse ? [{ key: "response", value: quickResponse, source: mine("pressed") }] : []}
+      later={session.labelsLater ?? []}
+      onAdd={onAddLabel}
+    />
 
     {item.canFollowUp && <section className="synthesis">
       <p className="tier-label">{t("recordDetail.followUpTitle")}</p>
@@ -1194,6 +1265,45 @@ function RecordDetail({ session, onFollowUp, onBack }: { session: EmotionSession
 
     <div className="navigation"><button className="quiet-button" onClick={onBack}>{t("recordDetail.backToList")}</button><a className="primary-button" href="/">{t("recordDetail.toStart")} <span>→</span></a></div>
   </Screen>;
+}
+
+/**
+ * The names a record has been given: the words of the moment on the first line,
+ * dated, then each name given later, by day (owner's decision 2026-10-30). One
+ * can be added, never edited or removed, and nothing is suggested. A record with
+ * no name yet shows an open, dashed space, never the word for none.
+ */
+function NamesLayer({ day, first, later, onAdd }: { day: string; first: { key: string; value: string; source: RowSource }[]; later: { label: string; at: string }[]; onAdd: (label: string) => void }) {
+  const t = useT();
+  const [adding, setAdding] = useState(false);
+  const [label, setLabel] = useState("");
+  const field = useRef<HTMLInputElement>(null);
+  useEffect(() => { if (adding) field.current?.focus(); }, [adding]);
+  const save = () => { if (!label.trim()) return; onAdd(label); setLabel(""); setAdding(false); };
+  const empty = first.length === 0 && later.length === 0;
+  return <section className="names-layer" aria-labelledby="names-title">
+    <p className="tier-label" id="names-title">{t("recordDetail.names.title")}</p>
+    {empty
+      ? <p className="names-not-yet names-empty">{t("records.namesNotYet")}</p>
+      : <div className="summary-card with-sources">
+          {first.map((line) => <SummaryRow key={line.key} label={day} value={line.value} source={line.source} />)}
+          {later.map((entry, index) => {
+            const date = formatDay(entry.at, t.locale);
+            return <SummaryRow key={`${entry.at}-${index}`} label={date} value={entry.label} source={{ kind: "later", label: t("recordDetail.addedOn", { date }) }} />;
+          })}
+        </div>}
+    {adding
+      ? <div className="own-word-block">
+          <label className="field-label" htmlFor="name-later">{t("recordDetail.names.fieldLabel")}</label>
+          <div className="own-word-row">
+            <input id="name-later" ref={field} className="text-input" maxLength={INPUT_LIMITS.word} value={label} onChange={(event) => setLabel(event.target.value)} onKeyDown={(event) => { if (event.key === "Enter") save(); }} />
+            <button className="small-button" disabled={!label.trim()} onClick={save}>{t("recordDetail.names.save")}</button>
+          </div>
+          <p className="small-note">{t("recordDetail.names.hint")}</p>
+          <div className="quick-option-row"><button className="quiet-button" onClick={() => { setLabel(""); setAdding(false); }}>{t("recordDetail.names.cancel")}</button></div>
+        </div>
+      : <button className="secondary-button names-add" onClick={() => setAdding(true)}>{t("recordDetail.names.add")}</button>}
+  </section>;
 }
 
 function StoppedScreen({ session }: { session: EmotionSession }) { const t = useT(); return <Screen className="entry-screen"><p className="eyebrow">{t("stopped.eyebrow")}</p><h1>{renderRich(t("stopped.title"))}</h1><p className="lede">{t("stopped.lede")}</p><div className="stack-actions"><a className="primary-button centered" href="/">{t("stopped.home")}</a><button className="quiet-button" onClick={() => { removeDraft(); dropCompleted(session.id); window.location.reload(); }}>{t("stopped.delete")}</button></div>{session.stopReason === "entry" && <p className="small-note">{t("stopped.entryNote")}</p>}<HelpReveal /></Screen>; }
@@ -1257,12 +1367,27 @@ function Navigation({ onNext, onSkip = onNext, disabled = false, note }: { onNex
 }
 function StepNote({ note }: { note?: string }) { return note ? <p className="step-note" role="note">{note}</p> : null; }
 /** A row whose value may be a skipped step: shown quietly as 비워 둠. */
-function LeftEmptyRow({ label, value }: { label: string; value?: string }) { const t = useT(); return <SummaryRow label={label} value={value ?? t("common.leftEmpty")} empty={value === undefined} />; }
-function SummaryRow({ label, value, empty = false, style }: { label: string; value: string; empty?: boolean; style?: CSSProperties }) { return <div className={`summary-row reveal-step${empty ? " is-empty" : ""}`} style={style}><span>{label}</span><strong>{value}</strong></div>; }
+function LeftEmptyRow({ label, value, source }: { label: string; value?: string; source?: RowSource }) { const t = useT(); return <SummaryRow label={label} value={value ?? t("common.leftEmpty")} empty={value === undefined} source={source} />; }
+/** Where a record line came from: a band at its left edge and a short label under it (record detail only). */
+type RowSource = { kind: SourceKind; label: string };
+function SummaryRow({ label, value, empty = false, style, source }: { label: string; value: string; empty?: boolean; style?: CSSProperties; source?: RowSource }) {
+  return <div className={`summary-row reveal-step${empty ? " is-empty" : ""}${source ? ` has-source source-${source.kind}` : ""}`} style={style}><span>{label}</span><strong>{value}</strong>{source && <em className="source-label">{source.label}</em>}</div>;
+}
+/** The three bands, named once above the record. */
+function SourceLegend() {
+  const t = useT();
+  return <ul className="source-legend" aria-label={t("recordDetail.legend.title")}>
+    {(["mine", "app", "later"] as const).map((kind) => <li key={kind} className={`source-${kind}`}>{t(`recordDetail.legend.${kind}`)}</li>)}
+  </ul>;
+}
 function quickAffectSuggestion(session: EmotionSession): AffectPoint | undefined {
   const affect = session.quickCheck?.affect;
   if (!affect || affect.unknown) return undefined;
   return { valence: affect.valence, activation: affect.activation };
+}
+/** The quick pad as words; 아직 모르겠다 is the answer given there, said back in the same words. */
+function quickAffectValue(t: Translate, affect?: AffectPoint) {
+  return affect?.unknown ? t("quickAffect.unknown") : `${quickValence(affect?.valence, t.locale)} · ${quickActivation(affect?.activation, t.locale)}`;
 }
 /** 잘 모르겠음 stays its own answer; a skipped pad is left empty (undefined), never the middle. */
 function deepAffectValue(t: Translate, affect?: AffectPoint) {

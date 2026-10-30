@@ -3,6 +3,7 @@ import { cleanup, fireEvent, render, screen, within } from "@testing-library/rea
 import Home from "../app/(ko)/page";
 import { ko } from "../lib/i18n/messages.ko";
 import { getStorageKeys } from "../lib/storage";
+import { startQuick } from "./helpers/start";
 
 /**
  * The homepage frame (docs/DESIGN_ALIGNMENT.md §5): header, menu and footer on
@@ -66,7 +67,7 @@ describe("homepage frame on the landing and record screens", () => {
 
   it("frames the records list and a record's detail the same way", () => {
     render(<Home />);
-    click("지난 기록 보기");
+    click(ko.landing.records);
     expect(hasFrame()).toMatchObject({ header: true, footer: true });
     fireEvent.click(document.querySelector(".record-row")!);
     expect(screen.getByRole("heading", { level: 1 }).textContent).not.toBe(ko.records.title);
@@ -80,14 +81,14 @@ describe("no homepage frame while working through the steps", () => {
 
   it("the first quick step keeps only the app name and 그만하기", () => {
     render(<Home />);
-    click("빠르게 살펴보기");
+    startQuick();
     expect(hasFrame()).toEqual({ header: false, footer: false, homepageLinks: 0 });
     expect(screen.getByRole("button", { name: ko.common.stop })).toBeTruthy();
   });
 
   it("the coach and the stopped screen have no homepage frame either", () => {
     render(<Home />);
-    click("빠르게 살펴보기");
+    startQuick();
     // move to the unpleasant, activated corner with the keyboard (a pointer has no size in jsdom)
     const pad = document.querySelector(".affect-grid")!;
     fireEvent.keyDown(pad, { key: "Enter" });
@@ -96,6 +97,7 @@ describe("no homepage frame while working through the steps", () => {
       fireEvent.keyDown(pad, { key: "ArrowUp" });
     }
     click("다음");
+    click(ko.words.reveal);
     const coachWord = [...document.querySelectorAll(".chip")].find((chip) => ["짜증", "억울함", "답답함"].includes(chip.textContent ?? ""));
     expect(coachWord).toBeDefined();
     fireEvent.click(coachWord!);
