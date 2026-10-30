@@ -80,7 +80,7 @@ export const en: Messages = {
     listSeparator: ", ",
   },
   landing: {
-    // placeholder wording (2026-10-30), as the Korean
+    // same meaning as the Korean (owner kept the proposed wording, 2026-10-30)
     title: "Before you name it, keep what you feel just as it is.",
     lede: "This is not a test to get right. It takes about a minute.",
     start: "Record now",

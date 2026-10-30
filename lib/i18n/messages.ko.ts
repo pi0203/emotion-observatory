@@ -48,7 +48,7 @@ export const ko = {
     listSeparator: ", ",
   },
   landing: {
-    // 임시 문구 (2026-10-30): the owner decides the final title and subtitle
+    // the one-way-in title and subtitle (owner kept the proposed wording, 2026-10-30)
     title: "이름 붙이기 전에, 지금 느껴지는 것을 그대로 남겨 둡니다.",
     lede: "맞히는 검사가 아닙니다. 1분이면 됩니다.",
     /** The one way in: the quick look. The slower look opens from inside it. */
@@ -245,7 +245,7 @@ export const ko = {
     notListed: "여기 없는 말이 더 가깝다면",
     add: "추가",
     startingPoint: "이 목록은 완전한 목록이 아니라 출발점입니다. 내 말로 적는 것도 똑같이 정상적인 길이에요.",
-    // 임시 문구 (2026-10-30): before 단어 보기, on both word steps
+    // before 단어 보기, on both word steps (owner kept the proposed wording, 2026-10-30)
     beforeTitle: "지금 느낌을 내 말로 적는다면?",
     beforeHint: "적지 않아도 됩니다. 단어 목록은 원하면 볼 수 있습니다.",
     reveal: "단어 보기",
@@ -479,7 +479,7 @@ export const ko = {
     eyebrow: "지난 기록",
     title: "이전에 적은 것들",
     empty: "아직 남긴 기록이 없습니다.",
-    // 임시 문구 (2026-10-30): a record with no name yet is not missing anything
+    // a record with no name yet is not missing anything (owner kept the proposed wording, 2026-10-30)
     namesNotYet: "이름은 아직",
     needLine: "필요했던 방향 · {label}",
     responsesLine: "해보기로 한 것 · {labels}",
