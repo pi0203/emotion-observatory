@@ -267,6 +267,11 @@ export const ko = {
     coach: "표현 사이의 차이 살펴보기",
     deep: "조금 더 천천히 들여다보기",
     coachNote: "예시 상황으로 해보는 짧은 연습입니다. 지금 고른 표현은 그대로 남습니다. 예시는 일부 후보에만 준비되어 있습니다.",
+    context: {
+      // one optional line under the second step (owner's decision 2026-10-30)
+      label: "무슨 일이 있었나요",
+      hint: "일어난 일만 적어도 됩니다. 뜻은 나중에 붙여도 됩니다.",
+    },
   },
   coach: {
     step: "예시로 연습하기",
@@ -558,6 +563,7 @@ export const ko = {
     deepAffect: "자세히 본 뒤",
     personalMeaning: "‘{label}’은",
     context: "상황",
+    quickContext: "그때 일어난 일",
     need: "필요했던 방향",
     responses: "해보기로 한 것",
     quickSpot: "빠른 확인에서 누른 곳",

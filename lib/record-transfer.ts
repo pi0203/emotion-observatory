@@ -69,7 +69,8 @@ export const isSessionShape = (value: unknown): value is EmotionSession => {
   if (!isString(value.stage)) return false;
   if (value.entry !== "quick" && value.entry !== "deep") return false;
   if (!optional(value.completedAt, isString) || !optional(value.locale, isString)) return false;
-  if (!optional(value.quickCheck, (quick) => isObject(quick) && arrayOf(quick.selected, labelled) && arrayOf(quick.candidatePool, labelled))) return false;
+  if (!optional(value.quickCheck, (quick) => isObject(quick) && arrayOf(quick.selected, labelled) && arrayOf(quick.candidatePool, labelled)
+    && optional(quick.context, (context) => isObject(context) && optional(context.eventText, isString)))) return false;
   if (!optional(value.deepReflection, (deep) => isObject(deep) && arrayOf(deep.body, labelled) && arrayOf(deep.concerns, isString) && arrayOf(deep.emotionCandidates, labelled))) return false;
   if (!optional(value.support, (support) => isObject(support) && arrayOf(support.chosen, isString))) return false;
   if (!optional(value.labelsLater, (labels) => arrayOf(labels, (item) => isObject(item) && isString(item.label) && isString(item.at)))) return false;

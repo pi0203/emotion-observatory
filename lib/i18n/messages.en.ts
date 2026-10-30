@@ -294,6 +294,10 @@ export const en: Messages = {
     coach: "Look at the differences between words",
     deep: "Take a slower look",
     coachNote: "A short practice with an example situation. The words you picked stay as they are. Examples exist for only some words.",
+    context: {
+      label: "What happened",
+      hint: "Just the event is enough. What it meant can come later, or not at all.",
+    },
   },
   coach: {
     step: "Practice with an example",
@@ -577,6 +581,7 @@ export const en: Messages = {
     deepAffect: "After the slow look",
     personalMeaning: "“{label}” meant",
     context: "Situation",
+    quickContext: "What happened then",
     need: "What you needed",
     responses: "What you chose to try",
     quickSpot: "Where you tapped in the quick look",

@@ -68,6 +68,14 @@ export type QuickCheck = {
    * record needs migrating.
    */
   wordsRevealed?: { at: string };
+  /**
+   * 무슨 일이 있었나요, one optional line under the quick look's second step
+   * (owner's decision 2026-10-30). The same shape as deepReflection.context's
+   * eventText, without its source choice: the quick look stays about a minute.
+   * Written only while the quick look is open; absent when left empty, so no
+   * stored record needs migrating.
+   */
+  context?: { eventText?: string };
   endedAt?: string;
 };
 
@@ -207,6 +215,7 @@ export type SessionAction =
   | { type: "ADD_QUICK_CUSTOM"; label: string }
   | { type: "SET_PERSONAL_MEANING"; label: string; meaning: string }
   | { type: "REVEAL_QUICK_WORDS" }
+  | { type: "SET_QUICK_CONTEXT"; eventText: string }
   | { type: "REVEAL_DEEP_WORDS" }
   | { type: "OPEN_GRANULARITY" }
   | { type: "CHOOSE_GRANULARITY"; concept: string }
@@ -297,7 +306,7 @@ const NOT_A_STEP = new Set<SessionAction["type"]>([
   "TOGGLE_QUICK_CANDIDATE", "SET_QUICK_CANDIDATE_RESPONSE", "ADD_QUICK_CUSTOM",
   "SET_SYNTHESIS_FEEDBACK", "SET_TALK_TO_SOMEONE", "CHOOSE_NEED", "TOGGLE_RESPONSE",
   "TOGGLE_COACH_WORD", "SET_COACH_OWN_WORD", "TOGGLE_APPRAISAL", "SET_OWN_APPRAISAL",
-  "SET_PERSONAL_MEANING", "REVEAL_QUICK_WORDS", "REVEAL_DEEP_WORDS", "ADD_LABEL_LATER", "RESUME", "BACK",
+  "SET_PERSONAL_MEANING", "REVEAL_QUICK_WORDS", "SET_QUICK_CONTEXT", "REVEAL_DEEP_WORDS", "ADD_LABEL_LATER", "RESUME", "BACK",
 ]);
 
 const reduce = (state: EmotionSession, action: SessionAction): EmotionSession => {
@@ -339,6 +348,12 @@ const reduce = (state: EmotionSession, action: SessionAction): EmotionSession =>
     case "REVEAL_QUICK_WORDS":
       // the first opening is the one kept: pressing again later does not move the time
       return state.quickCheck?.wordsRevealed ? state : withQuick(state, { wordsRevealed: { at: new Date().toISOString() } });
+    case "SET_QUICK_CONTEXT": {
+      // only while the quick look is still being written: once it ends, what happened then is part of the fixed layer
+      if (state.status !== "draft" || !state.quickCheck || state.quickCheck.endedAt) return state;
+      const eventText = action.eventText.trim().slice(0, INPUT_LIMITS.text);
+      return withQuick(state, { context: eventText ? { eventText } : undefined });
+    }
     case "SET_QUICK_CANDIDATE_RESPONSE":
       // Stays on the candidate step so the user can still end here or go deeper.
       return withQuick(state, { candidateResponse: action.response, selected: [] });
