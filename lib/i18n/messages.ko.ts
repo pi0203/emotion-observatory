@@ -484,6 +484,20 @@ export const ko = {
     saved: "이 기록에 남겨 두었습니다.",
     recordLabel: "사람에게 말해 볼 생각",
   },
+  /** A second question in the same form, under talkToSomeone (owner's decision 2026-10-30). Kept and shown back only. */
+  underlyingFeeling: {
+    question: "이 느낌 아래에 다른 느낌이 먼저 있었나요?",
+    hint: "답하지 않아도 됩니다. 어느 답이든 괜찮습니다.",
+    answers: {
+      yes: "있었다",
+      no: "없었다",
+      unsure: "모르겠다",
+    },
+    noteLabel: "어떤 느낌이었나요",
+    saved: "이 기록에 남겨 두었습니다.",
+    recordLabel: "아래에 먼저 있던 느낌",
+    noteRecordLabel: "그 느낌",
+  },
   records: {
     eyebrow: "지난 기록",
     title: "이전에 적은 것들",

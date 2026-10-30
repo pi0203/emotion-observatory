@@ -3,7 +3,7 @@
 import { useEffect, useReducer, useRef, useState, type CSSProperties } from "react";
 import { canGoBack, createSession, sessionReducer, understandRoute } from "../lib/session-types";
 import { appraisalEscapes, coachEscapes, coachResult, coachSetFor, getCoachSets } from "../lib/coach";
-import type { AffectPoint, BodyObservation, DeepReflection, EmotionSelection, EmotionSession, QuickNonSelection, SynthesisFit, TalkToSomeone } from "../lib/session-types";
+import type { AffectPoint, BodyObservation, DeepReflection, EmotionSelection, EmotionSession, QuickNonSelection, SynthesisFit, TalkToSomeone, UnderlyingFeeling } from "../lib/session-types";
 
 type DeepContext = NonNullable<DeepReflection["context"]>;
 type DeepOutcome = NonNullable<DeepReflection["outcome"]>;
@@ -194,7 +194,7 @@ function App() {
       {session.stage === "meaning" && <MeaningScreen initial={session.deepReflection?.concerns ?? []} onNext={(selected) => dispatch({ type: "SET_CONCERNS", concerns: selected })} />}
       {session.stage === "emotion" && <EmotionScreen initial={session.deepReflection?.emotionCandidates ?? []} affect={session.deepReflection?.affect} revealed={Boolean(session.deepReflection?.wordsRevealed)} onReveal={() => dispatch({ type: "REVEAL_DEEP_WORDS" })} onNext={(selected) => dispatch({ type: "SET_EMOTIONS", emotionCandidates: selected })} />}
       {session.stage === "outcome" && <OutcomeScreen onNext={(outcome) => dispatch({ type: "SET_OUTCOME", outcome })} />}
-      {session.stage === "summary" && <SummaryScreen session={session} onFeedback={(feedback) => dispatch({ type: "SET_SYNTHESIS_FEEDBACK", ...feedback })} onTalk={(answer) => dispatch({ type: "SET_TALK_TO_SOMEONE", answer })} onSupport={() => dispatch({ type: "OPEN_SUPPORT" })} />}
+      {session.stage === "summary" && <SummaryScreen session={session} onFeedback={(feedback) => dispatch({ type: "SET_SYNTHESIS_FEEDBACK", ...feedback })} onTalk={(answer) => dispatch({ type: "SET_TALK_TO_SOMEONE", answer })} onUnderlying={(answer) => dispatch({ type: "SET_UNDERLYING_FEELING", answer })} onUnderlyingNote={(note) => dispatch({ type: "SET_UNDERLYING_NOTE", note })} onSupport={() => dispatch({ type: "OPEN_SUPPORT" })} />}
       {session.stage === "support" && <NeedScreen session={session} onNeed={(id) => dispatch({ type: "CHOOSE_NEED", id })} onResponse={(id) => dispatch({ type: "TOGGLE_RESPONSE", id })} onDeep={() => dispatch({ type: "ENTER_DEEP" })} onCoach={() => dispatch({ type: "OPEN_COACH" })} onBack={() => dispatch({ type: "BACK" })} />}
       {session.stage === "stopped" && <StoppedScreen session={session} />}
 
@@ -831,7 +831,7 @@ function OutcomeScreen({ onNext }: { onNext: (outcome: DeepOutcome) => void }) {
   return <Screen><StepHeading step={t("outcome.step")} title={t("outcome.title")} hint={t("outcome.hint")} basis={t("outcome.basis")} /><div className="choice-list compact">{(["much_clearer", "clearer", "same", "more_complex", "more_distressed"] as const).map((value) => <button className={clarity === value ? "selected" : ""} aria-pressed={clarity === value} key={value} onClick={() => setClarity(value)}><Mark on={clarity === value} />{t(`outcome.clarity.${value}`)}</button>)}</div><h2 className="subquestion">{t("outcome.usefulnessQuestion")}</h2><div className="inline-choices">{(["helpful", "unsure", "unhelpful"] as const).map((value) => <button className={usefulness === value ? "selected" : ""} aria-pressed={usefulness === value} key={value} onClick={() => setUsefulness(value)}><Mark on={usefulness === value} />{t(`outcome.usefulness.${value}`)}</button>)}</div><input className="text-input" maxLength={INPUT_LIMITS.line} value={note} onChange={(event) => setNote(event.target.value)} placeholder={t("outcome.notePlaceholder")} /><Navigation disabled={!clarity || !usefulness} onNext={() => onNext({ clarity: clarity!, usefulness: usefulness!, note })} /></Screen>;
 }
 
-function SummaryScreen({ session, onFeedback, onTalk, onSupport }: { session: EmotionSession; onFeedback: (feedback: { fit?: SynthesisFit; correction?: string }) => void; onTalk: (answer: TalkToSomeone) => void; onSupport: () => void }) {
+function SummaryScreen({ session, onFeedback, onTalk, onUnderlying, onUnderlyingNote, onSupport }: { session: EmotionSession; onFeedback: (feedback: { fit?: SynthesisFit; correction?: string }) => void; onTalk: (answer: TalkToSomeone) => void; onUnderlying: (answer: UnderlyingFeeling) => void; onUnderlyingNote: (note: string) => void; onSupport: () => void }) {
   const t = useT();
   const deep = session.deepReflection;
   const play = useFirstReveal(`${session.id}:summary`);
@@ -858,6 +858,7 @@ function SummaryScreen({ session, onFeedback, onTalk, onSupport }: { session: Em
     <div className="reveal-rest reveal-step" style={delay(d.rest)}>
       <SynthesisSection session={session} onFeedback={onFeedback} />
       <TalkToSomeoneQuestion answer={session.talkToSomeone?.answer} onAnswer={onTalk} />
+      <UnderlyingFeelingQuestion answer={session.underlyingFeeling?.answer} note={session.underlyingFeeling?.note ?? ""} onAnswer={onUnderlying} onNote={onUnderlyingNote} />
       <div className="stack-actions"><button className="primary-button centered" onClick={onSupport}>{t("summary.support")} <span>→</span></button><a className="secondary-button centered" href="/">{t("common.backToStart")}</a></div>
     </div>
   </Screen>;
@@ -877,6 +878,27 @@ function TalkToSomeoneQuestion({ answer, onAnswer }: { answer?: TalkToSomeone; o
     <p className="small-note">{t("talkToSomeone.hint")}</p>
     <div className="inline-choices">{TALK_ANSWERS.map((value) => <button key={value} className={answer === value ? "selected" : ""} aria-pressed={answer === value} onClick={() => onAnswer(value)}><Mark on={answer === value} />{t(`talkToSomeone.answers.${value}`)}</button>)}</div>
     {answer && <p className="small-note" role="status">{t("talkToSomeone.saved")}</p>}
+  </section>;
+}
+
+/**
+ * A second question in the same form (owner's decision 2026-10-30, second round D):
+ * whether another feeling was there first, under this one. Kept and shown back
+ * only. No answer changes the next screen, and no word is offered. 있었다 opens one
+ * optional line for what it was, which stays with this answer, not the names layer.
+ */
+const UNDERLYING_ANSWERS: UnderlyingFeeling[] = ["yes", "no", "unsure"];
+function UnderlyingFeelingQuestion({ answer, note, onAnswer, onNote }: { answer?: UnderlyingFeeling; note: string; onAnswer: (answer: UnderlyingFeeling) => void; onNote: (note: string) => void }) {
+  const t = useT();
+  return <section className="talk-question" aria-labelledby="underlying-question-title">
+    <h2 className="subquestion" id="underlying-question-title">{t("underlyingFeeling.question")}</h2>
+    <p className="small-note">{t("underlyingFeeling.hint")}</p>
+    <div className="inline-choices">{UNDERLYING_ANSWERS.map((value) => <button key={value} className={answer === value ? "selected" : ""} aria-pressed={answer === value} onClick={() => onAnswer(value)}><Mark on={answer === value} />{t(`underlyingFeeling.answers.${value}`)}</button>)}</div>
+    {answer === "yes" && <div className="own-word-block">
+      <label className="field-label" htmlFor="underlying-note">{t("underlyingFeeling.noteLabel")} <em>{t("words.optional")}</em></label>
+      <input id="underlying-note" className="text-input" maxLength={INPUT_LIMITS.line} defaultValue={note} onChange={(event) => onNote(event.target.value)} />
+    </div>}
+    {answer && <p className="small-note" role="status">{t("underlyingFeeling.saved")}</p>}
   </section>;
 }
 
@@ -1274,6 +1296,8 @@ function RecordDetail({ session, onFollowUp, onAddLabel, onBack }: { session: Em
       {concernLines(session).map((line) => <SummaryRow key={line.how} label={t("recordDetail.concerns")} value={line.items.join(" · ")} source={mine(line.how)} />)}
       {item.personalMeanings.map((entry) => <SummaryRow key={entry.label} label={t("recordDetail.personalMeaning", { label: entry.label })} value={entry.meaning} source={mine("wrote")} />)}
       {session.talkToSomeone && <SummaryRow label={t("talkToSomeone.recordLabel")} value={t(`talkToSomeone.answers.${session.talkToSomeone.answer}`)} source={mine("pressed")} />}
+      {session.underlyingFeeling && <SummaryRow label={t("underlyingFeeling.recordLabel")} value={t(`underlyingFeeling.answers.${session.underlyingFeeling.answer}`)} source={mine("pressed")} />}
+      {session.underlyingFeeling?.answer === "yes" && session.underlyingFeeling.note && <SummaryRow label={t("underlyingFeeling.noteRecordLabel")} value={session.underlyingFeeling.note} source={mine("wrote")} />}
       {item.needLabel && <SummaryRow label={t("recordDetail.need")} value={item.needLabel} source={mine("pressed")} />}
       {item.responseLabels.length > 0 && <SummaryRow label={t("recordDetail.responses")} value={item.responseLabels.join(" / ")} source={mine("pressed")} />}
     </div>

@@ -505,6 +505,19 @@ export const en: Messages = {
     saved: "Your answer is kept with this entry.",
     recordLabel: "Thinking of telling someone",
   },
+  underlyingFeeling: {
+    question: "Was a different feeling there first, underneath this one?",
+    hint: "You do not have to answer. Any answer is fine.",
+    answers: {
+      yes: "There was",
+      no: "There was not",
+      unsure: "I don’t know",
+    },
+    noteLabel: "What was it like?",
+    saved: "Your answer is kept with this entry.",
+    recordLabel: "A feeling there first, underneath",
+    noteRecordLabel: "That feeling",
+  },
   records: {
     eyebrow: "Past entries",
     title: "What you wrote before",

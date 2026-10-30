@@ -112,6 +112,8 @@ export type DeepReflection = {
  * same id, so the two never split into separate records.
  */
 export type TalkToSomeone = "yes" | "no" | "not-yet";
+/** 이 느낌 아래에 다른 느낌이 먼저 있었나요? — 있었다 / 없었다 / 모르겠다. 모르겠다 is a finished answer. */
+export type UnderlyingFeeling = "yes" | "no" | "unsure";
 
 export type EmotionSession = {
   id: string;
@@ -132,6 +134,15 @@ export type EmotionSession = {
    * changes what the app shows next.
    */
   talkToSomeone?: { answer: TalkToSomeone; at: string };
+  /**
+   * 「이 느낌 아래에 다른 느낌이 먼저 있었나요?」 under the question above (owner's
+   * decision 2026-10-30, second round D). Kept and shown back, nothing more: no
+   * answer changes the next screen or brings words, and it is never scored or
+   * summed. `note`, what that feeling was, belongs to this answer, not to the
+   * names layer (labelsLater), and is kept only while the answer is 있었다.
+   * Optional, so no stored record needs migrating.
+   */
+  underlyingFeeling?: { answer: UnderlyingFeeling; note?: string; at: string };
   /**
    * The direction the user is exploring and what they picked inside it. One need
    * at a time, kept per need so stepping between them loses nothing. The app
@@ -233,6 +244,8 @@ export type SessionAction =
   | { type: "SET_OUTCOME"; outcome: NonNullable<DeepReflection["outcome"]> }
   | { type: "SET_SYNTHESIS_FEEDBACK"; fit?: SynthesisFit; correction?: string }
   | { type: "SET_TALK_TO_SOMEONE"; answer: TalkToSomeone }
+  | { type: "SET_UNDERLYING_FEELING"; answer: UnderlyingFeeling }
+  | { type: "SET_UNDERLYING_NOTE"; note: string }
   | { type: "OPEN_SUPPORT" }
   | { type: "CHOOSE_NEED"; id: string }
   | { type: "TOGGLE_RESPONSE"; id: string }
@@ -304,7 +317,7 @@ export const canGoBack = (session: EmotionSession) => (session.history?.length ?
 /** Actions that do not move the user to another screen, so they are not steps to undo. */
 const NOT_A_STEP = new Set<SessionAction["type"]>([
   "TOGGLE_QUICK_CANDIDATE", "SET_QUICK_CANDIDATE_RESPONSE", "ADD_QUICK_CUSTOM",
-  "SET_SYNTHESIS_FEEDBACK", "SET_TALK_TO_SOMEONE", "CHOOSE_NEED", "TOGGLE_RESPONSE",
+  "SET_SYNTHESIS_FEEDBACK", "SET_TALK_TO_SOMEONE", "SET_UNDERLYING_FEELING", "SET_UNDERLYING_NOTE", "CHOOSE_NEED", "TOGGLE_RESPONSE",
   "TOGGLE_COACH_WORD", "SET_COACH_OWN_WORD", "TOGGLE_APPRAISAL", "SET_OWN_APPRAISAL",
   "SET_PERSONAL_MEANING", "REVEAL_QUICK_WORDS", "SET_QUICK_CONTEXT", "REVEAL_DEEP_WORDS", "ADD_LABEL_LATER", "RESUME", "BACK",
 ]);
@@ -417,6 +430,15 @@ const reduce = (state: EmotionSession, action: SessionAction): EmotionSession =>
     case "SET_TALK_TO_SOMEONE":
       // merged onto the finished session like the summary feedback; stage and status stay
       return { ...state, talkToSomeone: { answer: action.answer, at: new Date().toISOString() } };
+    case "SET_UNDERLYING_FEELING":
+      // on the slower look's summary only; a change of answer away from 있었다 lets its line go with it
+      if (!state.deepReflection) return state;
+      return { ...state, underlyingFeeling: { answer: action.answer, note: action.answer === "yes" ? state.underlyingFeeling?.note : undefined, at: new Date().toISOString() } };
+    case "SET_UNDERLYING_NOTE": {
+      if (state.underlyingFeeling?.answer !== "yes") return state;
+      const note = action.note.trim().slice(0, INPUT_LIMITS.line);
+      return { ...state, underlyingFeeling: { ...state.underlyingFeeling, note: note || undefined } };
+    }
     case "OPEN_SUPPORT":
       // reached from a finished summary; it must not reopen or end the session
       return { ...state, stage: "support", support: state.support ?? { chosen: [] } };
