@@ -2,7 +2,7 @@ import { afterEach, beforeEach, describe, expect, it } from "vitest";
 import { cleanup, fireEvent, render, screen } from "@testing-library/react";
 import { readFileSync } from "node:fs";
 import Home from "../app/(ko)/page";
-import { startQuick } from "./helpers/start";
+import { revealWords, startQuick } from "./helpers/start";
 
 const stubGridSize = () => {
   Element.prototype.getBoundingClientRect = function () {
@@ -19,6 +19,7 @@ const toQuickSummary = (unsure = false) => {
   } else {
     fireEvent(screen.getByRole("application", { name: /불쾌함과 유쾌함/ }), new MouseEvent("pointerdown", { bubbles: true, clientX: 40, clientY: 30 }));
     fireEvent.click(screen.getByRole("button", { name: /다음/ }));
+    revealWords();
     fireEvent.click(screen.getByRole("button", { name: "짜증" }));
     fireEvent.click(screen.getByRole("button", { name: /^여기까지$/ }));
   }

@@ -1,7 +1,7 @@
 import { afterEach, beforeEach, describe, expect, it } from "vitest";
 import { cleanup, fireEvent, render, screen, within } from "@testing-library/react";
 import Home from "../app/(ko)/page";
-import { startQuick, startDeep } from "./helpers/start";
+import { revealWords, startDeep, startQuick } from "./helpers/start";
 import { ko } from "../lib/i18n/messages.ko";
 
 // jsdom reports a zero-sized box, which would make the affect tap produce NaN.
@@ -42,6 +42,7 @@ describe("quick check screens", () => {
   it("asks what mattered before showing any word", () => {
     openQuickCheck();
     tapUnpleasantActivated();
+    revealWords();
     fireEvent.click(screen.getByRole("button", { name: "짜증" }));
     fireEvent.click(screen.getByRole("button", { name: /표현 사이의 차이 살펴보기/ }));
     // the coach asks what mattered before it shows a single word
@@ -64,6 +65,7 @@ describe("quick check screens", () => {
   it("carries the quick reading into the deep affect step as an editable suggestion", () => {
     openQuickCheck();
     tapUnpleasantActivated();
+    revealWords();
     fireEvent.click(screen.getByRole("button", { name: "긴장" }));
     fireEvent.click(screen.getByRole("button", { name: /여기까지/ }));
     fireEvent.click(screen.getByRole("button", { name: /조금 더 천천히 들여다보기/ }));
@@ -82,6 +84,7 @@ describe("quick check screens", () => {
   it("shows a handful of words first and reveals related ones only when asked", () => {
     openQuickCheck();
     tapUnpleasantActivated();
+    revealWords();
     const firstTier = screen.getAllByRole("button", { name: /^(긴장|초조함|짜증|억울함|답답함)$/ });
     expect(firstTier.length).toBeLessThanOrEqual(5);
     expect(screen.queryByText("비슷한 표현")).toBeNull();
@@ -95,9 +98,9 @@ describe("quick check screens", () => {
     openQuickCheck();
     tapUnpleasantActivated();
 
-    // no clicking through tiers first: the box is there from the start
+    // no clicking through tiers first: the box is there from the start, before any word is shown (2026-10-30)
     const input = screen.getByLabelText("내 말로 적기");
-    expect(screen.getByText(/완전한 목록이 아니라 출발점/)).toBeTruthy();
+    expect(document.querySelectorAll(".chip")).toHaveLength(0);
     fireEvent.change(input, { target: { value: "뒤통수 맞은 느낌" } });
     fireEvent.click(screen.getByRole("button", { name: "추가" }));
 
@@ -123,6 +126,7 @@ describe("quick check screens", () => {
   it("offers a synthesis of the user's own entries on the summary, with a fit rating", () => {
     openQuickCheck();
     tapUnpleasantActivated();
+    revealWords();
     fireEvent.click(screen.getByRole("button", { name: "긴장" }));
     fireEvent.click(screen.getByRole("button", { name: /여기까지/ }));
 
@@ -144,6 +148,7 @@ describe("quick check screens", () => {
   it("keeps the rewrite box out of the way until it is asked for", () => {
     openQuickCheck();
     tapUnpleasantActivated();
+    revealWords();
     fireEvent.click(screen.getByRole("button", { name: "긴장" }));
     fireEvent.click(screen.getByRole("button", { name: /여기까지/ }));
 
@@ -175,6 +180,7 @@ describe("quick check screens", () => {
     fireEvent.click(screen.getByRole("button", { name: /다음/ }));     // affect
     fireEvent.click(screen.getByRole("button", { name: "건너뛰기" })); // context
     fireEvent.click(screen.getByRole("button", { name: "건너뛰기" })); // meaning
+    revealWords();
 
     expect(screen.getByText(/가까운 단어가 있나요/)).toBeTruthy();
     const chips = document.querySelectorAll(".chip");
@@ -199,6 +205,7 @@ describe("quick check screens", () => {
     // a finished session that picked a response
     openQuickCheck();
     tapUnpleasantActivated();
+    revealWords();
     fireEvent.click(screen.getByRole("button", { name: "짜증" }));
     fireEvent.click(screen.getByRole("button", { name: /여기까지/ }));
     fireEvent.click(screen.getByRole("button", { name: /무엇이 필요할지 살펴보기/ }));
@@ -266,6 +273,7 @@ describe("quick check screens", () => {
   it("offers directions to choose from at the end, and picks none of them", () => {
     openQuickCheck();
     tapUnpleasantActivated();
+    revealWords();
     fireEvent.click(screen.getByRole("button", { name: "긴장" }));
     fireEvent.click(screen.getByRole("button", { name: /여기까지/ }));
     fireEvent.click(screen.getByRole("button", { name: /무엇이 필요할지 살펴보기/ }));

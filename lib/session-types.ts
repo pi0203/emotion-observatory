@@ -60,6 +60,13 @@ export type QuickCheck = {
   granularityResponse?: "unsure";
   contrastAnswer?: string;
   microLearningSeen?: boolean;
+  /**
+   * When the offered words were opened with 단어 보기 (2026-10-30). The words are
+   * not shown until asked for, so the person can first put it in their own
+   * words; absent means the list was never opened. Optional, so no stored
+   * record needs migrating.
+   */
+  wordsRevealed?: { at: string };
   endedAt?: string;
 };
 
@@ -81,6 +88,8 @@ export type DeepReflection = {
   };
   concerns: string[];
   emotionCandidates: EmotionSelection[];
+  /** As in QuickCheck: when 단어 보기 opened the word step's list. Absent when it never was. */
+  wordsRevealed?: { at: string };
   outcome?: {
     clarity: "much_clearer" | "clearer" | "same" | "more_complex" | "more_distressed";
     usefulness: "helpful" | "unsure" | "unhelpful";
@@ -188,6 +197,8 @@ export type SessionAction =
   | { type: "SET_QUICK_CANDIDATE_RESPONSE"; response: QuickNonSelection }
   | { type: "ADD_QUICK_CUSTOM"; label: string }
   | { type: "SET_PERSONAL_MEANING"; label: string; meaning: string }
+  | { type: "REVEAL_QUICK_WORDS" }
+  | { type: "REVEAL_DEEP_WORDS" }
   | { type: "OPEN_GRANULARITY" }
   | { type: "CHOOSE_GRANULARITY"; concept: string }
   | { type: "SKIP_GRANULARITY" }
@@ -276,7 +287,7 @@ const NOT_A_STEP = new Set<SessionAction["type"]>([
   "TOGGLE_QUICK_CANDIDATE", "SET_QUICK_CANDIDATE_RESPONSE", "ADD_QUICK_CUSTOM",
   "SET_SYNTHESIS_FEEDBACK", "SET_TALK_TO_SOMEONE", "CHOOSE_NEED", "TOGGLE_RESPONSE",
   "TOGGLE_COACH_WORD", "SET_COACH_OWN_WORD", "TOGGLE_APPRAISAL", "SET_OWN_APPRAISAL",
-  "SET_PERSONAL_MEANING", "RESUME", "BACK",
+  "SET_PERSONAL_MEANING", "REVEAL_QUICK_WORDS", "REVEAL_DEEP_WORDS", "RESUME", "BACK",
 ]);
 
 const reduce = (state: EmotionSession, action: SessionAction): EmotionSession => {
@@ -315,6 +326,9 @@ const reduce = (state: EmotionSession, action: SessionAction): EmotionSession =>
           item.label === action.label ? { ...item, personalMeaning: action.meaning.trim() || undefined } : item),
       });
     }
+    case "REVEAL_QUICK_WORDS":
+      // the first opening is the one kept: pressing again later does not move the time
+      return state.quickCheck?.wordsRevealed ? state : withQuick(state, { wordsRevealed: { at: new Date().toISOString() } });
     case "SET_QUICK_CANDIDATE_RESPONSE":
       // Stays on the candidate step so the user can still end here or go deeper.
       return withQuick(state, { candidateResponse: action.response, selected: [] });
@@ -354,6 +368,8 @@ const reduce = (state: EmotionSession, action: SessionAction): EmotionSession =>
       return { ...withDeep(state, { context: action.context }), stage: "meaning" };
     case "SET_CONCERNS":
       return { ...withDeep(state, { concerns: action.concerns }), stage: "emotion" };
+    case "REVEAL_DEEP_WORDS":
+      return state.deepReflection?.wordsRevealed ? state : withDeep(state, { wordsRevealed: { at: new Date().toISOString() } });
     case "SET_EMOTIONS":
       return { ...withDeep(state, { emotionCandidates: action.emotionCandidates }), stage: "outcome" };
     case "SET_OUTCOME": {

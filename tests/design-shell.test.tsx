@@ -97,6 +97,7 @@ describe("no homepage frame while working through the steps", () => {
       fireEvent.keyDown(pad, { key: "ArrowUp" });
     }
     click("다음");
+    click(ko.words.reveal);
     const coachWord = [...document.querySelectorAll(".chip")].find((chip) => ["짜증", "억울함", "답답함"].includes(chip.textContent ?? ""));
     expect(coachWord).toBeDefined();
     fireEvent.click(coachWord!);

@@ -169,7 +169,7 @@ function App() {
       )}
 
       {session.stage === "quick-affect" && <QuickAffectScreen onNext={(affect) => { dispatch({ type: "SET_QUICK_AFFECT", affect }); dispatch({ type: "SET_QUICK_CANDIDATES", candidatePool: filterQuickCandidates({ x: affect.valence ?? 0.5, y: affect.activation ?? 0.5 }, undefined, t.locale) }); }} onUnknown={() => dispatch({ type: "SET_QUICK_UNKNOWN" })} />}
-      {session.stage === "quick-candidates" && <QuickCandidatesScreen pool={session.quickCheck?.candidatePool ?? []} selected={session.quickCheck?.selected ?? []} response={session.quickCheck?.candidateResponse} onToggle={(label) => dispatch({ type: "TOGGLE_QUICK_CANDIDATE", label })} onRespond={(response) => dispatch({ type: "SET_QUICK_CANDIDATE_RESPONSE", response })} onAddCustom={(label) => dispatch({ type: "ADD_QUICK_CUSTOM", label })} onMeaning={(label, meaning) => dispatch({ type: "SET_PERSONAL_MEANING", label, meaning })} onFinish={() => dispatch({ type: "COMPLETE_QUICK" })} onCoach={() => dispatch({ type: "OPEN_GRANULARITY" })} onDeep={() => { dispatch({ type: "COMPLETE_QUICK" }); dispatch({ type: "ENTER_DEEP" }); }} />}
+      {session.stage === "quick-candidates" && <QuickCandidatesScreen pool={session.quickCheck?.candidatePool ?? []} selected={session.quickCheck?.selected ?? []} response={session.quickCheck?.candidateResponse} revealed={Boolean(session.quickCheck?.wordsRevealed)} onReveal={() => dispatch({ type: "REVEAL_QUICK_WORDS" })} onToggle={(label) => dispatch({ type: "TOGGLE_QUICK_CANDIDATE", label })} onRespond={(response) => dispatch({ type: "SET_QUICK_CANDIDATE_RESPONSE", response })} onAddCustom={(label) => dispatch({ type: "ADD_QUICK_CUSTOM", label })} onMeaning={(label, meaning) => dispatch({ type: "SET_PERSONAL_MEANING", label, meaning })} onFinish={() => dispatch({ type: "COMPLETE_QUICK" })} onCoach={() => dispatch({ type: "OPEN_GRANULARITY" })} onDeep={() => { dispatch({ type: "COMPLETE_QUICK" }); dispatch({ type: "ENTER_DEEP" }); }} />}
       {session.stage === "coach-appraisal" && <CoachAppraisalScreen session={session} onToggle={(id) => dispatch({ type: "TOGGLE_APPRAISAL", id })} onOwn={(label) => dispatch({ type: "SET_OWN_APPRAISAL", label })} onNext={() => dispatch({ type: "GO_TO_COACH_WORDS" })} onLeave={() => dispatch({ type: "CLOSE_COACH" })} />}
       {session.stage === "coach-words" && <CoachWordsScreen session={session} onToggle={(label) => dispatch({ type: "TOGGLE_COACH_WORD", label })} onOwnWord={(label) => dispatch({ type: "SET_COACH_OWN_WORD", label })} onNext={() => dispatch({ type: "FINISH_COACH" })} onLeave={() => dispatch({ type: "CLOSE_COACH" })} />}
       {session.stage === "coach-note" && <CoachNoteScreen session={session} onDone={() => dispatch({ type: "CLOSE_COACH" })} />}
@@ -182,7 +182,7 @@ function App() {
       {session.stage === "affect" && <AffectScreen initial={session.deepReflection?.affect ?? quickAffectSuggestion(session)} fromQuick={!session.deepReflection?.affect && Boolean(quickAffectSuggestion(session))} onNext={(affect) => dispatch({ type: "SET_AFFECT", affect })} />}
       {session.stage === "context" && <ContextScreen initial={session.deepReflection?.context} onNext={(context) => dispatch({ type: "SET_CONTEXT", context })} />}
       {session.stage === "meaning" && <MeaningScreen initial={session.deepReflection?.concerns ?? []} onNext={(selected) => dispatch({ type: "SET_CONCERNS", concerns: selected })} />}
-      {session.stage === "emotion" && <EmotionScreen initial={session.deepReflection?.emotionCandidates ?? []} affect={session.deepReflection?.affect} onNext={(selected) => dispatch({ type: "SET_EMOTIONS", emotionCandidates: selected })} />}
+      {session.stage === "emotion" && <EmotionScreen initial={session.deepReflection?.emotionCandidates ?? []} affect={session.deepReflection?.affect} revealed={Boolean(session.deepReflection?.wordsRevealed)} onReveal={() => dispatch({ type: "REVEAL_DEEP_WORDS" })} onNext={(selected) => dispatch({ type: "SET_EMOTIONS", emotionCandidates: selected })} />}
       {session.stage === "outcome" && <OutcomeScreen onNext={(outcome) => dispatch({ type: "SET_OUTCOME", outcome })} />}
       {session.stage === "summary" && <SummaryScreen session={session} onFeedback={(feedback) => dispatch({ type: "SET_SYNTHESIS_FEEDBACK", ...feedback })} onTalk={(answer) => dispatch({ type: "SET_TALK_TO_SOMEONE", answer })} onSupport={() => dispatch({ type: "OPEN_SUPPORT" })} />}
       {session.stage === "support" && <NeedScreen session={session} onNeed={(id) => dispatch({ type: "CHOOSE_NEED", id })} onResponse={(id) => dispatch({ type: "TOGGLE_RESPONSE", id })} onDeep={() => dispatch({ type: "ENTER_DEEP" })} onCoach={() => dispatch({ type: "OPEN_COACH" })} onBack={() => dispatch({ type: "BACK" })} />}
@@ -483,7 +483,13 @@ function QuickAffectScreen({ onNext, onUnknown }: { onNext: (affect: AffectPoint
   </Screen>;
 }
 
-function TieredWords({ pool, selectedLabels, ownWords, onToggle, onAddCustom, meanings, onMeaning }: { pool: EmotionSelection[]; selectedLabels: string[]; ownWords: string[]; onToggle: (label: string) => void; onAddCustom: (label: string) => void; meanings?: Record<string, string>; onMeaning?: (label: string, meaning: string) => void }) {
+/**
+ * Words are thought of before they are seen (owner's decision 2026-10-30). Until
+ * 단어 보기 is pressed (`revealed`), no offered word is drawn: only the person's
+ * own-words field and the button. After it, the five nearest words and the
+ * similar ones behind 비슷한 표현 더 보기, as before.
+ */
+function TieredWords({ pool, selectedLabels, ownWords, onToggle, onAddCustom, meanings, onMeaning, revealed, onReveal }: { pool: EmotionSelection[]; selectedLabels: string[]; ownWords: string[]; onToggle: (label: string) => void; onAddCustom: (label: string) => void; meanings?: Record<string, string>; onMeaning?: (label: string, meaning: string) => void; revealed: boolean; onReveal: () => void }) {
   const t = useT();
   const [tier, setTier] = useState<1 | 2>(1);
   const [custom, setCustom] = useState("");
@@ -492,6 +498,25 @@ function TieredWords({ pool, selectedLabels, ownWords, onToggle, onAddCustom, me
   const expanded = expandCandidates([...pool, ...selectedAsItems], undefined, t.locale).filter((item) => !poolLabels.includes(item.label));
   const chip = (label: string) => <button className={`chip ${selectedLabels.includes(label) ? "selected" : ""}`} aria-pressed={selectedLabels.includes(label)} key={label} onClick={() => onToggle(label)}><Mark on={selectedLabels.includes(label)} />{label}</button>;
   const addCustom = () => { onAddCustom(custom); setCustom(""); };
+
+  const mine = ownWords.length > 0 && <>
+    <p className="tier-label">{t("words.mine")}</p>
+    <div className="chip-grid">{ownWords.map((label) => chip(label))}</div>
+    {onMeaning && ownWords.map((label) => <div className="own-meaning" key={label}>
+      <label className="field-label" htmlFor={`meaning-${label}`}>{t("words.meaningLabel", { label })} <em>{t("words.optional")}</em></label>
+      <input id={`meaning-${label}`} className="text-input" maxLength={INPUT_LIMITS.line} defaultValue={meanings?.[label] ?? ""} onChange={(event) => onMeaning(label, event.target.value)} placeholder={t("words.meaningPlaceholder")} />
+    </div>)}
+  </>;
+  const ownRow = <div className="own-word-row">
+    <input className="text-input" maxLength={INPUT_LIMITS.word} value={custom} onChange={(event) => setCustom(event.target.value)} onKeyDown={(event) => { if (event.key === "Enter") addCustom(); }} placeholder={t("common.ownWordsPlaceholder")} aria-label={t("common.ownWordsPlaceholder")} />
+    <button className="small-button" disabled={!custom.trim()} onClick={addCustom}>{t("words.add")}</button>
+  </div>;
+
+  if (!revealed) return <>
+    <div className="own-word-block own-word-first">{ownRow}</div>
+    {mine}
+    <button className="reveal-button" onClick={onReveal}>{t("words.reveal")}</button>
+  </>;
 
   return <>
     <div className="chip-grid">{pool.map((item) => chip(item.label))}</div>
@@ -502,33 +527,23 @@ function TieredWords({ pool, selectedLabels, ownWords, onToggle, onAddCustom, me
       <div className="chip-grid">{expanded.map((item) => chip(item.label))}</div>
     </>}
 
-    {ownWords.length > 0 && <>
-      <p className="tier-label">{t("words.mine")}</p>
-      <div className="chip-grid">{ownWords.map((label) => chip(label))}</div>
-      {onMeaning && ownWords.map((label) => <div className="own-meaning" key={label}>
-        <label className="field-label" htmlFor={`meaning-${label}`}>{t("words.meaningLabel", { label })} <em>{t("words.optional")}</em></label>
-        <input id={`meaning-${label}`} className="text-input" maxLength={INPUT_LIMITS.line} defaultValue={meanings?.[label] ?? ""} onChange={(event) => onMeaning(label, event.target.value)} placeholder={t("words.meaningPlaceholder")} />
-      </div>)}
-    </>}
+    {mine}
 
     <div className="own-word-block">
       <p className="tier-label">{t("words.notListed")}</p>
-      <div className="own-word-row">
-        <input className="text-input" maxLength={INPUT_LIMITS.word} value={custom} onChange={(event) => setCustom(event.target.value)} onKeyDown={(event) => { if (event.key === "Enter") addCustom(); }} placeholder={t("common.ownWordsPlaceholder")} aria-label={t("common.ownWordsPlaceholder")} />
-        <button className="small-button" disabled={!custom.trim()} onClick={addCustom}>{t("words.add")}</button>
-      </div>
+      {ownRow}
       <p className="small-note">{t("words.startingPoint")}</p>
     </div>
   </>;
 }
 
-function QuickCandidatesScreen({ pool, selected, response, onToggle, onRespond, onAddCustom, onMeaning, onFinish, onCoach, onDeep }: { pool: EmotionSelection[]; selected: EmotionSelection[]; response?: QuickNonSelection; onToggle: (label: string) => void; onRespond: (response: QuickNonSelection) => void; onAddCustom: (label: string) => void; onMeaning: (label: string, meaning: string) => void; onFinish: () => void; onCoach: () => void; onDeep: () => void }) {
+function QuickCandidatesScreen({ pool, selected, response, revealed, onReveal, onToggle, onRespond, onAddCustom, onMeaning, onFinish, onCoach, onDeep }: { pool: EmotionSelection[]; selected: EmotionSelection[]; response?: QuickNonSelection; revealed: boolean; onReveal: () => void; onToggle: (label: string) => void; onRespond: (response: QuickNonSelection) => void; onAddCustom: (label: string) => void; onMeaning: (label: string, meaning: string) => void; onFinish: () => void; onCoach: () => void; onDeep: () => void }) {
   const t = useT();
   const canCoach = getCoachSets(t.locale).some((set) => selected.some((item) => set.words.includes(item.label)));
   return <Screen>
-    <StepHeading step={t("quickCandidates.step")} title={t("quickCandidates.title")} hint={t("quickCandidates.hint")} basis={t("quickCandidates.basis")} />
-    <div className="provisional-note">{t("common.provisionalNote")}</div>
-    <TieredWords pool={pool} selectedLabels={selected.map((item) => item.label)} ownWords={selected.filter((item) => item.source === "custom").map((item) => item.label)} onToggle={onToggle} onAddCustom={onAddCustom} meanings={Object.fromEntries(selected.filter((item) => item.personalMeaning).map((item) => [item.label, item.personalMeaning!]))} onMeaning={onMeaning} />
+    <StepHeading step={t("quickCandidates.step")} title={revealed ? t("quickCandidates.title") : t("words.beforeTitle")} hint={revealed ? t("quickCandidates.hint") : t("words.beforeHint")} basis={t("quickCandidates.basis")} />
+    {revealed && <div className="provisional-note">{t("common.provisionalNote")}</div>}
+    <TieredWords revealed={revealed} onReveal={onReveal} pool={pool} selectedLabels={selected.map((item) => item.label)} ownWords={selected.filter((item) => item.source === "custom").map((item) => item.label)} onToggle={onToggle} onAddCustom={onAddCustom} meanings={Object.fromEntries(selected.filter((item) => item.personalMeaning).map((item) => [item.label, item.personalMeaning!]))} onMeaning={onMeaning} />
 
     <div className="quick-option-row">{(["none-close", "unsure"] as const).map((value) => <button className={`secondary-button ${response === value ? "selected" : ""}`} aria-pressed={response === value} key={value} onClick={() => onRespond(value)}><Mark on={response === value} />{t(`quickCandidates.decline.${value}`)}</button>)}</div>
     {response && <p className="small-note">{t(`quickCandidates.declined.${response}`)}</p>}
@@ -768,7 +783,7 @@ function MeaningScreen({ initial, onNext }: { initial: string[]; onNext: (select
   return <Screen><StepHeading step={t("meaning.step")} title={t("meaning.title")} hint={t("meaning.hint")} basis={t("meaning.basis")} /><div className="choice-list compact">{concerns.map((item) => <button className={selected.includes(item) ? "selected" : ""} aria-pressed={selected.includes(item)} key={item} onClick={() => toggle(item)}><Mark on={selected.includes(item)} />{item}</button>)}</div><input className="text-input" maxLength={INPUT_LIMITS.word} value={custom} onChange={(event) => setCustom(event.target.value)} placeholder={t("common.ownWordsPlaceholder")} /><Navigation note={stepNote(stepNotes, "meaning", selected.length > 0 || custom.trim().length > 0)} onNext={() => onNext([...selected, ...(custom ? [custom] : [])])} /></Screen>;
 }
 
-function EmotionScreen({ initial, affect, onNext }: { initial: EmotionSelection[]; affect?: AffectPoint; onNext: (selected: EmotionSelection[]) => void }) {
+function EmotionScreen({ initial, affect, revealed, onReveal, onNext }: { initial: EmotionSelection[]; affect?: AffectPoint; revealed: boolean; onReveal: () => void; onNext: (selected: EmotionSelection[]) => void }) {
   const t = useT();
   const { stepNotes } = useContent();
   const [selected, setSelected] = useState(initial.map((item) => item.label));
@@ -783,9 +798,9 @@ function EmotionScreen({ initial, affect, onNext }: { initial: EmotionSelection[
   // the deep affect already narrowed the space once; this reuses it rather than listing everything
   const pool = filterQuickCandidates({ x: affect?.valence ?? 0.5, y: affect?.activation ?? 0.5 }, undefined, t.locale);
   return <Screen>
-    <StepHeading step={t("emotion.step")} title={t("emotion.title")} hint={t("emotion.hint")} basis={t("emotion.basis")} />
-    <div className="provisional-note">{t("common.provisionalNote")}</div>
-    <TieredWords pool={pool} selectedLabels={selected} ownWords={ownWords} onToggle={toggle} onAddCustom={addOwnWord} />
+    <StepHeading step={t("emotion.step")} title={revealed ? t("emotion.title") : t("words.beforeTitle")} hint={revealed ? t("emotion.hint") : t("words.beforeHint")} basis={t("emotion.basis")} />
+    {revealed && <div className="provisional-note">{t("common.provisionalNote")}</div>}
+    <TieredWords revealed={revealed} onReveal={onReveal} pool={pool} selectedLabels={selected} ownWords={ownWords} onToggle={toggle} onAddCustom={addOwnWord} />
     <div className="quick-option-row">{[t("emotion.escapes.several"), t("emotion.escapes.unsure")].map((label) => <button className={`secondary-button ${selected.includes(label) ? "selected" : ""}`} aria-pressed={selected.includes(label)} key={label} onClick={() => toggle(label)}><Mark on={selected.includes(label)} />{label}</button>)}</div>
     <Navigation note={stepNote(stepNotes, "emotion", selected.length > 0)} onNext={() => onNext(selected.map((label) => ({ label, source: ownWords.includes(label) ? "custom" as const : "suggested" as const })))} />
   </Screen>;

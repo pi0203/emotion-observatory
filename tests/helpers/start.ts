@@ -15,3 +15,6 @@ export const startDeep = () => {
   fireEvent.click(screen.getByRole("button", { name: new RegExp(`^${ko.common.next}`) }));
   fireEvent.click(screen.getByRole("button", { name: ko.quickCandidates.deep }));
 };
+
+/** The word steps draw no offered word until 단어 보기 is pressed (2026-10-30). */
+export const revealWords = () => fireEvent.click(screen.getByRole("button", { name: ko.words.reveal }));

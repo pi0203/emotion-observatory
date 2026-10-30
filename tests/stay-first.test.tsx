@@ -3,7 +3,7 @@ import { cleanup, fireEvent, render, screen, within } from "@testing-library/rea
 import Home from "../app/(ko)/page";
 import { ko } from "../lib/i18n/messages.ko";
 import { getStorageAdapter } from "../lib/storage-adapter";
-import { startQuick } from "./helpers/start";
+import { revealWords, startDeep, startQuick } from "./helpers/start";
 
 /**
  * 머무르기가 먼저, 이름은 겹쓴다 (owner's decisions 2026-10-30, docs/EVIDENCE_CHAIN.md §7).
@@ -66,5 +66,66 @@ describe("아직 모르겠다 weighs the same as 다음", () => {
     const row = document.querySelector(".record-row")!;
     expect(row.textContent).toContain(ko.quickAffect.unknown);
     expect(row.textContent).not.toContain("없음");
+  });
+});
+
+describe("words are thought of before they are seen", () => {
+  beforeEach(() => window.localStorage.clear());
+  afterEach(cleanup);
+  const toWordStep = () => {
+    render(<Home />);
+    startQuick();
+    fireEvent.keyDown(document.querySelector(".affect-grid")!, { key: "Enter" });
+    fireEvent.click(screen.getByRole("button", { name: new RegExp(`^${ko.common.next}`) }));
+  };
+  const draft = () => getStorageAdapter().loadDraft();
+
+  it("draws no offered word on the quick step until 단어 보기, while the own-words field and every way out stay", () => {
+    toWordStep();
+    expect(screen.getByRole("heading", { level: 1 }).textContent).toBe(ko.words.beforeTitle);
+    expect(document.querySelectorAll(".chip")).toHaveLength(0);
+    expect(screen.queryByText(ko.common.provisionalNote)).toBeNull();
+    expect(screen.getByLabelText(ko.common.ownWordsPlaceholder)).toBeTruthy();
+    expect(screen.getByRole("button", { name: ko.words.add })).toBeTruthy();
+    for (const name of [ko.quickCandidates.decline["none-close"], ko.quickCandidates.decline.unsure, ko.quickCandidates.finish, ko.quickCandidates.deep]) {
+      expect(screen.getByRole("button", { name: new RegExp(name) })).toBeTruthy();
+    }
+    expect(draft()?.quickCheck?.wordsRevealed).toBeUndefined();
+
+    revealWords();
+    expect(screen.getByRole("heading", { level: 1 }).textContent).toBe(ko.quickCandidates.title);
+    expect(document.querySelectorAll(".chip").length).toBeGreaterThan(0);
+    expect(document.querySelectorAll(".chip").length).toBeLessThanOrEqual(5);
+    expect(screen.getByText(ko.common.provisionalNote)).toBeTruthy();
+    expect(screen.getByRole("button", { name: ko.words.more })).toBeTruthy();
+  });
+
+  it("keeps the time 단어 보기 was first pressed, and nothing when it never was", () => {
+    toWordStep();
+    revealWords();
+    const at = draft()?.quickCheck?.wordsRevealed?.at;
+    expect(Number.isNaN(Date.parse(at ?? ""))).toBe(false);
+    fireEvent.click(screen.getByRole("button", { name: new RegExp(`^${ko.quickCandidates.finish}`) }));
+    expect(getStorageAdapter().loadCompleted()[0].quickCheck?.wordsRevealed).toEqual({ at });
+    cleanup();
+    window.localStorage.clear();
+
+    toWordStep();
+    fireEvent.click(screen.getByRole("button", { name: new RegExp(`^${ko.quickCandidates.finish}`) }));
+    expect("wordsRevealed" in getStorageAdapter().loadCompleted()[0].quickCheck!).toBe(false);
+  });
+
+  it("does the same on the slower look's word step", () => {
+    render(<Home />);
+    startDeep();
+    fireEvent.click(screen.getByRole("button", { name: /조금 살펴보고 싶어요/ }));
+    for (let step = 0; step < 4; step += 1) fireEvent.click(screen.getAllByRole("button", { name: ko.common.skip })[0]); // body, affect, context, meaning
+    expect(screen.getByRole("heading", { level: 1 }).textContent).toBe(ko.words.beforeTitle);
+    expect(document.querySelectorAll(".chip")).toHaveLength(0);
+    for (const name of [ko.emotion.escapes.several, ko.emotion.escapes.unsure]) expect(screen.getByRole("button", { name })).toBeTruthy();
+    revealWords();
+    expect(screen.getByRole("heading", { level: 1 }).textContent).toBe(ko.emotion.title);
+    expect(draft()?.deepReflection?.wordsRevealed?.at).toBeTruthy();
+    expect(draft()?.quickCheck?.wordsRevealed).toBeUndefined();
   });
 });

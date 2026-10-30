@@ -273,6 +273,9 @@ export const en: Messages = {
     notListed: "If a word that is not here fits better",
     add: "Add",
     startingPoint: "This is a starting point, not a complete list. Writing your own word is just as ordinary a choice.",
+    beforeTitle: "If you put this feeling in your own words?",
+    beforeHint: "You don’t have to write anything. The word list is there if you want to see it.",
+    reveal: "Show words",
   },
   quickCandidates: {
     basis: "Based on where you just tapped",
