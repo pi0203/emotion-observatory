@@ -261,6 +261,7 @@ export const en: Messages = {
     step: "Quick look",
     title: "Where does your overall feeling sit right now?",
     hint: "No need to pick an exact point. Tap once wherever feels about right.",
+    unknown: "Not sure yet",
   },
   words: {
     more: "Show more similar words",

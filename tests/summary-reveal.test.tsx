@@ -15,7 +15,7 @@ const toQuickSummary = (unsure = false) => {
   startQuick();
   if (unsure) {
     // 잘 모르겠음 on the pad finishes the quick look straight away
-    fireEvent.click(screen.getByRole("button", { name: "잘 모르겠음" }));
+    fireEvent.click(screen.getByRole("button", { name: "아직 모르겠다" }));
   } else {
     fireEvent(screen.getByRole("application", { name: /불쾌함과 유쾌함/ }), new MouseEvent("pointerdown", { bubbles: true, clientX: 40, clientY: 30 }));
     fireEvent.click(screen.getByRole("button", { name: /다음/ }));

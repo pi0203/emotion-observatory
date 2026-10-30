@@ -466,14 +466,18 @@ function WhyThis() {
   </details>;
 }
 
+/**
+ * 아직 모르겠다 carries the same weight as 다음 (owner's decision 2026-10-30): an
+ * outlined button of the same size, and a record ended here is a finished one.
+ */
 function QuickAffectScreen({ onNext, onUnknown }: { onNext: (affect: AffectPoint) => void; onUnknown: () => void }) {
   const t = useT();
   const [point, setPoint] = useState<{ valence: number; activation: number } | null>(null);
   return <Screen>
     <StepHeading step={t("quickAffect.step")} title={t("quickAffect.title")} hint={t("quickAffect.hint")} basis={t("quickAffect.basis")} />
     <AffectPad onChange={setPoint} />
-    <div className="quick-actions">
-      <button className="quiet-button" onClick={onUnknown}>{t("common.unsure")}</button>
+    <div className="quick-actions even-actions">
+      <button className="secondary-button" onClick={onUnknown}>{t("quickAffect.unknown")}</button>
       <button className="primary-button" disabled={!point} onClick={() => point && onNext(point)}>{t("common.next")} <span>→</span></button>
     </div>
   </Screen>;
@@ -673,9 +677,10 @@ function CoachNoteScreen({ session, onDone }: { session: EmotionSession; onDone:
 function QuickSummaryScreen({ session, onDeep, onFeedback, onSupport }: { session: EmotionSession; onDeep: () => void; onFeedback: (feedback: { fit?: SynthesisFit; correction?: string }) => void; onSupport: () => void }) {
   const t = useT();
   const quick = session.quickCheck;
-  const affect = quick?.affect?.unknown ? t("common.unsure") : `${quickValence(quick?.affect?.valence, t.locale)} · ${quickActivation(quick?.affect?.activation, t.locale)}`;
+  const affect = quickAffectValue(t, quick?.affect);
   const words = (quick?.selected ?? []).map((item) => item.label).join(" · ") || quickResponseLabel(t, quick?.candidateResponse) || t("common.notChosen");
-  const rows: [string, string][] = [[t("quickSummary.affect"), affect], [t("quickSummary.words"), words]];
+  // ended at 아직 모르겠다, the words were never asked for, so no row says none were chosen
+  const rows: [string, string][] = quick?.affect?.unknown ? [[t("quickSummary.affect"), affect]] : [[t("quickSummary.affect"), affect], [t("quickSummary.words"), words]];
   if (quick?.granularityResponse === "unsure") rows.push([t("quickSummary.granularity"), t("common.unsure")]);
   if (quick?.contrastAnswer) rows.push([t("quickSummary.contrast"), quick.contrastAnswer]);
   const play = useFirstReveal(`${session.id}:quick-summary`);
@@ -801,7 +806,7 @@ function SummaryScreen({ session, onFeedback, onTalk, onSupport }: { session: Em
   if (deep?.outcome?.clarity === "more_distressed") return <WorsenedScreen />;
   const quickAffect = session.quickCheck?.affect;
   const rows: [string, string?][] = [];
-  if (quickAffect) rows.push([t("summary.quickAffect"), quickAffect.unknown ? t("common.unsure") : `${quickValence(quickAffect.valence, t.locale)} · ${quickActivation(quickAffect.activation, t.locale)}`]);
+  if (quickAffect) rows.push([t("summary.quickAffect"), quickAffectValue(t, quickAffect)]);
   // a skipped step stays in the list, quietly, as 비워 둠; 잘 모르겠음 is an answer and keeps its own row text
   rows.push(
     [t("summary.body"), (deep?.body ?? []).map((item) => item.label).join(" · ") || undefined],
@@ -974,7 +979,7 @@ function RecordsScreen({ records, onOpen, onBack, onChanged }: { records: Emotio
           const item = summarise(session, t.locale);
           return <button className="record-row" key={item.id} onClick={() => onOpen(session)}>
             <span className="record-when">{formatWhen(item.at, t.locale)}<em>{item.depthLabel}</em></span>
-            <strong>{item.words.join(" · ") || t("records.noWords")}</strong>
+            <strong>{item.words.join(" · ") || (session.quickCheck?.affect?.unknown && !session.deepReflection ? t("quickAffect.unknown") : t("records.noWords"))}</strong>
             {item.needLabel && <span className="record-need">{t("records.needLine", { label: item.needLabel })}</span>}
             {item.responseLabels.length > 0 && <span className="record-need">{t("records.responsesLine", { labels: item.responseLabels.join(" / ") })}</span>}
           </button>;
@@ -1176,11 +1181,11 @@ function RecordDetail({ session, onFollowUp, onBack }: { session: EmotionSession
     <h1>{formatWhen(item.at, t.locale)}</h1>
     <div className="summary-card">
       <SummaryRow label={t("recordDetail.depth")} value={item.depthLabel} />
-      {session.quickCheck?.affect && <SummaryRow label={t("recordDetail.quickAffect")} value={session.quickCheck.affect.unknown ? t("common.unsure") : `${quickValence(session.quickCheck.affect.valence, t.locale)} · ${quickActivation(session.quickCheck.affect.activation, t.locale)}`} />}
+      {session.quickCheck?.affect && <SummaryRow label={t("recordDetail.quickAffect")} value={quickAffectValue(t, session.quickCheck.affect)} />}
       {deep?.affect && <LeftEmptyRow label={t("recordDetail.deepAffect")} value={deepAffectValue(t, deep.affect)} />}
       {session.talkToSomeone && <SummaryRow label={t("talkToSomeone.recordLabel")} value={t(`talkToSomeone.answers.${session.talkToSomeone.answer}`)} />}
       {/* 가까운 말이 없음 · 잘 모르겠음 from the quick look are answers; only no words and no answer is 비워 둠 */}
-      <LeftEmptyRow label={t("recordDetail.words")} value={item.words.join(" · ") || (deep?.emotionCandidates?.length ? "" : quickResponseLabel(t, session.quickCheck?.candidateResponse)) || undefined} />
+      {!(session.quickCheck?.affect?.unknown && !deep) && <LeftEmptyRow label={t("recordDetail.words")} value={item.words.join(" · ") || (deep?.emotionCandidates?.length ? "" : quickResponseLabel(t, session.quickCheck?.candidateResponse)) || undefined} />}
       {item.personalMeanings.map((entry) => <SummaryRow key={entry.label} label={t("recordDetail.personalMeaning", { label: entry.label })} value={entry.meaning} />)}
       {deep?.context?.eventText && <SummaryRow label={t("recordDetail.context")} value={deep.context.eventText} />}
       {item.needLabel && <SummaryRow label={t("recordDetail.need")} value={item.needLabel} />}
@@ -1269,6 +1274,10 @@ function quickAffectSuggestion(session: EmotionSession): AffectPoint | undefined
   const affect = session.quickCheck?.affect;
   if (!affect || affect.unknown) return undefined;
   return { valence: affect.valence, activation: affect.activation };
+}
+/** The quick pad as words; 아직 모르겠다 is the answer given there, said back in the same words. */
+function quickAffectValue(t: Translate, affect?: AffectPoint) {
+  return affect?.unknown ? t("quickAffect.unknown") : `${quickValence(affect?.valence, t.locale)} · ${quickActivation(affect?.activation, t.locale)}`;
 }
 /** 잘 모르겠음 stays its own answer; a skipped pad is left empty (undefined), never the middle. */
 function deepAffectValue(t: Translate, affect?: AffectPoint) {

@@ -232,6 +232,8 @@ export const ko = {
     step: "빠른 확인",
     title: "지금은 어느 쪽에 가까운가요?",
     hint: "정확한 좌표를 고를 필요 없이, ‘이쯤’이라고 느껴지는 곳을 한 번 눌러보세요.",
+    /** As much an answer as a spot on the pad: the record ends here, finished (2026-10-30). */
+    unknown: "아직 모르겠다",
   },
   words: {
     more: "비슷한 표현 더 보기",

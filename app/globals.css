@@ -441,3 +441,6 @@ html, body { transition: background-color .5s ease; }
   .hero-card.single-entry > .hero-pad { width: 84px; margin-bottom: 14px; }
   .hero-card.single-entry .start-button { width: 100%; }
 }
+/* 아직 모르겠다 and 다음 side by side at the same size and height (2026-10-30) */
+.even-actions > .secondary-button, .even-actions > .primary-button { flex: 1 1 0; min-height: 52px; }
+@media (max-width: 560px) { .even-actions > .secondary-button { width: 100%; } }

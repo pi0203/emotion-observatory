@@ -62,7 +62,7 @@ const quotedList = (t: Translate, values: string[]) => ({
 const labels = (items?: { label: string }[]) => (items ?? []).map((item) => item.label);
 
 const quickAffectText = (t: Translate, affect: NonNullable<EmotionSession["quickCheck"]>["affect"]) =>
-  affect?.unknown ? t("common.unsure") : `${quickValence(affect?.valence, t.locale)} · ${quickActivation(affect?.activation, t.locale)}`;
+  affect?.unknown ? t("quickAffect.unknown") : `${quickValence(affect?.valence, t.locale)} · ${quickActivation(affect?.activation, t.locale)}`;
 
 const deepAffectText = (t: Translate, affect: NonNullable<EmotionSession["deepReflection"]>["affect"]) =>
   `${scaleLabel(affect?.valence, t.locale)} · ${activationLabel(affect?.activation, t.locale)}`;

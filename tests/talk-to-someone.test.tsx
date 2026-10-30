@@ -46,7 +46,7 @@ describe("the one question about telling a person", () => {
   it("is not asked on the quick look, which stays short", () => {
     render(<Home />);
     startQuick();
-    fireEvent.click(screen.getByRole("button", { name: "잘 모르겠음" }));
+    fireEvent.click(screen.getByRole("button", { name: "아직 모르겠다" }));
     expect(screen.getByRole("heading", { level: 1, name: "여기까지 살펴보았습니다." })).toBeInTheDocument();
     expect(screen.queryByText(QUESTION)).toBeNull();
   });
