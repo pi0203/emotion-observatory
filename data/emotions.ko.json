@@ -95,7 +95,7 @@
       "activation": "high",
       "neighbors": [
         "짜증",
-        "분개",
+        "분노",
         "억울함"
       ],
       "appraisalHints": [
@@ -139,7 +139,7 @@
         "화남",
         "서운함",
         "답답함",
-        "분개"
+        "분노"
       ],
       "appraisalHints": [
         "부당하게 대우받았다고 느낌",
@@ -224,9 +224,9 @@
       "normStatus": "provisional"
     },
     {
-      "label": "분개",
+      "label": "분노",
       "aliases": [
-        "분노"
+        "분개"
       ],
       "family": "friction",
       "valence": "negative",
@@ -467,7 +467,7 @@
       "activation": "medium",
       "neighbors": [
         "혐오",
-        "분개",
+        "분노",
         "짜증"
       ],
       "appraisalHints": [
