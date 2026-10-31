@@ -358,6 +358,7 @@ export const en: Messages = {
       hint: "You can tap the figure or choose from the list below.",
       ariaLabel: "Body figure. Tap a part to open its list below.",
       wholeBody: "Whole body",
+      part: { neck: "Neck", leftShoulder: "Left shoulder", rightShoulder: "Right shoulder", leftHand: "Left hand", rightHand: "Right hand" },
       credit: "Figure: Mikael Häggström, Wikimedia Commons, public domain. Trimmed to the silhouette, lungs, heart, stomach and intestines.",
       settings: "Change the figure",
       visibleLabel: "Figure",

@@ -87,27 +87,51 @@ export const organLayers = (prefs: FigurePrefs, activeRegion: string | null): { 
   return ORGAN_LAYERS.map((organ) => ({ organ, src: layerSrc(prefs.body, figure.layersByStyle[prefs.style][organ]), visible: shown.includes(organ) }));
 };
 
+export type ZonePart = "neck" | "leftShoulder" | "rightShoulder" | "leftHand" | "rightHand";
+type ZoneBase = { region: string; /** Tells apart the zones of one region for a screen reader (data/body-figure.json `partsNote`). */ part?: ZonePart };
 export type Zone =
-  | { region: string; shape: "rect"; x: number; y: number; w: number; h: number; rx: number }
-  | { region: string; shape: "circle"; cx: number; cy: number; r_over_width: number }
-  | { region: string; shape: "ellipse"; cx: number; cy: number; rx: number; ry: number };
+  | (ZoneBase & { shape: "rect"; x: number; y: number; w: number; h: number; rx: number })
+  | (ZoneBase & { shape: "circle"; cx: number; cy: number; r_over_width: number })
+  | (ZoneBase & { shape: "ellipse"; cx: number; cy: number; rx: number; ry: number });
 
 export const zonesOf = (body: FigureBody): Zone[] => figure.zones[body] as Zone[];
 
-/** The CSS box of a zone, as percentages of the figure, so it follows the figure's size. */
+/** No zone is drawn smaller than this on screen, whatever the figure's size (owner's decision 2026-11-01). */
+export const MIN_ZONE_PX: number = figure.minZonePx;
+
+/**
+ * The CSS box of a zone, as percentages of the figure, placed by its centre so
+ * the minimum size can grow it evenly in every direction.
+ */
 export const zoneBox = (zone: Zone, body: FigureBody): { left: string; top: string; width: string; height: string; borderRadius: string } => {
   const { w: W, h: H } = canvasOf(body);
   const pct = (value: number) => `${(value * 100).toFixed(2)}%`;
   if (zone.shape === "rect") {
     const vertical = (zone.rx * W) / (zone.h * H);
-    return { left: pct(zone.x), top: pct(zone.y), width: pct(zone.w), height: pct(zone.h), borderRadius: `${pct(zone.rx / zone.w)} / ${pct(vertical)}` };
+    return { left: pct(zone.x + zone.w / 2), top: pct(zone.y + zone.h / 2), width: pct(zone.w), height: pct(zone.h), borderRadius: `${pct(zone.rx / zone.w)} / ${pct(vertical)}` };
   }
   if (zone.shape === "circle") {
     const rx = zone.r_over_width;
     const ry = (rx * W) / H;
-    return { left: pct(zone.cx - rx), top: pct(zone.cy - ry), width: pct(2 * rx), height: pct(2 * ry), borderRadius: "50%" };
+    return { left: pct(zone.cx), top: pct(zone.cy), width: pct(2 * rx), height: pct(2 * ry), borderRadius: "50%" };
   }
-  return { left: pct(zone.cx - zone.rx), top: pct(zone.cy - zone.ry), width: pct(2 * zone.rx), height: pct(2 * zone.ry), borderRadius: "50%" };
+  return { left: pct(zone.cx), top: pct(zone.cy), width: pct(2 * zone.rx), height: pct(2 * zone.ry), borderRadius: "50%" };
 };
+
+/** The zone's size in pixels when the figure is `figureWidthPx` wide, before the minimum applies. */
+export const zonePx = (zone: Zone, body: FigureBody, figureWidthPx: number): { width: number; height: number } => {
+  const { w: W, h: H } = canvasOf(body);
+  const figureHeightPx = (figureWidthPx * H) / W;
+  const box = zoneBox(zone, body);
+  return { width: (parseFloat(box.width) / 100) * figureWidthPx, height: (parseFloat(box.height) / 100) * figureHeightPx };
+};
+
+/**
+ * The outline organ layers are drawn in one blue-grey (measured 2026-11-01:
+ * rgb(84, 108, 137)), which is 2.8:1 on the dark card. Dark mode brightens
+ * those layers by this factor, which lifts them past 3:1 (app/globals.css).
+ */
+export const OUTLINE_ORGAN_RGB: readonly [number, number, number] = [84, 108, 137];
+export const DARK_OUTLINE_BRIGHTNESS = 1.5;
 
 export const FIGURE_FADE_SECONDS: number = figure.fadeSeconds;

@@ -6,7 +6,7 @@ import bodySignals from "../data/body-signals.ko.json";
 import bodySignalsEn from "../data/body-signals.en.json";
 import figure from "../data/body-figure.json";
 import { ko } from "../lib/i18n/messages.ko";
-import { DEFAULT_FIGURE_PREFS, FIGURE_PREFS_KEY, loadFigurePrefs, organLayers, REGION_IDS, saveFigurePrefs, zoneBox, zonesOf } from "../lib/body-figure";
+import { DARK_OUTLINE_BRIGHTNESS, DEFAULT_FIGURE_PREFS, FIGURE_PREFS_KEY, loadFigurePrefs, MIN_ZONE_PX, organLayers, OUTLINE_ORGAN_RGB, REGION_IDS, saveFigurePrefs, zoneBox, zonePx, zonesOf } from "../lib/body-figure";
 import { buildExport, serializeExport } from "../lib/record-transfer";
 import { getStorageKeys, loadCompleted, loadDraft } from "../lib/storage";
 import { startDeep } from "./helpers/start";
@@ -65,7 +65,8 @@ describe("pressing the figure", () => {
     expect(zones.length).toBe(zonesOf(DEFAULT_FIGURE_PREFS.body).length);
     for (const zone of zones) {
       expect(zone.tagName).toBe("BUTTON");
-      expect(bodySignals.regions).toContain(zone.getAttribute("aria-label"));
+      // the label starts with the region name; a part name may follow after " · "
+      expect(bodySignals.regions).toContain(zone.getAttribute("aria-label")?.split(" · ")[0]);
       expect(zone.getAttribute("aria-pressed")).toBe("false");
     }
     const belly = within(group).getAllByRole("button", { name: "배·속" })[0];
@@ -105,7 +106,7 @@ describe("pressing the figure", () => {
     for (const layer of organLayers(always, null)) expect(layer.src).toMatch(/^\/body-figure\/[a-z]+_[a-z]+_[a-z]+\.webp$/);
   });
 
-  it("places every zone inside the figure", () => {
+  it("places every zone by its centre inside the figure", () => {
     for (const body of ["female", "male"] as const) {
       for (const zone of zonesOf(body)) {
         const box = zoneBox(zone, body);
@@ -116,6 +117,38 @@ describe("pressing the figure", () => {
         }
       }
     }
+  });
+
+  it("gives every zone at least 24×24px on a phone, where several are drawn smaller (owner's finding 2026-11-01)", () => {
+    expect(MIN_ZONE_PX).toBe(24);
+    const css = readFileSync("app/globals.css", "utf8");
+    expect(css).toMatch(/\.body-zone \{[^}]*min-width: 24px; min-height: 24px;[^}]*transform: translate\(-50%, -50%\)/);
+    // at the phone width the figure is 220px wide and the heart and shoulders are smaller than the minimum: the CSS minimum is what makes them reachable
+    const small = zonesOf("female").filter((zone) => { const px = zonePx(zone, "female", 220); return px.width < MIN_ZONE_PX || px.height < MIN_ZONE_PX; });
+    expect(small.map((zone) => zone.part ?? zone.region)).toEqual(expect.arrayContaining(["heart", "neck", "leftShoulder", "rightShoulder"]));
+  });
+
+  it("tells the parts of one region apart for a screen reader, and marks the pressed part with an edge only", () => {
+    toBody();
+    const group = screen.getByRole("group", { name: ko.body.figure.ariaLabel });
+    const names = within(group).getAllByRole("button").map((button) => button.getAttribute("aria-label"));
+    expect(new Set(names).size).toBe(names.length);
+    expect(names).toEqual(expect.arrayContaining(["근육·자세 · 목", "근육·자세 · 왼쪽 어깨", "근육·자세 · 오른쪽 어깨", "온도·피부 · 왼손", "온도·피부 · 오른손", "호흡·가슴", "배·속", "심박"]));
+    const css = readFileSync("app/globals.css", "utf8");
+    expect(css).toMatch(/\.body-zone\.selected \{ background: transparent; border: 2px solid var\(--accent-ink\); \}/);
+  });
+
+  it("brightens the outline organs in dark mode to at least 3:1 on the dark card", () => {
+    const css = readFileSync("app/globals.css", "utf8");
+    expect(css).toMatch(/@media \(prefers-color-scheme: dark\) \{ \.body-figure\.style-line \.body-figure-organ \{ filter: brightness\(1\.5\); \} \}/);
+    const darkCard = css.match(/@media \(prefers-color-scheme: dark\)[\s\S]*?--card: (#[0-9A-Fa-f]{6})/)![1];
+    const channel = (v: number) => { const c = v / 255; return c <= 0.03928 ? c / 12.92 : ((c + 0.055) / 1.055) ** 2.4; };
+    const luminance = (rgb: readonly number[]) => 0.2126 * channel(rgb[0]) + 0.7152 * channel(rgb[1]) + 0.0722 * channel(rgb[2]);
+    const hex = (value: string) => [1, 3, 5].map((i) => parseInt(value.slice(i, i + 2), 16));
+    const contrast = (a: readonly number[], b: readonly number[]) => { const [hi, lo] = [luminance(a), luminance(b)].sort((x, y) => y - x); return (hi + 0.05) / (lo + 0.05); };
+    const brightened = OUTLINE_ORGAN_RGB.map((v) => Math.min(255, Math.round(v * DARK_OUTLINE_BRIGHTNESS)));
+    expect(contrast(OUTLINE_ORGAN_RGB, hex(darkCard))).toBeLessThan(3);
+    expect(contrast(brightened, hex(darkCard))).toBeGreaterThanOrEqual(3);
   });
 });
 

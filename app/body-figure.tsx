@@ -40,7 +40,7 @@ export function BodyFigure({ regions, active, onPick, prefs, onPrefs }: {
   return <div className="body-figure-wrap">
     {!prefs.hidden && <p className="body-figure-hint">{t("body.figure.hint")}</p>}
     {!prefs.hidden && <div className="body-figure-row">
-      <div className="body-figure" role="group" aria-label={t("body.figure.ariaLabel")} style={{ aspectRatio: `${canvas.w} / ${canvas.h}` }}>
+      <div className={`body-figure style-${prefs.style}`} role="group" aria-label={t("body.figure.ariaLabel")} style={{ aspectRatio: `${canvas.w} / ${canvas.h}` }}>
         <img className="body-figure-layer" src={base.src} alt="" draggable={false} />
         {organLayers(prefs, active).map((layer) => (
           <img key={layer.organ} className={`body-figure-layer body-figure-organ ${layer.visible ? "visible" : ""}`} src={layer.src} alt="" aria-hidden="true" draggable={false} />
@@ -51,7 +51,7 @@ export function BodyFigure({ regions, active, onPick, prefs, onPrefs }: {
             type="button"
             className={`body-zone ${active === zone.region ? "selected" : ""}`}
             style={zoneBox(zone, prefs.body)}
-            aria-label={nameOf(zone.region)}
+            aria-label={zone.part ? `${nameOf(zone.region)} · ${t(`body.figure.part.${zone.part}`)}` : nameOf(zone.region)}
             aria-pressed={active === zone.region}
             onClick={() => toggle(zone.region)}
           />

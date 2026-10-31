@@ -333,6 +333,8 @@ export const ko = {
       hint: "그림에서 눌러도 되고, 아래 목록에서 골라도 됩니다.",
       ariaLabel: "몸 그림. 부분을 누르면 그 영역의 목록이 아래에 펼쳐집니다.",
       wholeBody: "몸 전체",
+      /** Tells apart the parts of one region for a screen reader. Left and right are as seen on the screen. */
+      part: { neck: "목", leftShoulder: "왼쪽 어깨", rightShoulder: "오른쪽 어깨", leftHand: "왼손", rightHand: "오른손" },
       credit: "그림: Mikael Häggström, Wikimedia Commons, 퍼블릭 도메인. 실루엣과 폐·심장·위·장만 남겨 다듬음.",
       settings: "그림 바꾸기",
       visibleLabel: "그림",
