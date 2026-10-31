@@ -202,6 +202,38 @@ p, .lede, .hint, .step-note, .small-note, .summary-footnote { text-wrap: pretty;
   *, *::before, *::after { transition-duration: 0s !important; transition-delay: 0s !important; animation-duration: 0s !important; animation-iteration-count: 1 !important; scroll-behavior: auto !important; }
 }
 
+/* Body figure (2026-10-31): a picture beside the body list, never in its place. The
+   organ layers fade (0.35s) and stop fading under reduced motion. A zone is an
+   invisible button over a part; only the pressed zone takes the accent, with the
+   border and aria-pressed carrying the state as well as the colour. */
+.body-figure-wrap { margin-top: 30px; }
+.body-figure-hint { margin: 0 0 14px; color: var(--muted); font: var(--t-aside) var(--font-sans); line-height: 1.6; }
+.body-figure-row { display: flex; align-items: flex-start; gap: 18px; }
+.body-figure { position: relative; flex: 0 0 auto; width: min(100%, 220px); background: var(--card); border: 1px solid var(--line); border-radius: 12px; overflow: hidden; }
+.body-figure-layer { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; user-select: none; }
+.body-figure-organ { opacity: 0; transition: opacity .35s ease; }
+.body-figure-organ.visible { opacity: 1; }
+.body-zone { position: absolute; padding: 0; background: transparent; border: 1px solid transparent; cursor: pointer; touch-action: manipulation; transition: border-color .15s ease, background-color .15s ease; }
+.body-zone:hover { border-color: var(--line-strong); }
+.body-zone.selected { background: color-mix(in srgb, var(--accent-subtle) 70%, transparent); border: 2px solid var(--accent-ink); }
+.body-figure-aside { display: flex; flex-direction: column; gap: 10px; min-width: 0; }
+.body-whole { flex-direction: column; align-items: flex-start; gap: 2px; text-align: left; }
+.body-whole-region { color: var(--muted); font: var(--t-aside) var(--font-sans); }
+.body-whole.selected { color: var(--on-accent); background: var(--accent-soft); border-color: var(--accent-ink); box-shadow: inset 0 0 0 1px var(--accent-ink); }
+.body-whole.selected .body-whole-region { color: var(--on-accent); }
+.body-figure-credit { margin: 12px 0 0; color: var(--muted); font: var(--t-aside) var(--font-sans); line-height: 1.5; }
+.body-figure-settings { margin-top: 14px; }
+.body-figure-settings summary { cursor: pointer; color: var(--accent-ink); font: 500 var(--t-aside) var(--font-sans); text-decoration: underline; text-underline-offset: 4px; }
+.body-figure-settings .segmented { margin-top: 14px; grid-template-columns: 1fr; }
+.body-figure-choice { display: grid; grid-template-columns: 1fr; gap: 8px; }
+.body-figure-choice span { grid-column: 1 / -1; }
+.body-figure-settings .small-note { margin-top: 14px; }
+.body-region-panel { margin-top: 22px; padding-top: 16px; border-top: 1px solid var(--line); }
+.body-region-panel .tier-label { margin-top: 0; color: var(--accent-ink); font-weight: 500; }
+.body-region-panel + .chip-grid { margin-top: 26px; }
+@media (prefers-reduced-motion: reduce) { .body-figure-organ { transition: none; } }
+@media (min-width: 561px) { .body-figure-settings .body-figure-choice { grid-template-columns: repeat(3, 1fr); } }
+
 /* Coach zones, by role (experiment 1, a design hypothesis). Existing tokens only;
    the accent is not used. The role is carried by the text label and the edge:
    example = warm, thin --line edge, small corner; mine = card, --line-strong

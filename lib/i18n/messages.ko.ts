@@ -328,6 +328,21 @@ export const ko = {
     more: "다른 몸의 느낌 보기",
     customLabel: "다른 느낌이 있다면 적어도 됩니다",
     customPlaceholder: "예: 손이 차가움",
+    /** The figure beside the list (2026-10-31). A pressed part names a region; it never names a feeling. */
+    figure: {
+      hint: "그림에서 눌러도 되고, 아래 목록에서 골라도 됩니다.",
+      ariaLabel: "몸 그림. 부분을 누르면 그 영역의 목록이 아래에 펼쳐집니다.",
+      wholeBody: "몸 전체",
+      credit: "그림: Mikael Häggström, Wikimedia Commons, 퍼블릭 도메인. 실루엣과 폐·심장·위·장만 남겨 다듬음.",
+      settings: "그림 바꾸기",
+      bodyLabel: "그림 체형",
+      body: { female: "여성형", male: "남성형" },
+      styleLabel: "표현",
+      style: { real: "실사", flat: "단색", line: "선화" },
+      modeLabel: "장기",
+      mode: { always: "늘 보이기", tap: "누른 곳만" },
+      storageNote: "이 선택은 이 기기에만 남고, 기록·요약·내보내기에는 들어가지 않습니다.",
+    },
   },
   affect: {
     basis: "지금 이 순간을 기준으로",

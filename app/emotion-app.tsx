@@ -23,6 +23,8 @@ import { I18nProvider, renderRich, useT } from "../lib/i18n/react";
 import type { Translate } from "../lib/i18n/t";
 import { toneOf } from "../lib/tones";
 import { enOnly } from "../lib/i18n/messages.en";
+import { regionIndexOf } from "../lib/body-figure";
+import { BodyFigure, useFigurePrefs } from "./body-figure";
 
 // Every read and write of a record goes through the one storage seam. It is
 // synchronous, like the localStorage calls it wraps, so no call site changes.
@@ -732,6 +734,9 @@ function BodyScreen({ initial, onNext }: { initial: BodyObservation[]; onNext: (
   const [selected, setSelected] = useState(initial.map((item) => item.label));
   const [custom, setCustom] = useState(initial.find((item) => item.custom)?.label ?? "");
   const [showAll, setShowAll] = useState(false);
+  // the figure: a pressed part opens that region's list; the list itself is unchanged (2026-10-31)
+  const [activeRegion, setActiveRegion] = useState<string | null>(null);
+  const [figurePrefs, setFigurePrefs] = useFigurePrefs();
   const toggle = (label: string) => setSelected((current) => current.includes(label) ? current.filter((item) => item !== label) : [...current, label]);
   const chip = (label: string) => <button className={`chip ${selected.includes(label) ? "selected" : ""}`} aria-pressed={selected.includes(label)} key={label} onClick={() => toggle(label)}><Mark on={selected.includes(label)} />{label}</button>;
   const items = bodySignals.items as { label: string; region: string; firstTier?: boolean }[];
@@ -739,9 +744,16 @@ function BodyScreen({ initial, onNext }: { initial: BodyObservation[]; onNext: (
   const rest = bodySignals.regions
     .map((region) => ({ region, labels: items.filter((item) => item.region === region && !item.firstTier).map((item) => item.label) }))
     .filter((group) => group.labels.length);
+  const activeName = activeRegion === null ? null : bodySignals.regions[regionIndexOf(activeRegion)] ?? null;
+  const activeLabels = activeName === null ? [] : items.filter((item) => item.region === activeName).map((item) => item.label);
 
   return <Screen>
     <StepHeading step={t("body.step")} title={t("body.title")} hint={t("body.hint")} basis={t("body.basis")} />
+    <BodyFigure regions={bodySignals.regions} active={activeRegion} onPick={setActiveRegion} prefs={figurePrefs} onPrefs={setFigurePrefs} />
+    {activeName !== null && <div className="body-region-panel" role="region" aria-label={activeName}>
+      <p className="tier-label">{activeName}</p>
+      <div className="chip-grid">{activeLabels.map((label) => chip(label))}</div>
+    </div>}
     <div className="chip-grid">{first.map((item) => chip(item.label))}</div>
     {!showAll && <button className="reveal-button" onClick={() => setShowAll(true)}>{t("body.more")}</button>}
     {showAll && rest.map((group) => <div key={group.region}>

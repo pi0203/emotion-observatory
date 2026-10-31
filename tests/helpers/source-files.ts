@@ -11,7 +11,7 @@ export const appSourceFiles = (): string[] => {
       if (entry.isDirectory()) return walk(relative);
       return /\.tsx?$/.test(entry.name) ? [relative] : [];
     });
-  return ["app/emotion-app.tsx", "app/(ko)/page.tsx", ...walk("lib")];
+  return ["app/emotion-app.tsx", "app/body-figure.tsx", "app/(ko)/page.tsx", ...walk("lib")];
 };
 
 /** The message dictionaries are the one place where Korean text belongs. */
