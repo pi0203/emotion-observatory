@@ -250,6 +250,23 @@ describe("a word chosen from a region's list (owner's decision 2026-11-01)", () 
   });
 });
 
+describe("이 기기의 기록 모두 지우기 (2026-11-01)", () => {
+  beforeEach(() => window.localStorage.clear());
+  afterEach(cleanup);
+
+  it("also forgets the figure choice, and says so in the confirmation", () => {
+    saveFigurePrefs({ body: "male", style: "real", mode: "always", hidden: true });
+    render(<Home />);
+    fireEvent.click(screen.getByRole("button", { name: ko.landing.records }));
+    fireEvent.click(screen.getByRole("button", { name: ko.recordTransfer.deleteAll }));
+    expect(screen.getByText(ko.recordTransfer.deleteAllConfirmBody)).toBeInTheDocument();
+    expect(ko.recordTransfer.deleteAllConfirmBody).toMatch(/몸 그림 선택/);
+    fireEvent.click(screen.getByRole("button", { name: ko.recordTransfer.deleteAllConfirm }));
+    expect(window.localStorage.getItem(FIGURE_PREFS_KEY)).toBeNull();
+    expect(loadFigurePrefs()).toEqual(DEFAULT_FIGURE_PREFS);
+  });
+});
+
 describe("motion and network", () => {
   it("fades the organ layers in 0.35s and not at all under reduced motion", () => {
     const css = readFileSync("app/globals.css", "utf8");

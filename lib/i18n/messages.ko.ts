@@ -566,7 +566,7 @@ export const ko = {
     },
     deleteAll: "이 기기의 기록 모두 지우기",
     deleteAllConfirmTitle: "이 기기의 기록을 모두 지울까요?",
-    deleteAllConfirmBody: "완료한 기록, 중단한 기록, 작성 중인 기록을 모두 이 기기에서 지웁니다. 지운 기록은 되돌릴 수 없습니다. 지우기 전에 위의 「파일로 내보내기」로 파일을 받아 둘 수 있습니다.",
+    deleteAllConfirmBody: "완료한 기록, 중단한 기록, 작성 중인 기록을 모두 이 기기에서 지웁니다. 지운 기록은 되돌릴 수 없습니다. 지우기 전에 위의 「파일로 내보내기」로 파일을 받아 둘 수 있습니다. 몸 그림 선택(체형·표현·장기·그림 없이)도 처음 값으로 돌아갑니다.",
     deleteAllConfirm: "모두 지우기",
     deleteAllCancel: "취소",
     deletedAll: "이 기기의 기록을 모두 지웠습니다.",

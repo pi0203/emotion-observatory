@@ -583,7 +583,7 @@ export const en: Messages = {
     },
     deleteAll: "Delete all entries on this device",
     deleteAllConfirmTitle: "Delete all entries on this device?",
-    deleteAllConfirmBody: "This deletes all entries from this device: finished, stopped, and in progress. Deleted entries cannot be brought back. Before deleting, you can save a copy with “Export to a file” above.",
+    deleteAllConfirmBody: "This deletes all entries from this device: finished, stopped, and in progress. Deleted entries cannot be brought back. Before deleting, you can save a copy with “Export to a file” above. The body figure choices (figure type, style, organs, no figure) also go back to their defaults.",
     deleteAllConfirm: "Delete all",
     deleteAllCancel: "Cancel",
     deletedAll: "All entries on this device have been deleted.",

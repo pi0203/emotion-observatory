@@ -23,7 +23,7 @@ import { I18nProvider, renderRich, useT } from "../lib/i18n/react";
 import type { Translate } from "../lib/i18n/t";
 import { toneOf } from "../lib/tones";
 import { enOnly } from "../lib/i18n/messages.en";
-import { regionIndexOf } from "../lib/body-figure";
+import { clearFigurePrefs, regionIndexOf } from "../lib/body-figure";
 import { BodyFigure, useFigurePrefs } from "./body-figure";
 
 // Every read and write of a record goes through the one storage seam. It is
@@ -1147,6 +1147,7 @@ function RecordTransfer({ count, onChanged }: { count: number; onChanged: () => 
 
   const deleteAll = () => {
     clearAll();
+    clearFigurePrefs(); // the figure choice goes with the records (2026-11-01)
     setConfirmingDelete(false);
     setNote({ kind: "status", text: t("recordTransfer.deletedAll") });
     onChanged();

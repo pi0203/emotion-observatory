@@ -58,6 +58,12 @@ export const saveFigurePrefs = (prefs: FigurePrefs): boolean => {
   }
 };
 
+/** Forgets the choice, with the records, when the person deletes everything on this device (2026-11-01). */
+export const clearFigurePrefs = () => {
+  if (typeof window === "undefined") return;
+  try { window.localStorage.removeItem(FIGURE_PREFS_KEY); } catch { /* nothing to forget */ }
+};
+
 /** The region ids, in the order of `regions` in data/body-signals.*.json. */
 export const REGION_IDS: readonly string[] = figure.regionIds;
 export const regionIdAt = (index: number): string => REGION_IDS[index];
