@@ -48,3 +48,13 @@
 
 - 디자인 참고 이미지와 다른 서비스의 화면은 저장소에 넣지 않는다.
 - 영화 미학 논문 등에서 얻은 설계 영감은 [AESTHETIC_SOURCES.md](AESTHETIC_SOURCES.md)에 출처로만 적는다.
+
+## 5. 몸 그림 (`public/body-figure/`, 2026-10-31)
+
+- 그림: Mikael Häggström, Wikimedia Commons, 퍼블릭 도메인. 실루엣과 폐·심장·위·장만 남겨 다듬음.
+  - 남성형: https://commons.wikimedia.org/wiki/File:Man_shadow_anatomy,_expanded_and_with_DVT.svg
+  - 여성형: https://commons.wikimedia.org/wiki/File:Female_shadow_template.svg
+- 뺀 것: 라벨과 설명선, 눈, 가슴 조직, 생식기, 뇌, 뼈, 혈관, 림프절, 신장·방광, 근육, 혈전 표시. 의학 도감처럼 읽히지 않게 하려는 것이고, 뇌는 감정 앱에서 과학처럼 보이는 효과를 낼 수 있어 뺐다.
+- 파일 22장(체형 2 × 바탕 2 + 표현 3 × 장기 3)을 무손실 WebP로 바꿔 저장소에 넣었다. 실행 중에 바깥 주소를 부르지 않는다. 레이어 짝·누르는 자리·기본값은 [`data/body-figure.json`](../data/body-figure.json)에 있다.
+- 퍼블릭 도메인이라 조건은 없지만, 출처 한 줄을 앱의 그림 아래와 이 문서에 적는다.
+

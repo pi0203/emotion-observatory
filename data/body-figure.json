@@ -1,0 +1,264 @@
+{
+  "note": "The body figure for the slow path's body step. A picture added beside the list, never in place of it: the list alone reaches every region. Regions carry no emotion and no pleasant/unpleasant value (data/body-signals.*.json fieldNotes.valence). Zone coordinates are fractions of the image's width and height. `region` is the index into body-signals regions, by id, so the same zones serve every language.",
+  "credit": {
+    "line": "그림: Mikael Häggström, Wikimedia Commons, 퍼블릭 도메인. 실루엣과 폐·심장·위·장만 남겨 다듬음.",
+    "author": "Mikael Häggström",
+    "via": "Wikimedia Commons",
+    "license": "Public domain",
+    "files": {
+      "male": {
+        "title": "Man shadow anatomy, expanded and with DVT.svg",
+        "url": "https://commons.wikimedia.org/wiki/File:Man_shadow_anatomy,_expanded_and_with_DVT.svg"
+      },
+      "female": {
+        "title": "Female shadow template.svg",
+        "url": "https://commons.wikimedia.org/wiki/File:Female_shadow_template.svg"
+      }
+    },
+    "edited": "Only the silhouette, lungs, heart, stomach and intestines were kept. Removed: labels, leader lines, eyes, breast tissue, genitals, brain, bones, vessels, lymph nodes, kidneys and bladder, muscles, the DVT marking."
+  },
+  "path": "/body-figure/{body}_{layer}.webp",
+  "regionIds": [
+    "breath",
+    "heart",
+    "muscle",
+    "belly",
+    "skin",
+    "energy",
+    "movement"
+  ],
+  "canvas": {
+    "male": {
+      "w": 600,
+      "h": 1018
+    },
+    "female": {
+      "w": 600,
+      "h": 1124
+    }
+  },
+  "layersByStyle": {
+    "real": {
+      "base": "base_fill",
+      "chest": "real_chest",
+      "heart": "real_heart",
+      "belly": "real_belly"
+    },
+    "flat": {
+      "base": "base_fill",
+      "chest": "flat_chest",
+      "heart": "flat_heart",
+      "belly": "flat_belly"
+    },
+    "line": {
+      "base": "base_line",
+      "chest": "line_chest",
+      "heart": "line_heart",
+      "belly": "line_belly"
+    }
+  },
+  "visibility": {
+    "always": [
+      "base",
+      "chest",
+      "belly"
+    ],
+    "tap": {
+      "alwaysShown": [
+        "base"
+      ],
+      "byRegion": {
+        "breath": [
+          "chest"
+        ],
+        "heart": [
+          "heart"
+        ],
+        "belly": [
+          "belly"
+        ]
+      }
+    }
+  },
+  "fadeSeconds": 0.35,
+  "outsideFigure": [
+    "energy"
+  ],
+  "zones": {
+    "male": [
+      {
+        "region": "muscle",
+        "shape": "rect",
+        "x": 0.434,
+        "y": 0.1639,
+        "w": 0.074,
+        "h": 0.0413,
+        "rx": 0.022
+      },
+      {
+        "region": "muscle",
+        "shape": "ellipse",
+        "rx": 0.07,
+        "ry": 0.0165,
+        "cx": 0.332,
+        "cy": 0.2182
+      },
+      {
+        "region": "muscle",
+        "shape": "ellipse",
+        "rx": 0.07,
+        "ry": 0.0165,
+        "cx": 0.612,
+        "cy": 0.2182
+      },
+      {
+        "region": "breath",
+        "shape": "rect",
+        "x": 0.352,
+        "y": 0.2205,
+        "w": 0.242,
+        "h": 0.1297,
+        "rx": 0.052
+      },
+      {
+        "region": "belly",
+        "shape": "rect",
+        "x": 0.322,
+        "y": 0.3526,
+        "w": 0.308,
+        "h": 0.1816,
+        "rx": 0.066
+      },
+      {
+        "region": "skin",
+        "shape": "circle",
+        "cx": 0.178,
+        "cy": 0.5896,
+        "r_over_width": 0.058
+      },
+      {
+        "region": "skin",
+        "shape": "circle",
+        "cx": 0.774,
+        "cy": 0.5896,
+        "r_over_width": 0.058
+      },
+      {
+        "region": "movement",
+        "shape": "rect",
+        "x": 0.344,
+        "y": 0.6144,
+        "w": 0.122,
+        "h": 0.3632,
+        "rx": 0.052
+      },
+      {
+        "region": "movement",
+        "shape": "rect",
+        "x": 0.498,
+        "y": 0.6144,
+        "w": 0.124,
+        "h": 0.3632,
+        "rx": 0.052
+      },
+      {
+        "region": "heart",
+        "shape": "circle",
+        "cx": 0.488,
+        "cy": 0.2983,
+        "r_over_width": 0.046
+      }
+    ],
+    "female": [
+      {
+        "region": "muscle",
+        "shape": "rect",
+        "x": 0.45,
+        "y": 0.1601,
+        "w": 0.09,
+        "h": 0.0427,
+        "rx": 0.024
+      },
+      {
+        "region": "muscle",
+        "shape": "ellipse",
+        "rx": 0.06,
+        "ry": 0.0128,
+        "cx": 0.364,
+        "cy": 0.2241
+      },
+      {
+        "region": "muscle",
+        "shape": "ellipse",
+        "rx": 0.06,
+        "ry": 0.0128,
+        "cx": 0.628,
+        "cy": 0.2241
+      },
+      {
+        "region": "breath",
+        "shape": "rect",
+        "x": 0.372,
+        "y": 0.2134,
+        "w": 0.224,
+        "h": 0.1121,
+        "rx": 0.052
+      },
+      {
+        "region": "belly",
+        "shape": "rect",
+        "x": 0.376,
+        "y": 0.3255,
+        "w": 0.228,
+        "h": 0.1601,
+        "rx": 0.064
+      },
+      {
+        "region": "skin",
+        "shape": "circle",
+        "cx": 0.272,
+        "cy": 0.5571,
+        "r_over_width": 0.054
+      },
+      {
+        "region": "skin",
+        "shape": "circle",
+        "cx": 0.702,
+        "cy": 0.5571,
+        "r_over_width": 0.054
+      },
+      {
+        "region": "movement",
+        "shape": "rect",
+        "x": 0.336,
+        "y": 0.555,
+        "w": 0.14,
+        "h": 0.4055,
+        "rx": 0.06
+      },
+      {
+        "region": "movement",
+        "shape": "rect",
+        "x": 0.508,
+        "y": 0.555,
+        "w": 0.14,
+        "h": 0.4055,
+        "rx": 0.06
+      },
+      {
+        "region": "heart",
+        "shape": "circle",
+        "cx": 0.492,
+        "cy": 0.2796,
+        "r_over_width": 0.042
+      }
+    ]
+  },
+  "zonesNote": "The heart circle sits on top of the chest rectangle and is hit first. Placing movement on the legs is provisional (source README).",
+  "defaults": {
+    "body": "female",
+    "style": "line",
+    "mode": "tap"
+  },
+  "storage": "The choice stays on this device (localStorage) and is never written into a record, a summary or an export: the body choice could be read as a statement about the person."
+}
