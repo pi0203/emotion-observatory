@@ -360,6 +360,8 @@ export const en: Messages = {
       wholeBody: "Whole body",
       credit: "Figure: Mikael Häggström, Wikimedia Commons, public domain. Trimmed to the silhouette, lungs, heart, stomach and intestines.",
       settings: "Change the figure",
+      visibleLabel: "Figure",
+      visible: { shown: "Show", hidden: "No figure" },
       bodyLabel: "Figure",
       body: { female: "Female figure", male: "Male figure" },
       styleLabel: "Style",

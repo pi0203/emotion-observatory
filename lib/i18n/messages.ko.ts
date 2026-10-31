@@ -335,6 +335,8 @@ export const ko = {
       wholeBody: "몸 전체",
       credit: "그림: Mikael Häggström, Wikimedia Commons, 퍼블릭 도메인. 실루엣과 폐·심장·위·장만 남겨 다듬음.",
       settings: "그림 바꾸기",
+      visibleLabel: "그림",
+      visible: { shown: "보이기", hidden: "그림 없이" },
       bodyLabel: "그림 체형",
       body: { female: "여성형", male: "남성형" },
       styleLabel: "표현",

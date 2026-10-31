@@ -14,7 +14,9 @@ import figure from "../data/body-figure.json";
 export type FigureBody = "female" | "male";
 export type FigureStyle = "real" | "flat" | "line";
 export type FigureMode = "always" | "tap";
-export type FigurePrefs = { body: FigureBody; style: FigureStyle; mode: FigureMode };
+export type FigurePrefs = { body: FigureBody; style: FigureStyle; mode: FigureMode; /** No figure at all: only the list (owner's decision 2026-11-01). */ hidden: boolean };
+export type FigureVisibility = "shown" | "hidden";
+export const FIGURE_VISIBILITIES: readonly FigureVisibility[] = ["shown", "hidden"];
 
 export const FIGURE_BODIES: readonly FigureBody[] = ["female", "male"];
 export const FIGURE_STYLES: readonly FigureStyle[] = ["real", "flat", "line"];
@@ -25,7 +27,7 @@ export const DEFAULT_FIGURE_PREFS: FigurePrefs = figure.defaults as FigurePrefs;
 /** Its own key, apart from the records (lib/storage.ts), so nothing about the figure travels with them. */
 export const FIGURE_PREFS_KEY = "emotion-lab:body-figure:v1";
 
-const isPrefs = (value: unknown): value is FigurePrefs =>
+const isPrefs = (value: unknown): value is Omit<FigurePrefs, "hidden"> & { hidden?: unknown } =>
   typeof value === "object" && value !== null &&
   FIGURE_BODIES.includes((value as FigurePrefs).body) &&
   FIGURE_STYLES.includes((value as FigurePrefs).style) &&
@@ -38,7 +40,8 @@ export const loadFigurePrefs = (): FigurePrefs => {
     const raw = window.localStorage.getItem(FIGURE_PREFS_KEY);
     if (!raw) return DEFAULT_FIGURE_PREFS;
     const parsed: unknown = JSON.parse(raw);
-    return isPrefs(parsed) ? parsed : DEFAULT_FIGURE_PREFS;
+    // a value saved before `hidden` existed shows the figure, as it did then
+    return isPrefs(parsed) ? { body: parsed.body, style: parsed.style, mode: parsed.mode, hidden: parsed.hidden === true } : DEFAULT_FIGURE_PREFS;
   } catch {
     return DEFAULT_FIGURE_PREFS;
   }

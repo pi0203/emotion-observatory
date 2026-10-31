@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { useT } from "../lib/i18n/react";
 import {
-  baseLayer, canvasOf, FIGURE_BODIES, FIGURE_MODES, FIGURE_STYLES, loadFigurePrefs, organLayers, REGIONS_OUTSIDE_FIGURE,
+  baseLayer, canvasOf, FIGURE_BODIES, FIGURE_MODES, FIGURE_STYLES, FIGURE_VISIBILITIES, loadFigurePrefs, organLayers, REGIONS_OUTSIDE_FIGURE,
   regionIndexOf, saveFigurePrefs, zoneBox, zonesOf, type FigurePrefs,
 } from "../lib/body-figure";
 
@@ -38,8 +38,8 @@ export function BodyFigure({ regions, active, onPick, prefs, onPrefs }: {
   const base = baseLayer(prefs);
 
   return <div className="body-figure-wrap">
-    <p className="body-figure-hint">{t("body.figure.hint")}</p>
-    <div className="body-figure-row">
+    {!prefs.hidden && <p className="body-figure-hint">{t("body.figure.hint")}</p>}
+    {!prefs.hidden && <div className="body-figure-row">
       <div className="body-figure" role="group" aria-label={t("body.figure.ariaLabel")} style={{ aspectRatio: `${canvas.w} / ${canvas.h}` }}>
         <img className="body-figure-layer" src={base.src} alt="" draggable={false} />
         {organLayers(prefs, active).map((layer) => (
@@ -66,10 +66,11 @@ export function BodyFigure({ regions, active, onPick, prefs, onPrefs }: {
           </button>
         ))}
       </div>
-    </div>
-    <p className="body-figure-credit">{t("body.figure.credit")}</p>
+    </div>}
+    {!prefs.hidden && <p className="body-figure-credit">{t("body.figure.credit")}</p>}
     <details className="body-figure-settings">
       <summary>{t("body.figure.settings")}</summary>
+      <FigureChoice label={t("body.figure.visibleLabel")} options={FIGURE_VISIBILITIES} value={prefs.hidden ? "hidden" : "shown"} name={(value) => t(`body.figure.visible.${value}`)} onChange={(visibility) => onPrefs({ ...prefs, hidden: visibility === "hidden" })} />
       <FigureChoice label={t("body.figure.bodyLabel")} options={FIGURE_BODIES} value={prefs.body} name={(value) => t(`body.figure.body.${value}`)} onChange={(body) => onPrefs({ ...prefs, body })} />
       <FigureChoice label={t("body.figure.styleLabel")} options={FIGURE_STYLES} value={prefs.style} name={(value) => t(`body.figure.style.${value}`)} onChange={(style) => onPrefs({ ...prefs, style })} />
       <FigureChoice label={t("body.figure.modeLabel")} options={FIGURE_MODES} value={prefs.mode} name={(value) => t(`body.figure.mode.${value}`)} onChange={(mode) => onPrefs({ ...prefs, mode })} />

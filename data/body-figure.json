@@ -223,7 +223,8 @@
   "defaults": {
     "body": "female",
     "style": "line",
-    "mode": "tap"
+    "mode": "tap",
+    "hidden": false
   },
-  "storage": "The choice stays on this device (localStorage) and is never written into a record, a summary or an export: the body choice could be read as a statement about the person."
+  "storage": "The choice stays on this device (localStorage) and is never written into a record, a summary or an export: the body choice could be read as a statement about the person. `hidden` (no figure at all) is saved the same way."
 }

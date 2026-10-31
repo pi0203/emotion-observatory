@@ -749,8 +749,8 @@ function BodyScreen({ initial, onNext }: { initial: BodyObservation[]; onNext: (
 
   return <Screen>
     <StepHeading step={t("body.step")} title={t("body.title")} hint={t("body.hint")} basis={t("body.basis")} />
-    <BodyFigure regions={bodySignals.regions} active={activeRegion} onPick={setActiveRegion} prefs={figurePrefs} onPrefs={setFigurePrefs} />
-    {activeName !== null && <div className="body-region-panel" role="region" aria-label={activeName}>
+    <BodyFigure regions={bodySignals.regions} active={activeRegion} onPick={setActiveRegion} prefs={figurePrefs} onPrefs={(next) => { if (next.hidden) setActiveRegion(null); setFigurePrefs(next); }} />
+    {activeName !== null && !figurePrefs.hidden && <div className="body-region-panel" role="region" aria-label={activeName}>
       <p className="tier-label">{activeName}</p>
       <div className="chip-grid">{activeLabels.map((label) => chip(label))}</div>
     </div>}
