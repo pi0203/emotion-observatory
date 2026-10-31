@@ -300,7 +300,8 @@
         "실망",
         "외로움",
         "억울함",
-        "아쉬움"
+        "아쉬움",
+        "속상함"
       ],
       "appraisalHints": [
         "기대했던 반응이 오지 않음",
@@ -558,7 +559,8 @@
         "외로움",
         "슬픔",
         "아쉬움",
-        "울적함"
+        "울적함",
+        "그리움"
       ],
       "appraisalHints": [
         "있던 것이 빠져나간 느낌"
@@ -893,7 +895,8 @@
         "평온",
         "안도",
         "신뢰",
-        "든든함"
+        "든든함",
+        "안정감"
       ],
       "appraisalHints": [
         "긴장을 놓아도 되는 느낌"
@@ -1006,7 +1009,8 @@
       "neighbors": [
         "기대",
         "신남",
-        "희망"
+        "희망",
+        "끌림"
       ],
       "appraisalHints": [
         "곧 있을 일에 몸이 먼저 반응함"
@@ -1498,10 +1502,99 @@
       "neighbors": [
         "신뢰",
         "편안함",
-        "친밀감"
+        "친밀감",
+        "안정감"
       ],
       "appraisalHints": [
         "기댈 곳이 있다고 느낌"
+      ],
+      "contextTags": [
+        "관계",
+        "안전"
+      ],
+      "provisional": true,
+      "normStatus": "provisional"
+    },
+    {
+      "label": "속상함",
+      "family": "social",
+      "valence": "negative",
+      "activation": "medium",
+      "neighbors": [
+        "서운함",
+        "억울함",
+        "답답함",
+        "슬픔"
+      ],
+      "appraisalHints": [
+        "마음이 상해서 자꾸 떠오름",
+        "애쓴 것이 어긋났다고 느낌"
+      ],
+      "contextTags": [
+        "관계",
+        "기대"
+      ],
+      "provisional": true,
+      "normStatus": "provisional"
+    },
+    {
+      "label": "그리움",
+      "family": "loss",
+      "valence": "negative",
+      "activation": "low",
+      "neighbors": [
+        "허전함",
+        "아쉬움",
+        "슬픔",
+        "사랑"
+      ],
+      "appraisalHints": [
+        "떨어져 있는 것이 자꾸 떠오름",
+        "다시 가까이 있고 싶은 마음"
+      ],
+      "contextTags": [
+        "거리",
+        "상실",
+        "관계"
+      ],
+      "provisional": true,
+      "contextDependent": true,
+      "normStatus": "provisional"
+    },
+    {
+      "label": "끌림",
+      "family": "interest",
+      "valence": "positive",
+      "activation": "medium",
+      "neighbors": [
+        "설렘",
+        "호기심",
+        "흥미",
+        "사랑"
+      ],
+      "appraisalHints": [
+        "그쪽으로 마음이 자꾸 향함"
+      ],
+      "contextTags": [
+        "관계",
+        "처음"
+      ],
+      "provisional": true,
+      "normStatus": "provisional"
+    },
+    {
+      "label": "안정감",
+      "family": "ease",
+      "valence": "positive",
+      "activation": "low",
+      "neighbors": [
+        "편안함",
+        "든든함",
+        "평온",
+        "신뢰"
+      ],
+      "appraisalHints": [
+        "발 디딘 자리가 쉽게 흔들리지 않는다고 느낌"
       ],
       "contextTags": [
         "관계",
