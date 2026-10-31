@@ -82,7 +82,8 @@
   },
   "fadeSeconds": 0.35,
   "outsideFigure": [
-    "energy"
+    "energy",
+    "movement"
   ],
   "zones": {
     "male": [
@@ -142,24 +143,6 @@
         "cx": 0.774,
         "cy": 0.5896,
         "r_over_width": 0.058
-      },
-      {
-        "region": "movement",
-        "shape": "rect",
-        "x": 0.344,
-        "y": 0.6144,
-        "w": 0.122,
-        "h": 0.3632,
-        "rx": 0.052
-      },
-      {
-        "region": "movement",
-        "shape": "rect",
-        "x": 0.498,
-        "y": 0.6144,
-        "w": 0.124,
-        "h": 0.3632,
-        "rx": 0.052
       },
       {
         "region": "heart",
@@ -228,24 +211,6 @@
         "r_over_width": 0.054
       },
       {
-        "region": "movement",
-        "shape": "rect",
-        "x": 0.336,
-        "y": 0.555,
-        "w": 0.14,
-        "h": 0.4055,
-        "rx": 0.06
-      },
-      {
-        "region": "movement",
-        "shape": "rect",
-        "x": 0.508,
-        "y": 0.555,
-        "w": 0.14,
-        "h": 0.4055,
-        "rx": 0.06
-      },
-      {
         "region": "heart",
         "shape": "circle",
         "cx": 0.492,
@@ -254,7 +219,7 @@
       }
     ]
   },
-  "zonesNote": "The heart circle sits on top of the chest rectangle and is hit first. Placing movement on the legs is provisional (source README).",
+  "zonesNote": "The heart circle sits on top of the chest rectangle and is hit first. Energy and movement have no place on the figure and are offered as buttons beside it (owner's decision 2026-11-01; the legs were a provisional placement).",
   "defaults": {
     "body": "female",
     "style": "line",

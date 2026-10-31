@@ -217,10 +217,9 @@ p, .lede, .hint, .step-note, .small-note, .summary-footnote { text-wrap: pretty;
 .body-zone:hover { border-color: var(--line-strong); }
 .body-zone.selected { background: color-mix(in srgb, var(--accent-subtle) 70%, transparent); border: 2px solid var(--accent-ink); }
 .body-figure-aside { display: flex; flex-direction: column; gap: 10px; min-width: 0; }
-.body-whole { flex-direction: column; align-items: flex-start; gap: 2px; text-align: left; }
-.body-whole-region { color: var(--muted); font: var(--t-aside) var(--font-sans); }
+.body-whole-title { margin: 4px 0 0; }
+.body-whole { justify-content: flex-start; text-align: left; }
 .body-whole.selected { color: var(--on-accent); background: var(--accent-soft); border-color: var(--accent-ink); box-shadow: inset 0 0 0 1px var(--accent-ink); }
-.body-whole.selected .body-whole-region { color: var(--on-accent); }
 .body-figure-credit { margin: 12px 0 0; color: var(--muted); font: var(--t-aside) var(--font-sans); line-height: 1.5; }
 .body-figure-settings { margin-top: 14px; }
 .body-figure-settings summary { cursor: pointer; color: var(--accent-ink); font: 500 var(--t-aside) var(--font-sans); text-decoration: underline; text-underline-offset: 4px; }

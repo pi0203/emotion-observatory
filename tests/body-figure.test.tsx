@@ -83,12 +83,16 @@ describe("pressing the figure", () => {
     expect(screen.queryByRole("region", { name: "배·속" })).toBeNull();
   });
 
-  it("offers 에너지·무게, which has no place on the figure, as a button beside it", () => {
+  it("offers 에너지·무게 and 움직임·정지, which have no place on the figure, as two buttons under 몸 전체 (2026-11-01)", () => {
     toBody();
-    const whole = screen.getByRole("button", { name: new RegExp(`${ko.body.figure.wholeBody}.*에너지·무게`) });
-    fireEvent.click(whole);
-    const panel = screen.getByRole("region", { name: "에너지·무게" });
-    expect(within(panel).getByRole("button", { name: /몸이 무거움/ })).toBeInTheDocument();
+    for (const body of ["female", "male"] as const) expect(zonesOf(body).map((zone) => zone.region)).not.toContain("movement");
+    const aside = screen.getByRole("group", { name: ko.body.figure.wholeBody });
+    expect(within(aside).getAllByRole("button").map((button) => button.textContent)).toEqual(["에너지·무게", "움직임·정지"]);
+    fireEvent.click(within(aside).getByRole("button", { name: "에너지·무게" }));
+    expect(within(screen.getByRole("region", { name: "에너지·무게" })).getByRole("button", { name: /몸이 무거움/ })).toBeInTheDocument();
+    fireEvent.click(within(aside).getByRole("button", { name: "움직임·정지" }));
+    expect(screen.queryByRole("region", { name: "에너지·무게" })).toBeNull();
+    expect(within(screen.getByRole("region", { name: "움직임·정지" })).getByRole("button", { name: /안절부절못함/ })).toBeInTheDocument();
   });
 
   it("shows an organ only for the pressed region in 누른 곳만, and chest and belly always in 늘 보이기", () => {

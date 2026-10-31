@@ -57,11 +57,12 @@ export function BodyFigure({ regions, active, onPick, prefs, onPrefs }: {
           />
         ))}
       </div>
-      <div className="body-figure-aside">
+      {/* regions with no place on the figure (energy, movement): buttons under one small title */}
+      <div className="body-figure-aside" role="group" aria-label={t("body.figure.wholeBody")}>
+        <p className="tier-label body-whole-title">{t("body.figure.wholeBody")}</p>
         {REGIONS_OUTSIDE_FIGURE.map((regionId) => (
           <button key={regionId} type="button" className={`small-button body-whole ${active === regionId ? "selected" : ""}`} aria-pressed={active === regionId} onClick={() => toggle(regionId)}>
-            {t("body.figure.wholeBody")}
-            <span className="body-whole-region">{nameOf(regionId)}</span>
+            {nameOf(regionId)}
           </button>
         ))}
       </div>
