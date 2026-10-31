@@ -739,13 +739,17 @@ function BodyScreen({ initial, onNext }: { initial: BodyObservation[]; onNext: (
   const [figurePrefs, setFigurePrefs] = useFigurePrefs();
   const toggle = (label: string) => setSelected((current) => current.includes(label) ? current.filter((item) => item !== label) : [...current, label]);
   const chip = (label: string) => <button className={`chip ${selected.includes(label) ? "selected" : ""}`} aria-pressed={selected.includes(label)} key={label} onClick={() => toggle(label)}><Mark on={selected.includes(label)} />{label}</button>;
-  const items = bodySignals.items as { label: string; region: string; firstTier?: boolean }[];
-  const first = items.filter((item) => item.firstTier);
+  const items = bodySignals.items as { label: string; region: string; firstTier?: boolean; none?: boolean }[];
+  const first = items.filter((item) => item.firstTier && !item.none);
+  // 특별히 모르겠음 stays in the first list, last, and never inside a region's list (2026-11-01)
+  const none = items.filter((item) => item.none);
   const rest = bodySignals.regions
     .map((region) => ({ region, labels: items.filter((item) => item.region === region && !item.firstTier).map((item) => item.label) }))
     .filter((group) => group.labels.length);
   const activeName = activeRegion === null ? null : bodySignals.regions[regionIndexOf(activeRegion)] ?? null;
-  const activeLabels = activeName === null ? [] : items.filter((item) => item.region === activeName).map((item) => item.label);
+  const activeLabels = activeName === null ? [] : items.filter((item) => item.region === activeName && !item.none).map((item) => item.label);
+  // a word chosen from a region's list stays visible after that list closes, and after coming back to this step
+  const carried = selected.filter((label) => !first.some((item) => item.label === label) && !none.some((item) => item.label === label) && items.some((item) => item.label === label));
 
   return <Screen>
     <StepHeading step={t("body.step")} title={t("body.title")} hint={t("body.hint")} basis={t("body.basis")} />
@@ -754,7 +758,7 @@ function BodyScreen({ initial, onNext }: { initial: BodyObservation[]; onNext: (
       <p className="tier-label">{activeName}</p>
       <div className="chip-grid">{activeLabels.map((label) => chip(label))}</div>
     </div>}
-    <div className="chip-grid">{first.map((item) => chip(item.label))}</div>
+    <div className="chip-grid">{[...first.map((item) => item.label), ...carried, ...none.map((item) => item.label)].map((label) => chip(label))}</div>
     {!showAll && <button className="reveal-button" onClick={() => setShowAll(true)}>{t("body.more")}</button>}
     {showAll && rest.map((group) => <div key={group.region}>
       <p className="tier-label">{group.region}</p>

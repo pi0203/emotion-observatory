@@ -3,7 +3,8 @@
   "fieldNotes": {
     "region": "Groups the sensations by part of the body so they are easier to scan. Not a classification of sensations.",
     "firstTier": "The few shown first. The rest open by region under “Show other body sensations.”",
-    "valence": "Left out on purpose. Giving body sensations a pleasant or unpleasant value would open the door to reading emotions off the body."
+    "valence": "Left out on purpose. Giving body sensations a pleasant or unpleasant value would open the door to reading emotions off the body.",
+    "none": "The one item that says nothing stands out. It is always shown in the first list and never inside a region's list, so it reads as an answer in its own right, not as a sensation of one region."
   },
   "regions": [
     "Breathing and chest",
@@ -153,7 +154,8 @@
     {
       "label": "nothing stands out",
       "region": "Movement and stillness",
-      "firstTier": true
+      "firstTier": true,
+      "none": true
     }
   ]
 }

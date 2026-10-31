@@ -186,6 +186,37 @@ describe("그림 없이 (owner's decision 2026-11-01)", () => {
   });
 });
 
+describe("a word chosen from a region's list (owner's decision 2026-11-01)", () => {
+  beforeEach(() => window.localStorage.clear());
+  afterEach(cleanup);
+
+  const firstGrid = () => document.querySelector(".body-region-panel + .chip-grid, .body-figure-wrap + .chip-grid") as HTMLElement;
+  const labelsOf = (grid: HTMLElement) => [...grid.querySelectorAll("button")].map((button) => button.textContent?.replace("✓ ", ""));
+
+  it("stays visible after that list closes, before 특별히 모르겠음 in the first list, and after coming back to the step; the region's list leaves 특별히 모르겠음 out", () => {
+    toBody();
+    const group = screen.getByRole("group", { name: ko.body.figure.ariaLabel });
+    fireEvent.click(within(group).getAllByRole("button", { name: /배·속/ })[0]);
+    const panel = screen.getByRole("region", { name: "배·속" });
+    expect(within(panel).queryByRole("button", { name: /특별히 모르겠음/ })).toBeNull();
+    fireEvent.click(within(panel).getByRole("button", { name: /속이 울렁거림/ }));
+    fireEvent.click(within(group).getAllByRole("button", { name: /배·속/ })[0]);
+    expect(screen.queryByRole("region", { name: "배·속" })).toBeNull();
+    let labels = labelsOf(firstGrid());
+    expect(labels.indexOf("속이 울렁거림")).toBe(labels.length - 2);
+    expect(labels[labels.length - 1]).toBe("특별히 모르겠음");
+    expect(screen.getByRole("button", { name: /속이 울렁거림/ }).getAttribute("aria-pressed")).toBe("true");
+    // the figure itself carries no mark for a chosen word
+    expect(within(group).queryAllByRole("button", { pressed: true })).toHaveLength(0);
+    fireEvent.click(screen.getByRole("button", { name: new RegExp(`^${ko.common.next}`) }));
+    fireEvent.click(screen.getByRole("button", { name: ko.common.stepBack }));
+    expect(screen.getByRole("heading", { level: 1 }).textContent).toBe(ko.body.title);
+    labels = labelsOf(firstGrid());
+    expect(labels.indexOf("속이 울렁거림")).toBe(labels.length - 2);
+    expect(screen.getByRole("button", { name: /속이 울렁거림/ }).getAttribute("aria-pressed")).toBe("true");
+  });
+});
+
 describe("motion and network", () => {
   it("fades the organ layers in 0.35s and not at all under reduced motion", () => {
     const css = readFileSync("app/globals.css", "utf8");
