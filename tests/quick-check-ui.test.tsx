@@ -193,7 +193,7 @@ describe("quick check screens", () => {
     startDeep();
     fireEvent.click(screen.getByRole("button", { name: /조금 살펴보고 싶어요/ }));
 
-    const note = "몸의 느낌은 고정된 정답이 아니라 지금 순간의 snapshot입니다. 움직임, 자세, 호흡, 시간, 상황이 달라지면 다르게 느껴질 수 있어요.";
+    const note = "몸의 느낌은 고정된 정답이 아니라 지금 이 순간의 모습입니다. 움직임, 자세, 호흡, 시간, 상황이 달라지면 다르게 느껴질 수 있어요.";
     expect(screen.queryByText(note)).toBeNull();
     fireEvent.click(screen.getByRole("button", { name: "몸이 무거움" }));
     expect(screen.getByText(note)).toBeTruthy();
