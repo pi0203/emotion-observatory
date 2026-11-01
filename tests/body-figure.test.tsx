@@ -9,6 +9,7 @@ import { ko } from "../lib/i18n/messages.ko";
 import { DEFAULT_FIGURE_PREFS, FIGURE_LINE_RGB, FIGURE_PREFS_KEY, loadFigurePrefs, MIN_ZONE_PX, organLayers, REGION_IDS, saveFigurePrefs, zoneBox, zonePx, zonesOf } from "../lib/body-figure";
 import { buildExport, serializeExport } from "../lib/record-transfer";
 import { getStorageKeys, loadCompleted, loadDraft } from "../lib/storage";
+import { en } from "../lib/i18n/messages.en";
 import { startDeep } from "./helpers/start";
 
 /**
@@ -343,6 +344,26 @@ describe("이 기기의 기록 모두 지우기 (2026-11-01)", () => {
     fireEvent.click(screen.getByRole("button", { name: ko.recordTransfer.deleteAllConfirm }));
     expect(window.localStorage.getItem(FIGURE_PREFS_KEY)).toBeNull();
     expect(loadFigurePrefs()).toEqual(DEFAULT_FIGURE_PREFS);
+  });
+});
+
+describe("where the figure comes from (line drawing, 2026-11-01)", () => {
+  afterEach(cleanup);
+
+  it("shows the manifest's credit line under the figure in both languages, and keeps the BodyParts3D attribution word for word (CC BY 4.0)", () => {
+    expect(ko.body.figure.credit).toBe(figure.credit.line.ko);
+    expect(en.body.figure.credit).toBe(figure.credit.line.en);
+    for (const line of [ko.body.figure.credit, en.body.figure.credit]) {
+      for (const part of ["BodyParts3D", "DBCLS", "CC BY 4.0", "MakeHuman", "CC0"]) expect(line, part).toContain(part);
+    }
+    const attribution = "BodyParts3D, © The Database Center for Life Science licensed under CC Attribution 4.0 International";
+    expect(figure.credit.male.attribution).toBe(attribution);
+    for (const doc of ["docs/BODY_FIGURE_SOURCES.md", "docs/THIRD_PARTY.md"]) expect(readFileSync(doc, "utf8"), doc).toContain(`「${attribution}」`);
+    // the earlier figure's credit is gone from the screen and the data
+    expect(JSON.stringify(figure.credit) + ko.body.figure.credit + en.body.figure.credit).not.toMatch(/Häggström|Wikimedia/);
+    window.localStorage.clear();
+    toBody();
+    expect(screen.getByText(figure.credit.line.ko)).toBeInTheDocument();
   });
 });
 

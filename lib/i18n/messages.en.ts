@@ -359,7 +359,7 @@ export const en: Messages = {
       ariaLabel: "Body figure. Tap a part to open its list below.",
       wholeBody: "Whole body",
       part: { neck: "Neck", leftShoulder: "Left shoulder", rightShoulder: "Right shoulder", leftHand: "Left hand", rightHand: "Right hand" },
-      credit: "Figure: Mikael Häggström, Wikimedia Commons, public domain. Trimmed to the silhouette, lungs, heart, stomach and intestines.",
+      credit: "Figure: line drawings from the BodyParts3D (© DBCLS, CC BY 4.0) and MakeHuman (CC0) 3D models. The lungs are a separately built model.",
       settings: "Change the figure",
       visibleLabel: "Figure",
       visible: { shown: "Show", hidden: "No figure" },

@@ -335,7 +335,7 @@ export const ko = {
       wholeBody: "몸 전체",
       /** Tells apart the parts of one region for a screen reader. Left and right are as seen on the screen. */
       part: { neck: "목", leftShoulder: "왼쪽 어깨", rightShoulder: "오른쪽 어깨", leftHand: "왼손", rightHand: "오른손" },
-      credit: "그림: Mikael Häggström, Wikimedia Commons, 퍼블릭 도메인. 실루엣과 폐·심장·위·장만 남겨 다듬음.",
+      credit: "그림: BodyParts3D(© DBCLS, CC BY 4.0)와 MakeHuman(CC0) 3D 모형을 선으로 다시 그림. 폐는 따로 만든 모형.",
       settings: "그림 바꾸기",
       visibleLabel: "그림",
       visible: { shown: "보이기", hidden: "그림 없이" },
