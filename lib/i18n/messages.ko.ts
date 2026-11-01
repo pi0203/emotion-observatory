@@ -153,7 +153,7 @@ export const ko = {
       },
       storage: {
         q: "기록은 어디에 저장되나요?",
-        a: "지금 쓰는 브라우저 안에만 저장됩니다. 적은 내용은 서버로 보내지 않습니다. 브라우저 데이터를 지우면 함께 사라지고, 암호화된 저장소는 아닙니다. 지난 기록 화면에서 파일로 내보내거나(원하면 암호로 잠가서) 모두 지울 수 있습니다.",
+        a: "지금 쓰는 브라우저 안에만 저장됩니다. 적은 내용은 서버로 보내지 않습니다. 브라우저 데이터를 지우면 함께 사라지고, 암호화된 저장소는 아닙니다. 지난 기록 화면에서 파일로 내보내거나(원하면 암호로 잠가서) 모두 지울 수 있습니다. Safari에서는 이 사이트를 7일 넘게 쓰지 않으면(Safari를 쓴 날만 셉니다) 브라우저가 기록을 지울 수 있습니다. 오래 두려면 가끔 파일로 내보내 주세요.",
       },
       maker: {
         q: "만든 사람이 내 기록을 볼 수 있나요?",
@@ -637,6 +637,19 @@ export const ko = {
     keepGoing: "계속 살펴보기",
     stop: "여기서 그만하기",
   },
+} as const;
+
+/**
+ * Wording that exists only in Korean, outside the shared Messages shape, so no
+ * English key is asked for: the links to the terms page, which is Korean only
+ * for now (lib/terms.ts). The English screen does not show them. Mirrors
+ * `enOnly` in messages.en.ts.
+ */
+export const koOnly = {
+  /** In the footer, after eunchanjoe.vercel.app. */
+  termsLink: "이용약관",
+  /** After the answer to 「기록은 어디에 저장되나요?」. */
+  termsStorageLink: "자세히: 이용약관 제6조",
 } as const;
 
 /**

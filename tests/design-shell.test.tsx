@@ -1,7 +1,8 @@
 import { afterEach, beforeEach, describe, expect, it } from "vitest";
 import { cleanup, fireEvent, render, screen, within } from "@testing-library/react";
 import Home from "../app/(ko)/page";
-import { ko } from "../lib/i18n/messages.ko";
+import EmotionApp from "../app/emotion-app";
+import { ko, koOnly } from "../lib/i18n/messages.ko";
 import { getStorageKeys } from "../lib/storage";
 import { startQuick } from "./helpers/start";
 
@@ -52,9 +53,18 @@ describe("homepage frame on the landing and record screens", () => {
     const footer = screen.getByRole("contentinfo");
     expect(footer.textContent).toContain(ko.common.appName);
     expect(footer.textContent).toContain(ko.shell.owner);
-    expect(within(footer).getByRole("link").getAttribute("href")).toBe("https://eunchanjoe.vercel.app/");
+    // the way back to the homepage, then the terms (Korean only, 2026-11-01)
+    expect(within(footer).getAllByRole("link").map((link) => link.getAttribute("href"))).toEqual(["https://eunchanjoe.vercel.app/", "/terms"]);
+    expect(within(footer).getByRole("link", { name: koOnly.termsLink })).toBeTruthy();
     expect(footer.innerHTML).not.toMatch(/mailto:|@|CC BY|license|licence|라이선스|저작권/i);
     expect(footer.textContent).not.toMatch(/위기|crisis/i);
+  });
+
+  it("leaves the terms link out of the English footer, since the terms are Korean only", () => {
+    render(<EmotionApp locale="en" />);
+    const footer = screen.getByRole("contentinfo");
+    expect(within(footer).getAllByRole("link").map((link) => link.getAttribute("href"))).toEqual(["https://eunchanjoe.vercel.app/"]);
+    expect(footer.textContent).not.toContain(koOnly.termsLink);
   });
 
   it("starts with a skip link to the main content", () => {

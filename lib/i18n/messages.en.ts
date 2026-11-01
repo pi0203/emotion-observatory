@@ -182,7 +182,8 @@ export const en: Messages = {
       },
       storage: {
         q: "Where are my entries saved?",
-        a: "Only in the browser you are using. What you write is not sent to a server. Clearing your browser data removes your entries, and the storage is not encrypted. On the past entries screen, you can export them to a file (locked with a passphrase if you like) or delete them all.",
+        // the Safari sentences were added 2026-11-01 and wait for the owner's reading (docs/TERMS.md)
+        a: "Only in the browser you are using. What you write is not sent to a server. Clearing your browser data removes your entries, and the storage is not encrypted. On the past entries screen, you can export them to a file (locked with a passphrase if you like) or delete them all. Safari may delete your entries if you don’t use this site for more than 7 days (only days you use Safari count). To keep them, export a file now and then.",
       },
       maker: {
         q: "Can the maker see my entries?",
