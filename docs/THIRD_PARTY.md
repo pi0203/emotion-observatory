@@ -49,11 +49,17 @@
 - 디자인 참고 이미지와 다른 서비스의 화면은 저장소에 넣지 않는다.
 - 영화 미학 논문 등에서 얻은 설계 영감은 [AESTHETIC_SOURCES.md](AESTHETIC_SOURCES.md)에 출처로만 적는다.
 
-## 5. 몸 그림 (`public/body-figure/`, 2026-10-31, 2026-11-01 선화로 바꿈)
+## 5. 표준국어대사전(국립국어원)
+
+- 쓰는 곳: 어휘의 `expressions` 칸([`data/emotions.ko.json`](../data/emotions.ko.json))과 단어 고르기 화면의 「이렇게도 말해요」(2026-11-01). 단어별 표현과 사전 위치는 [vocab-sources/EXPRESSIONS_2026_11_01.md](vocab-sources/EXPRESSIONS_2026_11_01.md)에 있다.
+- 쓰는 것: 표현 이름과 사전 위치(표제어, 뜻 번호, word_no)만. 뜻풀이와 용례 문장은 옮기지 않는다.
+- 라이선스: CC BY-SA 2.0 KR. 사전 누리집 「저작권 정책」에서 2026-11-01에 확인했다.
+- 화면 표기: 「표준국어대사전에 실린 표현이에요.」
+
+## 6. 몸 그림 (`public/body-figure/`, 2026-10-31, 2026-11-01 선화로 바꿈)
 
 - 그림: BodyParts3D(© DBCLS, CC BY 4.0)와 MakeHuman(CC0) 3D 모형을 선으로 다시 그린 선화. 폐는 「숨과 자세」 3D 자료용으로 따로 만든 모형. 출처·라이선스·손본 것은 [BODY_FIGURE_SOURCES.md](BODY_FIGURE_SOURCES.md)에 있다.
 - BodyParts3D 표기(CC BY 4.0): 「BodyParts3D, © The Database Center for Life Science licensed under CC Attribution 4.0 International」. 앱의 그림 아래에는 출처 줄과 CC BY 4.0 라이선스 링크를 둔다.
 - 화면 출처 줄은 표기 문장을 글자 그대로 담는다(본인 2026-11-01). BodyParts3D 라이선스 페이지(https://dbarchive.biosciencedbc.jp/en/bodyparts3d/lic.html, 2025-02-27 갱신)가 이 문장으로 표기하라고 정했고, 고쳐 만든 것을 배포할 때도 정한 방식대로 표기하라고 적었기 때문이다.
 - 파일 8장(체형 2 × 몸 1 + 장기 3), 투명 바탕 WebP. 실행 중에 바깥 주소를 부르지 않는다. 레이어·누르는 자리·기본값은 [`data/body-figure.json`](../data/body-figure.json)에 있다.
 - 2026-10-31~11-01에 쓴 Mikael Häggström 그림(Wikimedia Commons, 퍼블릭 도메인)과 실사·단색 표현은 2026-11-01에 뺐다.
-

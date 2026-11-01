@@ -249,6 +249,10 @@ export const ko = {
     beforeTitle: "지금 느낌을 내 말로 적는다면?",
     beforeHint: "적지 않아도 됩니다. 단어 목록은 원하면 볼 수 있습니다.",
     reveal: "단어 보기",
+    // under each picked list word that has dictionary expressions, after 단어 보기 (owner's decision 2026-11-01);
+    // the source line is drawn once under them (docs/vocab-sources/EXPRESSIONS_2026_11_01.md)
+    alsoSaidAs: "이렇게도 말해요",
+    expressionSource: "표준국어대사전에 실린 표현이에요.",
   },
   quickCandidates: {
     basis: "방금 누른 곳을 기준으로",
