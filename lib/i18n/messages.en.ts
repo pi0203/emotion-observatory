@@ -359,7 +359,9 @@ export const en: Messages = {
       ariaLabel: "Body figure. Tap a part to open its list below.",
       wholeBody: "Whole body",
       part: { neck: "Neck", leftShoulder: "Left shoulder", rightShoulder: "Right shoulder", leftHand: "Left hand", rightHand: "Right hand" },
-      credit: "Figure: line drawings from the BodyParts3D (© DBCLS, CC BY 4.0) and MakeHuman (CC0) 3D models. The lungs are a separately built model.",
+      // ends with the BodyParts3D attribution word for word (owner's decision 2026-11-01). Owner's approval of the English: 2026-11-01 ("영어 OK")
+      credit: "Figure: line drawings from the BodyParts3D and MakeHuman (CC0) 3D models. The lungs are a separately built model. BodyParts3D, © The Database Center for Life Science licensed under CC Attribution 4.0 International",
+      // Owner's approval of the English: 2026-11-01 ("영어 OK")
       licenseLink: "CC BY 4.0 license",
       licenseHref: "https://creativecommons.org/licenses/by/4.0/deed.en",
       settings: "Change the figure",
@@ -583,6 +585,7 @@ export const en: Messages = {
     },
     deleteAll: "Delete all entries on this device",
     deleteAllConfirmTitle: "Delete all entries on this device?",
+    // the last sentence (body figure choices) was added 2026-11-01. Owner's approval of the English: 2026-11-01 ("영어 OK")
     deleteAllConfirmBody: "This deletes all entries from this device: finished, stopped, and in progress. Deleted entries cannot be brought back. Before deleting, you can save a copy with “Export to a file” above. The body figure choices (figure type, organs, no figure) also go back to their defaults.",
     deleteAllConfirm: "Delete all",
     deleteAllCancel: "Cancel",

@@ -5,6 +5,7 @@
 - 그림과 사양: Aside가 만든 「몸그림_선화_2026-11-01」(렌더링·정리 Aside, 선택 조은찬). 아래 「출처와 라이선스」「손본 것」은 그 폴더의 README.md에서 글자 그대로 옮겼다.
 - 파일: female_/male_ × base_line(몸), line_chest(폐), line_heart(심장), line_belly(위·장). 모두 600×1124, 투명 바탕 WebP.
 - 화면의 출처 줄: `lib/i18n/messages.ko.ts`·`messages.en.ts`의 `body.figure.credit`(manifest.json `creditLine`). 그 뒤에 CC BY 4.0 라이선스 링크(`body.figure.licenseLink`·`licenseHref`, 한국어는 deed.ko, 영어는 deed.en, 새 탭)를 둔다(본인 2026-11-01). 출처 항목은 `data/body-figure.json`의 `credit`(manifest.json `sources`).
+- 화면 출처 줄은 표기 문장을 글자 그대로 담는다(본인 2026-11-01). BodyParts3D 라이선스 페이지(https://dbarchive.biosciencedbc.jp/en/bodyparts3d/lic.html, 2025-02-27 갱신)가 이 문장으로 표기하라고 정했고, 고쳐 만든 것을 배포할 때도 정한 방식대로 표기하라고 적었기 때문이다.
 
 ## 출처와 라이선스
 - BodyParts3D: CC BY 4.0. 표기 「BodyParts3D, © The Database Center for Life Science licensed under CC Attribution 4.0 International」. 남성형 몸·근육과 두 체형의 심장·위·장.

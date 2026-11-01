@@ -52,7 +52,8 @@
 ## 5. 몸 그림 (`public/body-figure/`, 2026-10-31, 2026-11-01 선화로 바꿈)
 
 - 그림: BodyParts3D(© DBCLS, CC BY 4.0)와 MakeHuman(CC0) 3D 모형을 선으로 다시 그린 선화. 폐는 「숨과 자세」 3D 자료용으로 따로 만든 모형. 출처·라이선스·손본 것은 [BODY_FIGURE_SOURCES.md](BODY_FIGURE_SOURCES.md)에 있다.
-- BodyParts3D 표기(CC BY 4.0): 「BodyParts3D, © The Database Center for Life Science licensed under CC Attribution 4.0 International」. 앱의 그림 아래에는 짧은 출처 줄과 CC BY 4.0 라이선스 링크를 둔다.
+- BodyParts3D 표기(CC BY 4.0): 「BodyParts3D, © The Database Center for Life Science licensed under CC Attribution 4.0 International」. 앱의 그림 아래에는 출처 줄과 CC BY 4.0 라이선스 링크를 둔다.
+- 화면 출처 줄은 표기 문장을 글자 그대로 담는다(본인 2026-11-01). BodyParts3D 라이선스 페이지(https://dbarchive.biosciencedbc.jp/en/bodyparts3d/lic.html, 2025-02-27 갱신)가 이 문장으로 표기하라고 정했고, 고쳐 만든 것을 배포할 때도 정한 방식대로 표기하라고 적었기 때문이다.
 - 파일 8장(체형 2 × 몸 1 + 장기 3), 투명 바탕 WebP. 실행 중에 바깥 주소를 부르지 않는다. 레이어·누르는 자리·기본값은 [`data/body-figure.json`](../data/body-figure.json)에 있다.
 - 2026-10-31~11-01에 쓴 Mikael Häggström 그림(Wikimedia Commons, 퍼블릭 도메인)과 실사·단색 표현은 2026-11-01에 뺐다.
 

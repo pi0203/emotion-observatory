@@ -2,8 +2,8 @@
   "note": "The body figure for the slow path's body step. A picture added beside the list, never in place of it: the list alone reaches every region. Regions carry no emotion and no pleasant/unpleasant value (data/body-signals.*.json fieldNotes.valence). Zone coordinates are fractions of the image's width and height. `region` is the index into body-signals regions, by id, so the same zones serve every language.",
   "credit": {
     "line": {
-      "ko": "그림: BodyParts3D(© DBCLS, CC BY 4.0)와 MakeHuman(CC0) 3D 모형을 선으로 다시 그림. 폐는 따로 만든 모형.",
-      "en": "Figure: line drawings from the BodyParts3D (© DBCLS, CC BY 4.0) and MakeHuman (CC0) 3D models. The lungs are a separately built model."
+      "ko": "그림: BodyParts3D와 MakeHuman(CC0) 3D 모형을 선으로 다시 그림. 폐는 따로 만든 모형. BodyParts3D, © The Database Center for Life Science licensed under CC Attribution 4.0 International",
+      "en": "Figure: line drawings from the BodyParts3D and MakeHuman (CC0) 3D models. The lungs are a separately built model. BodyParts3D, © The Database Center for Life Science licensed under CC Attribution 4.0 International"
     },
     "male": {
       "body": "BodyParts3D skin FJ2810 and 82 surface-muscle files (is_a 4.0)",

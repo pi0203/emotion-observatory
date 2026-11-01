@@ -2,6 +2,7 @@ import { afterEach, beforeEach, describe, expect, it } from "vitest";
 import { cleanup, fireEvent, render, screen, within } from "@testing-library/react";
 import { readdirSync, readFileSync } from "node:fs";
 import Home from "../app/(ko)/page";
+import EnglishPage from "../app/(en)/en/page";
 import bodySignals from "../data/body-signals.ko.json";
 import bodySignalsEn from "../data/body-signals.en.json";
 import figure from "../data/body-figure.json";
@@ -354,11 +355,14 @@ describe("where the figure comes from (line drawing, 2026-11-01)", () => {
   it("shows the manifest's credit line under the figure in both languages, and keeps the BodyParts3D attribution word for word (CC BY 4.0)", () => {
     expect(ko.body.figure.credit).toBe(figure.credit.line.ko);
     expect(en.body.figure.credit).toBe(figure.credit.line.en);
-    for (const line of [ko.body.figure.credit, en.body.figure.credit]) {
-      for (const part of ["BodyParts3D", "DBCLS", "CC BY 4.0", "MakeHuman", "CC0"]) expect(line, part).toContain(part);
-    }
     const attribution = "BodyParts3D, © The Database Center for Life Science licensed under CC Attribution 4.0 International";
     expect(figure.credit.male.attribution).toBe(attribution);
+    // the screen line carries the attribution word for word, as the BodyParts3D licence page asks, not the earlier short form (owner's decision 2026-11-01)
+    for (const line of [ko.body.figure.credit, en.body.figure.credit]) {
+      expect(line).toContain(attribution);
+      expect(line).not.toContain("(© DBCLS, CC BY 4.0)");
+      for (const part of ["MakeHuman", "CC0"]) expect(line, part).toContain(part);
+    }
     for (const doc of ["docs/BODY_FIGURE_SOURCES.md", "docs/THIRD_PARTY.md"]) expect(readFileSync(doc, "utf8"), doc).toContain(`「${attribution}」`);
     // the earlier figure's credit is gone from the screen and the data
     expect(JSON.stringify(figure.credit) + ko.body.figure.credit + en.body.figure.credit).not.toMatch(/Häggström|Wikimedia/);
@@ -366,6 +370,19 @@ describe("where the figure comes from (line drawing, 2026-11-01)", () => {
     toBody();
     const credit = document.querySelector(".body-figure-credit") as HTMLElement;
     expect(credit.textContent).toBe(`${figure.credit.line.ko} ${ko.body.figure.licenseLink}`);
+    expect(credit.textContent).toContain(attribution);
+    // the English screen draws the same attribution
+    cleanup();
+    window.localStorage.clear();
+    render(EnglishPage());
+    fireEvent.click(screen.getByRole("button", { name: new RegExp(`^${en.landing.start}`) }));
+    fireEvent.keyDown(document.querySelector(".affect-grid")!, { key: "Enter" });
+    fireEvent.click(screen.getByRole("button", { name: new RegExp(`^${en.common.next}`) }));
+    fireEvent.click(screen.getByRole("button", { name: en.quickCandidates.deep }));
+    fireEvent.click(screen.getByRole("button", { name: new RegExp(`^${en.entry.observe}`) }));
+    const creditEn = document.querySelector(".body-figure-credit") as HTMLElement;
+    expect(creditEn.textContent).toBe(`${figure.credit.line.en} ${en.body.figure.licenseLink}`);
+    expect(creditEn.textContent).toContain(attribution);
   });
 
   it("links the CC BY 4.0 licence after the credit line, in the reader's language, in a new tab (owner's decision 2026-11-01)", () => {
