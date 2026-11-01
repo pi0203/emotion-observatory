@@ -1,0 +1,220 @@
+{
+  "format": "emotion-observatory-records",
+  "formatVersion": 1,
+  "exportedDate": "2026-11-01",
+  "records": [
+    {
+      "id": "fixture-quick-ko",
+      "createdAt": "2026-10-20T09:00:00.000Z",
+      "completedAt": "2026-10-20T09:03:00.000Z",
+      "status": "completed",
+      "stage": "quick-summary",
+      "entry": "quick",
+      "locale": "ko",
+      "quickCheck": {
+        "affect": {
+          "valence": 0.25,
+          "activation": 0.7
+        },
+        "candidatePool": [
+          {
+            "label": "긴장",
+            "source": "suggested"
+          },
+          {
+            "label": "짜증",
+            "source": "suggested"
+          },
+          {
+            "label": "억울함",
+            "source": "suggested"
+          }
+        ],
+        "selected": [
+          {
+            "label": "짜증",
+            "source": "suggested",
+            "personalMeaning": "가짜 기록: 같은 말을 또 해야 할 때"
+          },
+          {
+            "label": "가짜 기록의 내 말",
+            "source": "custom"
+          }
+        ],
+        "wordsRevealed": {
+          "at": "2026-10-20T09:01:00.000Z"
+        },
+        "endedAt": "2026-10-20T09:03:00.000Z"
+      },
+      "synthesisFeedback": {
+        "fit": "partly",
+        "correction": "가짜 기록: 조금 다르게 적고 싶다"
+      },
+      "support": {
+        "need": "pace",
+        "chosen": [
+          "feel-now",
+          "loosen"
+        ],
+        "choicesByNeed": {
+          "pace": [
+            "feel-now",
+            "loosen"
+          ]
+        },
+        "note": "가짜 기록",
+        "followUp": {
+          "tried": "partly",
+          "helped": "unsure",
+          "at": "2026-10-21T09:00:00.000Z"
+        }
+      },
+      "coach": {
+        "origin": "example-practice",
+        "setId": "friction-unfair-stuck",
+        "wordsBefore": [
+          "짜증"
+        ],
+        "appraisals": [
+          "repeated",
+          "unheard"
+        ],
+        "ownAppraisal": "가짜 기록의 관찰",
+        "wordsAfter": [
+          "억울함"
+        ],
+        "ownWord": "가짜 기록의 표현"
+      },
+      "labelsLater": [
+        {
+          "label": "서운함",
+          "at": "2026-10-22T09:00:00.000Z"
+        }
+      ],
+      "history": [
+        "landing",
+        "quick-affect",
+        "quick-candidates"
+      ]
+    },
+    {
+      "id": "fixture-deep-ko",
+      "createdAt": "2026-10-23T20:00:00.000Z",
+      "completedAt": "2026-10-23T20:09:00.000Z",
+      "status": "completed",
+      "stage": "summary",
+      "entry": "quick",
+      "locale": "ko",
+      "quickCheck": {
+        "affect": {
+          "unknown": true
+        },
+        "candidatePool": [],
+        "selected": [],
+        "candidateResponse": "unsure",
+        "endedAt": "2026-10-23T20:01:00.000Z"
+      },
+      "deepReflection": {
+        "startedAt": "2026-10-23T20:01:00.000Z",
+        "entryDecision": "observe",
+        "body": [
+          {
+            "label": "가슴이 답답함",
+            "intensity": "medium"
+          },
+          {
+            "label": "가짜 기록의 몸 느낌",
+            "custom": true
+          }
+        ],
+        "affect": {
+          "valence": 0.4,
+          "activation": 0.35
+        },
+        "context": {
+          "eventText": "가짜 기록: 친구와 통화했다",
+          "source": "event"
+        },
+        "concerns": [
+          "이해받고 싶었다",
+          "잘 모르겠다"
+        ],
+        "emotionCandidates": [
+          {
+            "label": "답답함",
+            "source": "suggested"
+          },
+          {
+            "label": "잘 모르겠음",
+            "source": "suggested"
+          }
+        ],
+        "wordsRevealed": {
+          "at": "2026-10-23T20:06:00.000Z"
+        },
+        "outcome": {
+          "clarity": "clearer",
+          "usefulness": "unsure",
+          "note": "가짜 기록"
+        }
+      },
+      "talkToSomeone": {
+        "answer": "not-yet",
+        "at": "2026-10-23T20:09:00.000Z"
+      },
+      "history": [
+        "landing",
+        "quick-affect",
+        "body",
+        "affect",
+        "context",
+        "meaning",
+        "emotion",
+        "outcome"
+      ]
+    },
+    {
+      "id": "fixture-stopped-ko",
+      "createdAt": "2026-10-24T08:00:00.000Z",
+      "status": "stopped",
+      "stage": "stopped",
+      "entry": "deep",
+      "locale": "ko",
+      "stopReason": "user",
+      "deepReflection": {
+        "startedAt": "2026-10-24T08:00:00.000Z",
+        "entryDecision": "observe",
+        "body": [],
+        "concerns": [],
+        "emotionCandidates": []
+      }
+    },
+    {
+      "id": "fixture-quick-en",
+      "createdAt": "2026-10-25T10:00:00.000Z",
+      "completedAt": "2026-10-25T10:02:00.000Z",
+      "status": "completed",
+      "stage": "quick-summary",
+      "entry": "quick",
+      "locale": "en",
+      "quickCheck": {
+        "affect": {
+          "valence": 0.7,
+          "activation": 0.4
+        },
+        "candidatePool": [
+          {
+            "label": "tense",
+            "source": "suggested"
+          }
+        ],
+        "selected": [
+          {
+            "label": "tense",
+            "source": "suggested"
+          }
+        ]
+      }
+    }
+  ]
+}

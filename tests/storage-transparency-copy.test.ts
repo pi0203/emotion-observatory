@@ -24,6 +24,8 @@ describe("PUBLISHING_CHECKLIST §10: storage, transmission, and sharing copy ali
       expect(note).toContain("같은 기기와 브라우저를 쓰는 사람은 볼 수 있으니");
       expect(note).toContain("공용 기기에서는 주의");
       expect(note).toContain("브라우저 데이터를 지우면 함께 사라집니다");
+      // the Safari line went to the FAQ, not here, so the first card keeps its height (2026-11-01)
+      expect(note).not.toContain("Safari");
     });
 
     it("English landing note explicitly states browser-only, unencrypted, and shared-device caveats", () => {
@@ -50,6 +52,14 @@ describe("PUBLISHING_CHECKLIST §10: storage, transmission, and sharing copy ali
 
       const aiAnswer = faq.ai.a;
       expect(aiAnswer).toContain("적은 내용을 AI에 보내지 않고");
+    });
+
+    it("Korean FAQ ends the storage answer with Safari's seven days and the advice to export (이용약관 제6조 ③④)", () => {
+      expect(ko.about.faq.storage.a.endsWith(" Safari에서는 이 사이트를 7일 넘게 쓰지 않으면(Safari를 쓴 날만 셉니다) 브라우저가 기록을 지울 수 있습니다. 오래 두려면 가끔 파일로 내보내 주세요.")).toBe(true);
+    });
+
+    it("English FAQ ends the storage answer with Safari's seven days and the advice to export", () => {
+      expect(en.about.faq.storage.a.endsWith(" Safari may delete your entries if you don’t use this site for more than 7 days (only days you use Safari count). To keep them, export a file now and then.")).toBe(true);
     });
 
     it("English FAQ confirms serverless storage, maker invisibility, and no AI transmission", () => {
