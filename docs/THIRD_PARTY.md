@@ -48,3 +48,10 @@
 
 - 디자인 참고 이미지와 다른 서비스의 화면은 저장소에 넣지 않는다.
 - 영화 미학 논문 등에서 얻은 설계 영감은 [AESTHETIC_SOURCES.md](AESTHETIC_SOURCES.md)에 출처로만 적는다.
+
+## 5. 표준국어대사전(국립국어원)
+
+- 쓰는 곳: 어휘의 `expressions` 칸([`data/emotions.ko.json`](../data/emotions.ko.json))과 단어 고르기 화면의 「이렇게도 말해요」(2026-11-01). 단어별 표현과 사전 위치는 [vocab-sources/EXPRESSIONS_2026_11_01.md](vocab-sources/EXPRESSIONS_2026_11_01.md)에 있다.
+- 쓰는 것: 표현 이름과 사전 위치(표제어, 뜻 번호, word_no)만. 뜻풀이와 용례 문장은 옮기지 않는다.
+- 라이선스: CC BY-SA 2.0 KR. 사전 누리집 「저작권 정책」에서 2026-11-01에 확인했다.
+- 화면 표기: 「표준국어대사전에 실린 표현이에요.」

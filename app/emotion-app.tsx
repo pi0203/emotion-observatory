@@ -553,9 +553,16 @@ function QuickAffectScreen({ onNext, onUnknown }: { onNext: (affect: AffectPoint
  * 단어 보기 is pressed (`revealed`), no offered word is drawn: only the person's
  * own-words field and the button. After it, the five nearest words and the
  * similar ones behind 비슷한 표현 더 보기, as before.
+ *
+ * 이렇게도 말해요 (owner's decision 2026-11-01): under the chips, one line for
+ * each picked list word that has dictionary expressions, in the order picked,
+ * then the source once. Plain text, nothing to press: the expressions are
+ * examples of how people say it, never a choice, and nothing of them is stored.
+ * The person's own words get none.
  */
 function TieredWords({ pool, selectedLabels, ownWords, onToggle, onAddCustom, meanings, onMeaning, revealed, onReveal }: { pool: EmotionSelection[]; selectedLabels: string[]; ownWords: string[]; onToggle: (label: string) => void; onAddCustom: (label: string) => void; meanings?: Record<string, string>; onMeaning?: (label: string, meaning: string) => void; revealed: boolean; onReveal: () => void }) {
   const t = useT();
+  const { emotions } = useContent();
   const [tier, setTier] = useState<1 | 2>(1);
   const [custom, setCustom] = useState("");
   const poolLabels = pool.map((item) => item.label);
@@ -583,14 +590,25 @@ function TieredWords({ pool, selectedLabels, ownWords, onToggle, onAddCustom, me
     <button className="reveal-button" onClick={onReveal}>{t("words.reveal")}</button>
   </>;
 
+  const sayings = selectedLabels.filter((label) => !ownWords.includes(label)).flatMap((label) => {
+    const texts = emotions.items.find((item) => item.label === label)?.expressions?.map((expression) => expression.text) ?? [];
+    return texts.length > 0 ? [{ label, texts }] : [];
+  });
+
   return <>
     <div className="chip-grid">{pool.map((item) => chip(item.label))}</div>
 
-    {tier === 1 && expanded.length > 0 && <button className="reveal-button" onClick={() => setTier(2)}>{t("words.more")}</button>}
     {tier >= 2 && expanded.length > 0 && <>
       <p className="tier-label">{t("words.similar")}</p>
       <div className="chip-grid">{expanded.map((item) => chip(item.label))}</div>
     </>}
+
+    {sayings.length > 0 && <div className="also-said">
+      {sayings.map(({ label, texts }) => <p className="small-note" key={label}>{label} · {t("words.alsoSaidAs")}: {texts.join(", ")}</p>)}
+      <p className="tier-label">{t("words.expressionSource")}</p>
+    </div>}
+
+    {tier === 1 && expanded.length > 0 && <button className="reveal-button" onClick={() => setTier(2)}>{t("words.more")}</button>}
 
     {mine}
 

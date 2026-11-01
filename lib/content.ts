@@ -16,6 +16,30 @@ import { englishAvailable } from "./i18n/availability";
 import { DEFAULT_LOCALE, type Locale } from "./i18n/locale";
 
 /**
+ * An expression listed in the Standard Korean Language Dictionary, shown as
+ * 이렇게도 말해요 under a picked word (owner's decision 2026-11-01). Only `text`
+ * is drawn; the rest says where it sits in the dictionary
+ * (docs/vocab-sources/EXPRESSIONS_2026_11_01.md). Never stored in a record.
+ */
+export type DictionaryExpression = { text: string; dict: string; kind: string; sense?: string; headword: string; wordNo: number };
+
+/**
+ * The vocabulary, written out instead of taken from the Korean file, because
+ * only the Korean words carry `expressions` (2026-11-01): the English list is
+ * written on its own and not paired with the Korean.
+ */
+export type Vocabulary = {
+  provisional: boolean;
+  note: string;
+  fieldNotes: Record<string, string>;
+  items: {
+    label: string; aliases?: string[]; family: string; valence: string; activation: string;
+    neighbors: string[]; appraisalHints: string[]; contextTags: string[]; contextDependent?: boolean;
+    provisional: boolean; normStatus: string; expressions?: DictionaryExpression[];
+  }[];
+};
+
+/**
  * Everything the screens offer as choices: vocabulary, body signals, concerns,
  * needs, coach sets. Unlike the messages, this is content, and each language
  * gets its own, written for that language rather than translated
@@ -26,7 +50,7 @@ export type LocaleContent = {
   /** Keyed by the language's own concern sentences, so the keys differ between languages. */
   concernTags: { note: string; map: Record<string, string[]> };
   concerns: typeof concerns;
-  emotions: typeof emotions;
+  emotions: Vocabulary;
   granularity: typeof granularity;
   needs: typeof needs;
   stepNotes: typeof stepNotes;
