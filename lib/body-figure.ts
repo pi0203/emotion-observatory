@@ -132,11 +132,18 @@ export const zonePx = (zone: Zone, body: FigureBody, figureWidthPx: number): { w
 };
 
 /**
- * The outline organ layers are drawn in one blue-grey (measured 2026-11-01:
- * rgb(84, 108, 137)), which is 2.8:1 on the dark card. Dark mode brightens
- * those layers by this factor, which lifts them past 3:1 (app/globals.css).
+ * Every layer of the line drawing (2026-11-01), the body's outline and the
+ * organs alike, is one dark grey on a transparent ground, and alpha carries
+ * the line's strength: about 1 for outlines, about 0.42 for hatching and
+ * muscle lines (manifest lineNote). Measured 2026-11-01, the grey is rgb(29–38);
+ * the lightest, 38, is the worst case on the light card and, once inverted,
+ * on the dark one. As drawn it is 14:1 or more on every tone's light card and
+ * about 1:1 on the dark cards, so dark mode inverts every layer
+ * (app/globals.css), which makes the outline 10:1 or more on every tone's dark
+ * card. Hatching at 0.42 comes to about 2.5:1 in light mode and 3.0–3.1:1 in
+ * dark mode; it is texture, and the outline carries the shape.
  */
-export const OUTLINE_ORGAN_RGB: readonly [number, number, number] = [84, 108, 137];
-export const DARK_OUTLINE_BRIGHTNESS = 1.5;
+export const FIGURE_LINE_RGB: readonly [number, number, number] = [38, 38, 38];
+export const FIGURE_HATCH_ALPHA = 0.42;
 
 export const FIGURE_FADE_SECONDS: number = figure.fadeSeconds;

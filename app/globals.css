@@ -218,8 +218,8 @@ p, .lede, .hint, .step-note, .small-note, .summary-footnote { text-wrap: pretty;
 .body-zone:hover { border-color: var(--line-strong); }
 /* the pressed part: an edge only, so nothing covers the organ underneath */
 .body-zone.selected { background: transparent; border: 2px solid var(--accent-ink); }
-/* the outline organs are one blue-grey (2.8:1 on the dark card); brightening them in dark mode lifts them past 3:1 (lib/body-figure.ts) */
-@media (prefers-color-scheme: dark) { .body-figure.style-line .body-figure-organ { filter: brightness(1.5); } }
+/* every layer, the body's outline included, is one dark grey on a transparent ground: 14:1 or more on every light tone's card, about 1:1 on the dark cards. Inverting it in dark mode gives #D9D9D9, 10:1 or more on every dark tone's card (lib/body-figure.ts) */
+@media (prefers-color-scheme: dark) { .body-figure-layer { filter: invert(1); } }
 .body-figure-aside { display: flex; flex-direction: column; gap: 10px; min-width: 0; }
 .body-whole-title { margin: 4px 0 0; }
 .body-whole { justify-content: flex-start; text-align: left; }

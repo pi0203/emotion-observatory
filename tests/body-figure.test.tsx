@@ -6,7 +6,7 @@ import bodySignals from "../data/body-signals.ko.json";
 import bodySignalsEn from "../data/body-signals.en.json";
 import figure from "../data/body-figure.json";
 import { ko } from "../lib/i18n/messages.ko";
-import { DARK_OUTLINE_BRIGHTNESS, DEFAULT_FIGURE_PREFS, FIGURE_PREFS_KEY, loadFigurePrefs, MIN_ZONE_PX, organLayers, OUTLINE_ORGAN_RGB, REGION_IDS, saveFigurePrefs, zoneBox, zonePx, zonesOf } from "../lib/body-figure";
+import { DEFAULT_FIGURE_PREFS, FIGURE_LINE_RGB, FIGURE_PREFS_KEY, loadFigurePrefs, MIN_ZONE_PX, organLayers, REGION_IDS, saveFigurePrefs, zoneBox, zonePx, zonesOf } from "../lib/body-figure";
 import { buildExport, serializeExport } from "../lib/record-transfer";
 import { getStorageKeys, loadCompleted, loadDraft } from "../lib/storage";
 import { startDeep } from "./helpers/start";
@@ -176,17 +176,30 @@ describe("pressing the figure", () => {
     expect(css).toMatch(/\.body-zone\.selected \{ background: transparent; border: 2px solid var\(--accent-ink\); \}/);
   });
 
-  it("brightens the outline organs in dark mode to at least 3:1 on the dark card", () => {
+  it("draws every line, the body's outline included, at 3:1 or more on the card in light and dark mode (line drawing, 2026-11-01)", () => {
     const css = readFileSync("app/globals.css", "utf8");
-    expect(css).toMatch(/@media \(prefers-color-scheme: dark\) \{ \.body-figure\.style-line \.body-figure-organ \{ filter: brightness\(1\.5\); \} \}/);
-    const darkCard = css.match(/@media \(prefers-color-scheme: dark\)[\s\S]*?--card: (#[0-9A-Fa-f]{6})/)![1];
+    // the layers sit on the card colour, and dark mode inverts every one of them, the base outline as well as the organs
+    expect(css).toMatch(/\.body-figure \{[^}]*background: var\(--card\);/);
+    expect(css).toMatch(/@media \(prefers-color-scheme: dark\) \{ \.body-figure-layer \{ filter: invert\(1\); \} \}/);
+    expect(css).not.toMatch(/\.body-figure\.style-/);
+    // the card is the chosen tone's card (:root[data-tone]), so every tone is checked, light and dark
+    const darkStart = css.indexOf("@media (prefers-color-scheme: dark)");
+    const cardsIn = (part: string) => [...part.matchAll(/--(?:tone-[a-z]+-)?card: (#[0-9A-Fa-f]{6})/g)].map((match) => match[1]);
+    const lightCards = cardsIn(css.slice(0, darkStart));
+    const darkCards = cardsIn(css.slice(darkStart, css.indexOf("\n}\n", darkStart)));
+    expect(lightCards.length).toBeGreaterThanOrEqual(7);
+    expect(darkCards.length).toBe(lightCards.length);
     const channel = (v: number) => { const c = v / 255; return c <= 0.03928 ? c / 12.92 : ((c + 0.055) / 1.055) ** 2.4; };
     const luminance = (rgb: readonly number[]) => 0.2126 * channel(rgb[0]) + 0.7152 * channel(rgb[1]) + 0.0722 * channel(rgb[2]);
     const hex = (value: string) => [1, 3, 5].map((i) => parseInt(value.slice(i, i + 2), 16));
     const contrast = (a: readonly number[], b: readonly number[]) => { const [hi, lo] = [luminance(a), luminance(b)].sort((x, y) => y - x); return (hi + 0.05) / (lo + 0.05); };
-    const brightened = OUTLINE_ORGAN_RGB.map((v) => Math.min(255, Math.round(v * DARK_OUTLINE_BRIGHTNESS)));
-    expect(contrast(OUTLINE_ORGAN_RGB, hex(darkCard))).toBeLessThan(3);
-    expect(contrast(brightened, hex(darkCard))).toBeGreaterThanOrEqual(3);
+    const inverted = FIGURE_LINE_RGB.map((v) => 255 - v);
+    for (const card of lightCards) expect(contrast(FIGURE_LINE_RGB, hex(card)), card).toBeGreaterThanOrEqual(3);
+    for (const card of darkCards) {
+      // as drawn, the grey all but vanishes on a dark card: this is why dark mode inverts it
+      expect(contrast(FIGURE_LINE_RGB, hex(card)), card).toBeLessThan(3);
+      expect(contrast(inverted, hex(card)), card).toBeGreaterThanOrEqual(3);
+    }
   });
 });
 
