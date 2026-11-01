@@ -17,6 +17,7 @@ import { activationLabel, hasAffectPoint, quickActivation, quickValence, scaleLa
 import { buildSynthesis, hasSynthesis } from "../lib/synthesis";
 import { requireContent, type LocaleContent } from "../lib/content";
 import { INPUT_LIMITS } from "../lib/limits";
+import { CONTACTS_CHECKED_ON, parseTerms, TERMS_EFFECTIVE, TERMS_MAIL, TERMS_PATH, type Terms, type TermsBlock, type TermsPiece } from "../lib/terms";
 import { DEFAULT_LOCALE, type Locale } from "../lib/i18n/locale";
 import { englishAvailable } from "../lib/i18n/availability";
 import { I18nProvider, renderRich, useT } from "../lib/i18n/react";
@@ -239,6 +240,59 @@ function SiteFooter() {
     <span aria-hidden="true">·</span>
     <a href={`${HOMEPAGE}/`}>eunchanjoe.vercel.app</a>
   </footer>;
+}
+
+/**
+ * /terms: the terms of use (docs/TERMS.md) in the same frame as the landing,
+ * with the help button and the footer. Korean only. The text comes from
+ * data/terms.ko.json through the page, so the app's own screens do not carry it.
+ */
+export function TermsPage({ terms }: { terms: Terms }) {
+  return <I18nProvider locale="ko"><TermsFrame terms={terms} /></I18nProvider>;
+}
+
+function TermsFrame({ terms }: { terms: Terms }) {
+  const t = useT();
+  const [helpOpen, setHelpOpen] = useState(false);
+  return <div className="app-shell site-frame">
+    <a className="skip-link" href="#main">{t("shell.skipToContent")}</a>
+    <SiteHeader onHelp={() => setHelpOpen(true)} />
+    <main id="main" tabIndex={-1} className="site-main">
+      <article className="terms">
+        <p className="terms-back"><a href="/"><span aria-hidden="true">← </span>{t("common.backToStart")}</a></p>
+        <h1>{terms.title}</h1>
+        <p className="terms-intro"><TermsText text={terms.intro} /></p>
+        {terms.sections.map((section) => <section key={section.id} id={section.id} aria-labelledby={`${section.id}-title`}>
+          <h2 id={`${section.id}-title`}>{section.title}</h2>
+          {section.blocks.map((block, index) => <TermsBlockView key={index} block={block} />)}
+          {section.id === "changes" && <ul>{terms.changes.map((change) => <li key={change.date + change.text}>{change.date}: <TermsText text={change.text} /></li>)}</ul>}
+        </section>)}
+      </article>
+    </main>
+    <SiteFooter />
+    {helpOpen && <HelpDialog onClose={() => setHelpOpen(false)} />}
+  </div>;
+}
+
+function TermsBlockView({ block }: { block: TermsBlock }) {
+  if (typeof block === "string") return <p><TermsText text={block} /></p>;
+  if ("list" in block) return <ul>{block.list.map((item, index) => <li key={index}><TermsText text={item} /></li>)}</ul>;
+  return <ol>{block.ordered.map((item, index) => <li key={index}><TermsText text={item} /></li>)}</ol>;
+}
+
+/** A terms sentence: the dates from lib/terms.ts, the numbers from the crisis card's own messages, each one a tel: link. */
+function TermsText({ text }: { text: string }) {
+  const t = useT();
+  const draw = (piece: TermsPiece, index: number): React.ReactNode => {
+    switch (piece.kind) {
+      case "text": return piece.text;
+      case "bold": return <strong key={index}>{piece.pieces.map(draw)}</strong>;
+      case "date": return piece.which === "effective" ? TERMS_EFFECTIVE : CONTACTS_CHECKED_ON;
+      case "line": return <a key={index} href={t(`crisis.href${piece.line}`)}>{t(`crisis.num${piece.line}`)}</a>;
+      case "link": return <a key={index} href={piece.to === "mail" ? TERMS_MAIL : `${HOMEPAGE}/`}>{piece.text}</a>;
+    }
+  };
+  return <>{parseTerms(text).map(draw)}</>;
 }
 
 function EntryScreen({ draft, onStart, onUnsure, onStop, onResume }: { draft: EmotionSession | null; onStart: () => void; onUnsure: () => void; onStop: () => void; onResume: () => void }) {

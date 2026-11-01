@@ -111,6 +111,10 @@ export const en: Messages = {
     href109: "tel:109",
     href1577: "tel:1577-0199",
     href1388: "tel:1388",
+    num119: "119",
+    num112: "112",
+    href119: "tel:119",
+    href112: "tel:112",
   },
   about: {
     title: "About this tool",

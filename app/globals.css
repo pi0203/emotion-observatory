@@ -265,6 +265,19 @@ p, .lede, .hint, .step-note, .small-note, .summary-footnote { text-wrap: pretty;
 .about-kind { display: inline-block; padding: 2px 8px; border-radius: 6px; background: var(--card); color: var(--ink) !important; font: 500 var(--t-aside) var(--font-sans) !important; }
 .about-list dt { margin-bottom: 6px; color: var(--ink); font: 600 var(--t-small) var(--font-sans); }
 .about-list dd { margin-left: 0; }
+
+/* /terms: one readable column in the landing's frame; each article can be linked as /terms#article-N (lib/terms.ts) */
+.terms { max-width: 640px; margin: 0 auto; padding-top: 32px; }
+.terms-back { margin: 0 0 28px; font-size: var(--t-small); }
+.terms a { color: var(--accent-ink); text-decoration: underline; text-underline-offset: .2em; }
+.terms-intro { margin: 18px 0 0; color: var(--muted); font-size: var(--t-small); line-height: 1.7; }
+.terms section { margin-top: 44px; scroll-margin-top: 24px; }
+.terms h2 { margin: 0 0 14px; font-size: var(--t-lead); }
+.terms p, .terms li { color: var(--ink); font-size: var(--t-body); line-height: 1.8; }
+.terms p { margin: 0 0 12px; }
+.terms ul, .terms ol { margin: 0 0 12px; padding-left: 1.4em; }
+.terms li { margin-bottom: 6px; }
+.terms strong { font-weight: 700; }
 @keyframes rise-in { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: none; } }
 
 /* The basis band above each question (from the landing guide work): which moment

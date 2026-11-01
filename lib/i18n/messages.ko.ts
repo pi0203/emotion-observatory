@@ -80,6 +80,11 @@ export const ko = {
     href109: "tel:109",
     href1577: "tel:1577-0199",
     href1388: "tel:1388",
+    /** 119 and 112 on their own, as the terms (/terms 제8조) dial them; the emergency line above carries the same numbers (tests/terms.test.tsx). */
+    num119: "119",
+    num112: "112",
+    href119: "tel:119",
+    href112: "tel:112",
   },
   /** Below the landing buttons: what the tool is, the studies behind it (docs/EVIDENCE_CHAIN.md), and common questions. */
   about: {
