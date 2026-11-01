@@ -98,13 +98,14 @@ describe("pressing the figure", () => {
     expect(within(screen.getByRole("region", { name: "움직임·정지" })).getByRole("button", { name: /안절부절못함/ })).toBeInTheDocument();
   });
 
-  it("shows an organ only for the pressed region in 누른 곳만, and chest and belly always in 늘 보이기", () => {
+  it("shows an organ only for the pressed region in 누른 곳만, and lungs, heart and belly always in 늘 보이기", () => {
     const tap = { ...DEFAULT_FIGURE_PREFS, mode: "tap" as const };
     expect(organLayers(tap, null).filter((layer) => layer.visible)).toEqual([]);
     expect(organLayers(tap, "heart").filter((layer) => layer.visible).map((layer) => layer.organ)).toEqual(["heart"]);
     expect(organLayers(tap, "muscle").filter((layer) => layer.visible)).toEqual([]);
     const always = { ...DEFAULT_FIGURE_PREFS, mode: "always" as const };
-    expect(organLayers(always, null).filter((layer) => layer.visible).map((layer) => layer.organ)).toEqual(["chest", "belly"]);
+    // the line drawing draws the heart in its own layer, not inside the chest one (2026-11-01)
+    expect(organLayers(always, null).filter((layer) => layer.visible).map((layer) => layer.organ)).toEqual(["chest", "heart", "belly"]);
     for (const layer of organLayers(always, null)) expect(layer.src).toMatch(/^\/body-figure\/[a-z]+_[a-z]+_[a-z]+\.webp$/);
   });
 

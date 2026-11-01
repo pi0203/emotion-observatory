@@ -82,7 +82,8 @@ export const baseLayer = (prefs: FigurePrefs) => ({ layer: figure.layers.base, s
 
 /**
  * Every organ layer, each with whether it shows now. All of them
- * are rendered so a layer can fade in and out; "always" shows chest and belly,
+ * are rendered so a layer can fade in and out; "always" shows all three (the
+ * line drawing keeps the heart in its own layer, 2026-11-01),
  * "tap" shows only the layer of the pressed region, if that region has one.
  */
 export const organLayers = (prefs: FigurePrefs, activeRegion: string | null): { organ: OrganLayer; src: string; visible: boolean }[] => {

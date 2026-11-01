@@ -53,6 +53,7 @@
     "always": [
       "base",
       "chest",
+      "heart",
       "belly"
     ],
     "tap": {
