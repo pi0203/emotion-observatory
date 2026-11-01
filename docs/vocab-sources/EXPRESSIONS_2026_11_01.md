@@ -20,7 +20,7 @@
 - 「복장(이) 터지다」는 「복장1」(가슴의 한복판) 아래 관용구로 실려 있다 → 답답함. (사전 검색창은 관용구를 찾지 못한다. 표제어 쪽을 열어야 보인다.)
 - 그래서 [DECISIONS_2026_10_31.md](DECISIONS_2026_10_31.md) §2-B의 다음 차례 후보 「속 터짐」은 새 단어로 넣지 않고 답답함의 표현으로 이었다. 유쾌 쪽 짝 후보 「속 시원함」은 개운함의 표현 「속이 시원하다」로 이었다.
 
-## 3. 단어별 표현 (34개 단어, 표현 60개)
+## 3. 단어별 표현 (34개 단어, 표현 62개)
 
 | 단어 | 화면에 보이는 표현 | 사전에 실린 꼴 · 위치 | 평정 목록 수록 (박·민 2005 / 손 외 2012) | 심리학 근거 메모 |
 |---|---|---|---|---|
@@ -35,7 +35,7 @@
 | 걱정 | 속이 타다 · 가슴이 무겁다 | 속(이) 타다 (관용구, 「속1」, [word_no 448077](https://stdict.korean.go.kr/search/searchView.do?word_no=448077&searchKeywordTo=3))<br>가슴이 무겁다 (관용구, 「가슴」, [word_no 389941](https://stdict.korean.go.kr/search/searchView.do?word_no=389941&searchKeywordTo=3)) | 있음(걱정하다) / 있음(걱정하다) | 이번에 따로 확인하지 않음 |
 | 불안 | 가슴이 콩알만 해지다 | 가슴이 콩알만 하다[해지다] (관용구, 「가슴」, [word_no 389941](https://stdict.korean.go.kr/search/searchView.do?word_no=389941&searchKeywordTo=3)) | 있음(불안하다) / 있음(불안하다) | 이번에 따로 확인하지 않음 |
 | 조급함 | 몸이 달다 | 몸(이) 달다 (관용구, 「몸1」, [word_no 119418](https://stdict.korean.go.kr/search/searchView.do?word_no=119418&searchKeywordTo=3)) | 없음 / 없음 | 이번에 따로 확인하지 않음 |
-| 긴장 | 손에 땀을 쥐다 · 숨이 막히다 | 손에 땀을 쥐다 (관용구, 「손1」, [word_no 448742](https://stdict.korean.go.kr/search/searchView.do?word_no=448742&searchKeywordTo=3))<br>숨(이) 막히다 (관용구, 「숨1」 「2」, [word_no 446264](https://stdict.korean.go.kr/search/searchView.do?word_no=446264&searchKeywordTo=3)) | 있음(긴장하다) / 있음(긴장되다) | 이번에 따로 확인하지 않음 |
+| 긴장 | 손에 땀을 쥐다 · 숨이 막히다 · 숨이 가쁘다 | 손에 땀을 쥐다 (관용구, 「손1」, [word_no 448742](https://stdict.korean.go.kr/search/searchView.do?word_no=448742&searchKeywordTo=3))<br>숨(이) 막히다 (관용구, 「숨1」 「2」, [word_no 446264](https://stdict.korean.go.kr/search/searchView.do?word_no=446264&searchKeywordTo=3))<br>숨(이) 가쁘다 (관용구, 「숨1」 「1」, [word_no 446264](https://stdict.korean.go.kr/search/searchView.do?word_no=446264&searchKeywordTo=3)) | 있음(긴장하다) / 있음(긴장되다) | 이번에 따로 확인하지 않음 |
 | 두려움 | 등골이 오싹하다 · 가슴이 서늘하다 · 속이 떨리다 | 등골(이) 오싹하다 (관용구, 「등-골1」, [word_no 94849](https://stdict.korean.go.kr/search/searchView.do?word_no=94849&searchKeywordTo=3))<br>가슴이 서늘하다 (관용구, 「가슴」, [word_no 389941](https://stdict.korean.go.kr/search/searchView.do?word_no=389941&searchKeywordTo=3))<br>속이 떨리다 (관용구, 「속1」, [word_no 448077](https://stdict.korean.go.kr/search/searchView.do?word_no=448077&searchKeywordTo=3)) | 있음(두렵다) / 있음(두렵다) | 이번에 따로 확인하지 않음 |
 | 놀라움 | 간담이 내려앉다 · 눈이 동그래지다 | 간담이 내려앉다 (관용구, 「간담1」, [word_no 6513](https://stdict.korean.go.kr/search/searchView.do?word_no=6513&searchKeywordTo=3))<br>눈이 동그래지다 (관용구, 「눈1」, [word_no 409998](https://stdict.korean.go.kr/search/searchView.do?word_no=409998&searchKeywordTo=3)) | 있음(놀랍다, 놀라다) / 있음(놀랍다) | 이번에 따로 확인하지 않음 |
 | 당황 | 눈 둘 곳을 모르다 | 눈 둘 곳을 모르다 (관용구, 「눈1」, [word_no 409998](https://stdict.korean.go.kr/search/searchView.do?word_no=409998&searchKeywordTo=3)) | 있음(당황하다) / 있음(당황하다) | 이번에 따로 확인하지 않음 |
@@ -43,7 +43,7 @@
 | 민망함 | 머리를 긁다 | 머리(를) 긁다 (관용구, 「머리1」, [word_no 421316](https://stdict.korean.go.kr/search/searchView.do?word_no=421316&searchKeywordTo=3)) | 있음(민망하다) / 있음(민망하다) | 이번에 따로 확인하지 않음 |
 | 수치심 | 코가 납작해지다 | 코가 납작해지다 (관용구, 「코1」, [word_no 492487](https://stdict.korean.go.kr/search/searchView.do?word_no=492487&searchKeywordTo=3)) | 없음 / 있음(수치스럽다) | 수치심과 죄책감의 구분은 메타분석이 여럿 있다(Kim 외 2011 등, 초록). 있음(잠정). |
 | 죄책감 | 발이 저리다 · 가슴이 뜨끔하다 · 오금이 저리다 | 발이 저리다 (관용구, 「발1」, [word_no 132767](https://stdict.korean.go.kr/search/searchView.do?word_no=132767&searchKeywordTo=3))<br>가슴이 뜨끔하다 (관용구, 「가슴」, [word_no 389941](https://stdict.korean.go.kr/search/searchView.do?word_no=389941&searchKeywordTo=3))<br>오금이 저리다 (관용구, 「오금1」, [word_no 240464](https://stdict.korean.go.kr/search/searchView.do?word_no=240464&searchKeywordTo=3)) | 있음(죄책감) / 있음(죄책감) | 위 수치심 줄과 같음. |
-| 슬픔 | 가슴이 미어지다 · 가슴에 멍이 들다 · 목이 막히다 | 가슴이 미어지다 (관용구, 「가슴」 「1」, [word_no 389941](https://stdict.korean.go.kr/search/searchView.do?word_no=389941&searchKeywordTo=3))<br>가슴에 멍이 들다[지다] (관용구, 「가슴」, [word_no 389941](https://stdict.korean.go.kr/search/searchView.do?word_no=389941&searchKeywordTo=3))<br>목(이) 막히다 (관용구, 「목1」, [word_no 425672](https://stdict.korean.go.kr/search/searchView.do?word_no=425672&searchKeywordTo=3)) | 있음(슬프다) / 있음(슬퍼하다) | 이번에 따로 확인하지 않음 |
+| 슬픔 | 가슴이 미어지다 · 가슴에 멍이 들다 · 목이 막히다 · 가슴이 찢어지다 | 가슴이 미어지다 (관용구, 「가슴」 「1」, [word_no 389941](https://stdict.korean.go.kr/search/searchView.do?word_no=389941&searchKeywordTo=3))<br>가슴에 멍이 들다[지다] (관용구, 「가슴」, [word_no 389941](https://stdict.korean.go.kr/search/searchView.do?word_no=389941&searchKeywordTo=3))<br>목(이) 막히다 (관용구, 「목1」, [word_no 425672](https://stdict.korean.go.kr/search/searchView.do?word_no=425672&searchKeywordTo=3))<br>가슴이 찢어지다 (관용구, 「가슴」, [word_no 389941](https://stdict.korean.go.kr/search/searchView.do?word_no=389941&searchKeywordTo=3)) | 있음(슬프다) / 있음(슬퍼하다) | 이번에 따로 확인하지 않음 |
 | 속상함 | 속을 썩이다 | 속(을) 썩이다 (관용구, 「속1」, [word_no 448077](https://stdict.korean.go.kr/search/searchView.do?word_no=448077&searchKeywordTo=3)) | 있음(속상하다) / 있음(속상하다) | 이번에 따로 확인하지 않음 |
 | 실망 | 어깨가 처지다 | 어깨가 처지다[낮아지다/늘어지다] (관용구, 「어깨1」, [word_no 455915](https://stdict.korean.go.kr/search/searchView.do?word_no=455915&searchKeywordTo=3)) | 있음(실망하다) / 있음(실망하다) | 이번에 따로 확인하지 않음 |
 | 좌절 | 어깨가 처지다 | 어깨가 처지다[낮아지다/늘어지다] (관용구, 「어깨1」, [word_no 455915](https://stdict.korean.go.kr/search/searchView.do?word_no=455915&searchKeywordTo=3)) | 있음(좌절하다) / 없음 | 이번에 따로 확인하지 않음 |
@@ -59,6 +59,7 @@
 | 설렘 | 심장이 뛰다 | 심장이 뛰다 (관용구, 「심장2」, [word_no 449275](https://stdict.korean.go.kr/search/searchView.do?word_no=449275&searchKeywordTo=3)) | 있음(설레다) / 있음(설레다) | 이번에 따로 확인하지 않음 |
 | 연민 | 가슴이 아리다 | 가슴이 아리다 (관용구, 「가슴」, [word_no 389941](https://stdict.korean.go.kr/search/searchView.do?word_no=389941&searchKeywordTo=3)) | 있음(연민) / 없음 | 이번에 따로 확인하지 않음 |
 
+- 2026-11-01 추가: 숨이 가쁘다(책 세 권에서 긴장·두려움으로 쓰임, 사전 관용구), 가슴이 찢어지다(사전 뜻 그대로 슬픔). 근거: [BOOK_SURVEY_2026_11_01.md](BOOK_SURVEY_2026_11_01.md)
 - 평정 목록: 박인조·민경환(2005) 434개, 손선주·박미숙·박지은·손진훈(2012) 504개. 원문 부록을 글자로 뽑아 단어 꼴을 대조했다(표 행 일부가 뽑히지 않았을 수 있다). 「없음」은 그 꼴이 목록에서 보이지 않았다는 뜻이지 연구가 없다는 뜻이 아니다. 평정 값은 이 저장소에 옮기지 않는다(NORMS.md).
 - 표현이 없는 단어는 사전에서 뜻이 분명히 맞는 관용구를 찾지 못했거나(예: 서운함), 이번 1차에서 고르지 않은 것이다. 표현은 늘리거나 고칠 수 있는 목록이다.
 

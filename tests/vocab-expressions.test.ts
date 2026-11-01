@@ -34,9 +34,9 @@ const tableOfDoc = (): Record<string, string[]> => {
 };
 
 describe("dictionary expressions in the vocabulary", () => {
-  it("adds 60 expressions to 34 words", () => {
+  it("adds 62 expressions to 34 words", () => {
     expect(withExpressions).toHaveLength(34);
-    expect(all).toHaveLength(60);
+    expect(all).toHaveLength(62);
   });
 
   it("gives every expression its text, dictionary form, kind, headword and word_no, and nothing else", () => {
