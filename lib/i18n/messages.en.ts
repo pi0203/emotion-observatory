@@ -360,6 +360,8 @@ export const en: Messages = {
       wholeBody: "Whole body",
       part: { neck: "Neck", leftShoulder: "Left shoulder", rightShoulder: "Right shoulder", leftHand: "Left hand", rightHand: "Right hand" },
       credit: "Figure: line drawings from the BodyParts3D (© DBCLS, CC BY 4.0) and MakeHuman (CC0) 3D models. The lungs are a separately built model.",
+      licenseLink: "CC BY 4.0 license",
+      licenseHref: "https://creativecommons.org/licenses/by/4.0/deed.en",
       settings: "Change the figure",
       visibleLabel: "Figure",
       visible: { shown: "Show", hidden: "No figure" },

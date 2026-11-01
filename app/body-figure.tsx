@@ -67,7 +67,8 @@ export function BodyFigure({ regions, active, onPick, prefs, onPrefs }: {
         ))}
       </div>
     </div>}
-    {!prefs.hidden && <p className="body-figure-credit">{t("body.figure.credit")}</p>}
+    {/* the licence is a link the person may open, in a new tab; nothing is loaded from it */}
+    {!prefs.hidden && <p className="body-figure-credit">{t("body.figure.credit")} <a href={t("body.figure.licenseHref")} target="_blank" rel="noopener noreferrer">{t("body.figure.licenseLink")}</a></p>}
     <details className="body-figure-settings">
       <summary>{t("body.figure.settings")}</summary>
       <FigureChoice label={t("body.figure.visibleLabel")} options={FIGURE_VISIBILITIES} value={prefs.hidden ? "hidden" : "shown"} name={(value) => t(`body.figure.visible.${value}`)} onChange={(visibility) => onPrefs({ ...prefs, hidden: visibility === "hidden" })} />

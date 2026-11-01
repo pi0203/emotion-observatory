@@ -225,6 +225,7 @@ p, .lede, .hint, .step-note, .small-note, .summary-footnote { text-wrap: pretty;
 .body-whole { justify-content: flex-start; text-align: left; }
 .body-whole.selected { color: var(--on-accent); background: var(--accent-soft); border-color: var(--accent-ink); box-shadow: inset 0 0 0 1px var(--accent-ink); }
 .body-figure-credit { margin: 12px 0 0; color: var(--muted); font: var(--t-aside) var(--font-sans); line-height: 1.5; }
+.body-figure-credit a { color: var(--accent-ink); text-underline-offset: .2em; }
 .body-figure-settings { margin-top: 14px; }
 .body-figure-settings summary { cursor: pointer; color: var(--accent-ink); font: 500 var(--t-aside) var(--font-sans); text-decoration: underline; text-underline-offset: 4px; }
 .body-figure-settings .segmented { margin-top: 14px; grid-template-columns: 1fr; }

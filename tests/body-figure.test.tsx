@@ -281,7 +281,8 @@ describe("그림 없이 (owner's decision 2026-11-01)", () => {
     fireEvent.click(screen.getByRole("button", { name: ko.body.figure.visible.hidden }));
     expect(screen.queryByRole("group", { name: ko.body.figure.ariaLabel })).toBeNull();
     expect(screen.queryByText(ko.body.figure.hint)).toBeNull();
-    expect(screen.queryByText(ko.body.figure.credit)).toBeNull();
+    expect(document.querySelector(".body-figure-credit")).toBeNull();
+    expect(screen.queryByRole("link", { name: ko.body.figure.licenseLink })).toBeNull();
     expect(screen.queryByRole("group", { name: ko.body.figure.wholeBody })).toBeNull();
     expect(screen.getByText(ko.body.figure.settings)).toBeInTheDocument();
     expect(screen.getByRole("button", { name: /특별히 모르겠음/ })).toBeInTheDocument();
@@ -363,7 +364,20 @@ describe("where the figure comes from (line drawing, 2026-11-01)", () => {
     expect(JSON.stringify(figure.credit) + ko.body.figure.credit + en.body.figure.credit).not.toMatch(/Häggström|Wikimedia/);
     window.localStorage.clear();
     toBody();
-    expect(screen.getByText(figure.credit.line.ko)).toBeInTheDocument();
+    const credit = document.querySelector(".body-figure-credit") as HTMLElement;
+    expect(credit.textContent).toBe(`${figure.credit.line.ko} ${ko.body.figure.licenseLink}`);
+  });
+
+  it("links the CC BY 4.0 licence after the credit line, in the reader's language, in a new tab (owner's decision 2026-11-01)", () => {
+    expect(ko.body.figure.licenseHref).toBe("https://creativecommons.org/licenses/by/4.0/deed.ko");
+    expect(en.body.figure.licenseHref).toBe("https://creativecommons.org/licenses/by/4.0/deed.en");
+    for (const text of [ko.body.figure.licenseLink, en.body.figure.licenseLink]) expect(text).toContain("CC BY 4.0");
+    window.localStorage.clear();
+    toBody();
+    const link = within(document.querySelector(".body-figure-credit") as HTMLElement).getByRole("link", { name: ko.body.figure.licenseLink });
+    expect(link.getAttribute("href")).toBe(ko.body.figure.licenseHref);
+    expect(link.getAttribute("target")).toBe("_blank");
+    expect(link.getAttribute("rel")).toBe("noopener noreferrer");
   });
 });
 
@@ -378,6 +392,7 @@ describe("motion and network", () => {
     expect(figure.path.startsWith("/body-figure/")).toBe(true);
     const source = readFileSync("app/body-figure.tsx", "utf8") + readFileSync("lib/body-figure.ts", "utf8");
     expect(source).not.toMatch(/https?:\/\//);
+    // the licence link's address is in the message files: a link the person may open, never something the page loads
     // tests/no-network.test.ts keeps checking app/ and lib/ for network-sending APIs
   });
 });
