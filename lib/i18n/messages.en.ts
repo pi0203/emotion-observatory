@@ -276,6 +276,11 @@ export const en: Messages = {
     beforeTitle: "If you put this feeling in your own words?",
     beforeHint: "You don’t have to write anything. The word list is there if you want to see it.",
     reveal: "Show words",
+    // Waiting for the owner's approval of the English (added 2026-11-01). Not drawn on the English screen,
+    // since the English vocabulary has no dictionary expressions. Kept out of `pendingReview.keys`, which
+    // must stay empty while English is open (tests/crisis-card.test.tsx).
+    alsoSaidAs: "Also said as",
+    expressionSource: "Expressions listed in the Standard Korean Language Dictionary.",
   },
   quickCandidates: {
     basis: "Based on where you just tapped",
