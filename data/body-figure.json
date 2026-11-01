@@ -37,26 +37,13 @@
       "h": 1124
     }
   },
-  "layersByStyle": {
-    "real": {
-      "base": "base_fill",
-      "chest": "real_chest",
-      "heart": "real_heart",
-      "belly": "real_belly"
-    },
-    "flat": {
-      "base": "base_fill",
-      "chest": "flat_chest",
-      "heart": "flat_heart",
-      "belly": "flat_belly"
-    },
-    "line": {
-      "base": "base_line",
-      "chest": "line_chest",
-      "heart": "line_heart",
-      "belly": "line_belly"
-    }
+  "layers": {
+    "base": "base_line",
+    "chest": "line_chest",
+    "heart": "line_heart",
+    "belly": "line_belly"
   },
+  "layersNote": "One style only, the line drawing (owner's decision 2026-11-01: 「선화가 나은 것 같아. 색을 표시하는 건 별로」). The realistic and plain styles and their files were removed; a choice saved earlier with either of them is read as the line drawing.",
   "visibility": {
     "always": [
       "base",
@@ -232,7 +219,6 @@
   "zonesNote": "Coordinates are fractions of the figure width and height. Order matters: a later zone is hit first. Shoulders come after chest and belly so they win where they overlap; the heart is last. Energy and movement stay outside the figure as buttons.",
   "defaults": {
     "body": "female",
-    "style": "line",
     "mode": "tap",
     "hidden": false
   },

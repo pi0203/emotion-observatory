@@ -1,6 +1,6 @@
 import { afterEach, beforeEach, describe, expect, it } from "vitest";
 import { cleanup, fireEvent, render, screen, within } from "@testing-library/react";
-import { readFileSync } from "node:fs";
+import { readdirSync, readFileSync } from "node:fs";
 import Home from "../app/(ko)/page";
 import bodySignals from "../data/body-signals.ko.json";
 import bodySignalsEn from "../data/body-signals.en.json";
@@ -195,12 +195,12 @@ describe("the figure's choices stay on this device", () => {
   afterEach(cleanup);
 
   it("starts from the proposed defaults, saves a change under its own key, and ignores a broken value", () => {
-    expect(loadFigurePrefs()).toEqual({ body: "female", style: "line", mode: "tap", hidden: false });
-    expect(saveFigurePrefs({ body: "male", style: "real", mode: "always", hidden: false })).toBe(true);
-    expect(loadFigurePrefs()).toEqual({ body: "male", style: "real", mode: "always", hidden: false });
+    expect(loadFigurePrefs()).toEqual({ body: "female", mode: "tap", hidden: false });
+    expect(saveFigurePrefs({ body: "male", mode: "always", hidden: false })).toBe(true);
+    expect(loadFigurePrefs()).toEqual({ body: "male", mode: "always", hidden: false });
     // a value saved before 그림 없이 existed still shows the figure
-    window.localStorage.setItem(FIGURE_PREFS_KEY, JSON.stringify({ body: "male", style: "flat", mode: "tap" }));
-    expect(loadFigurePrefs()).toEqual({ body: "male", style: "flat", mode: "tap", hidden: false });
+    window.localStorage.setItem(FIGURE_PREFS_KEY, JSON.stringify({ body: "male", mode: "tap" }));
+    expect(loadFigurePrefs()).toEqual({ body: "male", mode: "tap", hidden: false });
     const keys = getStorageKeys();
     expect(FIGURE_PREFS_KEY).not.toBe(keys.DRAFT_KEY);
     expect(FIGURE_PREFS_KEY).not.toBe(keys.COMPLETED_KEY);
@@ -212,9 +212,8 @@ describe("the figure's choices stay on this device", () => {
     toBody();
     fireEvent.click(screen.getByText(ko.body.figure.settings));
     fireEvent.click(screen.getByRole("button", { name: ko.body.figure.body.male }));
-    fireEvent.click(screen.getByRole("button", { name: ko.body.figure.style.real }));
     fireEvent.click(screen.getByRole("button", { name: ko.body.figure.mode.always }));
-    expect(loadFigurePrefs()).toEqual({ body: "male", style: "real", mode: "always", hidden: false });
+    expect(loadFigurePrefs()).toEqual({ body: "male", mode: "always", hidden: false });
     expect(screen.getByText(ko.body.figure.storageNote)).toBeInTheDocument();
     // pick a sensation from the figure and go on, so the step is saved
     fireEvent.click(within(screen.getByRole("group", { name: ko.body.figure.ariaLabel })).getAllByRole("button", { name: "심박" })[0]);
@@ -225,6 +224,35 @@ describe("the figure's choices stay on this device", () => {
     const everything = JSON.stringify({ draft, completed: loadCompleted(), export: serializeExport(buildExport(loadCompleted())) });
     for (const trace of ["body-figure", "figurePrefs", "hidden", '"male"', '"female"', '"real"', '"line"', '"tap"', '"always"', "남성형", "여성형", "실사", "선화"]) {
       expect(everything, trace).not.toContain(trace);
+    }
+  });
+});
+
+describe("one style, the line drawing (owner's decision 2026-11-01: 「선화가 나은 것 같아. 색을 표시하는 건 별로」)", () => {
+  beforeEach(() => window.localStorage.clear());
+  afterEach(cleanup);
+
+  it("offers no 표현 row in 그림 바꾸기, keeps 그림·체형·장기, and ships only the line drawing files", () => {
+    toBody();
+    fireEvent.click(screen.getByText(ko.body.figure.settings));
+    const rows = [...document.querySelectorAll(".body-figure-settings .body-figure-choice")].map((row) => row.getAttribute("aria-label"));
+    expect(rows).toEqual([ko.body.figure.visibleLabel, ko.body.figure.bodyLabel, ko.body.figure.modeLabel]);
+    for (const gone of ["표현", "실사", "단색", "선화"]) expect(screen.queryByRole("button", { name: gone })).toBeNull();
+    expect(Object.keys(ko.body.figure)).not.toContain("style");
+    expect(readdirSync("public/body-figure").sort()).toEqual(
+      ["female", "male"].flatMap((body) => ["base_line", "line_belly", "line_chest", "line_heart"].map((layer) => `${body}_${layer}.webp`)),
+    );
+  });
+
+  it("reads a device that chose 실사 or 단색 before as the line drawing, keeping its figure type and organs", () => {
+    for (const style of ["real", "flat"]) {
+      window.localStorage.setItem(FIGURE_PREFS_KEY, JSON.stringify({ body: "male", style, mode: "always", hidden: false }));
+      expect(loadFigurePrefs()).toEqual({ body: "male", mode: "always", hidden: false });
+      toBody();
+      const sources = [...document.querySelectorAll(".body-figure img")].map((img) => img.getAttribute("src"));
+      expect(sources).toEqual(["/body-figure/male_base_line.webp", "/body-figure/male_line_chest.webp", "/body-figure/male_line_heart.webp", "/body-figure/male_line_belly.webp"]);
+      cleanup();
+      window.localStorage.clear();
     }
   });
 });
@@ -293,7 +321,7 @@ describe("이 기기의 기록 모두 지우기 (2026-11-01)", () => {
   afterEach(cleanup);
 
   it("also forgets the figure choice, and says so in the confirmation", () => {
-    saveFigurePrefs({ body: "male", style: "real", mode: "always", hidden: true });
+    saveFigurePrefs({ body: "male", mode: "always", hidden: true });
     render(<Home />);
     fireEvent.click(screen.getByRole("button", { name: ko.landing.records }));
     fireEvent.click(screen.getByRole("button", { name: ko.recordTransfer.deleteAll }));

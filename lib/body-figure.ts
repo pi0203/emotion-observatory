@@ -5,21 +5,20 @@ import figure from "../data/body-figure.json";
  *
  * A picture added to the list, never in place of it: the list alone reaches
  * every region, and a region carries no emotion and no pleasant/unpleasant
- * value. The three choices below (figure, style, organs) are a per-device
+ * value. There is one style, the line drawing (owner's decision 2026-11-01).
+ * The choices below (figure type, organs, no figure) are a per-device
  * preference. They are kept under their own key and never copied into a
  * record, a summary or an export, because the figure choice could be read as a
  * statement about the person (data/body-figure.json `storage`).
  */
 
 export type FigureBody = "female" | "male";
-export type FigureStyle = "real" | "flat" | "line";
 export type FigureMode = "always" | "tap";
-export type FigurePrefs = { body: FigureBody; style: FigureStyle; mode: FigureMode; /** No figure at all: only the list (owner's decision 2026-11-01). */ hidden: boolean };
+export type FigurePrefs = { body: FigureBody; mode: FigureMode; /** No figure at all: only the list (owner's decision 2026-11-01). */ hidden: boolean };
 export type FigureVisibility = "shown" | "hidden";
 export const FIGURE_VISIBILITIES: readonly FigureVisibility[] = ["shown", "hidden"];
 
 export const FIGURE_BODIES: readonly FigureBody[] = ["female", "male"];
-export const FIGURE_STYLES: readonly FigureStyle[] = ["real", "flat", "line"];
 export const FIGURE_MODES: readonly FigureMode[] = ["always", "tap"];
 
 export const DEFAULT_FIGURE_PREFS: FigurePrefs = figure.defaults as FigurePrefs;
@@ -30,7 +29,6 @@ export const FIGURE_PREFS_KEY = "emotion-lab:body-figure:v1";
 const isPrefs = (value: unknown): value is Omit<FigurePrefs, "hidden"> & { hidden?: unknown } =>
   typeof value === "object" && value !== null &&
   FIGURE_BODIES.includes((value as FigurePrefs).body) &&
-  FIGURE_STYLES.includes((value as FigurePrefs).style) &&
   FIGURE_MODES.includes((value as FigurePrefs).mode);
 
 /** The saved choice, or the defaults when nothing valid is saved or storage is unavailable. */
@@ -40,8 +38,9 @@ export const loadFigurePrefs = (): FigurePrefs => {
     const raw = window.localStorage.getItem(FIGURE_PREFS_KEY);
     if (!raw) return DEFAULT_FIGURE_PREFS;
     const parsed: unknown = JSON.parse(raw);
-    // a value saved before `hidden` existed shows the figure, as it did then
-    return isPrefs(parsed) ? { body: parsed.body, style: parsed.style, mode: parsed.mode, hidden: parsed.hidden === true } : DEFAULT_FIGURE_PREFS;
+    // a value saved before `hidden` existed shows the figure, as it did then;
+    // a `style` saved before 2026-11-01 (실사, 단색 or 선화) is dropped, so every device sees the line drawing
+    return isPrefs(parsed) ? { body: parsed.body, mode: parsed.mode, hidden: parsed.hidden === true } : DEFAULT_FIGURE_PREFS;
   } catch {
     return DEFAULT_FIGURE_PREFS;
   }
@@ -78,11 +77,11 @@ export const layerSrc = (body: FigureBody, layer: string) => figure.path.replace
 
 export const canvasOf = (body: FigureBody) => figure.canvas[body];
 
-/** The base silhouette of a style. */
-export const baseLayer = (prefs: FigurePrefs) => ({ layer: figure.layersByStyle[prefs.style].base, src: layerSrc(prefs.body, figure.layersByStyle[prefs.style].base) });
+/** The body's outline, under the organs. */
+export const baseLayer = (prefs: FigurePrefs) => ({ layer: figure.layers.base, src: layerSrc(prefs.body, figure.layers.base) });
 
 /**
- * Every organ layer of the style, each with whether it shows now. All of them
+ * Every organ layer, each with whether it shows now. All of them
  * are rendered so a layer can fade in and out; "always" shows chest and belly,
  * "tap" shows only the layer of the pressed region, if that region has one.
  */
@@ -90,7 +89,7 @@ export const organLayers = (prefs: FigurePrefs, activeRegion: string | null): { 
   const shown: readonly string[] = prefs.mode === "always"
     ? figure.visibility.always
     : activeRegion ? (figure.visibility.tap.byRegion as Record<string, string[]>)[activeRegion] ?? [] : [];
-  return ORGAN_LAYERS.map((organ) => ({ organ, src: layerSrc(prefs.body, figure.layersByStyle[prefs.style][organ]), visible: shown.includes(organ) }));
+  return ORGAN_LAYERS.map((organ) => ({ organ, src: layerSrc(prefs.body, figure.layers[organ]), visible: shown.includes(organ) }));
 };
 
 export type ZonePart = "neck" | "leftShoulder" | "rightShoulder" | "leftHand" | "rightHand";
