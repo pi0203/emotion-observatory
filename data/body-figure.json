@@ -30,7 +30,7 @@
   "canvas": {
     "male": {
       "w": 600,
-      "h": 1018
+      "h": 1124
     },
     "female": {
       "w": 600,
@@ -90,146 +90,146 @@
       {
         "region": "muscle",
         "shape": "rect",
-        "x": 0.434,
-        "y": 0.1639,
-        "w": 0.074,
-        "h": 0.0413,
-        "rx": 0.022,
+        "x": 0.3969,
+        "y": 0.1513,
+        "w": 0.2062,
+        "h": 0.036,
+        "rx": 0.0142,
         "part": "neck"
+      },
+      {
+        "region": "breath",
+        "shape": "rect",
+        "x": 0.359,
+        "y": 0.1774,
+        "w": 0.2821,
+        "h": 0.1338,
+        "rx": 0.0304
+      },
+      {
+        "region": "belly",
+        "shape": "rect",
+        "x": 0.3593,
+        "y": 0.3112,
+        "w": 0.2719,
+        "h": 0.1824,
+        "rx": 0.0365
       },
       {
         "region": "muscle",
         "shape": "ellipse",
-        "rx": 0.07,
-        "ry": 0.0165,
-        "cx": 0.332,
-        "cy": 0.2182,
+        "rx": 0.0498,
+        "ry": 0.0092,
+        "cx": 0.3324,
+        "cy": 0.1957,
         "part": "leftShoulder"
       },
       {
         "region": "muscle",
         "shape": "ellipse",
-        "rx": 0.07,
-        "ry": 0.0165,
-        "cx": 0.612,
-        "cy": 0.2182,
+        "rx": 0.0498,
+        "ry": 0.0092,
+        "cx": 0.6676,
+        "cy": 0.1957,
         "part": "rightShoulder"
-      },
-      {
-        "region": "breath",
-        "shape": "rect",
-        "x": 0.352,
-        "y": 0.2205,
-        "w": 0.242,
-        "h": 0.1297,
-        "rx": 0.052
-      },
-      {
-        "region": "belly",
-        "shape": "rect",
-        "x": 0.322,
-        "y": 0.3526,
-        "w": 0.308,
-        "h": 0.1816,
-        "rx": 0.066
       },
       {
         "region": "skin",
         "shape": "circle",
-        "cx": 0.178,
-        "cy": 0.5896,
-        "r_over_width": 0.058,
+        "cx": 0.2237,
+        "cy": 0.5407,
+        "r_over_width": 0.055,
         "part": "leftHand"
       },
       {
         "region": "skin",
         "shape": "circle",
-        "cx": 0.774,
-        "cy": 0.5896,
-        "r_over_width": 0.058,
+        "cx": 0.7752,
+        "cy": 0.5401,
+        "r_over_width": 0.055,
         "part": "rightHand"
       },
       {
         "region": "heart",
         "shape": "circle",
-        "cx": 0.488,
-        "cy": 0.2983,
-        "r_over_width": 0.046
+        "cx": 0.5217,
+        "cy": 0.2489,
+        "r_over_width": 0.0521
       }
     ],
     "female": [
       {
         "region": "muscle",
         "shape": "rect",
-        "x": 0.45,
-        "y": 0.1601,
-        "w": 0.09,
-        "h": 0.0427,
-        "rx": 0.024,
+        "x": 0.4293,
+        "y": 0.1509,
+        "w": 0.1414,
+        "h": 0.036,
+        "rx": 0.0153,
         "part": "neck"
+      },
+      {
+        "region": "breath",
+        "shape": "rect",
+        "x": 0.358,
+        "y": 0.1772,
+        "w": 0.2841,
+        "h": 0.134,
+        "rx": 0.0329
+      },
+      {
+        "region": "belly",
+        "shape": "rect",
+        "x": 0.3584,
+        "y": 0.3112,
+        "w": 0.2739,
+        "h": 0.183,
+        "rx": 0.0395
       },
       {
         "region": "muscle",
         "shape": "ellipse",
-        "rx": 0.06,
-        "ry": 0.0128,
-        "cx": 0.364,
-        "cy": 0.2241,
+        "rx": 0.0439,
+        "ry": 0.0099,
+        "cx": 0.3523,
+        "cy": 0.1987,
         "part": "leftShoulder"
       },
       {
         "region": "muscle",
         "shape": "ellipse",
-        "rx": 0.06,
-        "ry": 0.0128,
-        "cx": 0.628,
-        "cy": 0.2241,
+        "rx": 0.0439,
+        "ry": 0.0099,
+        "cx": 0.6477,
+        "cy": 0.1987,
         "part": "rightShoulder"
-      },
-      {
-        "region": "breath",
-        "shape": "rect",
-        "x": 0.372,
-        "y": 0.2134,
-        "w": 0.224,
-        "h": 0.1121,
-        "rx": 0.052
-      },
-      {
-        "region": "belly",
-        "shape": "rect",
-        "x": 0.376,
-        "y": 0.3255,
-        "w": 0.228,
-        "h": 0.1601,
-        "rx": 0.064
       },
       {
         "region": "skin",
         "shape": "circle",
-        "cx": 0.272,
-        "cy": 0.5571,
-        "r_over_width": 0.054,
+        "cx": 0.2335,
+        "cy": 0.4956,
+        "r_over_width": 0.055,
         "part": "leftHand"
       },
       {
         "region": "skin",
         "shape": "circle",
-        "cx": 0.702,
-        "cy": 0.5571,
-        "r_over_width": 0.054,
+        "cx": 0.7665,
+        "cy": 0.4956,
+        "r_over_width": 0.055,
         "part": "rightHand"
       },
       {
         "region": "heart",
         "shape": "circle",
-        "cx": 0.492,
-        "cy": 0.2796,
-        "r_over_width": 0.042
+        "cx": 0.5217,
+        "cy": 0.2489,
+        "r_over_width": 0.0521
       }
     ]
   },
-  "zonesNote": "The heart circle sits on top of the chest rectangle and is hit first. Energy and movement have no place on the figure and are offered as buttons beside it (owner's decision 2026-11-01; the legs were a provisional placement).",
+  "zonesNote": "Coordinates are fractions of the figure width and height. Order matters: a later zone is hit first. Shoulders come after chest and belly so they win where they overlap; the heart is last. Energy and movement stay outside the figure as buttons.",
   "defaults": {
     "body": "female",
     "style": "line",

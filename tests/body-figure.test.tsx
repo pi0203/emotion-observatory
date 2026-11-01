@@ -106,6 +106,44 @@ describe("pressing the figure", () => {
     for (const layer of organLayers(always, null)) expect(layer.src).toMatch(/^\/body-figure\/[a-z]+_[a-z]+_[a-z]+\.webp$/);
   });
 
+  it("draws every layer at the size the zones are measured against, 600×1124 for both figures (line drawings, 2026-11-01)", () => {
+    // the width and height straight from the WebP header, so a redrawn file of another size is caught
+    const webpSize = (file: string) => {
+      const bytes = readFileSync(file);
+      const chunk = bytes.toString("ascii", 12, 16);
+      if (chunk === "VP8X") return { w: 1 + bytes.readUIntLE(24, 3), h: 1 + bytes.readUIntLE(27, 3) };
+      if (chunk === "VP8L") { const bits = bytes.readUInt32LE(21); return { w: 1 + (bits & 0x3fff), h: 1 + ((bits >>> 14) & 0x3fff) }; }
+      if (chunk === "VP8 ") return { w: bytes.readUInt16LE(26) & 0x3fff, h: bytes.readUInt16LE(28) & 0x3fff };
+      throw new Error(`${file}: unknown WebP chunk ${chunk}`);
+    };
+    for (const body of ["female", "male"] as const) {
+      expect(figure.canvas[body]).toEqual({ w: 600, h: 1124 });
+      // the files the screen draws for this figure type: the body and its three organ layers
+      window.localStorage.clear();
+      saveFigurePrefs({ ...DEFAULT_FIGURE_PREFS, body });
+      toBody();
+      const sources = [...document.querySelectorAll(".body-figure img")].map((img) => img.getAttribute("src")!);
+      expect(sources).toHaveLength(4);
+      for (const src of sources) expect(webpSize(`public${src}`), src).toEqual(figure.canvas[body]);
+      cleanup();
+    }
+  });
+
+  it("draws the zones in the data's order, so a later zone sits on top and is hit first: shoulders over chest and belly, the heart last", () => {
+    for (const body of ["female", "male"] as const) {
+      const order = zonesOf(body).map((zone) => zone.part ?? zone.region);
+      for (const shoulder of ["leftShoulder", "rightShoulder"]) {
+        expect(order.indexOf(shoulder)).toBeGreaterThan(order.indexOf("breath"));
+        expect(order.indexOf(shoulder)).toBeGreaterThan(order.indexOf("belly"));
+      }
+      expect(order[order.length - 1]).toBe("heart");
+    }
+    toBody();
+    const rendered = within(screen.getByRole("group", { name: ko.body.figure.ariaLabel })).getAllByRole("button").map((button) => button.getAttribute("aria-label"));
+    const regionName = (id: string) => bodySignals.regions[REGION_IDS.indexOf(id)];
+    expect(rendered).toEqual(zonesOf(DEFAULT_FIGURE_PREFS.body).map((zone) => zone.part ? `${regionName(zone.region)} · ${ko.body.figure.part[zone.part]}` : regionName(zone.region)));
+  });
+
   it("places every zone by its centre inside the figure", () => {
     for (const body of ["female", "male"] as const) {
       for (const zone of zonesOf(body)) {
