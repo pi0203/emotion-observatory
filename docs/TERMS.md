@@ -39,12 +39,12 @@
 | 3①, 10-2 | 진단·치료·위기 대응 목적 아님, 효과 주장 없음 | 3①: `tests/crisis-card.test.tsx`(「이 도구에 대하여」 끝 문장이 위기 상담 도구가 아니라고 말하고 위기 카드 바로 앞에 있음). 10-2는 일부만: `tests/i18n-en-draft.test.ts`(영어에 cure·improve·proven 등 없음), `tests/i18n-en-review.test.ts`(영어 「not yet been shown」), `tests/quick-check-ui.test.tsx`(「건강을 보장하지도」), `tests/coach-example-practice.test.tsx`(코치 안). 한국어 효과 문장과 앱 전체의 효과 주장 금지는 테스트 없음. PRODUCT_SPEC P8 | 사람: [INTENDED_USE.md](INTENDED_USE.md) §5 질문 |
 | 3② | 판정·점수 없음 | `tests/synthesis-v2.test.ts`(원인·의도·성격 단정과 변화 등급 금지), `tests/quick-check-ui.test.tsx`(1~5 척도·range 입력 없음), `tests/records.test.ts`(기록에 점수·평가·해석 없음), `tests/quick-check.test.ts`(확신 점수 없음) | 확인 결과: 패드 위치 숫자가 화면에 나오지 않는다는 테스트는 **없다**. 가장 가까운 것은 `tests/stay-first.test.tsx`(기록 상세의 한 칸이 「패드 위의 한 점」). 이번에 만들지 않음 |
 | 3③, 4①, 7①, 10-1 | 아무것도 보내지 않음, AI 없음, 통계·추적 없음 | `tests/no-network.test.ts`(app·lib에 네트워크 API 없음, `connect-src 'self'`), `tests/record-transfer.test.tsx`(내보내기·가져오기에 요청 없음), `tests/synthesis-v2.test.ts`(정리는 정해 둔 규칙). 「통계·추적 없음」은 일부만: 같은 출처로 보내는 통계 도구는 위 테스트를 통과할 수 있고, 의존성·쿠키는 보지 않음 | 유지 |
-| 3④ | 선택지는 추천이 아님, 순위 없음, 늘 하지 않는 쪽 | 일부만: `tests/need-and-coach.test.ts`(권유·판정 문구 없음, 묶음에 순위 없음은 데이터 메모로만 확인), `tests/quick-check-ui.test.tsx`(미리 눌린 방향 없음). **「어느 묶음에서든 하지 않는 쪽」은 지금 데이터와 맞지 않는다**: 「좋은 경험에 조금 더 머물기」(savour), 「이 좋은 상태를 만든 조건 살펴보기」(conditions), 「누군가에게 표현할 준비하기」(express)에는 「하지 않기」류 선택지가 없다. `need-and-coach`의 "keeps a way out inside every set"은 개수(2~4)만 센다 | 본인 결정: 약관 문장을 고칠지, 세 묶음에 선택지를 더할지 |
+| 3④ | 선택지는 추천이 아님, 순위 없음, 어느 묶음에서든 아무것도 고르지 않고 마칠 수 있음 | `tests/finish-without-picking.test.tsx`(선택지가 있는 묶음 8개 pace·savour·sort-thoughts·conditions·express·ask-help·boundary·solve 모두에서, 묶음을 열고 아무것도 고르지 않아도 「여기까지」로 마칠 수 있고, 저장된 기록에 고른 것이 없으며, 지난 기록 목록에 「해보기로 한 것」 줄이 없음). 순위·권유는 일부만: `tests/need-and-coach.test.ts`(권유·판정 문구 없음, 묶음에 순위 없음은 데이터 메모로만 확인), `tests/quick-check-ui.test.tsx`(미리 눌린 방향 없음) | 완료(2026-11-01 본인 결정: 약관 문장을 앱에 맞춤) |
 | 4②③ | 네 부분, 비운 칸은 비워 둠, 「잘 모르겠음」은 답, 단서 둘 이상일 때만 이음 | `tests/synthesis-v2.test.ts`, `tests/summary-left-empty.test.tsx` | 유지 |
 | 4④ | 정리를 고쳐 쓸 수 있음 | `tests/quick-check-ui.test.tsx`(고쳐 쓰기 칸), `tests/session-flow.test.ts` | 유지 |
 | 5① | 연구마다 확인 날짜 | `tests/reference-checked.test.tsx` | 유지 |
 | 6①② | 브라우저에만, 암호화 아님 | `tests/storage-transparency-copy.test.ts`(문구), `tests/review-followup.test.tsx`(화면에 그려짐) | 유지 |
-| 6③ | Safari 7일 | `tests/storage-transparency-copy.test.ts`(자주 묻는 질문 저장 답 끝, 한국어·영어. 첫 화면 저장 안내에는 넣지 않음) | 완료. 영어 문장은 본인 검토 |
+| 6③ | Safari 7일 | `tests/storage-transparency-copy.test.ts`(자주 묻는 질문 저장 답 끝, 한국어·영어. 첫 화면 저장 안내에는 넣지 않음) | 완료. 영어 문장 본인 승인 2026-11-01 |
 | 6④⑤ | 내보내기, 잠금, 가져오기는 먼저 묻고 덮어쓰지 않음, 모두 지우기 | `tests/record-transfer.test.tsx`(먼저 묻기, 덮어쓰지 않음, 모두 지우기), `tests/record-lock.test.tsx`(잠금). 「암호는 어디에도 저장되지 않음」은 문구만: `tests/storage-transparency-copy.test.ts` | 유지 |
 | 7② | 호스팅 접속 기록 | 일부만: `tests/help-and-privacy.test.tsx`(질문과 「호스팅 업체(Vercel)」만 봄. 접속 기록 항목과 「적은 내용은 들어 있지 않다」는 보지 않음) | 유지 |
 | 8① | 위기 번호 | `tests/crisis-card.test.tsx`, `tests/terms.test.tsx`(약관의 번호가 카드와 같은 키에서 나오고, 약관 글에 번호를 다시 쓰지 않으며, 이름·운영 시간도 카드와 같음) | 완료 |
@@ -83,4 +83,5 @@
 - **영어판 약관.** 따로 쓰고 본인 검토 뒤에 연다.
 - **개인정보 처리방침 별도 문서.** 지금은 모으는 것이 없어 제7조로 둔다. 수업 채널(A) 로그인을 열 때는 동의 6항목(무엇을 모으나, 어디로 가나, 보관과 삭제, 누가 보나, 다른 용도, 거부하면)을 담은 처리방침과 동의 화면을 따로 만든다([LOGIN_DECISIONS.md](LOGIN_DECISIONS.md)). 돈을 받거나 로그인을 열 때는 법률 검토를 권한다.
 - **라이선스 조항.** 코드 MIT, 글 CC BY 4.0은 저장소를 공개할 때 함께 적는다(공개는 본인 결정 전).
+- **선택지 묶음과 규칙 메모의 어긋남.** `data/needs.ko.json`·`data/needs.en.json`의 규칙 메모(「마지막에는 늘 하지 않을 선택지를 둡니다」)와 달리 savour·conditions·express 세 묶음에는 「하지 않기」류 선택지가 없다. 묶음을 고칠지 메모를 고칠지는 나중에 정한다(약관 제3조④는 2026-11-01 「아무것도 고르지 않고 마칠 수 있습니다」로 앱에 맞춤).
 - **홈 화면 설치(웹 앱 매니페스트).** [BENCHMARK_SYNAPSTUDY_2026_10_31.md](BENCHMARK_SYNAPSTUDY_2026_10_31.md)에 따로 있다. 설치를 붙이면 제6조 ③④에 한 줄을 더한다.
