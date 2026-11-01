@@ -8,7 +8,8 @@
     "appraisalHints": "이 감정의 정의가 아닙니다. 비슷한 단어 사이의 차이를 탐색할 때 써볼 수 있는 가설적 힌트입니다.",
     "contextTags": "어떤 상황에서 이 말을 써볼 수 있는지에 대한 느슨한 단서입니다.",
     "contextDependent": "맥락에 따라 valence 경험이 달라질 수 있으니 고정된 positive/negative로 판정하지 말라는 UI metadata입니다. 'mixed emotion이라는 본질적 분류'가 아닙니다. 후보 탐색에서는 양쪽 어느 방향에서도 제시될 수 있습니다.",
-    "norms": "valencePrototype / arousalPrototype / valenceSD / arousalSD / normSource는 검증된 외부 norm 자료를 연결할 때만 채웁니다. normStatus가 'provisional'인 동안에는 좌표가 없으며, 출처와 사용 조건을 확인하지 못한 값은 넣지 않습니다."
+    "norms": "valencePrototype / arousalPrototype / valenceSD / arousalSD / normSource는 검증된 외부 norm 자료를 연결할 때만 채웁니다. normStatus가 'provisional'인 동안에는 좌표가 없으며, 출처와 사용 조건을 확인하지 못한 값은 넣지 않습니다.",
+    "expressions": "표준국어대사전에 실린 표현. 화면의 '이렇게도 말해요'에만 쓰고 기록에는 남기지 않는다. 출처와 위치: docs/vocab-sources/EXPRESSIONS_2026_11_01.md"
   },
   "items": [
     {
@@ -32,7 +33,24 @@
         "일·과제"
       ],
       "provisional": true,
-      "normStatus": "provisional"
+      "normStatus": "provisional",
+      "expressions": [
+        {
+          "text": "손에 땀을 쥐다",
+          "dict": "손에 땀을 쥐다",
+          "kind": "관용구",
+          "headword": "손1",
+          "wordNo": 448742
+        },
+        {
+          "text": "숨이 막히다",
+          "dict": "숨(이) 막히다",
+          "kind": "관용구",
+          "headword": "숨1",
+          "wordNo": 446264,
+          "sense": "「2」"
+        }
+      ]
     },
     {
       "label": "초조함",
@@ -55,7 +73,30 @@
         "불확실"
       ],
       "provisional": true,
-      "normStatus": "provisional"
+      "normStatus": "provisional",
+      "expressions": [
+        {
+          "text": "애가 마르다",
+          "dict": "애(가) 마르다",
+          "kind": "관용구",
+          "headword": "애1",
+          "wordNo": 457401
+        },
+        {
+          "text": "애간장을 태우다",
+          "dict": "애간장(을) 태우다",
+          "kind": "관용구",
+          "headword": "애-간장",
+          "wordNo": 219761
+        },
+        {
+          "text": "피가 마르다",
+          "dict": "피가 마르다",
+          "kind": "관용구",
+          "headword": "피2",
+          "wordNo": 501517
+        }
+      ]
     },
     {
       "label": "짜증",
@@ -82,7 +123,17 @@
         "반복"
       ],
       "provisional": true,
-      "normStatus": "provisional"
+      "normStatus": "provisional",
+      "expressions": [
+        {
+          "text": "약이 오르다",
+          "dict": "약(이) 오르다",
+          "kind": "관용구",
+          "headword": "약1",
+          "wordNo": 226883,
+          "sense": "「2」"
+        }
+      ]
     },
     {
       "label": "화남",
@@ -107,7 +158,31 @@
         "경계"
       ],
       "provisional": true,
-      "normStatus": "provisional"
+      "normStatus": "provisional",
+      "expressions": [
+        {
+          "text": "화가 머리끝까지 나다",
+          "dict": "화가 머리끝까지 나다[치밀다]",
+          "kind": "관용구",
+          "headword": "화5",
+          "wordNo": 379247
+        },
+        {
+          "text": "열이 오르다",
+          "dict": "열(이) 오르다",
+          "kind": "관용구",
+          "headword": "열5",
+          "wordNo": 460404,
+          "sense": "「2」"
+        },
+        {
+          "text": "열받다",
+          "dict": "열-받다",
+          "kind": "표제어",
+          "headword": "열-받다",
+          "wordNo": 534328
+        }
+      ]
     },
     {
       "label": "불안",
@@ -128,7 +203,16 @@
         "미래"
       ],
       "provisional": true,
-      "normStatus": "provisional"
+      "normStatus": "provisional",
+      "expressions": [
+        {
+          "text": "가슴이 콩알만 해지다",
+          "dict": "가슴이 콩알만 하다[해지다]",
+          "kind": "관용구",
+          "headword": "가슴",
+          "wordNo": 389941
+        }
+      ]
     },
     {
       "label": "억울함",
@@ -151,7 +235,16 @@
         "평가"
       ],
       "provisional": true,
-      "normStatus": "provisional"
+      "normStatus": "provisional",
+      "expressions": [
+        {
+          "text": "속이 끓다",
+          "dict": "속이 끓다",
+          "kind": "관용구",
+          "headword": "속1",
+          "wordNo": 448077
+        }
+      ]
     },
     {
       "label": "조급함",
@@ -174,7 +267,16 @@
         "기다림"
       ],
       "provisional": true,
-      "normStatus": "provisional"
+      "normStatus": "provisional",
+      "expressions": [
+        {
+          "text": "몸이 달다",
+          "dict": "몸(이) 달다",
+          "kind": "관용구",
+          "headword": "몸1",
+          "wordNo": 119418
+        }
+      ]
     },
     {
       "label": "두려움",
@@ -196,7 +298,30 @@
         "불확실"
       ],
       "provisional": true,
-      "normStatus": "provisional"
+      "normStatus": "provisional",
+      "expressions": [
+        {
+          "text": "등골이 오싹하다",
+          "dict": "등골(이) 오싹하다",
+          "kind": "관용구",
+          "headword": "등-골1",
+          "wordNo": 94849
+        },
+        {
+          "text": "가슴이 서늘하다",
+          "dict": "가슴이 서늘하다",
+          "kind": "관용구",
+          "headword": "가슴",
+          "wordNo": 389941
+        },
+        {
+          "text": "속이 떨리다",
+          "dict": "속이 떨리다",
+          "kind": "관용구",
+          "headword": "속1",
+          "wordNo": 448077
+        }
+      ]
     },
     {
       "label": "당황",
@@ -221,7 +346,16 @@
         "사람들 앞"
       ],
       "provisional": true,
-      "normStatus": "provisional"
+      "normStatus": "provisional",
+      "expressions": [
+        {
+          "text": "눈 둘 곳을 모르다",
+          "dict": "눈 둘 곳을 모르다",
+          "kind": "관용구",
+          "headword": "눈1",
+          "wordNo": 409998
+        }
+      ]
     },
     {
       "label": "분노",
@@ -244,7 +378,24 @@
         "가치"
       ],
       "provisional": true,
-      "normStatus": "provisional"
+      "normStatus": "provisional",
+      "expressions": [
+        {
+          "text": "분통이 터지다",
+          "dict": "분통이 터지다",
+          "kind": "용례",
+          "sense": "[Ⅰ]1「8」",
+          "headword": "터지다",
+          "wordNo": 494560
+        },
+        {
+          "text": "이가 갈리다",
+          "dict": "이(가) 갈리다",
+          "kind": "관용구",
+          "headword": "이3",
+          "wordNo": 270481
+        }
+      ]
     },
     {
       "label": "답답함",
@@ -266,7 +417,32 @@
         "일·과제"
       ],
       "provisional": true,
-      "normStatus": "provisional"
+      "normStatus": "provisional",
+      "expressions": [
+        {
+          "text": "속이 터지다",
+          "dict": "속이 터지다",
+          "kind": "용례",
+          "sense": "[Ⅰ]2「1」",
+          "headword": "터지다",
+          "wordNo": 494560
+        },
+        {
+          "text": "복장이 터지다",
+          "dict": "복장(이) 터지다",
+          "kind": "관용구",
+          "headword": "복장1",
+          "wordNo": 154892
+        },
+        {
+          "text": "숨이 막히다",
+          "dict": "숨(이) 막히다",
+          "kind": "관용구",
+          "headword": "숨1",
+          "wordNo": 446264,
+          "sense": "「1」"
+        }
+      ]
     },
     {
       "label": "걱정",
@@ -286,7 +462,23 @@
         "책임"
       ],
       "provisional": true,
-      "normStatus": "provisional"
+      "normStatus": "provisional",
+      "expressions": [
+        {
+          "text": "속이 타다",
+          "dict": "속(이) 타다",
+          "kind": "관용구",
+          "headword": "속1",
+          "wordNo": 448077
+        },
+        {
+          "text": "가슴이 무겁다",
+          "dict": "가슴이 무겁다",
+          "kind": "관용구",
+          "headword": "가슴",
+          "wordNo": 389941
+        }
+      ]
     },
     {
       "label": "서운함",
@@ -336,6 +528,15 @@
       "normStatus": "provisional",
       "aliases": [
         "낙담"
+      ],
+      "expressions": [
+        {
+          "text": "어깨가 처지다",
+          "dict": "어깨가 처지다[낮아지다/늘어지다]",
+          "kind": "관용구",
+          "headword": "어깨1",
+          "wordNo": 455915
+        }
       ]
     },
     {
@@ -355,7 +556,23 @@
         "자기평가"
       ],
       "provisional": true,
-      "normStatus": "provisional"
+      "normStatus": "provisional",
+      "expressions": [
+        {
+          "text": "낯을 못 들다",
+          "dict": "낯을 못 들다",
+          "kind": "관용구",
+          "headword": "낯",
+          "wordNo": 61398
+        },
+        {
+          "text": "어깨가 움츠러들다",
+          "dict": "어깨가 움츠러들다",
+          "kind": "관용구",
+          "headword": "어깨1",
+          "wordNo": 455915
+        }
+      ]
     },
     {
       "label": "민망함",
@@ -376,7 +593,16 @@
         "사람들 앞"
       ],
       "provisional": true,
-      "normStatus": "provisional"
+      "normStatus": "provisional",
+      "expressions": [
+        {
+          "text": "머리를 긁다",
+          "dict": "머리(를) 긁다",
+          "kind": "관용구",
+          "headword": "머리1",
+          "wordNo": 421316
+        }
+      ]
     },
     {
       "label": "죄책감",
@@ -396,7 +622,30 @@
         "책임"
       ],
       "provisional": true,
-      "normStatus": "provisional"
+      "normStatus": "provisional",
+      "expressions": [
+        {
+          "text": "발이 저리다",
+          "dict": "발이 저리다",
+          "kind": "관용구",
+          "headword": "발1",
+          "wordNo": 132767
+        },
+        {
+          "text": "가슴이 뜨끔하다",
+          "dict": "가슴이 뜨끔하다",
+          "kind": "관용구",
+          "headword": "가슴",
+          "wordNo": 389941
+        },
+        {
+          "text": "오금이 저리다",
+          "dict": "오금이 저리다",
+          "kind": "관용구",
+          "headword": "오금1",
+          "wordNo": 240464
+        }
+      ]
     },
     {
       "label": "수치심",
@@ -417,7 +666,16 @@
         "사람들 앞"
       ],
       "provisional": true,
-      "normStatus": "provisional"
+      "normStatus": "provisional",
+      "expressions": [
+        {
+          "text": "코가 납작해지다",
+          "dict": "코가 납작해지다",
+          "kind": "관용구",
+          "headword": "코1",
+          "wordNo": 492487
+        }
+      ]
     },
     {
       "label": "자책",
@@ -459,7 +717,25 @@
         "거리두기"
       ],
       "provisional": true,
-      "normStatus": "provisional"
+      "normStatus": "provisional",
+      "expressions": [
+        {
+          "text": "속이 뒤집히다",
+          "dict": "속(이) 뒤집히다",
+          "kind": "관용구",
+          "headword": "속1",
+          "wordNo": 448077,
+          "sense": "「1」"
+        },
+        {
+          "text": "비위가 상하다",
+          "dict": "비위(가) 상하다[뒤집히다]",
+          "kind": "관용구",
+          "headword": "비위5",
+          "wordNo": 163899,
+          "sense": "「1」"
+        }
+      ]
     },
     {
       "label": "못마땅함",
@@ -482,6 +758,29 @@
       "normStatus": "provisional",
       "aliases": [
         "언짢음"
+      ],
+      "expressions": [
+        {
+          "text": "눈이 시다",
+          "dict": "눈(이) 시다",
+          "kind": "관용구",
+          "headword": "눈1",
+          "wordNo": 409998
+        },
+        {
+          "text": "배알이 꼴리다",
+          "dict": "배알이 꼴리다[뒤틀리다]",
+          "kind": "관용구",
+          "headword": "배알1",
+          "wordNo": 137533
+        },
+        {
+          "text": "비위가 사납다",
+          "dict": "비위(가) 사납다",
+          "kind": "관용구",
+          "headword": "비위5",
+          "wordNo": 163899
+        }
       ]
     },
     {
@@ -502,7 +801,16 @@
         "결과"
       ],
       "provisional": true,
-      "normStatus": "provisional"
+      "normStatus": "provisional",
+      "expressions": [
+        {
+          "text": "어깨가 처지다",
+          "dict": "어깨가 처지다[낮아지다/늘어지다]",
+          "kind": "관용구",
+          "headword": "어깨1",
+          "wordNo": 455915
+        }
+      ]
     },
     {
       "label": "외로움",
@@ -545,7 +853,31 @@
         "관계"
       ],
       "provisional": true,
-      "normStatus": "provisional"
+      "normStatus": "provisional",
+      "expressions": [
+        {
+          "text": "가슴이 미어지다",
+          "dict": "가슴이 미어지다",
+          "kind": "관용구",
+          "headword": "가슴",
+          "wordNo": 389941,
+          "sense": "「1」"
+        },
+        {
+          "text": "가슴에 멍이 들다",
+          "dict": "가슴에 멍이 들다[지다]",
+          "kind": "관용구",
+          "headword": "가슴",
+          "wordNo": 389941
+        },
+        {
+          "text": "목이 막히다",
+          "dict": "목(이) 막히다",
+          "kind": "관용구",
+          "headword": "목1",
+          "wordNo": 425672
+        }
+      ]
     },
     {
       "label": "허전함",
@@ -633,7 +965,17 @@
         "규모"
       ],
       "provisional": true,
-      "normStatus": "provisional"
+      "normStatus": "provisional",
+      "expressions": [
+        {
+          "text": "눈이 캄캄하다",
+          "dict": "눈이 캄캄하다",
+          "kind": "관용구",
+          "headword": "눈1",
+          "wordNo": 409998,
+          "sense": "「1」"
+        }
+      ]
     },
     {
       "label": "기쁨",
@@ -653,7 +995,16 @@
         "관계"
       ],
       "provisional": true,
-      "normStatus": "provisional"
+      "normStatus": "provisional",
+      "expressions": [
+        {
+          "text": "입이 귀밑까지 찢어지다",
+          "dict": "입이 귀밑까지 찢어지다[이르다]",
+          "kind": "관용구",
+          "headword": "입",
+          "wordNo": 470931
+        }
+      ]
     },
     {
       "label": "신남",
@@ -795,7 +1146,23 @@
         "자기평가"
       ],
       "provisional": true,
-      "normStatus": "provisional"
+      "normStatus": "provisional",
+      "expressions": [
+        {
+          "text": "어깨가 으쓱거리다",
+          "dict": "어깨가[어깨를] 으쓱거리다",
+          "kind": "관용구",
+          "headword": "어깨1",
+          "wordNo": 455915
+        },
+        {
+          "text": "어깨가 올라가다",
+          "dict": "어깨가 올라가다",
+          "kind": "관용구",
+          "headword": "어깨1",
+          "wordNo": 455915
+        }
+      ]
     },
     {
       "label": "감동",
@@ -820,7 +1187,24 @@
       ],
       "provisional": true,
       "contextDependent": true,
-      "normStatus": "provisional"
+      "normStatus": "provisional",
+      "expressions": [
+        {
+          "text": "가슴이 뜨겁다",
+          "dict": "가슴이 뜨겁다",
+          "kind": "관용구",
+          "headword": "가슴",
+          "wordNo": 389941
+        },
+        {
+          "text": "가슴이 미어지다",
+          "dict": "가슴이 미어지다",
+          "kind": "관용구",
+          "headword": "가슴",
+          "wordNo": 389941,
+          "sense": "「2」"
+        }
+      ]
     },
     {
       "label": "감사",
@@ -958,7 +1342,24 @@
         "안전"
       ],
       "provisional": true,
-      "normStatus": "provisional"
+      "normStatus": "provisional",
+      "expressions": [
+        {
+          "text": "발 뻗고 자다",
+          "dict": "발(을) 뻗고[펴고] 자다",
+          "kind": "관용구",
+          "headword": "발1",
+          "wordNo": 132767
+        },
+        {
+          "text": "숨이 트이다",
+          "dict": "숨(이) 트이다",
+          "kind": "관용구",
+          "headword": "숨1",
+          "wordNo": 446264,
+          "sense": "「1」"
+        }
+      ]
     },
     {
       "label": "만족",
@@ -1027,7 +1428,16 @@
         "관계"
       ],
       "provisional": true,
-      "normStatus": "provisional"
+      "normStatus": "provisional",
+      "expressions": [
+        {
+          "text": "심장이 뛰다",
+          "dict": "심장이 뛰다",
+          "kind": "관용구",
+          "headword": "심장2",
+          "wordNo": 449275
+        }
+      ]
     },
     {
       "label": "호기심",
@@ -1191,7 +1601,23 @@
       ],
       "provisional": true,
       "contextDependent": true,
-      "normStatus": "provisional"
+      "normStatus": "provisional",
+      "expressions": [
+        {
+          "text": "간담이 내려앉다",
+          "dict": "간담이 내려앉다",
+          "kind": "관용구",
+          "headword": "간담1",
+          "wordNo": 6513
+        },
+        {
+          "text": "눈이 동그래지다",
+          "dict": "눈이 동그래지다",
+          "kind": "관용구",
+          "headword": "눈1",
+          "wordNo": 409998
+        }
+      ]
     },
     {
       "label": "연민",
@@ -1212,7 +1638,16 @@
       ],
       "provisional": true,
       "contextDependent": true,
-      "normStatus": "provisional"
+      "normStatus": "provisional",
+      "expressions": [
+        {
+          "text": "가슴이 아리다",
+          "dict": "가슴이 아리다",
+          "kind": "관용구",
+          "headword": "가슴",
+          "wordNo": 389941
+        }
+      ]
     },
     {
       "label": "다정함",
@@ -1336,7 +1771,16 @@
         "결과"
       ],
       "provisional": true,
-      "normStatus": "provisional"
+      "normStatus": "provisional",
+      "expressions": [
+        {
+          "text": "맥이 풀리다",
+          "dict": "맥(이) 풀리다",
+          "kind": "관용구",
+          "headword": "맥1",
+          "wordNo": 427824
+        }
+      ]
     },
     {
       "label": "혼란스러움",
@@ -1378,7 +1822,23 @@
       ],
       "contextDependent": true,
       "provisional": true,
-      "normStatus": "provisional"
+      "normStatus": "provisional",
+      "expressions": [
+        {
+          "text": "맥을 놓다",
+          "dict": "맥(을) 놓다",
+          "kind": "관용구",
+          "headword": "맥1",
+          "wordNo": 427824
+        },
+        {
+          "text": "넋을 놓다",
+          "dict": "넋(을) 놓다",
+          "kind": "관용구",
+          "headword": "넋",
+          "wordNo": 410929
+        }
+      ]
     },
     {
       "label": "울적함",
@@ -1480,7 +1940,23 @@
         "회복"
       ],
       "provisional": true,
-      "normStatus": "provisional"
+      "normStatus": "provisional",
+      "expressions": [
+        {
+          "text": "속이 시원하다",
+          "dict": "속(이) 시원하다",
+          "kind": "관용구",
+          "headword": "속1",
+          "wordNo": 448077
+        },
+        {
+          "text": "머리가 가볍다",
+          "dict": "머리가 가볍다",
+          "kind": "관용구",
+          "headword": "머리1",
+          "wordNo": 421316
+        }
+      ]
     },
     {
       "label": "홀가분함",
@@ -1500,7 +1976,23 @@
         "해소"
       ],
       "provisional": true,
-      "normStatus": "provisional"
+      "normStatus": "provisional",
+      "expressions": [
+        {
+          "text": "어깨가 가볍다",
+          "dict": "어깨가 가볍다",
+          "kind": "관용구",
+          "headword": "어깨1",
+          "wordNo": 455915
+        },
+        {
+          "text": "가슴이 트이다",
+          "dict": "가슴이 트이다",
+          "kind": "관용구",
+          "headword": "가슴",
+          "wordNo": 389941
+        }
+      ]
     },
     {
       "label": "든든함",
@@ -1543,7 +2035,16 @@
         "기대"
       ],
       "provisional": true,
-      "normStatus": "provisional"
+      "normStatus": "provisional",
+      "expressions": [
+        {
+          "text": "속을 썩이다",
+          "dict": "속(을) 썩이다",
+          "kind": "관용구",
+          "headword": "속1",
+          "wordNo": 448077
+        }
+      ]
     },
     {
       "label": "그리움",
