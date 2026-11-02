@@ -1,8 +1,7 @@
 import type { Metadata } from "next";
 import { TermsPage } from "../../emotion-app";
 import terms from "../../../data/terms.ko.json";
-import { getT } from "../../../lib/i18n/t";
-import { metadataFor } from "../../../lib/i18n/metadata";
+import { documentTitle, metadataFor } from "../../../lib/i18n/metadata";
 import { TERMS_PATH } from "../../../lib/terms";
 
 /**
@@ -11,7 +10,7 @@ import { TERMS_PATH } from "../../../lib/terms";
  * The app's head is shared, with this page's own title and address.
  */
 const app = metadataFor("ko");
-const title = `${terms.title} · ${getT("ko")("meta.title")}`;
+const title = `${terms.title} · ${documentTitle("ko")}`;
 
 export const metadata: Metadata = {
   title,

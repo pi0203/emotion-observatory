@@ -55,11 +55,14 @@ describe("/en route", () => {
     expect(en.robots).toBeUndefined();
     expect(String(en.description)).not.toMatch(HANGUL);
     const ko = metadataFor("ko");
-    expect(ko).toMatchObject({ title: "감정 관찰실", description: "몸, 상황, 의미를 천천히 구별해보는 자기관찰 도구" });
+    expect(ko).toMatchObject({ title: "감정 관찰실 · Emotion Observatory", description: "몸, 상황, 의미를 천천히 구별해보는 자기관찰 도구" });
     // the share card and canonical address point at the public site, not at a preview
     expect(String(ko.metadataBase)).toBe("https://emotion-observatory.vercel.app/");
     expect(ko.alternates?.canonical).toBe("/");
-    expect(ko.openGraph).toMatchObject({ title: "감정 관찰실", locale: "ko_KR", url: "/" });
+    expect(ko.openGraph).toMatchObject({ title: "감정 관찰실 · Emotion Observatory", siteName: "감정 관찰실", locale: "ko_KR", url: "/" });
+    expect(ko.twitter).toMatchObject({ title: "감정 관찰실 · Emotion Observatory" });
+    expect(en.openGraph).toMatchObject({ title: "Emotion Observatory" });
+    expect(en.twitter).toMatchObject({ title: "Emotion Observatory" });
     expect(ko.alternates).toMatchObject({ languages: { ko: "/", en: "/en" } });
   });
 });

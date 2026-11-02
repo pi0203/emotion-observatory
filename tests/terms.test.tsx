@@ -6,6 +6,7 @@ import Home from "../app/(ko)/page";
 import EmotionApp from "../app/emotion-app";
 import sitemap from "../app/sitemap";
 import terms from "../data/terms.ko.json";
+import { en } from "../lib/i18n/messages.en";
 import { ko, koOnly } from "../lib/i18n/messages.ko";
 import { SITE_URL } from "../lib/site";
 import { CONTACTS_CHECKED_ON, parseTerms, TERMS_EFFECTIVE, TERMS_MAIL, TERMS_PATH } from "../lib/terms";
@@ -42,10 +43,11 @@ describe("the terms page", () => {
   });
 
   it("is titled and addressed as its own page", () => {
-    expect(metadata.title).toBe(`${terms.title} · ${ko.meta.title}`);
-    expect(metadata.title).toBe("이용약관 · 감정 관찰실");
+    expect(metadata.title).toBe(`${terms.title} · ${ko.meta.title} · ${en.meta.title}`);
+    expect(metadata.title).toBe("이용약관 · 감정 관찰실 · Emotion Observatory");
     expect(metadata.alternates).toEqual({ canonical: "/terms" });
     expect(metadata.openGraph).toMatchObject({ url: "/terms", title: metadata.title });
+    expect(metadata.twitter).toMatchObject({ title: metadata.title });
   });
 
   it("is in the sitemap", () => {
