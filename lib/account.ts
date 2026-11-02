@@ -151,11 +151,15 @@ const writeChoice = (userId: string, choice: Choice | null) => {
 /** True when the address bar carries the email link's sign-in (or its error). */
 export const isLinkReturn = () => typeof window !== "undefined" && /(?:^#|&)(?:access_token|error_description)=/.test(window.location.hash);
 
-/** Takes the link's values out of the address bar without a navigation, and gives them back. */
-const takeLinkParams = (): URLSearchParams => {
-  const params = new URLSearchParams(window.location.hash.slice(1));
-  window.history.replaceState(window.history.state, "", `${window.location.pathname}${window.location.search}`);
-  return params;
+/**
+ * Takes the link's values out of the address bar without a navigation. The
+ * state passed is null on purpose: Next.js then treats it as an outside change
+ * and updates its own idea of the address; given its own state back, it would
+ * write the old address, tokens and all, at its next update. Called after an
+ * await, so Next.js has finished setting up its history handling first.
+ */
+const clearLinkFromAddress = () => {
+  window.history.replaceState(null, "", `${window.location.pathname}${window.location.search}`);
 };
 
 const hasStoredLogin = () => {
@@ -182,10 +186,11 @@ export const clearArrived = () => { if (state.arrived) setState({ arrived: false
  */
 export const resumeAccount = async () => {
   if (state.phase !== "signed-out") return;
-  const link = isLinkReturn() ? takeLinkParams() : null;
+  const link = isLinkReturn() ? new URLSearchParams(window.location.hash.slice(1)) : null;
   if (!link && !hasStoredLogin()) return;
   await run(async () => {
     const auth = (await client()).auth;
+    if (link) clearLinkFromAddress();
     const access = link?.get("access_token");
     const refresh = link?.get("refresh_token");
     if (access && refresh) {
