@@ -1,6 +1,6 @@
 import type { EmotionSession } from "./session-types";
 import { getStorageAdapter } from "./storage-adapter";
-import { supabaseConfig } from "./supabase-config";
+import { OAUTH_PROVIDER, supabaseConfig, type LoginProvider } from "./supabase-config";
 
 /**
  * The opt-in account: sign in, and the records follow to another device
@@ -22,7 +22,7 @@ import { supabaseConfig } from "./supabase-config";
 
 // ---------- the backend: the few Supabase calls this app makes ----------
 
-export type AuthErrorKey = "email-invalid" | "email-not-allowed" | "rate-limit" | "code-format" | "code-wrong-or-expired" | "link-expired" | "network";
+export type AuthErrorKey = "email-invalid" | "email-not-allowed" | "rate-limit" | "code-format" | "code-wrong-or-expired" | "link-expired" | "provider-failed" | "network";
 /** A record row as the server keeps it: one whole record in `data`. */
 export type RemoteRow = { id: string; data: unknown; updated_at: string };
 /** A row as sent: with its owner, since a record's id is unique only within one account (0002_records_per_account.sql). */
@@ -39,6 +39,8 @@ export type SupabaseLike = {
     getSession(): SessionResult;
     setSession(tokens: { access_token: string; refresh_token: string }): SessionResult;
     signOut(args?: { scope?: "global" | "local" | "others" }): Promise<{ error: unknown }>;
+    /** Leaves the page for the provider's sign-in; the provider sends the person back to redirectTo. */
+    signInWithOAuth(args: { provider: string; options?: { redirectTo?: string } }): Promise<{ error: unknown }>;
   };
   from(table: "records"): {
     select(columns: string): PromiseLike<{ data: unknown; error: unknown }>;
@@ -231,8 +233,7 @@ const EMAIL = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 export const sendCode = (email: string) => run(async () => {
   const address = email.trim();
   if (!EMAIL.test(address)) { setState({ note: "email-invalid" }); return; }
-  const redirect = `${window.location.origin}${window.location.pathname}`;
-  const { error } = await (await client()).auth.signInWithOtp({ email: address, options: { shouldCreateUser: true, emailRedirectTo: redirect } });
+  const { error } = await (await client()).auth.signInWithOtp({ email: address, options: { shouldCreateUser: true, emailRedirectTo: returnAddress() } });
   if (error) { setState({ note: authError(error) }); return; }
   setState({ phase: "code-sent", email: address });
 });
@@ -243,6 +244,18 @@ export const verifyCode = (code: string) => run(async () => {
   const { data, error } = await (await client()).auth.verifyOtp({ email: state.email ?? "", token, type: "email" });
   if (error || !data?.user) { setState({ note: authError(error) }); return; }
   await signedIn(data.user, true);
+});
+
+/** Where every sign-in comes back to: this page, without any old query or token. */
+const returnAddress = () => `${window.location.origin}${window.location.pathname}`;
+
+/**
+ * 구글·카카오·네이버·Apple로 계속하기: the page leaves for the provider and comes
+ * back to returnAddress(), where resumeAccount finishes the sign-in.
+ */
+export const signInWith = (provider: Exclude<LoginProvider, "email">) => run(async () => {
+  const { error } = await (await client()).auth.signInWithOAuth({ provider: OAUTH_PROVIDER[provider], options: { redirectTo: returnAddress() } });
+  if (error) setState({ note: "provider-failed" });
 });
 
 /** Back from the code step to the email step. */

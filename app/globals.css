@@ -378,6 +378,15 @@ p, .lede, .hint, .step-note, .small-note, .summary-footnote { text-wrap: pretty;
 .check-row { display: flex; gap: 10px; align-items: flex-start; margin: 10px 0 0; font-size: var(--t-small); line-height: 1.6; color: var(--ink); }
 .check-row input { margin-top: .3em; flex: none; }
 .account-sign-out { margin-top: 40px; padding-top: 18px; border-top: 1px solid var(--line); }
+/* sign-in buttons (2026-11-02): each company's colours from its own button guide; one column, full width, 48px tall */
+.login-buttons { display: grid; gap: 10px; max-width: 360px; margin-top: 20px; }
+.login-button { display: flex; align-items: center; justify-content: center; gap: 10px; min-height: 48px; padding: 0 16px; border-radius: 6px; font: 400 15px var(--font-sans); cursor: pointer; }
+.login-button:disabled { opacity: .45; cursor: not-allowed; }
+.login-google { color: #1F1F1F; background: #FFFFFF; border: 1px solid #747775; }
+.login-kakao { color: rgba(0, 0, 0, .85); background: #FEE500; border: 0; border-radius: 12px; }
+.login-naver { color: #FFFFFF; background: #03C75A; border: 0; }
+.login-apple { color: #FFFFFF; background: #000000; border: 1px solid #000000; }
+.login-email { color: var(--ink); background: var(--card); border: 1.5px solid var(--line-strong); }
 .lock-fields .small-note { margin: 8px 0 0; }
 
 /* The one question at the end of the slower look (TalkToSomeoneQuestion). */

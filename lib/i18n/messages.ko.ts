@@ -674,6 +674,15 @@ export const koOnly = {
     consentAccount: "위 내용을 읽었고, 이메일과 기록을 맡기는 데 동의해요 (필수)",
     consentRecords: "감정 기록을 맡기는 데 따로 동의해요 (필수)",
     continueAsGuest: "로그인 안 하고 계속 쓰기",
+    // the buttons, in this order (2026-11-02); Google and Apple keep their names in Latin letters as their guides ask
+    providers: {
+      google: "Google로 계속하기",
+      kakao: "카카오로 계속하기",
+      naver: "네이버로 계속하기",
+      apple: "Apple로 계속하기",
+      email: "이메일로 계속하기",
+    },
+    agreeFirst: "위 두 칸에 체크하면 로그인할 수 있어요.",
     emailLabel: "이메일 주소",
     sendCode: "코드 받기",
     codeSent: "{email}로 6자리 코드를 보냈어요. 10분 안에 넣어 주세요.",
@@ -704,6 +713,7 @@ export const koOnly = {
       "code-format": "코드는 숫자 6자리예요.",
       "code-wrong-or-expired": "코드가 틀렸거나 시간이 지났어요. 다시 넣거나 새 코드를 받아 주세요.",
       "link-expired": "로그인하지 못했어요. 링크 시간이 지났거나 취소됐어요. 다시 해 주세요.",
+      "provider-failed": "지금은 이 방법으로 로그인할 수 없어요. 다른 방법을 써 주세요.",
       network: "연결이 안 됐어요. 조금 뒤에 다시 해 주세요.",
       "sync-failed": "계정에 올리지 못했어요. 이 기기의 기록은 그대로 있어요.",
       deleted: "계정을 지웠어요. 이 기기의 기록은 그대로 있어요.",

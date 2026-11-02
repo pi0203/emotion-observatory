@@ -2,16 +2,21 @@
 
 import { useEffect, useRef, useState, useSyncExternalStore } from "react";
 import { koOnly } from "../lib/i18n/messages.ko";
-import { changeEmail, clearArrived, deleteAccount, getAccountState, importLocal, keepLocal, sendCode, signOut, subscribeAccount, verifyCode } from "../lib/account";
+import { changeEmail, clearArrived, deleteAccount, getAccountState, importLocal, keepLocal, sendCode, signInWith, signOut, subscribeAccount, verifyCode } from "../lib/account";
+import { loginProviders, type LoginProvider } from "../lib/supabase-config";
+import { AppleMark, GoogleMark, KakaoMark, NaverMark } from "./login-logos";
 
 const copy = koOnly.account;
+
+const MARKS: Record<Exclude<LoginProvider, "email">, () => React.ReactElement> = { google: GoogleMark, kakao: KakaoMark, naver: NaverMark, apple: AppleMark };
 
 /**
  * 「다른 기기에서도 보기」 at the foot of the records screen (owner's decision
  * 2026-11-02, changed the same day: no 기록 암호; preview only). Korean only,
  * and drawn only where the login values are set (app/emotion-app.tsx). The
- * order: what is sent and two agreements → email → 6-digit code (or the
- * email's link) → signed in, the account's records shown, and whether this
+ * order: what is sent and two agreements → a button (Google, Kakao, Naver,
+ * Apple, email; only those set up are drawn) → for email, the address and a
+ * 6-digit code or the email's link → signed in, the account's records shown, and whether this
  * device's records go to the account. Nothing is sent before the two boxes are
  * ticked; a guest who never opens this sends nothing at all.
  */
@@ -21,6 +26,7 @@ export function AccountPanel() {
   const [agreeAccount, setAgreeAccount] = useState(false);
   const [agreeRecords, setAgreeRecords] = useState(false);
   const [email, setEmail] = useState("");
+  const [byEmail, setByEmail] = useState(false);
   const [code, setCode] = useState("");
   const [confirmingDelete, setConfirmingDelete] = useState(false);
   const title = useRef<HTMLParagraphElement>(null);
@@ -41,16 +47,27 @@ export function AccountPanel() {
     body = <div className="quick-option-row"><button className="secondary-button" onClick={() => setOpen(true)}>{copy.open}</button></div>;
   } else if (phase === "signed-out") {
     const agreed = agreeAccount && agreeRecords;
+    const providers = loginProviders();
     body = <>
       <p className="small-note">{copy.consentLead}</p>
       <ul className="small-note">{copy.consentPoints.map((point) => <li key={point}>{point}</li>)}</ul>
       <label className="check-row"><input type="checkbox" checked={agreeAccount} onChange={(event) => setAgreeAccount(event.target.checked)} /> {copy.consentAccount}</label>
       <label className="check-row"><input type="checkbox" checked={agreeRecords} onChange={(event) => setAgreeRecords(event.target.checked)} /> {copy.consentRecords}</label>
-      <label className="lock-label" htmlFor="account-email">{copy.emailLabel}</label>
-      <input id="account-email" className="text-input" type="email" autoComplete="email" maxLength={254} value={email} onChange={(event) => setEmail(event.target.value)} />
+      {!agreed && <p className="small-note">{copy.agreeFirst}</p>}
+      <div className="login-buttons">
+        {providers.map((provider) => provider === "email"
+          ? <button key={provider} className="login-button login-email" disabled={!agreed || busy} aria-expanded={byEmail} onClick={() => setByEmail(true)}>{copy.providers.email}</button>
+          : <button key={provider} className={`login-button login-${provider}`} disabled={!agreed || busy} onClick={() => void signInWith(provider)}>{MARKS[provider]()}<span>{copy.providers[provider]}</span></button>)}
+      </div>
+      {byEmail && agreed && <>
+        <label className="lock-label" htmlFor="account-email">{copy.emailLabel}</label>
+        <input id="account-email" className="text-input" type="email" autoComplete="email" maxLength={254} value={email} onChange={(event) => setEmail(event.target.value)} onKeyDown={(event) => { if (event.key === "Enter" && email.trim()) void sendCode(email); }} />
+        <div className="quick-option-row">
+          <button className="secondary-button" disabled={!email.trim() || busy} onClick={() => void sendCode(email)}>{copy.sendCode}</button>
+        </div>
+      </>}
       <div className="quick-option-row">
-        <button className="secondary-button" disabled={!agreed || !email.trim() || busy} onClick={() => void sendCode(email)}>{copy.sendCode}</button>
-        <button className="quiet-button" onClick={() => setOpen(false)}>{copy.continueAsGuest}</button>
+        <button className="quiet-button" onClick={() => { setOpen(false); setByEmail(false); }}>{copy.continueAsGuest}</button>
       </div>
     </>;
   } else if (phase === "code-sent") {
