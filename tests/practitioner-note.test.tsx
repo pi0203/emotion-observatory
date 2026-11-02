@@ -20,7 +20,7 @@ describe("practitioner note on the landing", () => {
     const mail = fold.querySelector("a")!;
     expect(mail.getAttribute("href")).toBe("mailto:a5897@icloud.com");
     expect(mail.textContent).toBe("a5897@icloud.com");
-    expect(mail.parentElement!.textContent).toContain("a5897@icloud.com으로 알려 주세요.");
+    expect(mail.parentElement!.textContent).toBe("단어 목록, 문장, 안전 안내에서 개선이 필요한 곳이 있으면 a5897@icloud.com으로 알려 주세요. 내담자 정보나 사례는 적지 말아 주세요.");
     expect(fold.textContent).not.toMatch(/청소년|감정카드/);
   });
 
