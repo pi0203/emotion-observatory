@@ -1,3 +1,6 @@
+/* The two token layers: light first, dark over it. Rules outside the layers still win, as before. */
+@layer tokens-light, tokens-dark;
+@layer tokens-light {
 :root {
   /* The lab's own palette (owner's settled choice, 2026-10-12): light blue paper with a coral
      point. Token names are unchanged; only values moved, the same way the shelf, study notes and
@@ -53,8 +56,10 @@
   --t-lead: 1.6rem;         /* section titles (was 23 and 26px) */
   --t-scene: clamp(2.25rem, 6vw, 3.2rem); /* screen titles (was 35 to 54px, 36px on phones) */
 }
+}
 
 /* Dark follows the device setting only; there is no switch. Same tokens, darker values. */
+@layer tokens-dark {
 @media (prefers-color-scheme: dark) {
   :root {
     color-scheme: dark;
@@ -93,6 +98,16 @@
     --tone-butter-paper: #1E1A0D; --tone-butter-card: #2D2814; --tone-butter-line: #5E5530;
     --tone-mist-paper: #0D1A21;   --tone-mist-card: #172A33;   --tone-mist-line: #2E4D5B;
   }
+  /* /words printed from a dark device: back to the light tokens, so the paper gets dark text on white
+     (2026-11-02). revert-layer drops this layer's dark values for the light layer's; the screen and the
+     other pages' printing are unchanged. */
+  @media print {
+    :root:has(.words-page) {
+      color-scheme: revert-layer;
+      --accent: revert-layer; --accent-hover: revert-layer; --accent-press: revert-layer; --accent-soft: revert-layer; --accent-subtle: revert-layer; --accent-ink: revert-layer; --ink: revert-layer; --muted: revert-layer; --line: revert-layer; --line-strong: revert-layer; --paper: revert-layer; --card: revert-layer; --warm: revert-layer; --on-accent: revert-layer; --check: revert-layer; --badge: revert-layer; --pick-underline: revert-layer; --site-ink: revert-layer; --site-muted: revert-layer; --site-line: revert-layer; --site-hover: revert-layer; --focus-ring: revert-layer; --backdrop: revert-layer; --shadow: revert-layer; --axis: revert-layer; --source-mine: revert-layer; --source-app: revert-layer; --source-later: revert-layer; --tone-blue-paper: revert-layer; --tone-blue-card: revert-layer; --tone-blue-line: revert-layer; --tone-blue-blob: revert-layer; --tone-lilac-paper: revert-layer; --tone-lilac-card: revert-layer; --tone-lilac-line: revert-layer; --tone-lilac-blob: revert-layer; --tone-lilac-ink: revert-layer; --tone-mint-paper: revert-layer; --tone-mint-card: revert-layer; --tone-mint-line: revert-layer; --tone-mint-blob: revert-layer; --tone-mint-ink: revert-layer; --tone-peach-paper: revert-layer; --tone-peach-card: revert-layer; --tone-peach-line: revert-layer; --tone-peach-blob: revert-layer; --tone-peach-ink: revert-layer; --tone-butter-paper: revert-layer; --tone-butter-card: revert-layer; --tone-butter-line: revert-layer; --tone-mist-paper: revert-layer; --tone-mist-card: revert-layer; --tone-mist-line: revert-layer;
+    }
+  }
+}
 }
 * { box-sizing: border-box; }
 html { background: var(--paper); }
