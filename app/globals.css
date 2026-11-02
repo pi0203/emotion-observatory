@@ -279,6 +279,37 @@ p, .lede, .hint, .step-note, .small-note, .summary-footnote { text-wrap: pretty;
 .terms p { margin: 0 0 12px; }
 .terms ul, .terms ol { margin: 0 0 12px; padding-left: 1.4em; }
 .terms li { margin-bottom: 6px; }
+
+/* /words (2026-11-02): one card per word, no colour per feeling (PRODUCT_SPEC §19). */
+.words-page { max-width: 960px; }
+.words-page .terms-intro { max-width: 640px; }
+.words-print { margin: 20px 0 0; }
+.terms .words-list { padding: 0; }
+.words-list { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 12px; margin: 28px 0 0; padding: 0; list-style: none; }
+.word-card { margin: 0; padding: 16px 18px; border: 1px solid var(--line); border-radius: 12px; background: var(--card); scroll-margin-top: 24px; break-inside: avoid; }
+.word-card:target { border-color: var(--accent-ink); }
+.terms .word-card h2 { margin: 0; font-size: var(--t-lead); }
+.word-card h3 { margin: 14px 0 4px; color: var(--muted); font: 600 var(--t-aside) var(--font-sans); }
+.terms .word-card p, .terms .word-card li { margin: 0; font-size: var(--t-small); line-height: 1.7; }
+.terms .word-card ul { margin: 0; padding-left: 1.2em; list-style: disc; }
+.terms .word-card li { margin: 0; }
+.terms .word-card .word-aliases { margin-top: 2px; color: var(--muted); font-size: var(--t-aside); }
+.terms .word-card .word-source { margin-top: 4px; color: var(--muted); font-size: var(--t-aside); }
+.about-words { margin: 12px 0 0; font-size: var(--t-small); }
+.about-words a { color: var(--accent-ink); text-underline-offset: .2em; }
+
+/* Printing /words on A4: two columns, a card never split across pages. The header,
+   help button, footer and crisis card are kept, so the helplines stay on the paper.
+   No @page rule: it would reach every page of the site, so the paper is the print dialog's (A4 in Korea).  */
+@media print {
+  .words-page { max-width: none; padding-top: 0; }
+  .words-print { display: none; }
+  .words-list { display: block; columns: 2; column-gap: 8mm; margin-top: 16px; }
+  .word-card { display: block; margin: 0 0 4mm; padding: 3mm 4mm; border-radius: 6px; box-shadow: none; break-inside: avoid; page-break-inside: avoid; }
+  .terms .word-card h2 { font-size: var(--t-body); }
+  .terms .word-card p, .terms .word-card li { line-height: 1.5; }
+  .word-card h3 { margin-top: 6px; }
+}
 .terms strong { font-weight: 700; }
 .terms-tel { text-wrap: nowrap; } /* a number is never split across lines (1577-0199 broke at 390px), as on the crisis card */
 @keyframes rise-in { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: none; } }

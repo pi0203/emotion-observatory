@@ -19,6 +19,8 @@ import { requireContent, type LocaleContent } from "../lib/content";
 import { INPUT_LIMITS } from "../lib/limits";
 import { CONTACTS_CHECKED_ON, parseTerms, PRIVACY_PATH, TERMS_EFFECTIVE, TERMS_MAIL, TERMS_PATH, type Terms, type TermsBlock, type TermsPiece } from "../lib/terms";
 import { koOnly } from "../lib/i18n/messages.ko";
+import { interpolate } from "../lib/i18n/format";
+import { WORDS_PATH, wordId, type WordCard } from "../lib/words";
 import { DEFAULT_LOCALE, type Locale } from "../lib/i18n/locale";
 import { englishAvailable } from "../lib/i18n/availability";
 import { I18nProvider, renderRich, useT } from "../lib/i18n/react";
@@ -277,6 +279,55 @@ function TermsFrame({ terms }: { terms: Terms }) {
   </div>;
 }
 
+/**
+ * /words: every word on one page, in 가나다 order (lib/words.ts), in the same
+ * frame as the terms, with the crisis card under the list. Korean only. Printed,
+ * the header, help button, footer and crisis card stay on the paper too.
+ */
+export function WordsPage({ cards }: { cards: WordCard[] }) {
+  return <I18nProvider locale="ko"><WordsFrame cards={cards} /></I18nProvider>;
+}
+
+function WordsFrame({ cards }: { cards: WordCard[] }) {
+  const t = useT();
+  const [helpOpen, setHelpOpen] = useState(false);
+  const w = koOnly.words;
+  return <div className="app-shell site-frame">
+    <a className="skip-link" href="#main">{t("shell.skipToContent")}</a>
+    <SiteHeader onHelp={() => setHelpOpen(true)} />
+    <main id="main" tabIndex={-1} className="site-main">
+      <article className="terms words-page">
+        <p className="terms-back"><a href="/"><span aria-hidden="true">← </span>{t("common.backToStart")}</a></p>
+        <h1>{w.title}</h1>
+        <p className="terms-intro">{interpolate(w.intro, { count: cards.length })}</p>
+        <p className="words-print"><button className="small-button" onClick={() => window.print()}>{w.print}</button></p>
+        <ul className="words-list">
+          {cards.map((card) => <li key={card.label} id={wordId(card.label)} className="word-card">
+            <h2>{card.label}</h2>
+            {card.aliases.length > 0 && <p className="word-aliases">{interpolate(w.aliases, { words: card.aliases.join(", ") })}</p>}
+            {card.hints.length > 0 && <>
+              <h3>{w.hints}</h3>
+              <ul>{card.hints.map((hint) => <li key={hint}>{hint}</li>)}</ul>
+            </>}
+            {card.neighbors.length > 0 && <>
+              <h3>{w.neighbors}</h3>
+              <p className="word-neighbors">{card.neighbors.map((label, index) => <span key={label}>{index > 0 && ", "}<a href={`#${wordId(label)}`}>{label}</a></span>)}</p>
+            </>}
+            {card.expressions.length > 0 && <>
+              <h3>{t("words.alsoSaidAs")}</h3>
+              <p>{card.expressions.join(", ")}</p>
+              <p className="word-source">{t("words.expressionSource")}</p>
+            </>}
+          </li>)}
+        </ul>
+      </article>
+      <CrisisCard />
+    </main>
+    <SiteFooter />
+    {helpOpen && <HelpDialog onClose={() => setHelpOpen(false)} />}
+  </div>;
+}
+
 function TermsBlockView({ block }: { block: TermsBlock }) {
   if (typeof block === "string") return <p><TermsText text={block} /></p>;
   if ("list" in block) return <ul>{block.list.map((item, index) => <li key={index}><TermsText text={item} /></li>)}</ul>;
@@ -437,6 +488,7 @@ function AboutTool() {
         <li style={{ "--rise-order": koOnly.practitioner.lines.length } as CSSProperties}><p className="about-mail">{koOnly.practitioner.mailBefore}<a href={`mailto:${koOnly.practitioner.mailAddress}`}>{koOnly.practitioner.mailAddress}</a>{koOnly.practitioner.mailAfter}</p></li>
       </ul>
     </details>}
+    {t.locale === "ko" && <p className="about-words"><a href={WORDS_PATH}>{koOnly.practitioner.wordsLink}</a></p>}
     <details className="about-fold">
       <summary>{t("about.faqSummary")}</summary>
       <dl className="about-list">
