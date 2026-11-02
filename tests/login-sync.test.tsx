@@ -302,6 +302,57 @@ describe("locking with the 기록 암호", () => {
   });
 });
 
+describe("로그아웃 on the 기록 암호 steps", () => {
+  const toPassphraseStep = async () => {
+    openRecords();
+    press(copy.open);
+    fireEvent.click(within(panel()).getByLabelText(copy.consentAccount));
+    fireEvent.click(within(panel()).getByLabelText(copy.consentRecords));
+    type(copy.emailLabel, "me@example.com");
+    press(copy.sendCode);
+    await within(panel()).findByLabelText(copy.codeLabel);
+    type(copy.codeLabel, "123456");
+    press(copy.verify);
+  };
+
+  it("is not on the confirm button's line, and asks once before a 기록 암호 is set", async () => {
+    loginOn();
+    setClientFactoryForTests(factory);
+    await toPassphraseStep();
+    await within(panel()).findByLabelText(copy.passphrase);
+    const confirm = within(panel()).getByRole("button", { name: copy.setConfirm });
+    const signOutButton = within(panel()).getByRole("button", { name: copy.signOut });
+    expect(confirm.parentElement).not.toBe(signOutButton.parentElement);
+    expect(confirm.parentElement!.contains(signOutButton)).toBe(false);
+    // it comes after everything else in the section
+    expect(confirm.compareDocumentPosition(signOutButton) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
+
+    fireEvent.click(signOutButton);
+    expect(fake.sent.some((item) => item.what === "signOut")).toBe(false);
+    const ask = within(panel()).getByRole("group", { name: copy.signOutConfirmTitle });
+    fireEvent.click(within(ask).getByRole("button", { name: copy.signOutCancel }));
+    expect(getAccountState().phase).toBe("locked");
+    expect(fake.sent.some((item) => item.what === "signOut")).toBe(false);
+
+    fireEvent.click(within(panel()).getByRole("button", { name: copy.signOut }));
+    fireEvent.click(within(within(panel()).getByRole("group", { name: copy.signOutConfirmTitle })).getByRole("button", { name: copy.signOutConfirm }));
+    await waitFor(() => expect(getAccountState().phase).toBe("signed-out"));
+    expect(fake.sent.filter((item) => item.what === "signOut")).toHaveLength(1);
+  });
+
+  it("on another device, is apart from 열기 too", async () => {
+    loginOn();
+    setClientFactoryForTests(factory);
+    fake.db.vault = (await createVault(PASS, FAST)).row;
+    await toPassphraseStep();
+    await within(panel()).findByLabelText(copy.unlockLabel);
+    const confirm = within(panel()).getByRole("button", { name: copy.unlockConfirm });
+    const signOutButton = within(panel()).getByRole("button", { name: copy.signOut });
+    expect(confirm.parentElement).not.toBe(signOutButton.parentElement);
+    expect(confirm.parentElement!.contains(signOutButton)).toBe(false);
+  });
+});
+
 describe("what reaches the server", () => {
   it("holds none of the record's words, and neither the 기록 암호 nor the key is left in storage", async () => {
     loginOn();

@@ -702,6 +702,10 @@ export const koOnly = {
     importConfirm: "가져오기",
     importKeep: "이 기기에만 두기",
     signOut: "로그아웃",
+    // asked only before a 기록 암호 is set (2026-11-02)
+    signOutConfirmTitle: "아직 기록 암호를 정하지 않았어요. 로그아웃할까요?",
+    signOutConfirm: "로그아웃",
+    signOutCancel: "그만두기",
     deleteAccount: "계정 지우기",
     deleteConfirmTitle: "계정과 계정의 기록을 모두 지울까요?",
     deleteConfirmBody: "서버의 기록은 되살릴 수 없어요. 이 기기의 기록은 그대로 남아요.",

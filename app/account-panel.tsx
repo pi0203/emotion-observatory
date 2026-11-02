@@ -24,6 +24,7 @@ export function AccountPanel() {
   const [first, setFirst] = useState("");
   const [again, setAgain] = useState("");
   const [confirmingDelete, setConfirmingDelete] = useState(false);
+  const [confirmingSignOut, setConfirmingSignOut] = useState(false);
   const title = useRef<HTMLParagraphElement>(null);
   const { phase, busy, note } = account;
   // just signed in (code or email link): bring this section into view with its title focused, once
@@ -79,7 +80,6 @@ export function AccountPanel() {
       <input id="account-passphrase-again" className="text-input" type="password" autoComplete="new-password" maxLength={200} value={again} onChange={(event) => setAgain(event.target.value)} />
       <div className="quick-option-row">
         <button className="secondary-button" disabled={!first || !again || busy} onClick={() => void setPassphrase(first, again).then(clearSecrets)}>{copy.setConfirm}</button>
-        <button className="quiet-button" disabled={busy} onClick={() => void signOut()}>{copy.signOut}</button>
       </div>
     </div>;
   } else if (phase === "locked") {
@@ -92,7 +92,6 @@ export function AccountPanel() {
       <input id="account-unlock" className="text-input" type="password" autoComplete="current-password" maxLength={200} value={first} onChange={(event) => setFirst(event.target.value)} onKeyDown={(event) => { if (event.key === "Enter" && first) void unlock(first).then(clearSecrets); }} />
       <div className="quick-option-row">
         <button className="secondary-button" disabled={!first || busy} onClick={() => void unlock(first).then(clearSecrets)}>{copy.unlockConfirm}</button>
-        <button className="quiet-button" disabled={busy} onClick={() => void signOut()}>{copy.signOut}</button>
       </div>
     </div>;
   } else {
@@ -127,5 +126,16 @@ export function AccountPanel() {
     {body}
     {busy && <p className="small-note" role="status">{copy.working}</p>}
     {noteLine}
+    {/* on the 기록 암호 steps, 로그아웃 sits on its own line at the very end, away from the confirm button;
+        before a 기록 암호 is set it asks once (2026-11-02: a first login was ended by a tap meant for the step) */}
+    {phase === "locked" && (!confirmingSignOut
+      ? <div className="quick-option-row account-sign-out"><button className="quiet-button" disabled={busy} onClick={() => account.hasVault ? void signOut() : setConfirmingSignOut(true)}>{copy.signOut}</button></div>
+      : <div role="group" aria-labelledby="account-sign-out-title">
+          <p className="synthesis-question" id="account-sign-out-title">{copy.signOutConfirmTitle}</p>
+          <div className="quick-option-row">
+            <button className="secondary-button" disabled={busy} onClick={() => { setConfirmingSignOut(false); void signOut(); }}>{copy.signOutConfirm}</button>
+            <button className="quiet-button" onClick={() => setConfirmingSignOut(false)}>{copy.signOutCancel}</button>
+          </div>
+        </div>)}
   </section>;
 }
