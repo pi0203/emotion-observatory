@@ -47,6 +47,11 @@
   --tone-butter-paper: #F7F1DE; --tone-butter-card: #FFFCF2; --tone-butter-line: #E3D29E;
   --tone-mist-paper: #E3EEF3;   --tone-mist-card: #F5FAFC;   --tone-mist-line: #AFCBD8;
   /* Type scale, after the homepage (docs/DESIGN_ALIGNMENT.md §4): five steps instead of eleven sizes. */
+  /* sign-in buttons (login preview, 2026-11-02): each company's own colours, the same in both themes */
+  --brand-google-bg: #FFFFFF;  --brand-google-ink: #1F1F1F; --brand-google-line: #747775;
+  --brand-kakao-bg: #FEE500;   --brand-kakao-ink: rgba(0, 0, 0, .85);
+  --brand-naver-bg: #03C75A;   --brand-naver-ink: #FFFFFF;
+  --brand-apple-bg: #000000;   --brand-apple-ink: #FFFFFF;
   --t-aside: .76rem;        /* labels, meta, eyebrows (was 12 and 13px) */
   --t-small: .875rem;       /* notes and hints (was 14 and 15px) */
   --t-body: 1rem;           /* text, ledes, choices (was 16, 17 and 18px) */
@@ -59,6 +64,11 @@
   :root {
     color-scheme: dark;
     --accent: #8CA2FF;        /* filled light with dark text: 7.38:1 on paper */
+    /* sign-in buttons: the companies' colours as in light, except Apple, which offers a white button for dark backgrounds */
+    --brand-google-bg: #FFFFFF;  --brand-google-ink: #1F1F1F; --brand-google-line: #747775;
+    --brand-kakao-bg: #FEE500;   --brand-kakao-ink: rgba(0, 0, 0, .85);
+    --brand-naver-bg: #03C75A;   --brand-naver-ink: #FFFFFF;
+    --brand-apple-bg: #FFFFFF;   --brand-apple-ink: #000000;
     --accent-hover: #A3B4FF;
     --accent-press: #B8C5FF;
     --accent-soft: #8CA2FF;   /* a selected choice's background */
@@ -380,12 +390,12 @@ p, .lede, .hint, .step-note, .small-note, .summary-footnote { text-wrap: pretty;
 .account-sign-out { margin-top: 40px; padding-top: 18px; border-top: 1px solid var(--line); }
 /* sign-in buttons (2026-11-02): each company's colours from its own button guide; one column, full width, 48px tall */
 .login-buttons { display: grid; gap: 10px; max-width: 360px; margin-top: 20px; }
-.login-button { display: flex; align-items: center; justify-content: center; gap: 10px; min-height: 48px; padding: 0 16px; border-radius: 6px; font: 400 15px var(--font-sans); cursor: pointer; }
+.login-button { display: flex; align-items: center; justify-content: center; gap: 10px; min-height: 48px; padding: 0 16px; border-radius: 6px; font: 400 var(--t-body) var(--font-sans); cursor: pointer; }
 .login-button:disabled { opacity: .45; cursor: not-allowed; }
-.login-google { color: #1F1F1F; background: #FFFFFF; border: 1px solid #747775; }
-.login-kakao { color: rgba(0, 0, 0, .85); background: #FEE500; border: 0; border-radius: 12px; }
-.login-naver { color: #FFFFFF; background: #03C75A; border: 0; }
-.login-apple { color: #FFFFFF; background: #000000; border: 1px solid #000000; }
+.login-google { color: var(--brand-google-ink); background: var(--brand-google-bg); border: 1px solid var(--brand-google-line); }
+.login-kakao { color: var(--brand-kakao-ink); background: var(--brand-kakao-bg); border: 0; border-radius: 12px; }
+.login-naver { color: var(--brand-naver-ink); background: var(--brand-naver-bg); border: 0; }
+.login-apple { color: var(--brand-apple-ink); background: var(--brand-apple-bg); border: 1px solid var(--brand-apple-bg); }
 .login-email { color: var(--ink); background: var(--card); border: 1.5px solid var(--line-strong); }
 .lock-fields .small-note { margin: 8px 0 0; }
 
