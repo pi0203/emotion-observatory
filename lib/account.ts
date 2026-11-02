@@ -1,6 +1,6 @@
 import type { EmotionSession } from "./session-types";
 import { getStorageAdapter } from "./storage-adapter";
-import { OAUTH_PROVIDER, supabaseConfig, type LoginProvider } from "./supabase-config";
+import { loginAvailable, OAUTH_PROVIDER, supabaseConfig, type LoginProvider } from "./supabase-config";
 
 /**
  * The opt-in account: sign in, and the records follow to another device
@@ -22,7 +22,7 @@ import { OAUTH_PROVIDER, supabaseConfig, type LoginProvider } from "./supabase-c
 
 // ---------- the backend: the few Supabase calls this app makes ----------
 
-export type AuthErrorKey = "email-invalid" | "email-not-allowed" | "rate-limit" | "code-format" | "code-wrong-or-expired" | "link-expired" | "login-failed" | "attempt-failed" | "provider-failed" | "network";
+export type AuthErrorKey = "login-failed" | "attempt-failed" | "provider-failed" | "network";
 /** A record row as the server keeps it: one whole record in `data`. */
 export type RemoteRow = { id: string; data: unknown; updated_at: string };
 /** A row as sent: with its owner, since a record's id is unique only within one account (0002_records_per_account.sql). */
@@ -34,8 +34,6 @@ type SessionResult = Promise<{ data: { session: { user: User } | null }; error: 
 /** The subset of the Supabase client used here, so tests can hand in a fake one. */
 export type SupabaseLike = {
   auth: {
-    signInWithOtp(args: { email: string; options?: { shouldCreateUser?: boolean; emailRedirectTo?: string } }): Promise<{ error: unknown }>;
-    verifyOtp(args: { email: string; token: string; type: "email" }): Promise<{ data: { user: User | null } | null; error: unknown }>;
     getSession(): SessionResult;
     setSession(tokens: { access_token: string; refresh_token: string }): SessionResult;
     /** The ?code= return (PKCE): works when this browser started the sign-in. */
@@ -49,15 +47,6 @@ export type SupabaseLike = {
     upsert(rows: object[], options?: { onConflict?: string }): PromiseLike<{ error: unknown }>;
   };
   rpc(name: "delete_my_account"): PromiseLike<{ error: unknown }>;
-};
-
-const authError = (error: unknown): AuthErrorKey => {
-  const { code, status, message } = (error ?? {}) as { code?: string; status?: number; message?: string };
-  if (code === "over_email_send_rate_limit" || code === "over_request_rate_limit" || status === 429) return "rate-limit";
-  if (code === "otp_expired" || code === "invalid_credentials") return "code-wrong-or-expired";
-  if (code === "email_address_invalid" || code === "validation_failed") return "email-invalid";
-  if (code === "email_address_not_authorized" || /not authorized/i.test(message ?? "")) return "email-not-allowed";
-  return "network";
 };
 
 class BackendError extends Error {}
@@ -87,7 +76,7 @@ export const setClientFactoryForTests = (factory: () => Promise<SupabaseLike>) =
 export type AccountNote = AuthErrorKey | "sync-failed" | "deleted" | "signed-out";
 
 export type AccountState = {
-  phase: "off" | "signed-out" | "code-sent" | "signed-in";
+  phase: "off" | "signed-out" | "signed-in";
   busy: boolean;
   email?: string;
   /** How this account signs in, for the line shown when it has no email (Naver gives none). */
@@ -102,7 +91,7 @@ export type AccountState = {
   note?: AccountNote;
 };
 
-const initialState = (): AccountState => ({ phase: supabaseConfig() ? "signed-out" : "off", busy: false, remote: [], askImport: [] });
+const initialState = (): AccountState => ({ phase: loginAvailable() ? "signed-out" : "off", busy: false, remote: [], askImport: [] });
 
 let state: AccountState = initialState();
 const listeners = new Set<() => void>();
@@ -178,7 +167,7 @@ const HASH_KEYS = /(?:^#|&)(?:access_token|error_description|error)=/;
 const QUERY_KEYS = ["code", "error", "error_code", "error_description", "state"] as const;
 
 /**
- * True when the address carries the return from signing in: the email link or
+ * True when the address carries the return from signing in:
  * a provider button, as # tokens (implicit) or ?code= (PKCE), or their error.
  */
 export const isLinkReturn = () => {
@@ -226,7 +215,7 @@ const hasStoredLogin = () => {
 /** Supabase's name for how a user signs in, back to the button it came from. */
 const providerOf = (user: User): LoginProvider | undefined => {
   const name = user.app_metadata?.provider;
-  return (Object.keys(OAUTH_PROVIDER) as Exclude<LoginProvider, "email">[]).find((key) => OAUTH_PROVIDER[key] === name) ?? (name === "email" ? "email" : undefined);
+  return (Object.keys(OAUTH_PROVIDER) as LoginProvider[]).find((key) => OAUTH_PROVIDER[key] === name);
 };
 
 /** Signed in: the account's records come straight in, and this device's are offered once. */
@@ -245,7 +234,7 @@ export const clearArrived = () => { if (state.arrived) setState({ arrived: false
 
 /**
  * Picks up a login this browser already holds, or the one a return from
- * signing in brought (email link or provider button, # tokens or ?code=).
+ * signing in brought (a provider button, # tokens or ?code=).
  * Does nothing (and loads nothing) for a guest.
  *
  * A return that did not sign in (an error in the address, or a token or code
@@ -269,27 +258,9 @@ export const resumeAccount = async () => {
     if (data.session) {
       await signedIn(data.session.user, false);
       if (back) setState({ note: "attempt-failed" });
-    } else if (back) setState({ note: back.failed ? "login-failed" : "link-expired" });
+    } else if (back) setState({ note: "login-failed" });
   });
 };
-
-const EMAIL = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-
-export const sendCode = (email: string) => run(async () => {
-  const address = email.trim();
-  if (!EMAIL.test(address)) { setState({ note: "email-invalid" }); return; }
-  const { error } = await (await client()).auth.signInWithOtp({ email: address, options: { shouldCreateUser: true, emailRedirectTo: returnAddress() } });
-  if (error) { setState({ note: authError(error) }); return; }
-  setState({ phase: "code-sent", email: address });
-});
-
-export const verifyCode = (code: string) => run(async () => {
-  const token = code.replace(/\s/g, "");
-  if (!/^\d{6}$/.test(token)) { setState({ note: "code-format" }); return; }
-  const { data, error } = await (await client()).auth.verifyOtp({ email: state.email ?? "", token, type: "email" });
-  if (error || !data?.user) { setState({ note: authError(error) }); return; }
-  await signedIn(data.user, true);
-});
 
 /** Where every sign-in comes back to: this page, without any old query or token. */
 const returnAddress = () => `${window.location.origin}${window.location.pathname}`;
@@ -298,13 +269,11 @@ const returnAddress = () => `${window.location.origin}${window.location.pathname
  * 구글·카카오·네이버·Apple로 계속하기: the page leaves for the provider and comes
  * back to returnAddress(), where resumeAccount finishes the sign-in.
  */
-export const signInWith = (provider: Exclude<LoginProvider, "email">) => run(async () => {
+export const signInWith = (provider: LoginProvider) => run(async () => {
   const { error } = await (await client()).auth.signInWithOAuth({ provider: OAUTH_PROVIDER[provider], options: { redirectTo: returnAddress() } });
   if (error) setState({ note: "provider-failed" });
 });
 
-/** Back from the code step to the email step. */
-export const changeEmail = () => setState({ phase: "signed-out", note: undefined });
 
 const upload = async (sessions: EmotionSession[]) => {
   const userId = state.userId;

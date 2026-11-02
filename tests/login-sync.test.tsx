@@ -5,7 +5,7 @@ import { getAccountState, lastTouched, mergeRecords, recordSaved, resumeAccount,
 import { ko, koOnly } from "../lib/i18n/messages.ko";
 import type { EmotionSession } from "../lib/session-types";
 import { getStorageAdapter } from "../lib/storage-adapter";
-import { loginProviders } from "../lib/supabase-config";
+import { loginAvailable, loginProviders } from "../lib/supabase-config";
 
 /**
  * Login and records on the server (owner's decision 2026-11-02, changed the
@@ -28,20 +28,13 @@ const record = (id: string, at = "2026-10-01T09:04:00.000Z"): EmotionSession => 
 type Row = { user_id: string; id: string; data: EmotionSession; updated_at: string };
 type Fake = { client: SupabaseLike; sent: { what: string; value: unknown }[]; db: { records: Row[] }; signedInEarlier: () => void };
 type FakeUser = { id: string; email?: string; app_metadata?: { provider?: string } };
-const makeFake = (user: FakeUser = { id: USER, email: "me@example.com", app_metadata: { provider: "email" } }): Fake => {
+const makeFake = (user: FakeUser = { id: USER, email: "me@example.com", app_metadata: { provider: "google" } }): Fake => {
   const sent: Fake["sent"] = [];
   const db: Fake["db"] = { records: [] };
   let session: { user: typeof user } | null = null;
   const log = (what: string, value: unknown) => { sent.push({ what, value }); };
   const client = {
     auth: {
-      signInWithOtp: async (args: unknown) => { log("otp", args); return { error: null }; },
-      verifyOtp: async (args: { token: string }) => {
-        log("verify", args);
-        if (args.token !== "123456") return { data: null, error: { code: "otp_expired", status: 403 } };
-        session = { user };
-        return { data: { user }, error: null };
-      },
       getSession: async () => ({ data: { session }, error: null }),
       setSession: async (tokens: { access_token: string }) => {
         log("setSession", tokens.access_token);
@@ -71,35 +64,26 @@ const makeFake = (user: FakeUser = { id: USER, email: "me@example.com", app_meta
   return { client: client as unknown as SupabaseLike, sent, db, signedInEarlier: () => { session = { user }; } };
 };
 
-const loginOn = (providers?: string) => {
+const loginOn = (providers = "google,kakao,naver") => {
   vi.stubEnv("NEXT_PUBLIC_SUPABASE_URL", "https://example.supabase.co");
   vi.stubEnv("NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY", "sb_publishable_test");
-  vi.stubEnv("NEXT_PUBLIC_LOGIN_PROVIDERS", providers ?? "");
+  vi.stubEnv("NEXT_PUBLIC_LOGIN_PROVIDERS", providers);
 };
 const openRecords = () => { render(<Home />); fireEvent.click(screen.getByRole("button", { name: ko.landing.records })); };
 const panel = () => screen.getByRole("region", { name: copy.title });
 const type = (label: string, value: string) => fireEvent.change(within(panel()).getByLabelText(label), { target: { value } });
 const press = (name: string) => fireEvent.click(within(panel()).getByRole("button", { name }));
-const agree = () => {
-  fireEvent.click(within(panel()).getByLabelText(copy.consentAccount));
-  fireEvent.click(within(panel()).getByLabelText(copy.consentRecords));
-};
+const BOXES = [copy.consentAccount, copy.consentRecords, copy.consentAge];
+const agree = () => { for (const label of BOXES) fireEvent.click(within(panel()).getByLabelText(label)); };
 const loginButtons = () => [...panel().querySelectorAll(".login-buttons button")] as HTMLButtonElement[];
 
 let fake: Fake;
 const sentWhat = () => fake.sent.map((item) => item.what);
 
-/** Consent, 이메일로 계속하기, the address, the code. */
-const signInByCode = async () => {
-  openRecords();
-  press(copy.open);
-  agree();
-  press(copy.providers.email);
-  type(copy.emailLabel, "me@example.com");
-  press(copy.sendCode);
-  await within(panel()).findByLabelText(copy.codeLabel);
-  type(copy.codeLabel, "123456");
-  press(copy.verify);
+/** Back from a provider's sign-in with # tokens: the app opens on 다른 기기에서도 보기, signed in. */
+const signInByReturn = async () => {
+  window.history.replaceState(null, "", "/#access_token=good-access&refresh_token=good-refresh&token_type=bearer");
+  render(<Home />);
   await waitFor(() => expect(getAccountState().phase).toBe("signed-in"));
 };
 
@@ -165,12 +149,12 @@ describe("with the login values, a guest who never opens it", () => {
 describe("the sign-in buttons", () => {
   const labels = () => loginButtons().map((button) => button.textContent);
 
-  it("follow NEXT_PUBLIC_LOGIN_PROVIDERS, always in the order Google, Kakao, Naver, Apple, email", () => {
+  it("follow NEXT_PUBLIC_LOGIN_PROVIDERS, always in the order Google, Kakao, Naver, Apple, with no email login", () => {
     for (const [value, expected] of [
-      ["", ["email"]],
-      ["email", ["email"]],
-      ["google,email", ["google", "email"]],
-      ["email, apple ,NAVER,kakao,google", ["google", "kakao", "naver", "apple", "email"]],
+      ["", []],
+      ["email", []],
+      ["google,email", ["google"]],
+      ["email, apple ,NAVER,kakao,google", ["google", "kakao", "naver", "apple"]],
       ["google,line", ["google"]],
     ] as const) {
       vi.stubEnv("NEXT_PUBLIC_LOGIN_PROVIDERS", value);
@@ -183,36 +167,49 @@ describe("the sign-in buttons", () => {
     setClientFactoryForTests(factory);
     openRecords();
     press(copy.open);
-    expect(labels()).toEqual([copy.providers.google, copy.providers.email]);
+    expect(labels()).toEqual([copy.providers.google]);
     cleanup();
     loginOn("google,kakao,naver,apple,email");
     openRecords();
     press(copy.open);
-    expect(labels()).toEqual([copy.providers.google, copy.providers.kakao, copy.providers.naver, copy.providers.apple, copy.providers.email]);
-    cleanup();
-    loginOn();
-    openRecords();
-    press(copy.open);
-    expect(labels()).toEqual([copy.providers.email]);
+    expect(labels()).toEqual([copy.providers.google, copy.providers.kakao, copy.providers.naver, copy.providers.apple]);
+    expect(JSON.stringify(copy)).not.toMatch(/이메일로 계속하기|6자리 코드|코드 받기/);
   });
 
-  it("cannot be pressed before both agreements, which come before every button", () => {
-    loginOn("google,kakao,naver,apple,email");
+  it("draw no login entry at all when no way to sign in is set up, email included", async () => {
+    for (const value of ["", "email"]) {
+      loginOn(value);
+      setClientFactoryForTests(factory);
+      expect(loginAvailable()).toBe(false);
+      expect(getAccountState().phase).toBe("off");
+      openRecords();
+      expect(screen.queryByRole("region", { name: copy.title })).toBeNull();
+      await act(async () => { await resumeAccount(); });
+      expect(factory).not.toHaveBeenCalled();
+      cleanup();
+    }
+  });
+
+  it("cannot be pressed before all three agreements, age included, which come before every button", () => {
+    loginOn("google,kakao,naver,apple");
     setClientFactoryForTests(factory);
     openRecords();
     press(copy.open);
-    const boxes = [copy.consentAccount, copy.consentRecords].map((label) => within(panel()).getByLabelText(label));
+    const boxes = BOXES.map((label) => within(panel()).getByLabelText(label));
+    expect(boxes).toHaveLength(3);
     for (const button of loginButtons()) {
       expect(button, button.textContent!).toBeDisabled();
       for (const box of boxes) expect(box.compareDocumentPosition(button) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
       fireEvent.click(button);
     }
-    fireEvent.click(boxes[0]);
-    for (const button of loginButtons()) { expect(button).toBeDisabled(); fireEvent.click(button); }
-    expect(within(panel()).queryByLabelText(copy.emailLabel)).toBeNull();
+    // any two of the three are not enough
+    for (const missing of [0, 1, 2]) {
+      boxes.forEach((box, index) => { if ((box as HTMLInputElement).checked !== (index !== missing)) fireEvent.click(box); });
+      for (const button of loginButtons()) { expect(button).toBeDisabled(); fireEvent.click(button); }
+    }
     expect(fake.sent).toEqual([]);
     expect(factory).not.toHaveBeenCalled();
-    fireEvent.click(boxes[1]);
+    boxes.forEach((box) => { if (!(box as HTMLInputElement).checked) fireEvent.click(box); });
     for (const button of loginButtons()) expect(button).toBeEnabled();
   });
 
@@ -235,41 +232,27 @@ describe("the sign-in buttons", () => {
     ]);
   });
 
-  it("email asks for the address, then the code, and signs in with the first line 「로그인했어요.」 focused in view", async () => {
-    loginOn();
-    setClientFactoryForTests(factory);
-    await signInByCode();
-    expect(fake.sent.find((item) => item.what === "otp")?.value).toEqual({ email: "me@example.com", options: { shouldCreateUser: true, emailRedirectTo: `${window.location.origin}/` } });
-    expect(within(panel()).getByText(copy.arrived)).toBeTruthy();
-    await waitFor(() => expect(document.activeElement).toBe(within(panel()).getByText(copy.title)));
-  });
-
-  it("a wrong code reads as wrong or expired, and a short one is caught before sending", async () => {
+  it("come after the owner's consent wording (2026-11-02), shown in full, with the privacy policy link before the boxes", () => {
     loginOn();
     setClientFactoryForTests(factory);
     openRecords();
     press(copy.open);
-    agree();
-    press(copy.providers.email);
-    type(copy.emailLabel, "me@example.com");
-    press(copy.sendCode);
-    await within(panel()).findByLabelText(copy.codeLabel);
-    type(copy.codeLabel, "123");
-    press(copy.verify);
-    expect(await within(panel()).findByText(copy.notes["code-format"])).toBeTruthy();
-    type(copy.codeLabel, "654321");
-    press(copy.verify);
-    expect(await within(panel()).findByText(copy.notes["code-wrong-or-expired"])).toBeTruthy();
-  });
-
-  it("come after Aside's draft consent wording, shown in full, with no 기록 암호 left", () => {
-    loginOn();
-    setClientFactoryForTests(factory);
-    openRecords();
-    press(copy.open);
+    expect(copy.consentLead).toBe("로그인하면 다른 기기에서도 기록을 볼 수 있어요.");
+    expect(copy.consentPoints).toEqual([
+      "받는 것: 로그인한 계정의 이메일 주소(네이버는 식별 번호), 기록",
+      "기록은 서버에 저장돼요. 다른 사용자는 볼 수 없어요.",
+      "서비스를 관리하는 만든 사람은 관리 화면에서 기록을 볼 수 있어요. 필요한 경우에만 열어요.",
+      "서버는 Supabase(미국 회사)이고, 서울에 있어요.",
+      "만 14세 미만은 로그인할 수 없어요.",
+      "언제든 「계정 지우기」로 서버의 계정과 기록을 모두 지울 수 있어요.",
+    ]);
+    expect(BOXES).toEqual(["위 내용을 읽었고, 계정 정보와 기록을 맡기는 데 동의해요 (필수)", "감정 기록을 맡기는 데 따로 동의해요 (필수)", "만 14세 이상이에요 (필수)"]);
+    expect(copy.continueAsGuest).toBe("로그인 안 하고 계속 쓰기");
     const text = panel().textContent!;
-    for (const line of [copy.consentLead, ...copy.consentPoints, copy.consentAccount, copy.consentRecords, copy.continueAsGuest]) expect(text).toContain(line);
-    expect(copy.consentPoints).toContain("서비스를 관리하는 만든 사람은 관리 화면에서 기록을 볼 수 있어요.");
+    for (const line of [copy.consentLead, ...copy.consentPoints, copy.privacyLink, ...BOXES, copy.continueAsGuest]) expect(text).toContain(line);
+    const link = within(panel()).getByRole("link", { name: "개인정보 처리방침 보기" });
+    expect(link.getAttribute("href")).toBe("/privacy");
+    for (const label of BOXES) expect(link.compareDocumentPosition(within(panel()).getByLabelText(label)) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
     expect(JSON.stringify(copy)).not.toMatch(/기록 암호/);
   });
 });
@@ -322,12 +305,12 @@ describe("coming back signed in", () => {
     cleanup();
     setClientFactoryForTests(factory);
     arriveAt("/#access_token=old&refresh_token=old");
-    expect(await within(panel()).findByText(copy.notes["link-expired"])).toBeTruthy();
+    expect(await within(panel()).findByText(copy.notes["login-failed"])).toBeTruthy();
     expect(window.location.hash).toBe("");
     cleanup();
     setClientFactoryForTests(factory);
     arriveAt("/?code=from-another-browser");
-    expect(await within(panel()).findByText(copy.notes["link-expired"])).toBeTruthy();
+    expect(await within(panel()).findByText(copy.notes["login-failed"])).toBeTruthy();
     expect(window.location.search).toBe("");
   });
 });
@@ -359,7 +342,7 @@ describe("coming back from a failed sign-in while an earlier login is still held
 describe("an account without an email", () => {
   it("is named by how it signs in: 「네이버 계정으로 로그인했어요.」, and the same rule for the others", async () => {
     expect(copy.signedInWith.replace("{provider}", copy.providerNames.naver)).toBe("네이버 계정으로 로그인했어요.");
-    for (const [supabaseName, name] of [["custom:naver", "naver"], ["kakao", "kakao"], ["google", "google"], ["apple", "apple"], ["email", "email"]] as const) {
+    for (const [supabaseName, name] of [["custom:naver", "naver"], ["kakao", "kakao"], ["google", "google"], ["apple", "apple"]] as const) {
       for (const email of [undefined, ""]) {
         loginOn("google,kakao,naver,apple,email");
         fake = makeFake({ id: USER, email, app_metadata: { provider: supabaseName } });
@@ -396,7 +379,7 @@ describe("the records on the server", () => {
     loginOn();
     setClientFactoryForTests(factory);
     fake.db.records = [{ user_id: USER, id: ID_A, data: record(ID_A), updated_at: "2026-10-01T09:04:00+00:00" }];
-    await signInByCode();
+    await signInByReturn();
     expect(getAccountState().remote.map((item) => item.session.deepReflection?.context?.eventText)).toEqual([MEMO]);
     expect(screen.getAllByRole("button").some((button) => button.classList.contains("record-row"))).toBe(true);
     expect(getStorageAdapter().loadCompleted()).toEqual([]);
@@ -406,7 +389,7 @@ describe("the records on the server", () => {
     loginOn();
     setClientFactoryForTests(factory);
     getStorageAdapter().saveCompleted(record(ID_A));
-    await signInByCode();
+    await signInByReturn();
     expect(await within(panel()).findByText(copy.importQuestion.replace("{count}", "1"))).toBeTruthy();
     press(copy.importConfirm);
     await waitFor(() => expect(fake.db.records).toHaveLength(1));
@@ -430,7 +413,7 @@ describe("the records on the server", () => {
     setClientFactoryForTests(factory);
     const here = record(ID_A);
     getStorageAdapter().saveCompleted(here);
-    await signInByCode();
+    await signInByReturn();
     expect(sentWhat()).not.toContain("upsert:records");
     // saved while the question is still open: not sent
     recordSaved({ ...here, labelsLater: [{ label: "서운함", at: "2026-10-02T09:00:00.000Z" }] });
@@ -453,7 +436,7 @@ describe("the records on the server", () => {
   it("leave drafts on the device", async () => {
     loginOn();
     setClientFactoryForTests(factory);
-    await signInByCode();
+    await signInByReturn();
     recordSaved({ ...record(ID_B), status: "draft" });
     await act(async () => { await Promise.resolve(); });
     expect(sentWhat()).not.toContain("upsert:records");
@@ -464,7 +447,7 @@ describe("the records on the server", () => {
     setClientFactoryForTests(factory);
     const here = record(ID_A);
     getStorageAdapter().saveCompleted(here);
-    await signInByCode();
+    await signInByReturn();
     press(copy.importConfirm);
     await waitFor(() => expect(fake.db.records).toHaveLength(1));
     press(copy.deleteAccount);
@@ -480,7 +463,7 @@ describe("the records on the server", () => {
     loginOn();
     setClientFactoryForTests(factory);
     getStorageAdapter().saveCompleted(record(ID_A));
-    await signInByCode();
+    await signInByReturn();
     const importButton = within(panel()).getByRole("button", { name: copy.importConfirm });
     const signOutButton = within(panel()).getByRole("button", { name: copy.signOut });
     expect(importButton.parentElement).not.toBe(signOutButton.parentElement);

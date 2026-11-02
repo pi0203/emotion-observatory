@@ -396,7 +396,6 @@ p, .lede, .hint, .step-note, .small-note, .summary-footnote { text-wrap: pretty;
 .login-kakao { color: var(--brand-kakao-ink); background: var(--brand-kakao-bg); border: 0; border-radius: 12px; }
 .login-naver { color: var(--brand-naver-ink); background: var(--brand-naver-bg); border: 0; }
 .login-apple { color: var(--brand-apple-ink); background: var(--brand-apple-bg); border: 1px solid var(--brand-apple-bg); }
-.login-email { color: var(--ink); background: var(--card); border: 1.5px solid var(--line-strong); }
 .lock-fields .small-note { margin: 8px 0 0; }
 
 /* The one question at the end of the slower look (TalkToSomeoneQuestion). */
