@@ -2,17 +2,18 @@
 
 import { useEffect, useRef, useState, useSyncExternalStore } from "react";
 import { koOnly } from "../lib/i18n/messages.ko";
-import { changeEmail, clearArrived, deleteAccount, getAccountState, importLocal, keepLocal, sendCode, setPassphrase, signOut, subscribeAccount, unlock, verifyCode } from "../lib/account";
+import { changeEmail, clearArrived, deleteAccount, getAccountState, importLocal, keepLocal, sendCode, signOut, subscribeAccount, verifyCode } from "../lib/account";
 
 const copy = koOnly.account;
 
 /**
  * 「다른 기기에서도 보기」 at the foot of the records screen (owner's decision
- * 2026-11-02, preview only). Korean only, and drawn only where the login values
- * are set (app/emotion-app.tsx). The order: what is sent and two agreements →
- * email → 6-digit code (or the email's link) → a 기록 암호, set or typed → whether
- * this device's records go to the account. Nothing is sent before the two boxes
- * are ticked; a guest who never opens this sends nothing at all.
+ * 2026-11-02, changed the same day: no 기록 암호; preview only). Korean only,
+ * and drawn only where the login values are set (app/emotion-app.tsx). The
+ * order: what is sent and two agreements → email → 6-digit code (or the
+ * email's link) → signed in, the account's records shown, and whether this
+ * device's records go to the account. Nothing is sent before the two boxes are
+ * ticked; a guest who never opens this sends nothing at all.
  */
 export function AccountPanel() {
   const account = useSyncExternalStore(subscribeAccount, getAccountState, getAccountState);
@@ -21,15 +22,12 @@ export function AccountPanel() {
   const [agreeRecords, setAgreeRecords] = useState(false);
   const [email, setEmail] = useState("");
   const [code, setCode] = useState("");
-  const [first, setFirst] = useState("");
-  const [again, setAgain] = useState("");
   const [confirmingDelete, setConfirmingDelete] = useState(false);
-  const [confirmingSignOut, setConfirmingSignOut] = useState(false);
   const title = useRef<HTMLParagraphElement>(null);
   const { phase, busy, note } = account;
-  // just signed in (code or email link): bring this section into view with its title focused, once
+  // just signed in: bring this section into view with its title focused, once
   useEffect(() => {
-    if (!account.arrived || phase !== "locked") return;
+    if (!account.arrived || phase !== "signed-in") return;
     title.current?.scrollIntoView?.({ block: "start" });
     title.current?.focus();
     clearArrived();
@@ -37,7 +35,6 @@ export function AccountPanel() {
   if (phase === "off") return null;
 
   const noteLine = note && <p className="step-note" role={note === "deleted" || note === "signed-out" ? "status" : "alert"}>{copy.notes[note]}</p>;
-  const clearSecrets = () => { setFirst(""); setAgain(""); };
 
   let body: React.ReactNode;
   if (phase === "signed-out" && !open) {
@@ -68,35 +65,10 @@ export function AccountPanel() {
         <button className="quiet-button" onClick={() => { setCode(""); changeEmail(); }}>{copy.changeEmail}</button>
       </div>
     </>;
-  } else if (phase === "locked" && !account.hasVault) {
-    body = <div role="group" aria-labelledby="account-set-title">
-      <p className="small-note" role="status">{copy.arrivedSet}</p>
-      <p className="synthesis-question" id="account-set-title">{copy.setTitle}</p>
-      <p className="small-note">{copy.setIntro}</p>
-      <p className="small-note"><strong>{copy.forgetWarning}</strong></p>
-      <label className="lock-label" htmlFor="account-passphrase">{copy.passphrase}</label>
-      <input id="account-passphrase" className="text-input" type="password" autoComplete="new-password" maxLength={200} value={first} onChange={(event) => setFirst(event.target.value)} />
-      <label className="lock-label" htmlFor="account-passphrase-again">{copy.passphraseAgain}</label>
-      <input id="account-passphrase-again" className="text-input" type="password" autoComplete="new-password" maxLength={200} value={again} onChange={(event) => setAgain(event.target.value)} />
-      <div className="quick-option-row">
-        <button className="secondary-button" disabled={!first || !again || busy} onClick={() => void setPassphrase(first, again).then(clearSecrets)}>{copy.setConfirm}</button>
-      </div>
-    </div>;
-  } else if (phase === "locked") {
-    body = <div role="group" aria-labelledby="account-unlock-title">
-      <p className="small-note" role="status">{copy.arrivedUnlock}</p>
-      <p className="synthesis-question" id="account-unlock-title">{copy.unlockTitle}</p>
-      <p className="small-note">{copy.unlockIntro}</p>
-      <p className="small-note"><strong>{copy.forgetWarning}</strong></p>
-      <label className="lock-label" htmlFor="account-unlock">{copy.unlockLabel}</label>
-      <input id="account-unlock" className="text-input" type="password" autoComplete="current-password" maxLength={200} value={first} onChange={(event) => setFirst(event.target.value)} onKeyDown={(event) => { if (event.key === "Enter" && first) void unlock(first).then(clearSecrets); }} />
-      <div className="quick-option-row">
-        <button className="secondary-button" disabled={!first || busy} onClick={() => void unlock(first).then(clearSecrets)}>{copy.unlockConfirm}</button>
-      </div>
-    </div>;
   } else {
     body = <>
-      <p className="small-note">{copy.signedInAs.replace("{email}", account.email ?? "")} {copy.syncOn}</p>
+      <p className="small-note" role="status">{copy.arrived}</p>
+      <p className="small-note">{account.email ? `${copy.signedInAs.replace("{email}", account.email)} ` : ""}{copy.syncOn}</p>
       {account.askImport.length > 0 && <div role="group" aria-labelledby="account-import-question">
         <p className="synthesis-question" id="account-import-question">{copy.importQuestion.replace("{count}", String(account.askImport.length))}</p>
         <p className="small-note">{copy.importNote}</p>
@@ -105,19 +77,14 @@ export function AccountPanel() {
           <button className="quiet-button" disabled={busy} onClick={keepLocal}>{copy.importKeep}</button>
         </div>
       </div>}
-      {!confirmingDelete
-        ? <div className="quick-option-row">
-            <button className="quiet-button" disabled={busy} onClick={() => void signOut()}>{copy.signOut}</button>
-            <button className="quiet-button" disabled={busy} onClick={() => setConfirmingDelete(true)}>{copy.deleteAccount}</button>
-          </div>
-        : <div role="group" aria-labelledby="account-delete-title">
-            <p className="synthesis-question" id="account-delete-title">{copy.deleteConfirmTitle}</p>
-            <p className="small-note">{copy.deleteConfirmBody}</p>
-            <div className="quick-option-row">
-              <button className="secondary-button" disabled={busy} onClick={() => { setConfirmingDelete(false); void deleteAccount(); }}>{copy.deleteConfirm}</button>
-              <button className="quiet-button" onClick={() => setConfirmingDelete(false)}>{copy.deleteCancel}</button>
-            </div>
-          </div>}
+      {confirmingDelete && <div role="group" aria-labelledby="account-delete-title">
+        <p className="synthesis-question" id="account-delete-title">{copy.deleteConfirmTitle}</p>
+        <p className="small-note">{copy.deleteConfirmBody}</p>
+        <div className="quick-option-row">
+          <button className="secondary-button" disabled={busy} onClick={() => { setConfirmingDelete(false); void deleteAccount(); }}>{copy.deleteConfirm}</button>
+          <button className="quiet-button" onClick={() => setConfirmingDelete(false)}>{copy.deleteCancel}</button>
+        </div>
+      </div>}
     </>;
   }
 
@@ -126,16 +93,10 @@ export function AccountPanel() {
     {body}
     {busy && <p className="small-note" role="status">{copy.working}</p>}
     {noteLine}
-    {/* on the 기록 암호 steps, 로그아웃 sits on its own line at the very end, away from the confirm button;
-        before a 기록 암호 is set it asks once (2026-11-02: a first login was ended by a tap meant for the step) */}
-    {phase === "locked" && (!confirmingSignOut
-      ? <div className="quick-option-row account-sign-out"><button className="quiet-button" disabled={busy} onClick={() => account.hasVault ? void signOut() : setConfirmingSignOut(true)}>{copy.signOut}</button></div>
-      : <div role="group" aria-labelledby="account-sign-out-title">
-          <p className="synthesis-question" id="account-sign-out-title">{copy.signOutConfirmTitle}</p>
-          <div className="quick-option-row">
-            <button className="secondary-button" disabled={busy} onClick={() => { setConfirmingSignOut(false); void signOut(); }}>{copy.signOutConfirm}</button>
-            <button className="quiet-button" onClick={() => setConfirmingSignOut(false)}>{copy.signOutCancel}</button>
-          </div>
-        </div>)}
+    {/* 로그아웃 and 계정 지우기 on their own line at the very end, away from the step's buttons (2026-11-02) */}
+    {phase === "signed-in" && !confirmingDelete && <div className="quick-option-row account-sign-out">
+      <button className="quiet-button" disabled={busy} onClick={() => void signOut()}>{copy.signOut}</button>
+      <button className="quiet-button" disabled={busy} onClick={() => setConfirmingDelete(true)}>{copy.deleteAccount}</button>
+    </div>}
   </section>;
 }

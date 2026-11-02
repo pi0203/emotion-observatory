@@ -655,9 +655,9 @@ export const koOnly = {
   /** After the answer to 「기록은 어디에 저장되나요?」. */
   termsStorageLink: "자세히: 이용약관 제6조",
   /**
-   * 「다른 기기에서도 보기」 on the records screen: login and locked records
-   * (owner's decision 2026-11-02, preview only; shown only where the login
-   * values are set). The consent wording is Aside's draft, 초안, 본인 확정 전.
+   * 「다른 기기에서도 보기」 on the records screen: login, and records stored on
+   * the server (owner's decision 2026-11-02, changed the same day: no 기록 암호;
+   * preview only; shown only where the login values are set).
    */
   account: {
     title: "다른 기기에서도 보기",
@@ -665,14 +665,14 @@ export const koOnly = {
     // 초안, 본인 확정 전 (Aside, 2026-11-02): from here to consentRecords
     consentLead: "로그인하면 다른 기기에서도 기록을 볼 수 있어요.",
     consentPoints: [
-      "받는 것: 이메일 주소, 잠긴 기록",
-      "기록은 기록 암호로 이 기기에서 잠근 뒤에 보내요. 만든 사람도 내용을 볼 수 없어요.",
-      "기록 암호를 잊으면 서버의 기록은 되살릴 수 없어요.",
+      "받는 것: 로그인한 계정의 이메일 주소, 기록",
+      "기록은 서버에 저장돼요. 다른 사용자는 볼 수 없어요.",
+      "서비스를 관리하는 만든 사람은 관리 화면에서 기록을 볼 수 있어요.",
       "서버는 Supabase(미국 회사)이고, 서울에 있어요.",
-      "언제든 「계정 지우기」로 모두 지울 수 있어요.",
+      "언제든 「계정 지우기」로 서버의 이메일과 기록을 모두 지울 수 있어요.",
     ],
-    consentAccount: "위 내용을 읽었고, 이메일과 잠긴 기록을 맡기는 데 동의해요 (필수)",
-    consentRecords: "감정 기록(잠긴 상태)을 맡기는 데 따로 동의해요 (필수)",
+    consentAccount: "위 내용을 읽었고, 이메일과 기록을 맡기는 데 동의해요 (필수)",
+    consentRecords: "감정 기록을 맡기는 데 따로 동의해요 (필수)",
     continueAsGuest: "로그인 안 하고 계속 쓰기",
     emailLabel: "이메일 주소",
     sendCode: "코드 받기",
@@ -682,33 +682,18 @@ export const koOnly = {
     verify: "확인",
     resend: "다시 보내기",
     changeEmail: "이메일 다시 쓰기",
-    // the first line right after signing in, by code or by the email link (2026-11-02)
-    arrivedSet: "로그인했어요. 이제 기록 암호를 정해 주세요.",
-    arrivedUnlock: "로그인했어요. 기록 암호를 넣어 주세요.",
-    setTitle: "기록 암호 정하기",
-    setIntro: "기록은 이 암호로 이 기기에서 잠근 뒤에 보내요. 다른 기기에서는 같은 암호로 열어요.",
-    forgetWarning: "이 암호를 잊으면 서버의 기록은 누구도 되살릴 수 없어요.",
-    passphrase: "기록 암호 (8자 이상)",
-    passphraseAgain: "기록 암호 한 번 더",
-    setConfirm: "기록 암호 정하기",
-    unlockTitle: "기록 암호 넣기",
-    unlockIntro: "이 계정의 기록을 열려면 기록 암호를 넣어 주세요. 새로 고치면 다시 물어요.",
-    unlockLabel: "기록 암호",
-    unlockConfirm: "열기",
-    signedInAs: "{email}로 로그인했어요.",
-    syncOn: "이 기기에서 저장하는 기록은 잠근 뒤 계정에도 올라가요.",
+    // the first line right after signing in, however it was done (2026-11-02)
+    arrived: "로그인했어요.",
+    signedInAs: "{email} 계정이에요.",
+    syncOn: "이 기기에서 저장하는 기록은 계정에도 올라가요.",
     importQuestion: "이 기기의 기록 {count}개를 계정으로 가져올까요?",
     importNote: "고르지 않은 기록은 이 기기에만 남아요. 고른 것은 다시 묻지 않아요.",
     importConfirm: "가져오기",
     importKeep: "이 기기에만 두기",
     signOut: "로그아웃",
-    // asked only before a 기록 암호 is set (2026-11-02)
-    signOutConfirmTitle: "아직 기록 암호를 정하지 않았어요. 로그아웃할까요?",
-    signOutConfirm: "로그아웃",
-    signOutCancel: "그만두기",
     deleteAccount: "계정 지우기",
     deleteConfirmTitle: "계정과 계정의 기록을 모두 지울까요?",
-    deleteConfirmBody: "서버의 기록은 되살릴 수 없어요. 이 기기의 기록은 그대로 남아요.",
+    deleteConfirmBody: "서버의 이메일과 기록은 되살릴 수 없어요. 이 기기의 기록은 그대로 남아요.",
     deleteConfirm: "계정 지우기",
     deleteCancel: "그만두기",
     working: "잠시만요…",
@@ -718,12 +703,8 @@ export const koOnly = {
       "rate-limit": "메일을 너무 자주 보냈어요. 조금 뒤에 다시 해 주세요.",
       "code-format": "코드는 숫자 6자리예요.",
       "code-wrong-or-expired": "코드가 틀렸거나 시간이 지났어요. 다시 넣거나 새 코드를 받아 주세요.",
-      "link-expired": "링크 시간이 지났어요. 코드를 다시 받아 주세요.",
+      "link-expired": "로그인하지 못했어요. 링크 시간이 지났거나 취소됐어요. 다시 해 주세요.",
       network: "연결이 안 됐어요. 조금 뒤에 다시 해 주세요.",
-      "passphrase-short": "기록 암호는 8자 이상이어야 해요.",
-      "passphrase-mismatch": "두 번 넣은 기록 암호가 달라요.",
-      "passphrase-wrong": "기록 암호가 틀렸어요.",
-      "vault-damaged": "계정의 기록 암호 정보를 읽을 수 없어요.",
       "sync-failed": "계정에 올리지 못했어요. 이 기기의 기록은 그대로 있어요.",
       deleted: "계정을 지웠어요. 이 기기의 기록은 그대로 있어요.",
       "signed-out": "로그아웃했어요. 이 기기의 기록은 그대로 있어요.",

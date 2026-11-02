@@ -1,18 +1,18 @@
 import type { EmotionSession } from "./session-types";
 import { getStorageAdapter } from "./storage-adapter";
 import { supabaseConfig } from "./supabase-config";
-import { createVault, lastTouched, lockRecord, MIN_PASSPHRASE_LENGTH, openVault, unlockRecord, type VaultRow } from "./vault-crypto";
 
 /**
- * The opt-in account: email code login and records synced only after they are
- * locked on this device (owner's decision 2026-11-02, preview only).
+ * The opt-in account: sign in, and the records follow to another device
+ * (owner's decision 2026-11-02, changed the same day: no 기록 암호; preview only).
  *
  * - Guest first. Nothing here runs, and no client is even loaded, unless the
  *   login values are set (lib/supabase-config.ts) and the person opens the
- *   login, already has a login stored in this browser, or comes back from the
- *   email's link. A guest's records never leave the device.
- * - The 기록 암호 and the key made from it are held in this module's memory
- *   only. Reloading the page forgets them, and the screen asks again.
+ *   login, already has a login stored in this browser, or comes back from
+ *   signing in. A guest's records never leave the device.
+ * - Records are stored on the server as they are. Row level security lets each
+ *   account read only its own rows; the maker can see them in Supabase's
+ *   dashboard, and the consent says so.
  * - Records on this device are never deleted or overwritten by the account.
  *   Existing records go to the account only after 「가져오기」; that choice is
  *   remembered per account and not asked again.
@@ -23,23 +23,25 @@ import { createVault, lastTouched, lockRecord, MIN_PASSPHRASE_LENGTH, openVault,
 // ---------- the backend: the few Supabase calls this app makes ----------
 
 export type AuthErrorKey = "email-invalid" | "email-not-allowed" | "rate-limit" | "code-format" | "code-wrong-or-expired" | "link-expired" | "network";
-export type RemoteRow = { id: string; blob: string; updated_at: string };
+/** A record row as the server keeps it: one whole record in `data`. */
+export type RemoteRow = { id: string; data: unknown; updated_at: string };
 /** A row as sent: with its owner, since a record's id is unique only within one account (0002_records_per_account.sql). */
-type SentRow = RemoteRow & { user_id: string };
-type Result<T> = { ok: true; value: T } | { ok: false; error: AuthErrorKey };
+type SentRow = { user_id: string; id: string; data: EmotionSession; updated_at: string };
+
+type User = { id: string; email?: string };
+type SessionResult = Promise<{ data: { session: { user: User } | null }; error: unknown }>;
 
 /** The subset of the Supabase client used here, so tests can hand in a fake one. */
 export type SupabaseLike = {
   auth: {
     signInWithOtp(args: { email: string; options?: { shouldCreateUser?: boolean; emailRedirectTo?: string } }): Promise<{ error: unknown }>;
-    verifyOtp(args: { email: string; token: string; type: "email" }): Promise<{ data: { user: { id: string; email?: string } | null } | null; error: unknown }>;
-    getSession(): Promise<{ data: { session: { user: { id: string; email?: string } } | null }; error: unknown }>;
-    setSession(tokens: { access_token: string; refresh_token: string }): Promise<{ data: { session: { user: { id: string; email?: string } } | null }; error: unknown }>;
+    verifyOtp(args: { email: string; token: string; type: "email" }): Promise<{ data: { user: User | null } | null; error: unknown }>;
+    getSession(): SessionResult;
+    setSession(tokens: { access_token: string; refresh_token: string }): SessionResult;
     signOut(args?: { scope?: "global" | "local" | "others" }): Promise<{ error: unknown }>;
   };
-  from(table: "vault" | "records"): {
-    select(columns: string): PromiseLike<{ data: unknown; error: unknown }> & { maybeSingle(): PromiseLike<{ data: unknown; error: unknown }> };
-    insert(row: object): PromiseLike<{ error: unknown }>;
+  from(table: "records"): {
+    select(columns: string): PromiseLike<{ data: unknown; error: unknown }>;
     upsert(rows: object[], options?: { onConflict?: string }): PromiseLike<{ error: unknown }>;
   };
   rpc(name: "delete_my_account"): PromiseLike<{ error: unknown }>;
@@ -61,9 +63,9 @@ let clientFactory: () => Promise<SupabaseLike> = async () => {
   const config = supabaseConfig();
   if (!config) throw new BackendError("login is off");
   const { createClient } = await import("@supabase/supabase-js");
-  // the email link is read by resumeAccount, not by the library: the library clears
-  // the address with location.hash = "", a navigation Next.js did not make, and the
-  // page lost its place (2026-11-02, the first link login landed on the first screen)
+  // the return from signing in is read by resumeAccount, not by the library: the
+  // library clears the address with location.hash = "", a navigation Next.js did
+  // not make, and the page lost its place (2026-11-02, the first link login)
   return createClient(config.url, config.key, { auth: { detectSessionInUrl: false } }) as unknown as SupabaseLike;
 };
 let clientPromise: Promise<SupabaseLike> | null = null;
@@ -73,24 +75,21 @@ const client = () => (clientPromise ??= clientFactory());
 export const setClientFactoryForTests = (factory: () => Promise<SupabaseLike>) => {
   clientFactory = factory;
   clientPromise = null;
-  passphraseKey = null;
   setState(initialState());
 };
 
 // ---------- the state the screen draws ----------
 
-export type AccountNote = AuthErrorKey | "passphrase-short" | "passphrase-mismatch" | "passphrase-wrong" | "vault-damaged" | "sync-failed" | "deleted" | "signed-out";
+export type AccountNote = AuthErrorKey | "sync-failed" | "deleted" | "signed-out";
 
 export type AccountState = {
-  phase: "off" | "signed-out" | "code-sent" | "locked" | "unlocked";
+  phase: "off" | "signed-out" | "code-sent" | "signed-in";
   busy: boolean;
   email?: string;
   userId?: string;
-  /** Only meaningful while locked: true when this account already has a 기록 암호. */
-  hasVault?: boolean;
-  /** True right after signing in by code or by the email link: the screen moves to the next step once, then clears it. */
+  /** True right after signing in: the screen moves to 다른 기기에서도 보기 once, then clears it. */
   arrived?: boolean;
-  /** The records in the account, unlocked, with when each last changed. Memory only. */
+  /** The records in the account, with when each last changed. Memory only. */
   remote: { session: EmotionSession; updatedAt: string }[];
   /** This device's records still waiting for the 「가져오기」 answer; empty when not asking. */
   askImport: string[];
@@ -110,9 +109,6 @@ export const subscribeAccount = (listener: () => void) => {
   listeners.add(listener);
   return () => { listeners.delete(listener); };
 };
-
-// the key from the 기록 암호: this variable, and nowhere else
-let passphraseKey: CryptoKey | null = null;
 
 const run = async (work: () => Promise<void>) => {
   setState({ busy: true, note: undefined });
@@ -146,6 +142,29 @@ const writeChoice = (userId: string, choice: Choice | null) => {
   }
 };
 
+// ---------- when a record last changed ----------
+
+/**
+ * The latest ISO time anywhere in a record (createdAt, completedAt, a
+ * follow-up's or a later name's `at`). Records carry no updatedAt of their
+ * own, and every change a person makes after finishing stamps a time, so this
+ * is what 「updated_at이 새것」 compares.
+ */
+export const lastTouched = (session: EmotionSession): string => {
+  let latest = session.createdAt ?? "";
+  const walk = (value: unknown) => {
+    if (typeof value === "string") {
+      if (/^\d{4}-\d{2}-\d{2}T/.test(value) && value > latest) latest = value;
+    } else if (Array.isArray(value)) value.forEach(walk);
+    else if (value && typeof value === "object") Object.values(value).forEach(walk);
+  };
+  walk(session);
+  return latest;
+};
+
+const newer = (a: string, b: string) => Date.parse(a) > Date.parse(b);
+const isRecord = (value: unknown): value is EmotionSession => Boolean(value && typeof value === "object" && typeof (value as EmotionSession).id === "string");
+
 // ---------- the steps ----------
 
 /** True when the address bar carries the email link's sign-in (or its error). */
@@ -171,13 +190,17 @@ const hasStoredLogin = () => {
   }
 };
 
-const signedIn = async (user: { id: string; email?: string }, arrived: boolean) => {
-  const { data, error } = await (await client()).from("vault").select("kdf, check_blob").maybeSingle();
+/** Signed in: the account's records come straight in, and this device's are offered once. */
+const signedIn = async (user: User, arrived: boolean) => {
+  const { data, error } = await (await client()).from("records").select("id, data, updated_at");
   check(error);
-  setState({ phase: "locked", userId: user.id, email: user.email ?? state.email, hasVault: Boolean(data), arrived });
+  const remote = ((data ?? []) as RemoteRow[]).filter((row) => isRecord(row.data)).map((row) => ({ session: row.data as EmotionSession, updatedAt: row.updated_at }));
+  const chosen = readChoices()[user.id];
+  const local = getStorageAdapter().loadCompleted();
+  setState({ phase: "signed-in", userId: user.id, email: user.email ?? state.email, arrived, remote, askImport: chosen ? [] : local.map((session) => session.id) });
 };
 
-/** The screen has moved to the next step; do not move it again. */
+/** The screen has moved to 다른 기기에서도 보기; do not move it again. */
 export const clearArrived = () => { if (state.arrived) setState({ arrived: false }); };
 
 /**
@@ -225,59 +248,15 @@ export const verifyCode = (code: string) => run(async () => {
 /** Back from the code step to the email step. */
 export const changeEmail = () => setState({ phase: "signed-out", note: undefined });
 
-const unlocked = async (key: CryptoKey) => {
-  passphraseKey = key;
-  const { data, error } = await (await client()).from("records").select("id, blob, updated_at");
-  check(error);
-  const remote: AccountState["remote"] = [];
-  for (const row of (data ?? []) as RemoteRow[]) {
-    const session = await unlockRecord(key, row.blob);
-    if (session) remote.push({ session, updatedAt: row.updated_at });
-  }
-  const userId = state.userId ?? "";
-  const chosen = readChoices()[userId];
-  const local = getStorageAdapter().loadCompleted();
-  setState({ phase: "unlocked", remote, askImport: chosen ? [] : local.map((session) => session.id) });
-};
-
-/** First device: a new 기록 암호, typed twice, at least eight characters. */
-export const setPassphrase = (passphrase: string, again: string) => run(async () => {
-  if (passphrase.length < MIN_PASSPHRASE_LENGTH) { setState({ note: "passphrase-short" }); return; }
-  if (passphrase !== again) { setState({ note: "passphrase-mismatch" }); return; }
-  const { row, key } = await createVault(passphrase, iterationsForTests ?? undefined);
-  const { error } = await (await client()).from("vault").insert(row);
-  check(error);
-  await unlocked(key);
-});
-
-/** Another device, or after a reload: the same 기록 암호 opens the same key. */
-export const unlock = (passphrase: string) => run(async () => {
-  const { data, error } = await (await client()).from("vault").select("kdf, check_blob").maybeSingle();
-  check(error);
-  if (!data) { setState({ hasVault: false }); return; }
-  const result = await openVault(data as VaultRow, passphrase);
-  if (!result.ok) { setState({ note: result.error === "damaged" ? "vault-damaged" : "passphrase-wrong" }); return; }
-  await unlocked(result.key);
-});
-
-let iterationsForTests: number | null = null;
-/** Tests only: a small PBKDF2 count so the suite stays fast. */
-export const setIterationsForTests = (iterations: number | null) => { iterationsForTests = iterations; };
-
 const upload = async (sessions: EmotionSession[]) => {
-  const key = passphraseKey;
-  if (!key || sessions.length === 0) return;
   const userId = state.userId;
-  if (!key || !userId) return;
-  const rows: SentRow[] = [];
-  for (const session of sessions) rows.push({ user_id: userId, id: session.id, blob: await lockRecord(key, session), updated_at: lastTouched(session) });
+  if (!userId || sessions.length === 0) return;
+  const rows: SentRow[] = sessions.map((session) => ({ user_id: userId, id: session.id, data: session, updated_at: lastTouched(session) }));
   const { error } = await (await client()).from("records").upsert(rows, { onConflict: "user_id,id" });
   check(error);
-  const sent = new Map(sessions.map((session) => [session.id, session]));
-  setState({ remote: [...state.remote.filter((item) => !sent.has(item.session.id)), ...rows.map((row) => ({ session: sent.get(row.id)!, updatedAt: row.updated_at }))] });
+  const sent = new Set(rows.map((row) => row.id));
+  setState({ remote: [...state.remote.filter((item) => !sent.has(item.session.id)), ...rows.map((row) => ({ session: row.data, updatedAt: row.updated_at }))] });
 };
-
-const newer = (a: string, b: string) => Date.parse(a) > Date.parse(b);
 
 /** 「가져오기」: this device's records go to the account, except where the account already holds a newer copy. */
 export const importLocal = () => run(async () => {
@@ -301,20 +280,19 @@ export const keepLocal = () => {
 };
 
 /**
- * Called after every save on this device. While signed in and unlocked, a
- * finished or stopped record is locked and sent; a draft, a record kept on
- * this device, or one still waiting for the 가져오기 answer is not.
+ * Called after every save on this device. While signed in, a finished or
+ * stopped record is sent; a draft, a record kept on this device, or one still
+ * waiting for the 가져오기 answer is not.
  */
 export const recordSaved = (session: EmotionSession) => {
-  if (state.phase !== "unlocked" || !passphraseKey || session.status === "draft") return;
+  if (state.phase !== "signed-in" || session.status === "draft") return;
   if (state.askImport.includes(session.id)) return;
   if (readChoices()[state.userId ?? ""]?.keptIds.includes(session.id)) return;
   void upload([session]).catch(() => setState({ note: "sync-failed" }));
 };
 
 const forget = (note: AccountNote) => {
-  passphraseKey = null;
-  setState({ phase: "signed-out", email: undefined, userId: undefined, hasVault: undefined, arrived: false, remote: [], askImport: [], note });
+  setState({ phase: "signed-out", email: undefined, userId: undefined, arrived: false, remote: [], askImport: [], note });
 };
 
 export const signOut = () => run(async () => {

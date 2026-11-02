@@ -31,17 +31,16 @@ export type LockedFile = {
   data: string;
 };
 
-export const toBase64 = (bytes: Uint8Array) => {
+const toBase64 = (bytes: Uint8Array) => {
   let text = "";
   for (let i = 0; i < bytes.length; i += 0x8000) text += String.fromCharCode(...bytes.subarray(i, i + 0x8000));
   return btoa(text);
 };
-export const fromBase64 = (text: string) => Uint8Array.from(atob(text), (char) => char.charCodeAt(0));
+const fromBase64 = (text: string) => Uint8Array.from(atob(text), (char) => char.charCodeAt(0));
 
-/** Also used by lib/vault-crypto.ts for the records sent to an account (2026-11-02). */
-export const deriveKey = async (passphrase: string, salt: Uint8Array, iterations: number, usage: KeyUsage | KeyUsage[]) => {
+const deriveKey = async (passphrase: string, salt: Uint8Array, iterations: number, usage: KeyUsage) => {
   const material = await crypto.subtle.importKey("raw", new TextEncoder().encode(passphrase), "PBKDF2", false, ["deriveKey"]);
-  return crypto.subtle.deriveKey({ name: "PBKDF2", hash: "SHA-256", salt: salt as BufferSource, iterations }, material, { name: "AES-GCM", length: 256 }, false, Array.isArray(usage) ? usage : [usage]);
+  return crypto.subtle.deriveKey({ name: "PBKDF2", hash: "SHA-256", salt: salt as BufferSource, iterations }, material, { name: "AES-GCM", length: 256 }, false, [usage]);
 };
 
 export const lockExport = async (file: ExportFile, passphrase: string, iterations: number = KDF_ITERATIONS): Promise<LockedFile> => {
