@@ -434,7 +434,7 @@ function AboutTool() {
       <summary>{koOnly.practitioner.summary}</summary>
       <ul className="about-list">
         {koOnly.practitioner.lines.map((line, index) => <li key={index} style={{ "--rise-order": index } as CSSProperties}><p>{line}</p></li>)}
-        <li style={{ "--rise-order": koOnly.practitioner.lines.length } as CSSProperties}><p>{koOnly.practitioner.mailBefore}<a href={`mailto:${koOnly.practitioner.mailAddress}`}>{koOnly.practitioner.mailAddress}</a>{koOnly.practitioner.mailAfter}</p></li>
+        <li style={{ "--rise-order": koOnly.practitioner.lines.length } as CSSProperties}><p className="about-mail">{koOnly.practitioner.mailBefore}<a href={`mailto:${koOnly.practitioner.mailAddress}`}>{koOnly.practitioner.mailAddress}</a>{koOnly.practitioner.mailAfter}</p></li>
       </ul>
     </details>}
     <details className="about-fold">

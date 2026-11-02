@@ -670,7 +670,7 @@ export const koOnly = {
     ],
     mailBefore: "단어 목록, 문장, 안전 안내에서 걸리는 곳이 있으면 ",
     mailAddress: "a5897@icloud.com",
-    mailAfter: " 으로 알려 주세요. 내담자 정보나 사례는 적지 말아 주세요.",
+    mailAfter: "으로 알려 주세요. 내담자 정보나 사례는 적지 말아 주세요.",
   },
 } as const;
 
