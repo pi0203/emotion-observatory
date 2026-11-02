@@ -291,7 +291,7 @@ function TermsText({ text }: { text: string }) {
       case "text": return piece.text;
       case "bold": return <strong key={index}>{piece.pieces.map(draw)}</strong>;
       case "date": return piece.which === "effective" ? TERMS_EFFECTIVE : CONTACTS_CHECKED_ON;
-      case "line": return <a key={index} href={t(`crisis.href${piece.line}`)}>{t(`crisis.num${piece.line}`)}</a>;
+      case "line": return <a key={index} className="terms-tel" href={t(`crisis.href${piece.line}`)}>{t(`crisis.num${piece.line}`)}</a>;
       case "link": return <a key={index} href={piece.to === "mail" ? TERMS_MAIL : `${HOMEPAGE}/`}>{piece.text}</a>;
     }
   };

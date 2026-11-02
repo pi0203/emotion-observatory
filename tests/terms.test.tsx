@@ -77,6 +77,14 @@ describe("the helplines in 제8조", () => {
     expect(dialled.slice(2).map(([number]) => number)).toEqual([ko.crisis.num109, ko.crisis.num1577, ko.crisis.num1388]);
   });
 
+  it("are each kept on one line, like the crisis card's numbers", () => {
+    render(<Terms />);
+    const numbers = [...document.querySelectorAll("article.terms a[href^='tel:']")];
+    expect(numbers.map((a) => a.textContent)).toEqual([ko.crisis.num119, ko.crisis.num112, ko.crisis.num109, ko.crisis.num1577, ko.crisis.num1388]);
+    for (const a of numbers) expect(a.classList.contains("terms-tel"), a.textContent!).toBe(true);
+    expect(readFileSync("app/globals.css", "utf8")).toMatch(/\.terms-tel \{[^}]*text-wrap: nowrap;[^}]*\}/);
+  });
+
   it("keep the card's names and hours beside each number", () => {
     render(<Terms />);
     const text = article("article-8").textContent!;

@@ -280,6 +280,7 @@ p, .lede, .hint, .step-note, .small-note, .summary-footnote { text-wrap: pretty;
 .terms ul, .terms ol { margin: 0 0 12px; padding-left: 1.4em; }
 .terms li { margin-bottom: 6px; }
 .terms strong { font-weight: 700; }
+.terms-tel { text-wrap: nowrap; } /* a number is never split across lines (1577-0199 broke at 390px), as on the crisis card */
 @keyframes rise-in { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: none; } }
 
 /* The basis band above each question (from the landing guide work): which moment
