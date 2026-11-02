@@ -1,4 +1,4 @@
-import { defineConfig } from "vitest/config";
+import { configDefaults, defineConfig } from "vitest/config";
 
 /**
  * Node 25+ turns on an experimental `localStorage` global that stays
@@ -14,6 +14,8 @@ export default defineConfig({
   test: {
     environment: "jsdom",
     setupFiles: ["./tests/setup.ts"],
+    // Supabase Edge Functions run on Deno, not here (supabase/functions/)
+    exclude: [...configDefaults.exclude, "supabase/functions/**"],
     poolOptions: {
       forks: { execArgv: webStorageOff },
       threads: { execArgv: webStorageOff },
