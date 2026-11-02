@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useReducer, useRef, useState, type CSSProperties } from "react";
+import { useEffect, useReducer, useRef, useState, useSyncExternalStore, type CSSProperties } from "react";
 import { canGoBack, createSession, sessionReducer, understandRoute } from "../lib/session-types";
 import { appraisalEscapes, coachEscapes, coachResult, coachSetFor, getCoachSets } from "../lib/coach";
 import type { AffectPoint, BodyObservation, DeepReflection, EmotionSelection, EmotionSession, QuickNonSelection, SynthesisFit, TalkToSomeone } from "../lib/session-types";
@@ -25,6 +25,9 @@ import { I18nProvider, renderRich, useT } from "../lib/i18n/react";
 import type { Translate } from "../lib/i18n/t";
 import { toneOf } from "../lib/tones";
 import { enOnly } from "../lib/i18n/messages.en";
+import { getAccountState, isLinkReturn, mergeRecords, recordSaved, resumeAccount, subscribeAccount } from "../lib/account";
+import { loginAvailable } from "../lib/supabase-config";
+import { AccountPanel } from "./account-panel";
 
 // Every read and write of a record goes through the one storage seam. It is
 // synchronous, like the localStorage calls it wraps, so no call site changes.
@@ -64,12 +67,15 @@ function App() {
   // the helplines on every step, one tap away (SAFETY.md): a fixed card, no judgement of risk
   const [helpOpen, setHelpOpen] = useState(false);
 
+  // the opt-in account (2026-11-02, preview only): its records are joined to this device's on the records screen
+  const account = useSyncExternalStore(subscribeAccount, getAccountState, getAccountState);
   const showRecords = () => { setRecords(loadCompleted()); setOpenRecord(null); };
   const saveFollowUp = (session: EmotionSession, followUp: NonNullable<NonNullable<EmotionSession["support"]>["followUp"]>) => {
     // written straight to the completed store, which upserts by id; the reducer
     // session is on the landing screen here, so nothing can clobber it
     const next = { ...session, support: { ...(session.support ?? { chosen: [] }), followUp: { ...session.support?.followUp, ...followUp, at: new Date().toISOString() } } };
     saveCompleted(next);
+    recordSaved(next);
     setOpenRecord(next);
     setRecords(loadCompleted());
   };
@@ -78,6 +84,7 @@ function App() {
     const next = sessionReducer(session, { type: "ADD_LABEL_LATER", id: session.id, label });
     if (next === session) return;
     saveCompleted(next);
+    recordSaved(next);
     setOpenRecord(next);
     setRecords(loadCompleted());
   };
@@ -87,11 +94,17 @@ function App() {
     const existing = loadDraft();
     setDraft(existing);
     setHydrated(true);
+    // a login already held in this browser, or the email link coming back; a guest loads nothing
+    if (t.locale === "ko" && loginAvailable()) {
+      if (isLinkReturn()) setRecords(loadCompleted());
+      void resumeAccount();
+    }
   }, []);
 
   useEffect(() => {
     if (!hydrated || session.stage === "landing") return;
     setSaveFailed(!persistSession(session));
+    recordSaved(session);
   }, [hydrated, session]);
 
   // keep the browser's back button in step with the app's, so neither surprises the other
@@ -140,7 +153,7 @@ function App() {
       {openRecord
         ? <RecordDetail session={openRecord} onFollowUp={(followUp) => saveFollowUp(openRecord, followUp)} onAddLabel={(label) => addLabelLater(openRecord, label)} onBack={() => setOpenRecord(null)} />
         : records
-          ? <RecordsScreen records={records} onOpen={setOpenRecord} onBack={() => setRecords(null)} onChanged={() => { setRecords(loadCompleted()); setDraft(loadDraft()); }} />
+          ? <RecordsScreen records={mergeRecords(records, account.remote)} localCount={records.length} onOpen={setOpenRecord} onBack={() => setRecords(null)} onChanged={() => { setRecords(loadCompleted()); setDraft(loadDraft()); }} />
           : <LandingScreen onStart={() => askToStart("quick")} draft={draft} onResume={resume} onRecords={showRecords} pendingStart={pendingStart} onDiscardAndStart={discardAndStart} onCancelStart={() => setPendingStart(null)} />}
       </main>
       <SiteFooter />
@@ -1066,7 +1079,7 @@ function NeedScreen({ session, onNeed, onResponse, onDeep, onCoach, onBack }: { 
 }
 
 /** A list of what was recorded. No scores, no patterns across records, no interpretation. */
-function RecordsScreen({ records, onOpen, onBack, onChanged }: { records: EmotionSession[]; onOpen: (session: EmotionSession) => void; onBack: () => void; onChanged: () => void }) {
+function RecordsScreen({ records, localCount, onOpen, onBack, onChanged }: { records: EmotionSession[]; localCount: number; onOpen: (session: EmotionSession) => void; onBack: () => void; onChanged: () => void }) {
   const t = useT();
   return <Screen className="entry-screen">
     <p className="eyebrow">{t("records.eyebrow")}</p>
@@ -1087,7 +1100,8 @@ function RecordsScreen({ records, onOpen, onBack, onChanged }: { records: Emotio
             {item.responseLabels.length > 0 && <span className="record-need">{t("records.responsesLine", { labels: item.responseLabels.join(" / ") })}</span>}
           </button>;
         })}</div>}
-    <RecordTransfer count={records.length} onChanged={onChanged} />
+    <RecordTransfer count={localCount} onChanged={onChanged} />
+    {t.locale === "ko" && loginAvailable() && <AccountPanel />}
     <div className="navigation"><button className="quiet-button" onClick={onBack}>{t("records.backToStart")}</button><span /></div>
   </Screen>;
 }
