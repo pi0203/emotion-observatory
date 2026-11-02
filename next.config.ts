@@ -1,6 +1,9 @@
 import type { NextConfig } from "next";
+import { supabaseOrigin } from "./lib/supabase-config";
 
 const isDev = process.env.NODE_ENV === "development";
+// login preview only (2026-11-02): set on Vercel's Preview environment, absent in Production
+const loginOrigin = supabaseOrigin(process.env.NEXT_PUBLIC_SUPABASE_URL);
 
 /**
  * Response headers for every page (docs/SECURITY_HEADERS.md).
@@ -11,7 +14,10 @@ const isDev = process.env.NODE_ENV === "development";
  * every page to render on each request instead of being served prebuilt:
  *
  * - connect-src 'self': the page can only talk to its own origin, so nothing
- *   can be posted elsewhere. The app makes no network calls at all.
+ *   can be posted elsewhere. The guest app makes no network calls at all.
+ *   Only where the login values are set (the Preview environment, 2026-11-02)
+ *   is the Supabase project's own origin added, for the opt-in login and the
+ *   records locked on the device before they are sent.
  * - frame-ancestors: only this site and the owner's homepage may frame the
  *   app, so no other page can lay a transparent copy over its own buttons
  *   (clickjacking). X-Frame-Options cannot express the homepage exception.
@@ -25,7 +31,7 @@ const contentSecurityPolicy = [
   "style-src 'self' 'unsafe-inline'",
   "img-src 'self' data: blob:",
   "font-src 'self'",
-  `connect-src 'self'${isDev ? " ws: wss:" : ""}`,
+  `connect-src 'self'${isDev ? " ws: wss:" : ""}` + (loginOrigin ? ` ${loginOrigin}` : ""),
   "object-src 'none'",
   "base-uri 'self'",
   "form-action 'self'",
