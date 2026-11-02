@@ -38,6 +38,8 @@ export type SupabaseLike = {
     verifyOtp(args: { email: string; token: string; type: "email" }): Promise<{ data: { user: User | null } | null; error: unknown }>;
     getSession(): SessionResult;
     setSession(tokens: { access_token: string; refresh_token: string }): SessionResult;
+    /** The ?code= return (PKCE): works when this browser started the sign-in. */
+    exchangeCodeForSession(code: string): SessionResult;
     signOut(args?: { scope?: "global" | "local" | "others" }): Promise<{ error: unknown }>;
     /** Leaves the page for the provider's sign-in; the provider sends the person back to redirectTo. */
     signInWithOAuth(args: { provider: string; options?: { redirectTo?: string } }): Promise<{ error: unknown }>;
@@ -169,18 +171,45 @@ const isRecord = (value: unknown): value is EmotionSession => Boolean(value && t
 
 // ---------- the steps ----------
 
-/** True when the address bar carries the email link's sign-in (or its error). */
-export const isLinkReturn = () => typeof window !== "undefined" && /(?:^#|&)(?:access_token|error_description)=/.test(window.location.hash);
+/** What signing in leaves in the address: tokens after #, or a code (or an error) after ?. */
+const HASH_KEYS = /(?:^#|&)(?:access_token|error_description|error)=/;
+const QUERY_KEYS = ["code", "error", "error_code", "error_description", "state"] as const;
 
 /**
- * Takes the link's values out of the address bar without a navigation. The
- * state passed is null on purpose: Next.js then treats it as an outside change
- * and updates its own idea of the address; given its own state back, it would
- * write the old address, tokens and all, at its next update. Called after an
- * await, so Next.js has finished setting up its history handling first.
+ * True when the address carries the return from signing in: the email link or
+ * a provider button, as # tokens (implicit) or ?code= (PKCE), or their error.
+ */
+export const isLinkReturn = () => {
+  if (typeof window === "undefined") return false;
+  const query = new URLSearchParams(window.location.search);
+  return HASH_KEYS.test(window.location.hash) || query.has("code") || query.has("error_description");
+};
+
+/** The values the return brought, from both places, read before they are wiped. */
+const readReturn = () => {
+  const hash = new URLSearchParams(window.location.hash.slice(1));
+  const query = new URLSearchParams(window.location.search);
+  return {
+    access: hash.get("access_token"),
+    refresh: hash.get("refresh_token"),
+    code: query.get("code"),
+    failed: hash.has("error") || hash.has("error_description") || query.has("error") || query.has("error_description"),
+  };
+};
+
+/**
+ * Takes the return's values out of the address bar without a navigation: the
+ * whole # part, and code/error/state from the query (anything else in the
+ * query stays). The state passed is null on purpose: Next.js then treats it as
+ * an outside change and updates its own idea of the address; given its own
+ * state back, it would write the old address, tokens and all, at its next
+ * update. Called after an await, so Next.js has finished setting up first.
  */
 const clearLinkFromAddress = () => {
-  window.history.replaceState(null, "", `${window.location.pathname}${window.location.search}`);
+  const query = new URLSearchParams(window.location.search);
+  for (const key of QUERY_KEYS) query.delete(key);
+  const rest = query.toString();
+  window.history.replaceState(null, "", `${window.location.pathname}${rest ? `?${rest}` : ""}`);
 };
 
 const hasStoredLogin = () => {
@@ -206,25 +235,25 @@ const signedIn = async (user: User, arrived: boolean) => {
 export const clearArrived = () => { if (state.arrived) setState({ arrived: false }); };
 
 /**
- * Picks up a login this browser already holds, or the one the email link
- * brought. Does nothing (and loads nothing) for a guest.
+ * Picks up a login this browser already holds, or the one a return from
+ * signing in brought (email link or provider button, # tokens or ?code=).
+ * Does nothing (and loads nothing) for a guest.
  */
 export const resumeAccount = async () => {
   if (state.phase !== "signed-out") return;
-  const link = isLinkReturn() ? new URLSearchParams(window.location.hash.slice(1)) : null;
-  if (!link && !hasStoredLogin()) return;
+  const back = isLinkReturn() ? readReturn() : null;
+  if (!back && !hasStoredLogin()) return;
   await run(async () => {
     const auth = (await client()).auth;
-    if (link) clearLinkFromAddress();
-    const access = link?.get("access_token");
-    const refresh = link?.get("refresh_token");
-    if (access && refresh) {
-      const { data, error } = await auth.setSession({ access_token: access, refresh_token: refresh });
-      if (!error && data.session) { await signedIn(data.session.user, true); return; }
+    if (back) clearLinkFromAddress();
+    if (back && !back.failed) {
+      const result = back.access && back.refresh ? await auth.setSession({ access_token: back.access, refresh_token: back.refresh })
+        : back.code ? await auth.exchangeCodeForSession(back.code) : null;
+      if (result && !result.error && result.data.session) { await signedIn(result.data.session.user, true); return; }
     }
     const { data } = await auth.getSession();
-    if (data.session) await signedIn(data.session.user, Boolean(link));
-    else if (link) setState({ note: "link-expired" });
+    if (data.session) await signedIn(data.session.user, Boolean(back));
+    else if (back) setState({ note: "link-expired" });
   });
 };
 
