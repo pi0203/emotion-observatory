@@ -302,6 +302,9 @@ p, .lede, .hint, .step-note, .small-note, .summary-footnote { text-wrap: pretty;
    help button, footer and crisis card are kept, so the helplines stay on the paper.
    No @page rule: it would reach every page of the site, so the paper is the print dialog's (A4 in Korea).  */
 @media print {
+  /* white paper: only where the page holds the word list, so /terms and /privacy print as before (2026-11-02) */
+  html:has(.words-page), html:has(.words-page) body { background: transparent; }
+  .word-card { background: transparent; }
   .words-page { max-width: none; padding-top: 0; }
   .words-print { display: none; }
   .words-list { display: block; columns: 2; column-gap: 8mm; margin-top: 16px; }
