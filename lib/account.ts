@@ -24,6 +24,8 @@ import { createVault, lastTouched, lockRecord, MIN_PASSPHRASE_LENGTH, openVault,
 
 export type AuthErrorKey = "email-invalid" | "email-not-allowed" | "rate-limit" | "code-format" | "code-wrong-or-expired" | "link-expired" | "network";
 export type RemoteRow = { id: string; blob: string; updated_at: string };
+/** A row as sent: with its owner, since a record's id is unique only within one account (0002_records_per_account.sql). */
+type SentRow = RemoteRow & { user_id: string };
 type Result<T> = { ok: true; value: T } | { ok: false; error: AuthErrorKey };
 
 /** The subset of the Supabase client used here, so tests can hand in a fake one. */
@@ -260,9 +262,11 @@ export const setIterationsForTests = (iterations: number | null) => { iterations
 const upload = async (sessions: EmotionSession[]) => {
   const key = passphraseKey;
   if (!key || sessions.length === 0) return;
-  const rows: RemoteRow[] = [];
-  for (const session of sessions) rows.push({ id: session.id, blob: await lockRecord(key, session), updated_at: lastTouched(session) });
-  const { error } = await (await client()).from("records").upsert(rows, { onConflict: "id" });
+  const userId = state.userId;
+  if (!key || !userId) return;
+  const rows: SentRow[] = [];
+  for (const session of sessions) rows.push({ user_id: userId, id: session.id, blob: await lockRecord(key, session), updated_at: lastTouched(session) });
+  const { error } = await (await client()).from("records").upsert(rows, { onConflict: "user_id,id" });
   check(error);
   const sent = new Map(sessions.map((session) => [session.id, session]));
   setState({ remote: [...state.remote.filter((item) => !sent.has(item.session.id)), ...rows.map((row) => ({ session: sent.get(row.id)!, updatedAt: row.updated_at }))] });

@@ -57,8 +57,8 @@ const makeFake = (): Fake => {
         });
       },
       insert: async (row: object) => { log(`insert:${table}`, row); db.vault = row; return { error: null }; },
-      upsert: async (rows: RemoteRow[]) => {
-        log(`upsert:${table}`, rows);
+      upsert: async (rows: RemoteRow[], options?: { onConflict?: string }) => {
+        log(`upsert:${table}`, { rows, options });
         for (const row of rows) db.records = [...db.records.filter((item) => item.id !== row.id), row];
         return { error: null };
       },
@@ -367,7 +367,7 @@ describe("what reaches the server", () => {
 
     const everything = JSON.stringify(fake.sent);
     for (const secret of [MEMO, WORD, PASS, "quick-summary", "valence"]) expect(everything, secret).not.toContain(secret);
-    expect(fake.db.records.map((row) => Object.keys(row).sort())).toEqual([["blob", "id", "updated_at"], ["blob", "id", "updated_at"]]);
+    expect(fake.db.records.map((row) => Object.keys(row).sort())).toEqual([["blob", "id", "updated_at", "user_id"], ["blob", "id", "updated_at", "user_id"]]);
     expect(Object.keys(fake.db.vault!).sort()).toEqual(["check_blob", "kdf"]);
 
     const stored = storedText();
@@ -446,6 +446,25 @@ describe("what reaches the server", () => {
     expect(fake.sent.filter((item) => item.what === "rpc").map((item) => item.value)).toEqual(["delete_my_account"]);
     expect(getStorageAdapter().loadCompleted().map((session) => session.id)).toEqual([here.id]);
     expect(getAccountState().remote).toEqual([]);
+  });
+});
+
+describe("record ids per account", () => {
+  it("each sent row carries its owner, and conflicts are matched on user_id and id together", async () => {
+    loginOn();
+    setClientFactoryForTests(factory);
+    getStorageAdapter().saveCompleted(record("11111111-1111-4111-8111-111111111111"));
+    await signInFirstTime();
+    press(copy.importConfirm);
+    await waitFor(() => expect(fake.db.records).toHaveLength(1));
+    recordSaved(record("22222222-2222-4222-8222-222222222222"));
+    await waitFor(() => expect(fake.db.records).toHaveLength(2));
+    const upserts = fake.sent.filter((item) => item.what === "upsert:records").map((item) => item.value as { rows: (RemoteRow & { user_id?: string })[]; options?: { onConflict?: string } });
+    expect(upserts).toHaveLength(2);
+    for (const { rows, options } of upserts) {
+      expect(options).toEqual({ onConflict: "user_id,id" });
+      for (const row of rows) expect(row.user_id).toBe("00000000-0000-4000-8000-000000000001");
+    }
   });
 });
 
