@@ -32,6 +32,7 @@ export type SupabaseLike = {
     signInWithOtp(args: { email: string; options?: { shouldCreateUser?: boolean; emailRedirectTo?: string } }): Promise<{ error: unknown }>;
     verifyOtp(args: { email: string; token: string; type: "email" }): Promise<{ data: { user: { id: string; email?: string } | null } | null; error: unknown }>;
     getSession(): Promise<{ data: { session: { user: { id: string; email?: string } } | null }; error: unknown }>;
+    setSession(tokens: { access_token: string; refresh_token: string }): Promise<{ data: { session: { user: { id: string; email?: string } } | null }; error: unknown }>;
     signOut(args?: { scope?: "global" | "local" | "others" }): Promise<{ error: unknown }>;
   };
   from(table: "vault" | "records"): {
@@ -58,7 +59,10 @@ let clientFactory: () => Promise<SupabaseLike> = async () => {
   const config = supabaseConfig();
   if (!config) throw new BackendError("login is off");
   const { createClient } = await import("@supabase/supabase-js");
-  return createClient(config.url, config.key) as unknown as SupabaseLike;
+  // the email link is read by resumeAccount, not by the library: the library clears
+  // the address with location.hash = "", a navigation Next.js did not make, and the
+  // page lost its place (2026-11-02, the first link login landed on the first screen)
+  return createClient(config.url, config.key, { auth: { detectSessionInUrl: false } }) as unknown as SupabaseLike;
 };
 let clientPromise: Promise<SupabaseLike> | null = null;
 const client = () => (clientPromise ??= clientFactory());
@@ -82,6 +86,8 @@ export type AccountState = {
   userId?: string;
   /** Only meaningful while locked: true when this account already has a 기록 암호. */
   hasVault?: boolean;
+  /** True right after signing in by code or by the email link: the screen moves to the next step once, then clears it. */
+  arrived?: boolean;
   /** The records in the account, unlocked, with when each last changed. Memory only. */
   remote: { session: EmotionSession; updatedAt: string }[];
   /** This device's records still waiting for the 「가져오기」 answer; empty when not asking. */
@@ -143,6 +149,13 @@ const writeChoice = (userId: string, choice: Choice | null) => {
 /** True when the address bar carries the email link's sign-in (or its error). */
 export const isLinkReturn = () => typeof window !== "undefined" && /(?:^#|&)(?:access_token|error_description)=/.test(window.location.hash);
 
+/** Takes the link's values out of the address bar without a navigation, and gives them back. */
+const takeLinkParams = (): URLSearchParams => {
+  const params = new URLSearchParams(window.location.hash.slice(1));
+  window.history.replaceState(window.history.state, "", `${window.location.pathname}${window.location.search}`);
+  return params;
+};
+
 const hasStoredLogin = () => {
   if (typeof window === "undefined") return false;
   try {
@@ -152,23 +165,34 @@ const hasStoredLogin = () => {
   }
 };
 
-const signedIn = async (user: { id: string; email?: string }) => {
+const signedIn = async (user: { id: string; email?: string }, arrived: boolean) => {
   const { data, error } = await (await client()).from("vault").select("kdf, check_blob").maybeSingle();
   check(error);
-  setState({ phase: "locked", userId: user.id, email: user.email ?? state.email, hasVault: Boolean(data) });
+  setState({ phase: "locked", userId: user.id, email: user.email ?? state.email, hasVault: Boolean(data), arrived });
 };
+
+/** The screen has moved to the next step; do not move it again. */
+export const clearArrived = () => { if (state.arrived) setState({ arrived: false }); };
 
 /**
  * Picks up a login this browser already holds, or the one the email link
  * brought. Does nothing (and loads nothing) for a guest.
  */
 export const resumeAccount = async () => {
-  if (state.phase !== "signed-out" || (!hasStoredLogin() && !isLinkReturn())) return;
-  const linkError = isLinkReturn() && /error_description=/.test(window.location.hash);
+  if (state.phase !== "signed-out") return;
+  const link = isLinkReturn() ? takeLinkParams() : null;
+  if (!link && !hasStoredLogin()) return;
   await run(async () => {
-    const { data } = await (await client()).auth.getSession();
-    if (data.session) await signedIn(data.session.user);
-    else if (linkError) setState({ note: "link-expired" });
+    const auth = (await client()).auth;
+    const access = link?.get("access_token");
+    const refresh = link?.get("refresh_token");
+    if (access && refresh) {
+      const { data, error } = await auth.setSession({ access_token: access, refresh_token: refresh });
+      if (!error && data.session) { await signedIn(data.session.user, true); return; }
+    }
+    const { data } = await auth.getSession();
+    if (data.session) await signedIn(data.session.user, Boolean(link));
+    else if (link) setState({ note: "link-expired" });
   });
 };
 
@@ -188,7 +212,7 @@ export const verifyCode = (code: string) => run(async () => {
   if (!/^\d{6}$/.test(token)) { setState({ note: "code-format" }); return; }
   const { data, error } = await (await client()).auth.verifyOtp({ email: state.email ?? "", token, type: "email" });
   if (error || !data?.user) { setState({ note: authError(error) }); return; }
-  await signedIn(data.user);
+  await signedIn(data.user, true);
 });
 
 /** Back from the code step to the email step. */
@@ -281,7 +305,7 @@ export const recordSaved = (session: EmotionSession) => {
 
 const forget = (note: AccountNote) => {
   passphraseKey = null;
-  setState({ phase: "signed-out", email: undefined, userId: undefined, hasVault: undefined, remote: [], askImport: [], note });
+  setState({ phase: "signed-out", email: undefined, userId: undefined, hasVault: undefined, arrived: false, remote: [], askImport: [], note });
 };
 
 export const signOut = () => run(async () => {

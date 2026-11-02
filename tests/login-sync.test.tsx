@@ -41,6 +41,12 @@ const makeFake = (): Fake => {
         return { data: { user }, error: null };
       },
       getSession: async () => ({ data: { session }, error: null }),
+      setSession: async (tokens: { access_token: string; refresh_token: string }) => {
+        log("setSession", "tokens");
+        if (tokens.access_token !== "link-access") return { data: { session: null }, error: { code: "bad_jwt" } };
+        session = { user };
+        return { data: { session }, error: null };
+      },
       signOut: async (args: unknown) => { log("signOut", args); session = null; return { error: null }; },
     },
     from: (table: "vault" | "records") => ({
@@ -196,6 +202,58 @@ describe("the two agreements", () => {
     type(copy.codeLabel, "654321");
     press(copy.verify);
     expect(await within(panel()).findByText(copy.notes["code-wrong-or-expired"])).toBeTruthy();
+  });
+});
+
+describe("coming back signed in", () => {
+  afterEach(() => window.history.replaceState(null, "", "/"));
+
+  it("from the email link, goes straight to 다른 기기에서도 보기 with its title focused, and wipes the link from the address", async () => {
+    loginOn();
+    setClientFactoryForTests(factory);
+    window.history.replaceState(null, "", "/#access_token=link-access&refresh_token=link-refresh&type=magiclink");
+    render(<Home />);
+    expect(await within(panel()).findByText(copy.arrivedSet)).toBeTruthy();
+    expect(screen.getByRole("heading", { level: 1 }).textContent).toBe(ko.records.title);
+    await waitFor(() => expect(document.activeElement).toBe(within(panel()).getByText(copy.title)));
+    expect(window.location.hash).toBe("");
+    expect(window.location.href).not.toMatch(/link-access|link-refresh/);
+    expect(within(panel()).getByLabelText(copy.passphrase)).toBeTruthy();
+  });
+
+  it("from the email link to an account that already has a 기록 암호, asks for it", async () => {
+    loginOn();
+    setClientFactoryForTests(factory);
+    fake.db.vault = (await createVault(PASS, FAST)).row;
+    window.history.replaceState(null, "", "/#access_token=link-access&refresh_token=link-refresh&type=magiclink");
+    render(<Home />);
+    expect(await within(panel()).findByText(copy.arrivedUnlock)).toBeTruthy();
+    expect(within(panel()).getByLabelText(copy.unlockLabel)).toBeTruthy();
+  });
+
+  it("from a link that no longer works, says so on the same spot", async () => {
+    loginOn();
+    setClientFactoryForTests(factory);
+    window.history.replaceState(null, "", "/#access_token=old&refresh_token=old&type=magiclink");
+    render(<Home />);
+    expect(await within(panel()).findByText(copy.notes["link-expired"])).toBeTruthy();
+    expect(window.location.hash).toBe("");
+  });
+
+  it("by code, shows the same first line", async () => {
+    loginOn();
+    setClientFactoryForTests(factory);
+    openRecords();
+    press(copy.open);
+    fireEvent.click(within(panel()).getByLabelText(copy.consentAccount));
+    fireEvent.click(within(panel()).getByLabelText(copy.consentRecords));
+    type(copy.emailLabel, "me@example.com");
+    press(copy.sendCode);
+    await within(panel()).findByLabelText(copy.codeLabel);
+    type(copy.codeLabel, "123456");
+    press(copy.verify);
+    expect(await within(panel()).findByText(copy.arrivedSet)).toBeTruthy();
+    await waitFor(() => expect(document.activeElement).toBe(within(panel()).getByText(copy.title)));
   });
 });
 

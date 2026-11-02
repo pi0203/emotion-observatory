@@ -1,8 +1,8 @@
 "use client";
 
-import { useState, useSyncExternalStore } from "react";
+import { useEffect, useRef, useState, useSyncExternalStore } from "react";
 import { koOnly } from "../lib/i18n/messages.ko";
-import { changeEmail, deleteAccount, getAccountState, importLocal, keepLocal, sendCode, setPassphrase, signOut, subscribeAccount, unlock, verifyCode } from "../lib/account";
+import { changeEmail, clearArrived, deleteAccount, getAccountState, importLocal, keepLocal, sendCode, setPassphrase, signOut, subscribeAccount, unlock, verifyCode } from "../lib/account";
 
 const copy = koOnly.account;
 
@@ -24,7 +24,15 @@ export function AccountPanel() {
   const [first, setFirst] = useState("");
   const [again, setAgain] = useState("");
   const [confirmingDelete, setConfirmingDelete] = useState(false);
+  const title = useRef<HTMLParagraphElement>(null);
   const { phase, busy, note } = account;
+  // just signed in (code or email link): bring this section into view with its title focused, once
+  useEffect(() => {
+    if (!account.arrived || phase !== "locked") return;
+    title.current?.scrollIntoView?.({ block: "start" });
+    title.current?.focus();
+    clearArrived();
+  }, [account.arrived, phase]);
   if (phase === "off") return null;
 
   const noteLine = note && <p className="step-note" role={note === "deleted" || note === "signed-out" ? "status" : "alert"}>{copy.notes[note]}</p>;
@@ -61,6 +69,7 @@ export function AccountPanel() {
     </>;
   } else if (phase === "locked" && !account.hasVault) {
     body = <div role="group" aria-labelledby="account-set-title">
+      <p className="small-note" role="status">{copy.arrivedSet}</p>
       <p className="synthesis-question" id="account-set-title">{copy.setTitle}</p>
       <p className="small-note">{copy.setIntro}</p>
       <p className="small-note"><strong>{copy.forgetWarning}</strong></p>
@@ -75,6 +84,7 @@ export function AccountPanel() {
     </div>;
   } else if (phase === "locked") {
     body = <div role="group" aria-labelledby="account-unlock-title">
+      <p className="small-note" role="status">{copy.arrivedUnlock}</p>
       <p className="synthesis-question" id="account-unlock-title">{copy.unlockTitle}</p>
       <p className="small-note">{copy.unlockIntro}</p>
       <p className="small-note"><strong>{copy.forgetWarning}</strong></p>
@@ -113,7 +123,7 @@ export function AccountPanel() {
   }
 
   return <section className="synthesis" aria-labelledby="account-title">
-    <p className="tier-label" id="account-title">{copy.title}</p>
+    <p className="tier-label" id="account-title" ref={title} tabIndex={-1}>{copy.title}</p>
     {body}
     {busy && <p className="small-note" role="status">{copy.working}</p>}
     {noteLine}

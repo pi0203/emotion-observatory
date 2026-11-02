@@ -682,6 +682,9 @@ export const koOnly = {
     verify: "확인",
     resend: "다시 보내기",
     changeEmail: "이메일 다시 쓰기",
+    // the first line right after signing in, by code or by the email link (2026-11-02)
+    arrivedSet: "로그인했어요. 이제 기록 암호를 정해 주세요.",
+    arrivedUnlock: "로그인했어요. 기록 암호를 넣어 주세요.",
     setTitle: "기록 암호 정하기",
     setIntro: "기록은 이 암호로 이 기기에서 잠근 뒤에 보내요. 다른 기기에서는 같은 암호로 열어요.",
     forgetWarning: "이 암호를 잊으면 서버의 기록은 누구도 되살릴 수 없어요.",
