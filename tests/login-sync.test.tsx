@@ -27,10 +27,10 @@ const record = (id: string, at = "2026-10-01T09:04:00.000Z"): EmotionSession => 
 
 type Row = { user_id: string; id: string; data: EmotionSession; updated_at: string };
 type Fake = { client: SupabaseLike; sent: { what: string; value: unknown }[]; db: { records: Row[] }; signedInEarlier: () => void };
-const makeFake = (): Fake => {
+type FakeUser = { id: string; email?: string; app_metadata?: { provider?: string } };
+const makeFake = (user: FakeUser = { id: USER, email: "me@example.com", app_metadata: { provider: "email" } }): Fake => {
   const sent: Fake["sent"] = [];
   const db: Fake["db"] = { records: [] };
-  const user = { id: USER, email: "me@example.com" };
   let session: { user: typeof user } | null = null;
   const log = (what: string, value: unknown) => { sent.push({ what, value }); };
   const client = {
@@ -353,6 +353,41 @@ describe("coming back from a failed sign-in while an earlier login is still held
       expect(window.location.href, address).not.toMatch(/error|access|code=/);
       cleanup();
     }
+  });
+});
+
+describe("an account without an email", () => {
+  it("is named by how it signs in: 「네이버 계정으로 로그인했어요.」, and the same rule for the others", async () => {
+    expect(copy.signedInWith.replace("{provider}", copy.providerNames.naver)).toBe("네이버 계정으로 로그인했어요.");
+    for (const [supabaseName, name] of [["custom:naver", "naver"], ["kakao", "kakao"], ["google", "google"], ["apple", "apple"], ["email", "email"]] as const) {
+      for (const email of [undefined, ""]) {
+        loginOn("google,kakao,naver,apple,email");
+        fake = makeFake({ id: USER, email, app_metadata: { provider: supabaseName } });
+        setClientFactoryForTests(factory);
+        window.history.replaceState(null, "", "/#access_token=good-access&refresh_token=good-refresh");
+        render(<Home />);
+        const line = copy.signedInWith.replace("{provider}", copy.providerNames[name]);
+        expect(await within(panel()).findByText(line), supabaseName).toBeTruthy();
+        expect(getAccountState().provider).toBe(name);
+        expect(getAccountState().email).toBeUndefined();
+        // said once: no bare 「로그인했어요.」 beside it, and no 「 계정이에요.」 with an empty address
+        expect(within(panel()).queryByText(copy.arrived)).toBeNull();
+        expect(panel().textContent).not.toContain(copy.signedInAs.replace("{email}", ""));
+        expect(panel().textContent).toContain(copy.syncOn);
+        cleanup();
+      }
+    }
+  });
+
+  it("keeps the address line when there is an email", async () => {
+    loginOn("google,email");
+    fake = makeFake({ id: USER, email: "me@gmail.com", app_metadata: { provider: "google" } });
+    setClientFactoryForTests(factory);
+    window.history.replaceState(null, "", "/#access_token=good-access&refresh_token=good-refresh");
+    render(<Home />);
+    expect(await within(panel()).findByText(copy.arrived)).toBeTruthy();
+    expect(panel().textContent).toContain(copy.signedInAs.replace("{email}", "me@gmail.com"));
+    expect(panel().textContent).not.toContain(copy.signedInWith.replace("{provider}", copy.providerNames.google));
   });
 });
 

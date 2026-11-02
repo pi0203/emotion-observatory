@@ -694,6 +694,9 @@ export const koOnly = {
     // the first line right after signing in, however it was done (2026-11-02)
     arrived: "로그인했어요.",
     signedInAs: "{email} 계정이에요.",
+    // in place of the line above when the account has no email, as a Naver account never does (2026-11-02)
+    signedInWith: "{provider} 계정으로 로그인했어요.",
+    providerNames: { google: "Google", kakao: "카카오", naver: "네이버", apple: "Apple", email: "이메일" },
     syncOn: "이 기기에서 저장하는 기록은 계정에도 올라가요.",
     importQuestion: "이 기기의 기록 {count}개를 계정으로 가져올까요?",
     importNote: "고르지 않은 기록은 이 기기에만 남아요. 고른 것은 다시 묻지 않아요.",

@@ -84,8 +84,11 @@ export function AccountPanel() {
     </>;
   } else {
     body = <>
-      {/* not after a return that failed: the login shown is an earlier one (2026-11-02) */}
-      {note !== "attempt-failed" && <p className="small-note" role="status">{copy.arrived}</p>}
+      {/* with no email (Naver), the way of signing in names the account and says it in one line;
+          「로그인했어요.」 alone is not shown after a return that failed: the login is an earlier one (2026-11-02) */}
+      {!account.email && account.provider
+        ? <p className="small-note" role="status">{copy.signedInWith.replace("{provider}", copy.providerNames[account.provider])}</p>
+        : note !== "attempt-failed" && <p className="small-note" role="status">{copy.arrived}</p>}
       <p className="small-note">{account.email ? `${copy.signedInAs.replace("{email}", account.email)} ` : ""}{copy.syncOn}</p>
       {account.askImport.length > 0 && <div role="group" aria-labelledby="account-import-question">
         <p className="synthesis-question" id="account-import-question">{copy.importQuestion.replace("{count}", String(account.askImport.length))}</p>

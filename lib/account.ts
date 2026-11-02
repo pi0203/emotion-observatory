@@ -28,7 +28,7 @@ export type RemoteRow = { id: string; data: unknown; updated_at: string };
 /** A row as sent: with its owner, since a record's id is unique only within one account (0002_records_per_account.sql). */
 type SentRow = { user_id: string; id: string; data: EmotionSession; updated_at: string };
 
-type User = { id: string; email?: string };
+type User = { id: string; email?: string; app_metadata?: { provider?: string } };
 type SessionResult = Promise<{ data: { session: { user: User } | null }; error: unknown }>;
 
 /** The subset of the Supabase client used here, so tests can hand in a fake one. */
@@ -90,6 +90,8 @@ export type AccountState = {
   phase: "off" | "signed-out" | "code-sent" | "signed-in";
   busy: boolean;
   email?: string;
+  /** How this account signs in, for the line shown when it has no email (Naver gives none). */
+  provider?: LoginProvider;
   userId?: string;
   /** True right after signing in: the screen moves to 다른 기기에서도 보기 once, then clears it. */
   arrived?: boolean;
@@ -221,6 +223,12 @@ const hasStoredLogin = () => {
   }
 };
 
+/** Supabase's name for how a user signs in, back to the button it came from. */
+const providerOf = (user: User): LoginProvider | undefined => {
+  const name = user.app_metadata?.provider;
+  return (Object.keys(OAUTH_PROVIDER) as Exclude<LoginProvider, "email">[]).find((key) => OAUTH_PROVIDER[key] === name) ?? (name === "email" ? "email" : undefined);
+};
+
 /** Signed in: the account's records come straight in, and this device's are offered once. */
 const signedIn = async (user: User, arrived: boolean) => {
   const { data, error } = await (await client()).from("records").select("id, data, updated_at");
@@ -228,7 +236,8 @@ const signedIn = async (user: User, arrived: boolean) => {
   const remote = ((data ?? []) as RemoteRow[]).filter((row) => isRecord(row.data)).map((row) => ({ session: row.data as EmotionSession, updatedAt: row.updated_at }));
   const chosen = readChoices()[user.id];
   const local = getStorageAdapter().loadCompleted();
-  setState({ phase: "signed-in", userId: user.id, email: user.email ?? state.email, arrived, remote, askImport: chosen ? [] : local.map((session) => session.id) });
+  // an account without an email (Naver) may carry "" rather than nothing
+  setState({ phase: "signed-in", userId: user.id, email: user.email || undefined, provider: providerOf(user), arrived, remote, askImport: chosen ? [] : local.map((session) => session.id) });
 };
 
 /** The screen has moved to 다른 기기에서도 보기; do not move it again. */
@@ -341,7 +350,7 @@ export const recordSaved = (session: EmotionSession) => {
 };
 
 const forget = (note: AccountNote) => {
-  setState({ phase: "signed-out", email: undefined, userId: undefined, arrived: false, remote: [], askImport: [], note });
+  setState({ phase: "signed-out", email: undefined, provider: undefined, userId: undefined, arrived: false, remote: [], askImport: [], note });
 };
 
 export const signOut = () => run(async () => {
