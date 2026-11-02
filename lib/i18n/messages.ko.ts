@@ -713,6 +713,8 @@ export const koOnly = {
       "code-format": "코드는 숫자 6자리예요.",
       "code-wrong-or-expired": "코드가 틀렸거나 시간이 지났어요. 다시 넣거나 새 코드를 받아 주세요.",
       "link-expired": "로그인하지 못했어요. 링크 시간이 지났거나 취소됐어요. 다시 해 주세요.",
+      "login-failed": "로그인하지 못했어요. 다시 해 주세요.",
+      "attempt-failed": "방금 시도한 로그인은 되지 않았어요.",
       "provider-failed": "지금은 이 방법으로 로그인할 수 없어요. 다른 방법을 써 주세요.",
       network: "연결이 안 됐어요. 조금 뒤에 다시 해 주세요.",
       "sync-failed": "계정에 올리지 못했어요. 이 기기의 기록은 그대로 있어요.",

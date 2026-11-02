@@ -84,7 +84,8 @@ export function AccountPanel() {
     </>;
   } else {
     body = <>
-      <p className="small-note" role="status">{copy.arrived}</p>
+      {/* not after a return that failed: the login shown is an earlier one (2026-11-02) */}
+      {note !== "attempt-failed" && <p className="small-note" role="status">{copy.arrived}</p>}
       <p className="small-note">{account.email ? `${copy.signedInAs.replace("{email}", account.email)} ` : ""}{copy.syncOn}</p>
       {account.askImport.length > 0 && <div role="group" aria-labelledby="account-import-question">
         <p className="synthesis-question" id="account-import-question">{copy.importQuestion.replace("{count}", String(account.askImport.length))}</p>

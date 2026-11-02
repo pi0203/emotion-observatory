@@ -26,7 +26,7 @@ const record = (id: string, at = "2026-10-01T09:04:00.000Z"): EmotionSession => 
 });
 
 type Row = { user_id: string; id: string; data: EmotionSession; updated_at: string };
-type Fake = { client: SupabaseLike; sent: { what: string; value: unknown }[]; db: { records: Row[] } };
+type Fake = { client: SupabaseLike; sent: { what: string; value: unknown }[]; db: { records: Row[] }; signedInEarlier: () => void };
 const makeFake = (): Fake => {
   const sent: Fake["sent"] = [];
   const db: Fake["db"] = { records: [] };
@@ -68,7 +68,7 @@ const makeFake = (): Fake => {
     }),
     rpc: async (name: string) => { log("rpc", name); db.records = []; session = null; return { error: null }; },
   };
-  return { client: client as unknown as SupabaseLike, sent, db };
+  return { client: client as unknown as SupabaseLike, sent, db, signedInEarlier: () => { session = { user }; } };
 };
 
 const loginOn = (providers?: string) => {
@@ -305,9 +305,20 @@ describe("coming back signed in", () => {
     loginOn("google,email");
     setClientFactoryForTests(factory);
     arriveAt("/?error=access_denied&error_description=cancelled");
-    expect(await within(panel()).findByText(copy.notes["link-expired"])).toBeTruthy();
+    expect(await within(panel()).findByText(copy.notes["login-failed"])).toBeTruthy();
+    expect(copy.notes["login-failed"]).toBe("로그인하지 못했어요. 다시 해 주세요.");
     expect(window.location.search).toBe("");
     expect(sentWhat()).not.toContain("exchange");
+    cleanup();
+    setClientFactoryForTests(factory);
+    arriveAt("/?error=server_error");
+    expect(await within(panel()).findByText(copy.notes["login-failed"])).toBeTruthy();
+    expect(window.location.search).toBe("");
+    cleanup();
+    setClientFactoryForTests(factory);
+    arriveAt("/#error=access_denied&error_code=otp_expired");
+    expect(await within(panel()).findByText(copy.notes["login-failed"])).toBeTruthy();
+    expect(window.location.hash).toBe("");
     cleanup();
     setClientFactoryForTests(factory);
     arriveAt("/#access_token=old&refresh_token=old");
@@ -318,6 +329,30 @@ describe("coming back signed in", () => {
     arriveAt("/?code=from-another-browser");
     expect(await within(panel()).findByText(copy.notes["link-expired"])).toBeTruthy();
     expect(window.location.search).toBe("");
+  });
+});
+
+describe("coming back from a failed sign-in while an earlier login is still held", () => {
+  const arriveAt = (address: string) => {
+    window.history.replaceState(null, "", address);
+    render(<Home />);
+  };
+
+  it("keeps the earlier login, says the attempt did not work, never 「로그인했어요.」, and wipes the address", async () => {
+    for (const address of ["/?error=access_denied&error_description=cancelled", "/#error=access_denied&error_description=cancelled", "/#access_token=old&refresh_token=old", "/?code=from-another-browser"]) {
+      loginOn("google,naver,email");
+      fake = makeFake();
+      fake.signedInEarlier();
+      setClientFactoryForTests(factory);
+      arriveAt(address);
+      expect(await within(panel()).findByText(copy.notes["attempt-failed"]), address).toBeTruthy();
+      expect(copy.notes["attempt-failed"]).toBe("방금 시도한 로그인은 되지 않았어요.");
+      expect(getAccountState().phase, address).toBe("signed-in");
+      expect(within(panel()).queryByText(copy.arrived), address).toBeNull();
+      expect(within(panel()).getByRole("button", { name: copy.signOut })).toBeTruthy();
+      expect(window.location.href, address).not.toMatch(/error|access|code=/);
+      cleanup();
+    }
   });
 });
 

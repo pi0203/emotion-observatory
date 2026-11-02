@@ -22,7 +22,7 @@ import { OAUTH_PROVIDER, supabaseConfig, type LoginProvider } from "./supabase-c
 
 // ---------- the backend: the few Supabase calls this app makes ----------
 
-export type AuthErrorKey = "email-invalid" | "email-not-allowed" | "rate-limit" | "code-format" | "code-wrong-or-expired" | "link-expired" | "provider-failed" | "network";
+export type AuthErrorKey = "email-invalid" | "email-not-allowed" | "rate-limit" | "code-format" | "code-wrong-or-expired" | "link-expired" | "login-failed" | "attempt-failed" | "provider-failed" | "network";
 /** A record row as the server keeps it: one whole record in `data`. */
 export type RemoteRow = { id: string; data: unknown; updated_at: string };
 /** A row as sent: with its owner, since a record's id is unique only within one account (0002_records_per_account.sql). */
@@ -182,7 +182,7 @@ const QUERY_KEYS = ["code", "error", "error_code", "error_description", "state"]
 export const isLinkReturn = () => {
   if (typeof window === "undefined") return false;
   const query = new URLSearchParams(window.location.search);
-  return HASH_KEYS.test(window.location.hash) || query.has("code") || query.has("error_description");
+  return HASH_KEYS.test(window.location.hash) || query.has("code") || query.has("error") || query.has("error_description");
 };
 
 /** The values the return brought, from both places, read before they are wiped. */
@@ -238,6 +238,11 @@ export const clearArrived = () => { if (state.arrived) setState({ arrived: false
  * Picks up a login this browser already holds, or the one a return from
  * signing in brought (email link or provider button, # tokens or ?code=).
  * Does nothing (and loads nothing) for a guest.
+ *
+ * A return that did not sign in (an error in the address, or a token or code
+ * that no longer works) never reads as 「로그인했어요」: with no earlier login
+ * it says the login failed; with an earlier login still held, that login stays
+ * and the note says the attempt just made did not work (2026-11-02).
  */
 export const resumeAccount = async () => {
   if (state.phase !== "signed-out") return;
@@ -252,8 +257,10 @@ export const resumeAccount = async () => {
       if (result && !result.error && result.data.session) { await signedIn(result.data.session.user, true); return; }
     }
     const { data } = await auth.getSession();
-    if (data.session) await signedIn(data.session.user, Boolean(back));
-    else if (back) setState({ note: "link-expired" });
+    if (data.session) {
+      await signedIn(data.session.user, false);
+      if (back) setState({ note: "attempt-failed" });
+    } else if (back) setState({ note: back.failed ? "login-failed" : "link-expired" });
   });
 };
 
