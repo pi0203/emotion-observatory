@@ -17,7 +17,7 @@ import { activationLabel, hasAffectPoint, quickActivation, quickValence, scaleLa
 import { buildSynthesis, hasSynthesis } from "../lib/synthesis";
 import { requireContent, type LocaleContent } from "../lib/content";
 import { INPUT_LIMITS } from "../lib/limits";
-import { CONTACTS_CHECKED_ON, parseTerms, TERMS_EFFECTIVE, TERMS_MAIL, TERMS_PATH, type Terms, type TermsBlock, type TermsPiece } from "../lib/terms";
+import { CONTACTS_CHECKED_ON, parseTerms, PRIVACY_PATH, TERMS_EFFECTIVE, TERMS_MAIL, TERMS_PATH, type Terms, type TermsBlock, type TermsPiece } from "../lib/terms";
 import { koOnly } from "../lib/i18n/messages.ko";
 import { DEFAULT_LOCALE, type Locale } from "../lib/i18n/locale";
 import { englishAvailable } from "../lib/i18n/availability";
@@ -231,7 +231,7 @@ function SiteHeader({ onHelp }: { onHelp: () => void }) {
   </header>;
 }
 
-/** A small footer: the app, its maker, the way back and, in Korean, the terms. No mail address, no licence line. */
+/** A small footer: the app, its maker, the way back and, in Korean, the terms and the privacy policy. No mail address, no licence line. */
 function SiteFooter() {
   const t = useT();
   return <footer className="site-footer">
@@ -241,7 +241,7 @@ function SiteFooter() {
     <span aria-hidden="true">·</span>
     <a href={`${HOMEPAGE}/`}>eunchanjoe.vercel.app</a>
     {/* the terms are Korean only for now (lib/terms.ts), so the English footer has no link to them */}
-    {t.locale === "ko" && <><span aria-hidden="true">·</span><a href={TERMS_PATH}>{koOnly.termsLink}</a></>}
+    {t.locale === "ko" && <><span aria-hidden="true">·</span><a href={TERMS_PATH}>{koOnly.termsLink}</a><span aria-hidden="true">·</span><a href={PRIVACY_PATH}>{koOnly.privacyLink}</a></>}
   </footer>;
 }
 

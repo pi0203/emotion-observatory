@@ -652,6 +652,8 @@ export const ko = {
 export const koOnly = {
   /** In the footer, after eunchanjoe.vercel.app. */
   termsLink: "이용약관",
+  /** In the footer, after 이용약관 (2026-11-02). */
+  privacyLink: "개인정보 처리방침",
   /** After the answer to 「기록은 어디에 저장되나요?」. */
   termsStorageLink: "자세히: 이용약관 제6조",
 } as const;

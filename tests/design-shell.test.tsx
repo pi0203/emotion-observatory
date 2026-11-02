@@ -53,8 +53,8 @@ describe("homepage frame on the landing and record screens", () => {
     const footer = screen.getByRole("contentinfo");
     expect(footer.textContent).toContain(ko.common.appName);
     expect(footer.textContent).toContain(ko.shell.owner);
-    // the way back to the homepage, then the terms (Korean only, 2026-11-01)
-    expect(within(footer).getAllByRole("link").map((link) => link.getAttribute("href"))).toEqual(["https://eunchanjoe.vercel.app/", "/terms"]);
+    // the way back to the homepage, then the terms (Korean only, 2026-11-01) and the privacy policy (2026-11-02)
+    expect(within(footer).getAllByRole("link").map((link) => link.getAttribute("href"))).toEqual(["https://eunchanjoe.vercel.app/", "/terms", "/privacy"]);
     expect(within(footer).getByRole("link", { name: koOnly.termsLink })).toBeTruthy();
     expect(footer.innerHTML).not.toMatch(/mailto:|@|CC BY|license|licence|라이선스|저작권/i);
     expect(footer.textContent).not.toMatch(/위기|crisis/i);
