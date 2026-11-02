@@ -42,7 +42,7 @@ export type SupabaseLike = {
     exchangeCodeForSession(code: string): SessionResult;
     signOut(args?: { scope?: "global" | "local" | "others" }): Promise<{ error: unknown }>;
     /** Leaves the page for the provider's sign-in; the provider sends the person back to redirectTo. */
-    signInWithOAuth(args: { provider: string; options?: { redirectTo?: string; scopes?: string } }): Promise<{ error: unknown }>;
+    signInWithOAuth(args: { provider: string; options?: { redirectTo?: string } }): Promise<{ error: unknown }>;
   };
   from(table: "records"): {
     select(columns: string): PromiseLike<{ data: unknown; error: unknown }>;
@@ -298,17 +298,8 @@ const returnAddress = () => `${window.location.origin}${window.location.pathname
  * 구글·카카오·네이버·Apple로 계속하기: the page leaves for the provider and comes
  * back to returnAddress(), where resumeAccount finishes the sign-in.
  */
-/**
- * Kakao is asked for the email only (2026-11-02). Supabase's Kakao code adds
- * these to its own list (account_email, profile_image, profile_nickname)
- * rather than replacing it, so this alone does not stop the other two being
- * asked for; what Kakao shows is set in the Kakao console.
- */
-const SCOPES: Partial<Record<Exclude<LoginProvider, "email">, string>> = { kakao: "account_email" };
-
 export const signInWith = (provider: Exclude<LoginProvider, "email">) => run(async () => {
-  const scopes = SCOPES[provider];
-  const { error } = await (await client()).auth.signInWithOAuth({ provider: OAUTH_PROVIDER[provider], options: { redirectTo: returnAddress(), ...(scopes ? { scopes } : {}) } });
+  const { error } = await (await client()).auth.signInWithOAuth({ provider: OAUTH_PROVIDER[provider], options: { redirectTo: returnAddress() } });
   if (error) setState({ note: "provider-failed" });
 });
 

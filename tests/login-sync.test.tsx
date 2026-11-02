@@ -229,7 +229,7 @@ describe("the sign-in buttons", () => {
     const back = `${window.location.origin}/`;
     expect(fake.sent.filter((item) => item.what === "oauth").map((item) => item.value)).toEqual([
       { provider: "google", options: { redirectTo: back } },
-      { provider: "kakao", options: { redirectTo: back, scopes: "account_email" } },
+      { provider: "kakao", options: { redirectTo: back } },
       { provider: "custom:naver", options: { redirectTo: back } },
       { provider: "apple", options: { redirectTo: back } },
     ]);
