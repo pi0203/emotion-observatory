@@ -14,7 +14,7 @@
  * (`changes` in data/terms.ko.json) must carry the same day; change both when
  * the terms change, or when they reach main on a later day.
  */
-export const TERMS_EFFECTIVE = "2026-11-01";
+export const TERMS_EFFECTIVE = "2026-11-02";
 
 /** The latest check of the crisis numbers: SAFETY.md 「연락처 확인 기록」. */
 export const CONTACTS_CHECKED_ON = "2026-10-28";

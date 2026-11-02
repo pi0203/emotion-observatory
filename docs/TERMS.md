@@ -23,7 +23,7 @@
 
 ### 구현 메모
 
-- `(시행일)`: `lib/terms.ts`의 `TERMS_EFFECTIVE`(이 브랜치에서는 2026-11-01). main에 합치는 날이 다르면 그날로 바꾸고, `data/terms.ko.json`의 `changes` 첫 줄 날짜도 함께 바꾼다(`tests/terms.test.tsx`).
+- `(시행일)`: `lib/terms.ts`의 `TERMS_EFFECTIVE`(2026-11-02, main 공개일). main에 합치는 날이 다르면 그날로 바꾸고, `data/terms.ko.json`의 `changes` 첫 줄 날짜도 함께 바꾼다(`tests/terms.test.tsx`).
 - `(확인일)`: `lib/terms.ts`의 `CONTACTS_CHECKED_ON`. [SAFETY.md](../SAFETY.md) 「연락처 확인 기록」의 가장 최근 확인일(2026-10-28)과 같아야 한다(`tests/terms.test.tsx`).
 - 위기 번호는 위기 카드와 같은 메시지 키(`crisis.num*`, `crisis.href*`)에서 가져온다(다시 쓰지 않는다). `tel:` 링크. 119·112는 카드 첫 줄 문장 안에만 있어서 `crisis.num119`·`crisis.num112` 키를 새로 두고, 카드 문장과 같은 번호인지 테스트로 묶었다.
 - 「이 약관에 대해 말하기 (메일)」: 홈페이지의 「이 쪽에 대해 말하기 (메일)」과 같은 주소(`mailto:a5897@icloud.com`, 2026-11-01 홈페이지에서 확인).
