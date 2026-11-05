@@ -31,9 +31,9 @@ describe("mapPoints", () => {
   });
 
   it("takes the spot from after the slower look when a record has both", () => {
-    const both: EmotionSession = { ...quick("d", day(2), 0.1, 0.9), deepReflection: { startedAt: day(2), affect: { valence: 0.7, activation: 0.3 } } };
+    const both: EmotionSession = { ...quick("d", day(2), 0.1, 0.9), deepReflection: { startedAt: day(2), body: [], concerns: [], emotionCandidates: [], affect: { valence: 0.7, activation: 0.3 } } };
     expect(mapPoints([both])[0]).toMatchObject({ valence: 0.7, activation: 0.3 });
-    const skippedDeep: EmotionSession = { ...both, deepReflection: { startedAt: day(2), affect: {} } };
+    const skippedDeep: EmotionSession = { ...both, deepReflection: { startedAt: day(2), body: [], concerns: [], emotionCandidates: [], affect: {} } };
     expect(mapPoints([skippedDeep])[0]).toMatchObject({ valence: 0.1, activation: 0.9 });
   });
 

@@ -18,9 +18,9 @@ const deep = (id: string, day: number, parts: { body?: string[]; concerns?: stri
   quickCheck: { affect: { valence: 0.4, activation: 0.6 }, candidatePool: [], selected: [] },
   deepReflection: {
     startedAt: at(day),
-    body: parts.body?.map((label) => ({ label })),
-    concerns: parts.concerns,
-    emotionCandidates: parts.word ? [{ label: parts.word, source: "suggested" }] : undefined,
+    body: parts.body?.map((label) => ({ label })) ?? [],
+    concerns: parts.concerns ?? [],
+    emotionCandidates: parts.word ? [{ label: parts.word, source: "suggested" }] : [],
     outcome: { clarity: "clearer", usefulness: "helpful" },
   },
   support: parts.need ? { chosen: [], need: parts.need } : undefined,

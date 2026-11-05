@@ -14,7 +14,7 @@ const both: EmotionSession = {
   id: "pad-both", createdAt: "2026-11-03T02:00:00.000Z", completedAt: "2026-11-03T02:10:00.000Z", status: "completed",
   stage: "summary", entry: "quick", locale: "ko",
   quickCheck: { affect: { valence: 0.2, activation: 0.8 }, candidatePool: [], selected: [{ label: "짜증", source: "suggested" }] },
-  deepReflection: { startedAt: "2026-11-03T02:02:00.000Z", affect: { valence: 0.3, activation: 0.6 }, outcome: { clarity: "clearer", usefulness: "helpful" } },
+  deepReflection: { startedAt: "2026-11-03T02:02:00.000Z", body: [], concerns: [], emotionCandidates: [], affect: { valence: 0.3, activation: 0.6 }, outcome: { clarity: "clearer", usefulness: "helpful" } },
 };
 const quickOnly: EmotionSession = { ...both, id: "pad-quick", stage: "quick-summary", deepReflection: undefined };
 const unsure: EmotionSession = { ...both, id: "pad-unsure", stage: "quick-summary", quickCheck: { affect: { unknown: true }, candidatePool: [], selected: [] }, deepReflection: undefined };
