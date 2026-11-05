@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useReducer, useRef, useState, type CSSProperties } from "react";
+import { createContext, useContext, useEffect, useReducer, useRef, useState, type CSSProperties } from "react";
 import { canGoBack, createSession, sessionReducer, understandRoute } from "../lib/session-types";
 import { appraisalEscapes, coachEscapes, coachResult, coachSetFor, getCoachSets } from "../lib/coach";
 import type { AffectPoint, BodyObservation, DeepReflection, EmotionSelection, EmotionSession, QuickNonSelection, SynthesisFit, TalkToSomeone, UnderlyingFeeling } from "../lib/session-types";
@@ -67,7 +67,9 @@ function App() {
   // the helplines on every step, one tap away (SAFETY.md): a fixed card, no judgement of risk
   const [helpOpen, setHelpOpen] = useState(false);
 
-  const showRecords = () => { setRecords(loadCompleted()); setOpenRecord(null); };
+  // 기록 관리 starts open when the records were opened from 기록 보기·지우기 (2026-11-05)
+  const [manageOpen, setManageOpen] = useState(false);
+  const showRecords = (manage = false) => { setManageOpen(manage); setRecords(loadCompleted()); setOpenRecord(null); };
   const saveFollowUp = (session: EmotionSession, followUp: NonNullable<NonNullable<EmotionSession["support"]>["followUp"]>) => {
     // written straight to the completed store, which upserts by id; the reducer
     // session is on the landing screen here, so nothing can clobber it
@@ -143,8 +145,8 @@ function App() {
       {openRecord
         ? <RecordDetail session={openRecord} previous={previousRecord(openRecord, records ?? loadCompleted())} onFollowUp={(followUp) => saveFollowUp(openRecord, followUp)} onAddLabel={(label) => addLabelLater(openRecord, label)} onBack={() => setOpenRecord(null)} />
         : records
-          ? <RecordsScreen records={records} onOpen={setOpenRecord} onBack={() => setRecords(null)} onChanged={() => { setRecords(loadCompleted()); setDraft(loadDraft()); }} />
-          : <LandingScreen onStart={() => askToStart("quick")} draft={draft} onResume={resume} onRecords={showRecords} pendingStart={pendingStart} onDiscardAndStart={discardAndStart} onCancelStart={() => setPendingStart(null)} />}
+          ? <RecordsScreen records={records} manageOpen={manageOpen} onOpen={setOpenRecord} onBack={() => setRecords(null)} onChanged={() => { setRecords(loadCompleted()); setDraft(loadDraft()); }} />
+          : <LandingScreen onStart={() => askToStart("quick")} draft={draft} onResume={resume} onRecords={() => showRecords()} onManage={() => showRecords(true)} pendingStart={pendingStart} onDiscardAndStart={discardAndStart} onCancelStart={() => setPendingStart(null)} />}
       </main>
       <SiteFooter />
       {helpOpen && <HelpDialog onClose={() => setHelpOpen(false)} />}
@@ -373,7 +375,7 @@ function EntryScreen({ draft, onStart, onUnsure, onStop, onResume }: { draft: Em
  * 지금 기록 is the quick look; the slower look is reached from inside it, at the
  * end of its second step and on its summary. Everything else sits below the fold.
  */
-function LandingScreen({ onStart, draft, onResume, onRecords, pendingStart, onDiscardAndStart, onCancelStart }: { onStart: () => void; draft: EmotionSession | null; onResume: () => void; onRecords: () => void; pendingStart: "quick" | "deep" | null; onDiscardAndStart: () => void; onCancelStart: () => void }) {
+function LandingScreen({ onStart, draft, onResume, onRecords, onManage, pendingStart, onDiscardAndStart, onCancelStart }: { onStart: () => void; draft: EmotionSession | null; onResume: () => void; onRecords: () => void; onManage: () => void; pendingStart: "quick" | "deep" | null; onDiscardAndStart: () => void; onCancelStart: () => void }) {
   const t = useT();
   const confirmTitle = useRef<HTMLParagraphElement>(null);
   // the question takes the focus, so it is read before the choice is made
@@ -405,7 +407,7 @@ function LandingScreen({ onStart, draft, onResume, onRecords, pendingStart, onDi
     <SplitFigure />
     <div className="privacy-note">
       <span aria-hidden="true">💻</span>
-      <span>{t("landing.storageNote")} <button className="inline-link" onClick={onRecords}>{t("landing.storageManage")}</button></span>
+      <span>{t("landing.storageNote")} <button className="inline-link" onClick={onManage}>{t("landing.storageManage")}</button></span>
     </div>
 
     <div className="why-section">
@@ -1206,7 +1208,7 @@ function NeedScreen({ session, onNeed, onResponse, onDeep, onCoach, onBack }: { 
 }
 
 /** A list of what was recorded. No scores, no patterns across records, no interpretation. */
-function RecordsScreen({ records, onOpen, onBack, onChanged }: { records: EmotionSession[]; onOpen: (session: EmotionSession) => void; onBack: () => void; onChanged: () => void }) {
+function RecordsScreen({ records, manageOpen = false, onOpen, onBack, onChanged }: { records: EmotionSession[]; manageOpen?: boolean; onOpen: (session: EmotionSession) => void; onBack: () => void; onChanged: () => void }) {
   const t = useT();
   return <Screen className="entry-screen">
     <p className="eyebrow">{t("records.eyebrow")}</p>
@@ -1229,7 +1231,11 @@ function RecordsScreen({ records, onOpen, onBack, onChanged }: { records: Emotio
             {item.responseLabels.length > 0 && <span className="record-need">{t("records.responsesLine", { labels: item.responseLabels.join(" / ") })}</span>}
           </button>;
         })}</div>}
-    <RecordTransfer count={records.length} onChanged={onChanged} />
+    {/* moving and deleting, folded into one line (2026-11-05); open when the person came to manage them */}
+    <details className="record-manage" open={manageOpen}>
+      <summary>{t("records.manage")}</summary>
+      <RecordTransfer count={records.length} onChanged={onChanged} />
+    </details>
     <div className="navigation"><button className="quiet-button" onClick={onBack}>{t("records.backToStart")}</button><span /></div>
   </Screen>;
 }
@@ -1499,13 +1505,15 @@ function RecordDetail({ session, previous, onFollowUp, onAddLabel, onBack }: { s
   const before = previous ? previousLines(previous) : undefined;
   const lastTime = (value?: string) => before && value ? <p className="previous-line">{t("recordDetail.previous", { date: formatDay(before.at, t.locale), value })}</p> : null;
   const concernRows = concernLines(session);
-  return <Screen>
+  // where each line came from, and how far the record went, wait behind one button (2026-11-05); the bands stay
+  const [sourcesShown, setSourcesShown] = useState(false);
+  return <SourcesShown.Provider value={sourcesShown}><Screen>
     <p className="eyebrow">{t("records.eyebrow")}</p>
     <h1>{formatWhen(item.at, t.locale)}</h1>
-    <SourceLegend />
+    {sourcesShown && <SourceLegend />}
     <MiniPad quick={quickAffect} deep={deep?.affect} />
     <div className="summary-card with-sources">
-      <SummaryRow label={t("recordDetail.depth")} value={item.depthLabel} source={app("depth")} />
+      {sourcesShown && <SummaryRow label={t("recordDetail.depth")} value={item.depthLabel} source={app("depth")} />}
       {quickAffect && (quickAffect.unknown
         ? <SummaryRow label={t("recordDetail.quickAffect")} value={t("quickAffect.unknown")} source={mine("pressed")} />
         : <SummaryRow label={t("recordDetail.quickAffect")} value={quickAffectValue(t, quickAffect)} source={app("sentence")} />)}
@@ -1553,8 +1561,9 @@ function RecordDetail({ session, previous, onFollowUp, onAddLabel, onBack }: { s
       <p className="synthesis-caveat">{t("recordDetail.followUpCaveat")}</p>
     </section>}
 
+    <button className="inline-link sources-toggle" aria-expanded={sourcesShown} onClick={() => setSourcesShown((shown) => !shown)}>{sourcesShown ? t("recordDetail.sourcesHide") : t("recordDetail.sourcesShow")}</button>
     <div className="navigation"><button className="quiet-button" onClick={onBack}>{t("recordDetail.backToList")}</button><a className="primary-button" href="/">{t("recordDetail.toStart")} <span>→</span></a></div>
-  </Screen>;
+  </Screen></SourcesShown.Provider>;
 }
 
 /**
@@ -1662,8 +1671,11 @@ function StepNote({ note }: { note?: string }) { return note ? <p className="ste
 function LeftEmptyRow({ label, value, source }: { label: string; value?: string; source?: RowSource }) { const t = useT(); return <SummaryRow label={label} value={value ?? t("common.leftEmpty")} empty={value === undefined} source={source} />; }
 /** Where a record line came from: a band at its left edge and a short label under it (record detail only). */
 type RowSource = { kind: SourceKind; label: string };
+/** Whether the short source labels are shown; the band always is. The record detail folds them (2026-11-05). */
+const SourcesShown = createContext(true);
 function SummaryRow({ label, value, empty = false, style, source }: { label: string; value: string; empty?: boolean; style?: CSSProperties; source?: RowSource }) {
-  return <div className={`summary-row reveal-step${empty ? " is-empty" : ""}${source ? ` has-source source-${source.kind}` : ""}`} style={style}><span>{label}</span><strong>{value}</strong>{source && <em className="source-label">{source.label}</em>}</div>;
+  const labelShown = useContext(SourcesShown);
+  return <div className={`summary-row reveal-step${empty ? " is-empty" : ""}${source ? ` has-source source-${source.kind}` : ""}`} style={style}><span>{label}</span><strong>{value}</strong>{source && labelShown && <em className="source-label">{source.label}</em>}</div>;
 }
 /** The three bands, named once above the record. */
 function SourceLegend() {

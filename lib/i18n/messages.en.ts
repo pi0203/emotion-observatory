@@ -554,6 +554,8 @@ export const en: Messages = {
       today: "Today",
       goTo: "Go to the entries from {date}",
     },
+    /** 기록 옮기기와 지우기, folded into one line (2026-11-05). */
+    manage: "Manage entries",
     /** 내 지도 under the strip (2026-11-05): one point per record with a spot, nothing counted. */
     map: {
       title: "My map",
@@ -624,6 +626,9 @@ export const en: Messages = {
     deletedAll: "All entries on this device have been deleted.",
   },
   recordDetail: {
+    /** The one button that shows the source labels and how far the record went (2026-11-05). */
+    sourcesShow: "See where each line came from",
+    sourcesHide: "Hide where each line came from",
     /** Under a line, when the record just before had the same one (2026-11-05). Side by side only: no comparing word. */
     previous: "Last time ({date}): {value}",
     depth: "How far you went",

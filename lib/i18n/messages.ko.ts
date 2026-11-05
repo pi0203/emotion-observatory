@@ -535,6 +535,8 @@ export const ko = {
       today: "오늘",
       goTo: "{date} 기록으로 가기",
     },
+    /** 기록 옮기기와 지우기, folded into one line (2026-11-05). */
+    manage: "기록 관리",
     /** 내 지도 under the strip (2026-11-05): one point per record with a spot, nothing counted. */
     map: {
       title: "내 지도",
@@ -609,6 +611,9 @@ export const ko = {
     deletedAll: "이 기기의 기록을 모두 지웠습니다.",
   },
   recordDetail: {
+    /** The one button that shows the source labels and how far the record went (2026-11-05). */
+    sourcesShow: "어디서 온 줄인지 보기",
+    sourcesHide: "어디서 온 줄인지 접기",
     /** Under a line, when the record just before had the same one (2026-11-05). Side by side only: no comparing word. */
     previous: "지난번 ({date}): {value}",
     depth: "살펴본 정도",

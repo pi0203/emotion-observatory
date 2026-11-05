@@ -70,6 +70,7 @@ describe("on the summary", () => {
     render(<Home />);
     fireEvent.click(screen.getByRole("button", { name: ko.landing.records }));
     fireEvent.click(document.querySelector(".record-row")!);
+    fireEvent.click(screen.getByRole("button", { name: ko.recordDetail.sourcesShow })); // the source labels are folded by default (2026-11-05)
     const rows = [...document.querySelectorAll(".summary-row")];
     const answer = rows.find((row) => row.textContent?.startsWith(Q.recordLabel))!;
     const line = rows.find((row) => row.textContent?.startsWith(Q.noteRecordLabel))!;

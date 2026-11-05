@@ -570,10 +570,10 @@ html, body { transition: background-color .5s ease; }
 .split-lines path, .split-stem path { vector-effect: non-scaling-stroke; }
 .split-branches { list-style: none; display: grid; grid-template-columns: 1fr 1fr; gap: 0; margin: 0; padding: 0; }
 .split-branch { display: flex; flex-direction: column; align-items: center; padding: 0 6px; text-align: center; }
-.split-kind { padding: 6px 10px; border: 1px solid var(--line-strong); border-radius: 10px; background: var(--paper); font-size: .92rem; word-break: keep-all; }
+.split-kind { padding: 6px 10px; border: 1px solid var(--line-strong); border-radius: 10px; background: var(--paper); font-size: var(--t-small); word-break: keep-all; }
 .split-stem { display: block; width: 2px; height: 24px; overflow: visible; }
-.split-need { color: var(--muted); font-size: .88rem; line-height: 1.45; word-break: keep-all; }
-.split-line { margin: 18px 0 0; color: var(--muted); font-size: .92rem; line-height: 1.6; text-align: center; word-break: keep-all; }
+.split-need { color: var(--muted); font-size: var(--t-small); line-height: 1.45; word-break: keep-all; }
+.split-line { margin: 18px 0 0; color: var(--muted); font-size: var(--t-small); line-height: 1.6; text-align: center; word-break: keep-all; }
 /* the lines are uncovered from the top down, so they seem to be drawn; the words under them then appear */
 .split-play .split-lines { clip-path: inset(0 0 100% 0); animation: split-draw .55s ease-out .15s forwards; }
 .split-play .split-stem { clip-path: inset(0 0 100% 0); animation: split-draw .3s ease-out .7s forwards; }
@@ -588,13 +588,13 @@ html, body { transition: background-color .5s ease; }
 /* The small read-only pad on the closing screens and the record detail (2026-11-05): the pad's own axis names around it.
    Two spots: the earlier one lighter and smaller, each with a small label; never a line between them. */
 .mini-pad-wrap { width: 200px; margin: 6px 0 22px; }
-.mini-axis, .mini-axis-row { color: var(--muted); font: .68rem/1.3 var(--font-sans); }
+.mini-axis, .mini-axis-row { color: var(--muted); font: var(--t-aside)/1.3 var(--font-sans); }
 .mini-axis { text-align: center; }
 .mini-axis.top { margin-bottom: 4px; }
 .mini-axis.bottom { margin-top: 2px; }
 .mini-axis-row { display: flex; justify-content: space-between; padding-top: 3px; }
 .mini-quick:not(:only-child) .mini-dot { width: 11px; height: 11px; opacity: .5; }
-.mini-label { position: absolute; transform: translate(10px, -50%); white-space: nowrap; color: var(--ink); font: 600 .68rem/1 var(--font-sans); text-shadow: 0 0 3px var(--card), 0 0 3px var(--card); }
+.mini-label { position: absolute; transform: translate(10px, -50%); white-space: nowrap; color: var(--ink); font: 600 var(--t-aside)/1 var(--font-sans); text-shadow: 0 0 3px var(--card), 0 0 3px var(--card); }
 .mini-label.to-left { transform: translate(calc(-100% - 10px), -50%); }
 .with-sources ~ .mini-pad-wrap, .source-legend + .mini-pad-wrap { margin-top: 14px; }
 
@@ -621,3 +621,12 @@ html, body { transition: background-color .5s ease; }
 .summary-card .summary-row:has(+ .previous-line) { border-bottom: 0; }
 .previous-line:last-child { border-bottom: 0; }
 @media (max-width: 560px) { .previous-line { padding-left: calc(90px + 16px + 16px); } }
+
+/* 덜 중요한 것 접어 두기 (2026-11-05): the records' moving and deleting behind one line, the record's source labels behind one button */
+.record-manage { margin-top: 36px; border-top: 1px solid var(--line); }
+.record-manage > summary { display: flex; align-items: center; justify-content: space-between; min-height: 48px; color: var(--muted); font: 600 var(--t-aside) var(--font-sans); cursor: pointer; list-style: none; }
+.record-manage > summary::-webkit-details-marker { display: none; }
+.record-manage > summary::after { content: "+"; font-size: var(--t-body); }
+.record-manage[open] > summary::after { content: "−"; }
+.record-manage > .synthesis { margin-top: 8px; }
+.sources-toggle { display: block; min-height: 44px; margin-top: 28px; color: var(--muted); font-size: var(--t-aside); }

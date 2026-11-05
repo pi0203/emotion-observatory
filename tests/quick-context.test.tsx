@@ -57,6 +57,7 @@ describe("what happened, on the quick look", () => {
     render(<Home />);
     fireEvent.click(screen.getByRole("button", { name: ko.landing.records }));
     fireEvent.click(document.querySelector(".record-row")!);
+    fireEvent.click(screen.getByRole("button", { name: ko.recordDetail.sourcesShow })); // the source labels are folded by default (2026-11-05)
     const row = [...document.querySelectorAll(".summary-row")].find((item) => item.textContent?.includes(ko.recordDetail.quickContext))!;
     expect(row.textContent).toContain("회의에서 내 안이 빠졌다");
     expect(row.className).toContain("source-mine");
