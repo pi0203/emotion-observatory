@@ -99,6 +99,8 @@ export const ko = {
     limit: "한계",
     refsClosing: "<b>이 앱을 직접 시험한 연구는 아직 없습니다.</b> 이 앱처럼 가끔, 10~30초씩 쓰는 방식은 위 어느 연구보다도 훨씬 적게 쓰는 것입니다. 위 연구들은 앱의 생각이 어디쯤 서 있는지 보여 줄 뿐입니다.",
     doiLink: "원문",
+    atlasLead: "몸과 뇌가 감정과 어떻게 이어지는지, 교과서와 연구가 어디까지 말하고 어디서 의견이 갈리는지는 만든 사람의 홈페이지에 따로 모으고 있습니다(작업 중).",
+    atlasLink: "뇌 지도",
     refs: {
       vedernikova: {
         cite: "Vedernikova, Kuppens, & Erbas (2021). From knowledge to differentiation. Frontiers in Psychology.",

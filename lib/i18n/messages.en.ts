@@ -128,6 +128,9 @@ export const en: Messages = {
     refsChecked: "Last checked {year}-{month}-{day}. For each study we looked again at its publication status and any correction or retraction notice on Crossref.",
     checkedOn: "Checked {year}-{month}-{day}",
     doiLink: "Source",
+    // 검토 전, 화면에 안 나옴 — not reviewed, not shown: the about section renders this line for Korean only, like the brain map
+    atlasLead: "How the body and brain relate to emotion, what textbooks and studies say and where they disagree, is collected on the maker’s homepage (in Korean, a work in progress).",
+    atlasLink: "Brain map",
     refs: {
       vedernikova: {
         cite: "Vedernikova, Kuppens, & Erbas (2021). From knowledge to differentiation. Frontiers in Psychology.",
