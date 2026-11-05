@@ -143,9 +143,9 @@ function App() {
       <SiteHeader onHelp={() => setHelpOpen(true)} />
       <main id="main" tabIndex={-1} className="site-main">
       {openRecord
-        ? <RecordDetail session={openRecord} previous={previousRecord(openRecord, records ?? loadCompleted())} onFollowUp={(followUp) => saveFollowUp(openRecord, followUp)} onAddLabel={(label) => addLabelLater(openRecord, label)} onBack={() => setOpenRecord(null)} />
+        ? <RecordDetail session={openRecord} previous={previousRecord(openRecord, records ?? loadCompleted())} onHelp={() => setHelpOpen(true)} onFollowUp={(followUp) => saveFollowUp(openRecord, followUp)} onAddLabel={(label) => addLabelLater(openRecord, label)} onBack={() => setOpenRecord(null)} />
         : records
-          ? <RecordsScreen records={records} manageOpen={manageOpen} onOpen={setOpenRecord} onBack={() => setRecords(null)} onChanged={() => { setRecords(loadCompleted()); setDraft(loadDraft()); }} />
+          ? <RecordsScreen records={records} manageOpen={manageOpen} onHelp={() => setHelpOpen(true)} onOpen={setOpenRecord} onBack={() => setRecords(null)} onChanged={() => { setRecords(loadCompleted()); setDraft(loadDraft()); }} />
           : <LandingScreen onStart={() => askToStart("quick")} draft={draft} onResume={resume} onRecords={() => showRecords()} onManage={() => showRecords(true)} pendingStart={pendingStart} onDiscardAndStart={discardAndStart} onCancelStart={() => setPendingStart(null)} />}
       </main>
       <SiteFooter />
@@ -1208,7 +1208,7 @@ function NeedScreen({ session, onNeed, onResponse, onDeep, onCoach, onBack }: { 
 }
 
 /** A list of what was recorded. No scores, no patterns across records, no interpretation. */
-function RecordsScreen({ records, manageOpen = false, onOpen, onBack, onChanged }: { records: EmotionSession[]; manageOpen?: boolean; onOpen: (session: EmotionSession) => void; onBack: () => void; onChanged: () => void }) {
+function RecordsScreen({ records, manageOpen = false, onHelp, onOpen, onBack, onChanged }: { records: EmotionSession[]; manageOpen?: boolean; onHelp: () => void; onOpen: (session: EmotionSession) => void; onBack: () => void; onChanged: () => void }) {
   const t = useT();
   return <Screen className="entry-screen">
     <p className="eyebrow">{t("records.eyebrow")}</p>
@@ -1231,6 +1231,7 @@ function RecordsScreen({ records, manageOpen = false, onOpen, onBack, onChanged 
             {item.responseLabels.length > 0 && <span className="record-need">{t("records.responsesLine", { labels: item.responseLabels.join(" / ") })}</span>}
           </button>;
         })}</div>}
+    <HelpLine onHelp={onHelp} />
     {/* moving and deleting, folded into one line (2026-11-05); open when the person came to manage them */}
     <details className="record-manage" open={manageOpen}>
       <summary>{t("records.manage")}</summary>
@@ -1490,7 +1491,7 @@ function RecordTransfer({ count, onChanged }: { count: number; onChanged: () => 
  * from (owner's decision 2026-10-30): what the person pressed or wrote, what the
  * app worked out from it, and what was added later. Colour is never the only sign.
  */
-function RecordDetail({ session, previous, onFollowUp, onAddLabel, onBack }: { session: EmotionSession; previous?: EmotionSession; onFollowUp: (followUp: { tried?: "yes" | "partly" | "no"; helped?: "yes" | "somewhat" | "no" | "unsure" }) => void; onAddLabel: (label: string) => void; onBack: () => void }) {
+function RecordDetail({ session, previous, onHelp, onFollowUp, onAddLabel, onBack }: { session: EmotionSession; previous?: EmotionSession; onHelp: () => void; onFollowUp: (followUp: { tried?: "yes" | "partly" | "no"; helped?: "yes" | "somewhat" | "no" | "unsure" }) => void; onAddLabel: (label: string) => void; onBack: () => void }) {
   const t = useT();
   const item = summarise(session, t.locale);
   const followUp = session.support?.followUp;
@@ -1563,6 +1564,7 @@ function RecordDetail({ session, previous, onFollowUp, onAddLabel, onBack }: { s
 
     <button className="inline-link sources-toggle" aria-expanded={sourcesShown} onClick={() => setSourcesShown((shown) => !shown)}>{sourcesShown ? t("recordDetail.sourcesHide") : t("recordDetail.sourcesShow")}</button>
     <div className="navigation"><button className="quiet-button" onClick={onBack}>{t("recordDetail.backToList")}</button><a className="primary-button" href="/">{t("recordDetail.toStart")} <span>→</span></a></div>
+    <HelpLine onHelp={onHelp} />
   </Screen></SourcesShown.Provider>;
 }
 
@@ -1623,6 +1625,16 @@ function WorsenedScreen() {
     <p className="small-note">{t("worsened.kept")}</p>
     <HelpReveal />
   </Screen>;
+}
+
+/**
+ * The same line at the foot of the records list and of a record (2026-11-05): it
+ * opens the help card the header's 도움 opens. It is always there and always the
+ * same; nothing in a record changes it, and nothing is read for risk (SAFETY.md).
+ */
+function HelpLine({ onHelp }: { onHelp: () => void }) {
+  const t = useT();
+  return <p className="help-line"><button className="inline-link" onClick={onHelp}>{t("common.helpLine")} <span aria-hidden="true">→</span></button></p>;
 }
 
 /** The helplines, folded until asked for, so they are offered without being pressed on anyone. */

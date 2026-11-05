@@ -74,6 +74,8 @@ export const en: Messages = {
     provisionalNote: "A starter set of words · Only what you choose is kept",
     helpLink: "Where to get help",
     helpShort: "Help",
+    /** The same line at the foot of the records list and of a record (2026-11-05); opens the help card. */
+    helpLine: "Where to reach out when it’s hard",
     close: "Close",
     saveFailed: "This browser is not saving this entry. Its storage may be full, or the browser may be blocking it. You can go on, but if you close this screen, this entry will not be kept. You can free up space on the past entries screen by exporting older entries to a file and then deleting them.",
     quoted: "“{value}”",
