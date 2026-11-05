@@ -48,6 +48,8 @@ export const ko = {
     listSeparator: ", ",
   },
   landing: {
+    /** The small label above the title (2026-11-05): the nickname 이쯤 joins the pad's own hint, 「‘이쯤’이라고 느껴지는 곳」. Korean only; the tab title, meta, header and footer keep 감정 관찰실. */
+    eyebrow: "이쯤 · 감정 관찰실",
     // the one-way-in title and subtitle (owner kept the proposed wording, 2026-10-30)
     title: "이름 붙이기 전에, 지금 느껴지는 것을 그대로 남겨 둡니다.",
     lede: "맞히는 검사가 아닙니다. 1분이면 됩니다.",

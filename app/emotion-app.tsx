@@ -382,7 +382,7 @@ function LandingScreen({ onStart, draft, onResume, onRecords, pendingStart, onDi
     <section className="card hero-card single-entry">
       {/* a drawing of the pad used in the steps: four quiet colours and one dot (decoration only) */}
       <div className="hero-pad" aria-hidden="true"><span className="hero-dot" /></div>
-      <p className="eyebrow">{t("common.appName")}</p>
+      <p className="eyebrow">{t("landing.eyebrow")}</p>
       <h1>{renderRich(t("landing.title"))}</h1>
       <p className="lede">{renderRich(t("landing.lede"))}</p>
       {pendingStart

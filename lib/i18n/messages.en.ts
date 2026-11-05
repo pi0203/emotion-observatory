@@ -80,6 +80,8 @@ export const en: Messages = {
     listSeparator: ", ",
   },
   landing: {
+    /** The nickname 이쯤 is not used in English (2026-11-05): the label stays the app's name. */
+    eyebrow: "Emotion Observatory",
     // same meaning as the Korean (owner kept the proposed wording, 2026-10-30)
     title: "Before you name it, keep what you feel just as it is.",
     lede: "This is not a test to get right. It takes about a minute.",
