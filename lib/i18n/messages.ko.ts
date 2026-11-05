@@ -50,6 +50,15 @@ export const ko = {
   landing: {
     /** The small label above the title (2026-11-05): the nickname 이쯤 joins the pad's own hint, 「‘이쯤’이라고 느껴지는 곳」. Korean only; the tab title, meta, header and footer keep 감정 관찰실. */
     eyebrow: "이쯤 · 감정 관찰실",
+    /** The drawing under the buttons (2026-11-05): the 답답함 example from 「왜 감정을 조금 더 자세히 살펴볼까요?」, as one word that splits in two. */
+    split: {
+      word: "답답해",
+      tired: "지쳐서 답답함",
+      tiredNeed: "쉬는 게 필요할 때",
+      stuck: "할 말이 막혀 답답함",
+      stuckNeed: "말을 정리하는 게 필요할 때",
+      line: "좋은지 싫은지 잘 몰라도 괜찮아요. 이쯤이라고 눌러 두면, 쌓인 점들이 내 쪽을 보여 줘요.",
+    },
     // the one-way-in title and subtitle (owner kept the proposed wording, 2026-10-30)
     title: "이름 붙이기 전에, 지금 느껴지는 것을 그대로 남겨 둡니다.",
     lede: "맞히는 검사가 아닙니다. 1분이면 됩니다.",

@@ -402,6 +402,7 @@ function LandingScreen({ onStart, draft, onResume, onRecords, pendingStart, onDi
     </section>
 
     {draft && !pendingStart && <div className="resume-card"><div><strong>{t("entry.resumeTitle")}</strong><span>{t("entry.resumeBody")}</span></div><button className="small-button" onClick={onResume}>{t("landing.resume")}</button></div>}
+    <SplitFigure />
     <div className="privacy-note">
       <span aria-hidden="true">💻</span>
       <span>{t("landing.storageNote")} <button className="inline-link" onClick={onRecords}>{t("landing.storageManage")}</button></span>
@@ -415,6 +416,32 @@ function LandingScreen({ onStart, draft, onResume, onRecords, pendingStart, onDi
     <AboutTool />
     <CrisisCard />
   </Screen>;
+}
+
+/**
+ * Under the buttons (2026-11-05): the 답답함 example from the fold above, drawn.
+ * One word splits into two kinds, each with what it calls for. The lines draw
+ * themselves once per page load, in about a second; with reduced motion they are
+ * simply there. The words are real text, read in order; the lines are decoration.
+ * No colour per feeling (§19): one ink, one line weight.
+ */
+function SplitFigure() {
+  const t = useT();
+  const play = useFirstReveal("landing:split");
+  const branch = (kind: "tired" | "stuck") => <li className="split-branch">
+    <span className="split-kind">{t(`landing.split.${kind}`)}</span>
+    <svg className="split-stem" viewBox="0 0 2 24" aria-hidden="true"><path d="M1 0 V24" /></svg>
+    <span className="split-need">{t(`landing.split.${kind}Need`)}</span>
+  </li>;
+  return <figure className={`split-figure${play ? " split-play" : ""}`}>
+    <p className="split-word"><span>{t("landing.split.word")}</span></p>
+    <svg className="split-lines" viewBox="0 0 200 40" preserveAspectRatio="none" aria-hidden="true">
+      <path d="M100 0 C100 22 50 18 50 40" />
+      <path d="M100 0 C100 22 150 18 150 40" />
+    </svg>
+    <ul className="split-branches">{branch("tired")}{branch("stuck")}</ul>
+    <figcaption className="split-line">{t("landing.split.line")}</figcaption>
+  </figure>;
 }
 
 /** The question each step asks, in the order it is met; the preview on the landing lists them from the same messages the steps use. */

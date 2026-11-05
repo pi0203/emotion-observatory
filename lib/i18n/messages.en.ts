@@ -82,6 +82,14 @@ export const en: Messages = {
   landing: {
     /** The nickname 이쯤 is not used in English (2026-11-05): the label stays the app's name. */
     eyebrow: "Emotion Observatory",
+    split: {
+      word: "I feel stuck",
+      tired: "Stuck because I’m worn out",
+      tiredNeed: "When rest is what’s needed",
+      stuck: "Stuck because the words won’t come",
+      stuckNeed: "When sorting out what to say is what’s needed",
+      line: "It’s fine not to know whether it feels good or bad. Tap roughly where it is, and the dots that gather show you your own side.",
+    },
     // same meaning as the Korean (owner kept the proposed wording, 2026-10-30)
     title: "Before you name it, keep what you feel just as it is.",
     lede: "This is not a test to get right. It takes about a minute.",
