@@ -572,7 +572,7 @@ html, body { transition: background-color .5s ease; }
 .split-branch { display: flex; flex-direction: column; align-items: center; padding: 0 6px; text-align: center; }
 .split-kind { padding: 6px 10px; border: 1px solid var(--line-strong); border-radius: 10px; background: var(--paper); font-size: var(--t-small); word-break: keep-all; }
 .split-stem { display: block; width: 2px; height: 24px; overflow: visible; }
-.split-need { color: var(--muted); font-size: var(--t-small); line-height: 1.45; word-break: keep-all; }
+.split-need { color: var(--muted); font-size: var(--t-small); line-height: 1.45; word-break: keep-all; text-wrap: balance; }
 .split-line { margin: 18px 0 0; color: var(--muted); font-size: var(--t-small); line-height: 1.6; text-align: center; word-break: keep-all; }
 /* the lines are uncovered from the top down, so they seem to be drawn; the words under them then appear */
 .split-play .split-lines { clip-path: inset(0 0 100% 0); animation: split-draw .55s ease-out .15s forwards; }
@@ -596,13 +596,13 @@ html, body { transition: background-color .5s ease; }
 .mini-quick:not(:only-child) .mini-dot { width: 11px; height: 11px; opacity: .5; }
 .mini-label { position: absolute; transform: translate(10px, -50%); white-space: nowrap; color: var(--ink); font: 600 var(--t-aside)/1 var(--font-sans); text-shadow: 0 0 3px var(--card), 0 0 3px var(--card); }
 .mini-label.to-left { transform: translate(calc(-100% - 10px), -50%); }
-.with-sources ~ .mini-pad-wrap, .source-legend + .mini-pad-wrap { margin-top: 14px; }
+.screen > h1 + .mini-pad-wrap, .source-legend + .mini-pad-wrap { margin-top: 20px; }
 
 /* 내 지도 on the records screen (2026-11-05): the pad's shape, every spot on it, a thin line in time order.
    Time is carried by how strong a point is and how large the latest is; there is no colour per feeling (§19).
    Each point is a 32px button around a small dot, so neighbours stay pressable at 390px. */
 .records-map { margin: 24px 0 8px; }
-.map-wrap { width: min(100%, 420px); margin: 10px auto 0; }
+.map-wrap { width: min(100%, 300px); margin: 10px auto 0; }
 .map-pad { position: relative; aspect-ratio: 1.35; border: 1px solid var(--line-strong); border-radius: 48% 52% 50% 48%; background: var(--card); }
 .map-pad::before, .map-pad::after { content: ""; position: absolute; background: var(--axis); }
 .map-pad::before { left: 0; right: 0; top: 50%; height: 1px; }
