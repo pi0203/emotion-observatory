@@ -10,7 +10,7 @@ type DeepOutcome = NonNullable<DeepReflection["outcome"]>;
 import { getStorageAdapter } from "../lib/storage-adapter";
 import { applyImport, buildExport, downloadExport, downloadJson, exportFileName, MAX_IMPORT_BYTES, parseImport, planImport, readFileText, type ImportError, type ImportPlan } from "../lib/record-transfer";
 import { isLockedText, lockedFileName, lockExport, MIN_PASSPHRASE_LENGTH, unlockExport } from "../lib/record-crypto";
-import { concernLines, formatDay, formatWhen, helpedOptions, mapPoints, recentDays, summarise, triedOptions, wordLines, type SourceKind, type WordHow } from "../lib/records";
+import { concernLines, formatDay, formatWhen, helpedOptions, mapPoints, previousLines, previousRecord, recentDays, summarise, triedOptions, wordLines, type SourceKind, type WordHow } from "../lib/records";
 import { migrateLegacyStorage } from "../lib/migrations";
 import { expandCandidates, filterQuickCandidates, showsPauseLine } from "../lib/quick-check";
 import { activationLabel, hasAffectPoint, quickActivation, quickValence, scaleLabel } from "../lib/affect-labels";
@@ -141,7 +141,7 @@ function App() {
       <SiteHeader onHelp={() => setHelpOpen(true)} />
       <main id="main" tabIndex={-1} className="site-main">
       {openRecord
-        ? <RecordDetail session={openRecord} onFollowUp={(followUp) => saveFollowUp(openRecord, followUp)} onAddLabel={(label) => addLabelLater(openRecord, label)} onBack={() => setOpenRecord(null)} />
+        ? <RecordDetail session={openRecord} previous={previousRecord(openRecord, records ?? loadCompleted())} onFollowUp={(followUp) => saveFollowUp(openRecord, followUp)} onAddLabel={(label) => addLabelLater(openRecord, label)} onBack={() => setOpenRecord(null)} />
         : records
           ? <RecordsScreen records={records} onOpen={setOpenRecord} onBack={() => setRecords(null)} onChanged={() => { setRecords(loadCompleted()); setDraft(loadDraft()); }} />
           : <LandingScreen onStart={() => askToStart("quick")} draft={draft} onResume={resume} onRecords={showRecords} pendingStart={pendingStart} onDiscardAndStart={discardAndStart} onCancelStart={() => setPendingStart(null)} />}
@@ -1484,7 +1484,7 @@ function RecordTransfer({ count, onChanged }: { count: number; onChanged: () => 
  * from (owner's decision 2026-10-30): what the person pressed or wrote, what the
  * app worked out from it, and what was added later. Colour is never the only sign.
  */
-function RecordDetail({ session, onFollowUp, onAddLabel, onBack }: { session: EmotionSession; onFollowUp: (followUp: { tried?: "yes" | "partly" | "no"; helped?: "yes" | "somewhat" | "no" | "unsure" }) => void; onAddLabel: (label: string) => void; onBack: () => void }) {
+function RecordDetail({ session, previous, onFollowUp, onAddLabel, onBack }: { session: EmotionSession; previous?: EmotionSession; onFollowUp: (followUp: { tried?: "yes" | "partly" | "no"; helped?: "yes" | "somewhat" | "no" | "unsure" }) => void; onAddLabel: (label: string) => void; onBack: () => void }) {
   const t = useT();
   const item = summarise(session, t.locale);
   const followUp = session.support?.followUp;
@@ -1495,6 +1495,10 @@ function RecordDetail({ session, onFollowUp, onAddLabel, onBack }: { session: Em
   const lines = wordLines(session);
   const quickResponse = deep?.emotionCandidates?.length ? "" : quickResponseLabel(t, session.quickCheck?.candidateResponse);
   const endedUnsure = Boolean(quickAffect?.unknown && !deep);
+  // the record just before, in the same four places only (2026-11-05): shown under the line, never compared
+  const before = previous ? previousLines(previous) : undefined;
+  const lastTime = (value?: string) => before && value ? <p className="previous-line">{t("recordDetail.previous", { date: formatDay(before.at, t.locale), value })}</p> : null;
+  const concernRows = concernLines(session);
   return <Screen>
     <p className="eyebrow">{t("records.eyebrow")}</p>
     <h1>{formatWhen(item.at, t.locale)}</h1>
@@ -1506,17 +1510,24 @@ function RecordDetail({ session, onFollowUp, onAddLabel, onBack }: { session: Em
         ? <SummaryRow label={t("recordDetail.quickAffect")} value={t("quickAffect.unknown")} source={mine("pressed")} />
         : <SummaryRow label={t("recordDetail.quickAffect")} value={quickAffectValue(t, quickAffect)} source={app("sentence")} />)}
       {session.quickCheck?.context?.eventText && <SummaryRow label={t("recordDetail.quickContext")} value={session.quickCheck.context.eventText} source={mine("wrote")} />}
-      {deep?.body && deep.body.length > 0 && <SummaryRow label={t("recordDetail.body")} value={deep.body.map((entry) => entry.label).join(" · ")} source={mine(deep.body.some((entry) => entry.custom) ? "wrote" : "pressed")} />}
+      {deep?.body && deep.body.length > 0 && <>
+        <SummaryRow label={t("recordDetail.body")} value={deep.body.map((entry) => entry.label).join(" · ")} source={mine(deep.body.some((entry) => entry.custom) ? "wrote" : "pressed")} />
+        {lastTime(before?.body)}
+      </>}
       {deep?.affect && (hasAffectPoint(deep.affect)
         ? <SummaryRow label={t("recordDetail.deepAffect")} value={deepAffectValue(t, deep.affect)!} source={app("sentence")} />
         : <LeftEmptyRow label={t("recordDetail.deepAffect")} value={deepAffectValue(t, deep.affect)} source={mine(deep.affect.unknown ? "pressed" : "skipped")} />)}
       {deep?.context?.eventText && <SummaryRow label={t("recordDetail.context")} value={deep.context.eventText} source={mine("wrote")} />}
-      {concernLines(session).map((line) => <SummaryRow key={line.how} label={t("recordDetail.concerns")} value={line.items.join(" · ")} source={mine(line.how)} />)}
+      {concernRows.map((line) => <SummaryRow key={line.how} label={t("recordDetail.concerns")} value={line.items.join(" · ")} source={mine(line.how)} />)}
+      {concernRows.length > 0 && lastTime(before?.concerns)}
       {item.personalMeanings.map((entry) => <SummaryRow key={entry.label} label={t("recordDetail.personalMeaning", { label: entry.label })} value={entry.meaning} source={mine("wrote")} />)}
       {session.talkToSomeone && <SummaryRow label={t("talkToSomeone.recordLabel")} value={t(`talkToSomeone.answers.${session.talkToSomeone.answer}`)} source={mine("pressed")} />}
       {session.underlyingFeeling && <SummaryRow label={t("underlyingFeeling.recordLabel")} value={t(`underlyingFeeling.answers.${session.underlyingFeeling.answer}`)} source={mine("pressed")} />}
       {session.underlyingFeeling?.answer === "yes" && session.underlyingFeeling.note && <SummaryRow label={t("underlyingFeeling.noteRecordLabel")} value={session.underlyingFeeling.note} source={mine("wrote")} />}
-      {item.needLabel && <SummaryRow label={t("recordDetail.need")} value={item.needLabel} source={mine("pressed")} />}
+      {item.needLabel && <>
+        <SummaryRow label={t("recordDetail.need")} value={item.needLabel} source={mine("pressed")} />
+        {lastTime(before?.need)}
+      </>}
       {item.responseLabels.length > 0 && <SummaryRow label={t("recordDetail.responses")} value={item.responseLabels.join(" / ")} source={mine("pressed")} />}
     </div>
 
@@ -1528,6 +1539,7 @@ function RecordDetail({ session, onFollowUp, onAddLabel, onBack }: { session: Em
         : quickResponse ? [{ key: "response", value: quickResponse, source: mine("pressed") }] : []}
       later={session.labelsLater ?? []}
       onAdd={onAddLabel}
+      previous={lastTime(before?.names)}
     />
 
     {item.canFollowUp && <section className="synthesis">
@@ -1551,7 +1563,7 @@ function RecordDetail({ session, onFollowUp, onAddLabel, onBack }: { session: Em
  * can be added, never edited or removed, and nothing is suggested. A record with
  * no name yet shows an open, dashed space, never the word for none.
  */
-function NamesLayer({ day, first, later, onAdd }: { day: string; first: { key: string; value: string; source: RowSource }[]; later: { label: string; at: string }[]; onAdd: (label: string) => void }) {
+function NamesLayer({ day, first, later, onAdd, previous }: { day: string; first: { key: string; value: string; source: RowSource }[]; later: { label: string; at: string }[]; onAdd: (label: string) => void; previous?: React.ReactNode }) {
   const t = useT();
   const [adding, setAdding] = useState(false);
   const [label, setLabel] = useState("");
@@ -1569,6 +1581,7 @@ function NamesLayer({ day, first, later, onAdd }: { day: string; first: { key: s
             const date = formatDay(entry.at, t.locale);
             return <SummaryRow key={`${entry.at}-${index}`} label={date} value={entry.label} source={{ kind: "later", label: t("recordDetail.addedOn", { date }) }} />;
           })}
+          {previous}
         </div>}
     {adding
       ? <div className="own-word-block">

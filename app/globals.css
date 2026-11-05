@@ -615,3 +615,9 @@ html, body { transition: background-color .5s ease; }
 .map-dot { width: 10px; height: 10px; border-radius: 50%; background: var(--accent-ink); box-shadow: 0 0 0 2px var(--card); }
 .map-point.is-latest { z-index: 2; }
 .map-point.is-latest .map-dot { width: 15px; height: 15px; }
+
+/* 「지난번 (11/3): …」 under a record line (2026-11-05): small and grey, in the value column, no band of its own */
+.previous-line { margin: -10px 0 0; padding: 0 0 14px calc(115px + 16px + 16px); border-bottom: 1px solid var(--line); color: var(--muted); font: var(--t-aside)/1.5 var(--font-sans); overflow-wrap: anywhere; }
+.summary-card .summary-row:has(+ .previous-line) { border-bottom: 0; }
+.previous-line:last-child { border-bottom: 0; }
+@media (max-width: 560px) { .previous-line { padding-left: calc(90px + 16px + 16px); } }

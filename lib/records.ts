@@ -201,3 +201,42 @@ export const mapPoints = (records: EmotionSession[]): MapPoint[] => {
   return points.map(({ time, ...point }, index) => index === 0 ? point
     : { ...point, afterGap: time - points[index - 1].time > MAP_GAP_DAYS * 24 * 60 * 60 * 1000 });
 };
+
+/**
+ * The record just before this one in time (2026-11-05), for the record detail's
+ * 「지난번」 lines. Undefined for the first record.
+ */
+export const previousRecord = (session: EmotionSession, records: EmotionSession[]): EmotionSession | undefined => {
+  const time = recordTime(session);
+  if (Number.isNaN(time)) return undefined;
+  return records
+    .filter((other) => other.id !== session.id && !Number.isNaN(recordTime(other)) && recordTime(other) < time)
+    .sort((a, b) => recordTime(b) - recordTime(a))[0];
+};
+
+export type PreviousLines = {
+  /** ISO time of the record before, for the date in 「지난번 (11/3)」. */
+  at: string;
+  body?: string;
+  names?: string;
+  concerns?: string;
+  need?: string;
+};
+
+/**
+ * What the record just before held in the same four places (2026-11-05): body,
+ * names, what mattered and the direction needed, each exactly as it was shown
+ * there, joined with " · ". A place left empty there is absent here. Nothing is
+ * compared: the lines are only set side by side.
+ */
+export const previousLines = (previous: EmotionSession): PreviousLines => {
+  const item = summarise(previous, localeOf(previous));
+  const join = (values: string[]) => values.join(" · ") || undefined;
+  return {
+    at: item.at,
+    body: join((previous.deepReflection?.body ?? []).map((entry) => entry.label)),
+    names: join(item.words) ?? join((previous.labelsLater ?? []).map((entry) => entry.label)),
+    concerns: join(previous.deepReflection?.concerns ?? []),
+    need: item.needLabel,
+  };
+};

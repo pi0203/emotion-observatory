@@ -624,6 +624,8 @@ export const en: Messages = {
     deletedAll: "All entries on this device have been deleted.",
   },
   recordDetail: {
+    /** Under a line, when the record just before had the same one (2026-11-05). Side by side only: no comparing word. */
+    previous: "Last time ({date}): {value}",
     depth: "How far you went",
     quickAffect: "Quick look",
     deepAffect: "After the slow look",

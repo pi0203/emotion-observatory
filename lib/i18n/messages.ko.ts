@@ -609,6 +609,8 @@ export const ko = {
     deletedAll: "이 기기의 기록을 모두 지웠습니다.",
   },
   recordDetail: {
+    /** Under a line, when the record just before had the same one (2026-11-05). Side by side only: no comparing word. */
+    previous: "지난번 ({date}): {value}",
     depth: "살펴본 정도",
     quickAffect: "빠른 확인",
     deepAffect: "자세히 본 뒤",
