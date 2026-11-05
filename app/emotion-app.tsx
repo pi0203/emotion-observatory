@@ -3,16 +3,16 @@
 import { useEffect, useReducer, useRef, useState, type CSSProperties } from "react";
 import { canGoBack, createSession, sessionReducer, understandRoute } from "../lib/session-types";
 import { appraisalEscapes, coachEscapes, coachResult, coachSetFor, getCoachSets } from "../lib/coach";
-import type { AffectPoint, BodyObservation, DeepReflection, EmotionSelection, EmotionSession, QuickNonSelection, SynthesisFit, TalkToSomeone } from "../lib/session-types";
+import type { AffectPoint, BodyObservation, DeepReflection, EmotionSelection, EmotionSession, QuickNonSelection, SynthesisFit, TalkToSomeone, UnderlyingFeeling } from "../lib/session-types";
 
 type DeepContext = NonNullable<DeepReflection["context"]>;
 type DeepOutcome = NonNullable<DeepReflection["outcome"]>;
 import { getStorageAdapter } from "../lib/storage-adapter";
 import { applyImport, buildExport, downloadExport, downloadJson, exportFileName, MAX_IMPORT_BYTES, parseImport, planImport, readFileText, type ImportError, type ImportPlan } from "../lib/record-transfer";
 import { isLockedText, lockedFileName, lockExport, MIN_PASSPHRASE_LENGTH, unlockExport } from "../lib/record-crypto";
-import { concernLines, formatDay, formatWhen, helpedOptions, summarise, triedOptions, wordLines, type SourceKind, type WordHow } from "../lib/records";
+import { concernLines, formatDay, formatWhen, helpedOptions, recentDays, summarise, triedOptions, wordLines, type SourceKind, type WordHow } from "../lib/records";
 import { migrateLegacyStorage } from "../lib/migrations";
-import { expandCandidates, filterQuickCandidates } from "../lib/quick-check";
+import { expandCandidates, filterQuickCandidates, showsPauseLine } from "../lib/quick-check";
 import { activationLabel, hasAffectPoint, quickActivation, quickValence, scaleLabel } from "../lib/affect-labels";
 import { buildSynthesis, hasSynthesis } from "../lib/synthesis";
 import { requireContent, type LocaleContent } from "../lib/content";
@@ -173,6 +173,8 @@ function App() {
       </header>
 
       {saveFailed && <p className="save-warning" role="status">{t("common.saveFailed")}</p>}
+      {/* the person's own spot in the unpleasant, high-energy corner (lib/quick-check PAUSE_LINE_CORNER): one plain line at the top of the second step, no warning colour, nothing else changes */}
+      {session.stage === "quick-candidates" && showsPauseLine(session.quickCheck?.affect) && <p className="pause-line pause-line-banner">{t("quickCandidates.pause")}</p>}
 
       {progress[session.stage] && (
         <div className="progress-row" aria-label={t("common.progress", { step: progress[session.stage] })}>
@@ -182,7 +184,7 @@ function App() {
       )}
 
       {session.stage === "quick-affect" && <QuickAffectScreen onNext={(affect) => { dispatch({ type: "SET_QUICK_AFFECT", affect }); dispatch({ type: "SET_QUICK_CANDIDATES", candidatePool: filterQuickCandidates({ x: affect.valence ?? 0.5, y: affect.activation ?? 0.5 }, undefined, t.locale) }); }} onUnknown={() => dispatch({ type: "SET_QUICK_UNKNOWN" })} />}
-      {session.stage === "quick-candidates" && <QuickCandidatesScreen pool={session.quickCheck?.candidatePool ?? []} selected={session.quickCheck?.selected ?? []} response={session.quickCheck?.candidateResponse} revealed={Boolean(session.quickCheck?.wordsRevealed)} onReveal={() => dispatch({ type: "REVEAL_QUICK_WORDS" })} onToggle={(label) => dispatch({ type: "TOGGLE_QUICK_CANDIDATE", label })} onRespond={(response) => dispatch({ type: "SET_QUICK_CANDIDATE_RESPONSE", response })} onAddCustom={(label) => dispatch({ type: "ADD_QUICK_CUSTOM", label })} onMeaning={(label, meaning) => dispatch({ type: "SET_PERSONAL_MEANING", label, meaning })} onFinish={() => dispatch({ type: "COMPLETE_QUICK" })} onCoach={() => dispatch({ type: "OPEN_GRANULARITY" })} onDeep={() => { dispatch({ type: "COMPLETE_QUICK" }); dispatch({ type: "ENTER_DEEP" }); }} />}
+      {session.stage === "quick-candidates" && <QuickCandidatesScreen pool={session.quickCheck?.candidatePool ?? []} selected={session.quickCheck?.selected ?? []} response={session.quickCheck?.candidateResponse} revealed={Boolean(session.quickCheck?.wordsRevealed)} onReveal={() => dispatch({ type: "REVEAL_QUICK_WORDS" })} onToggle={(label) => dispatch({ type: "TOGGLE_QUICK_CANDIDATE", label })} onRespond={(response) => dispatch({ type: "SET_QUICK_CANDIDATE_RESPONSE", response })} onAddCustom={(label) => dispatch({ type: "ADD_QUICK_CUSTOM", label })} onMeaning={(label, meaning) => dispatch({ type: "SET_PERSONAL_MEANING", label, meaning })} eventText={session.quickCheck?.context?.eventText ?? ""} onEventText={(eventText) => dispatch({ type: "SET_QUICK_CONTEXT", eventText })} onFinish={() => dispatch({ type: "COMPLETE_QUICK" })} onCoach={() => dispatch({ type: "OPEN_GRANULARITY" })} onDeep={() => { dispatch({ type: "COMPLETE_QUICK" }); dispatch({ type: "ENTER_DEEP" }); }} />}
       {session.stage === "coach-appraisal" && <CoachAppraisalScreen session={session} onToggle={(id) => dispatch({ type: "TOGGLE_APPRAISAL", id })} onOwn={(label) => dispatch({ type: "SET_OWN_APPRAISAL", label })} onNext={() => dispatch({ type: "GO_TO_COACH_WORDS" })} onLeave={() => dispatch({ type: "CLOSE_COACH" })} />}
       {session.stage === "coach-words" && <CoachWordsScreen session={session} onToggle={(label) => dispatch({ type: "TOGGLE_COACH_WORD", label })} onOwnWord={(label) => dispatch({ type: "SET_COACH_OWN_WORD", label })} onNext={() => dispatch({ type: "FINISH_COACH" })} onLeave={() => dispatch({ type: "CLOSE_COACH" })} />}
       {session.stage === "coach-note" && <CoachNoteScreen session={session} onDone={() => dispatch({ type: "CLOSE_COACH" })} />}
@@ -197,7 +199,7 @@ function App() {
       {session.stage === "meaning" && <MeaningScreen initial={session.deepReflection?.concerns ?? []} onNext={(selected) => dispatch({ type: "SET_CONCERNS", concerns: selected })} />}
       {session.stage === "emotion" && <EmotionScreen initial={session.deepReflection?.emotionCandidates ?? []} affect={session.deepReflection?.affect} revealed={Boolean(session.deepReflection?.wordsRevealed)} onReveal={() => dispatch({ type: "REVEAL_DEEP_WORDS" })} onNext={(selected) => dispatch({ type: "SET_EMOTIONS", emotionCandidates: selected })} />}
       {session.stage === "outcome" && <OutcomeScreen onNext={(outcome) => dispatch({ type: "SET_OUTCOME", outcome })} />}
-      {session.stage === "summary" && <SummaryScreen session={session} onFeedback={(feedback) => dispatch({ type: "SET_SYNTHESIS_FEEDBACK", ...feedback })} onTalk={(answer) => dispatch({ type: "SET_TALK_TO_SOMEONE", answer })} onSupport={() => dispatch({ type: "OPEN_SUPPORT" })} />}
+      {session.stage === "summary" && <SummaryScreen session={session} onFeedback={(feedback) => dispatch({ type: "SET_SYNTHESIS_FEEDBACK", ...feedback })} onTalk={(answer) => dispatch({ type: "SET_TALK_TO_SOMEONE", answer })} onUnderlying={(answer) => dispatch({ type: "SET_UNDERLYING_FEELING", answer })} onUnderlyingNote={(note) => dispatch({ type: "SET_UNDERLYING_NOTE", note })} onSupport={() => dispatch({ type: "OPEN_SUPPORT" })} />}
       {session.stage === "support" && <NeedScreen session={session} onNeed={(id) => dispatch({ type: "CHOOSE_NEED", id })} onResponse={(id) => dispatch({ type: "TOGGLE_RESPONSE", id })} onDeep={() => dispatch({ type: "ENTER_DEEP" })} onCoach={() => dispatch({ type: "OPEN_COACH" })} onBack={() => dispatch({ type: "BACK" })} />}
       {session.stage === "stopped" && <StoppedScreen session={session} />}
 
@@ -682,7 +684,7 @@ function TieredWords({ pool, selectedLabels, ownWords, onToggle, onAddCustom, me
   </>;
 }
 
-function QuickCandidatesScreen({ pool, selected, response, revealed, onReveal, onToggle, onRespond, onAddCustom, onMeaning, onFinish, onCoach, onDeep }: { pool: EmotionSelection[]; selected: EmotionSelection[]; response?: QuickNonSelection; revealed: boolean; onReveal: () => void; onToggle: (label: string) => void; onRespond: (response: QuickNonSelection) => void; onAddCustom: (label: string) => void; onMeaning: (label: string, meaning: string) => void; onFinish: () => void; onCoach: () => void; onDeep: () => void }) {
+function QuickCandidatesScreen({ pool, selected, response, revealed, onReveal, onToggle, onRespond, onAddCustom, onMeaning, eventText, onEventText, onFinish, onCoach, onDeep }: { pool: EmotionSelection[]; selected: EmotionSelection[]; response?: QuickNonSelection; revealed: boolean; onReveal: () => void; onToggle: (label: string) => void; onRespond: (response: QuickNonSelection) => void; onAddCustom: (label: string) => void; onMeaning: (label: string, meaning: string) => void; eventText: string; onEventText: (eventText: string) => void; onFinish: () => void; onCoach: () => void; onDeep: () => void }) {
   const t = useT();
   const canCoach = getCoachSets(t.locale).some((set) => selected.some((item) => set.words.includes(item.label)));
   return <Screen>
@@ -692,6 +694,13 @@ function QuickCandidatesScreen({ pool, selected, response, revealed, onReveal, o
 
     <div className="quick-option-row">{(["none-close", "unsure"] as const).map((value) => <button className={`secondary-button ${response === value ? "selected" : ""}`} aria-pressed={response === value} key={value} onClick={() => onRespond(value)}><Mark on={response === value} />{t(`quickCandidates.decline.${value}`)}</button>)}</div>
     {response && <p className="small-note">{t(`quickCandidates.declined.${response}`)}</p>}
+
+    {/* what happened, one optional line (owner's decision 2026-10-30): no source choice and no split into parts, so the quick look stays short */}
+    <div className="quick-context">
+      <label className="field-label" htmlFor="quick-event">{t("quickCandidates.context.label")} <em>{t("words.optional")}</em></label>
+      <input id="quick-event" className="text-input" maxLength={INPUT_LIMITS.text} defaultValue={eventText} onChange={(event) => onEventText(event.target.value)} />
+      <p className="small-note">{t("quickCandidates.context.hint")}</p>
+    </div>
 
     <div className="quick-bottom-actions">
       <button className="quiet-button" onClick={onFinish}>{t("quickCandidates.finish")}</button>
@@ -878,7 +887,7 @@ function BodyScreen({ initial, onNext }: { initial: BodyObservation[]; onNext: (
     .filter((group) => group.labels.length);
 
   return <Screen>
-    <StepHeading step={t("body.step")} title={t("body.title")} hint={t("body.hint")} basis={t("body.basis")} />
+    <StepHeading step={t("body.step")} title={t("body.title")} pause={t("body.pause")} hint={t("body.hint")} basis={t("body.basis")} />
     <div className="chip-grid">{first.map((item) => chip(item.label))}</div>
     {!showAll && <button className="reveal-button" onClick={() => setShowAll(true)}>{t("body.more")}</button>}
     {showAll && rest.map((group) => <div key={group.region}>
@@ -959,7 +968,7 @@ function OutcomeScreen({ onNext }: { onNext: (outcome: DeepOutcome) => void }) {
   return <Screen><StepHeading step={t("outcome.step")} title={t("outcome.title")} hint={t("outcome.hint")} basis={t("outcome.basis")} /><div className="choice-list compact">{(["much_clearer", "clearer", "same", "more_complex", "more_distressed"] as const).map((value) => <button className={clarity === value ? "selected" : ""} aria-pressed={clarity === value} key={value} onClick={() => setClarity(value)}><Mark on={clarity === value} />{t(`outcome.clarity.${value}`)}</button>)}</div><h2 className="subquestion">{t("outcome.usefulnessQuestion")}</h2><div className="inline-choices">{(["helpful", "unsure", "unhelpful"] as const).map((value) => <button className={usefulness === value ? "selected" : ""} aria-pressed={usefulness === value} key={value} onClick={() => setUsefulness(value)}><Mark on={usefulness === value} />{t(`outcome.usefulness.${value}`)}</button>)}</div><input className="text-input" maxLength={INPUT_LIMITS.line} value={note} onChange={(event) => setNote(event.target.value)} placeholder={t("outcome.notePlaceholder")} /><Navigation disabled={!clarity || !usefulness} onNext={() => onNext({ clarity: clarity!, usefulness: usefulness!, note })} /></Screen>;
 }
 
-function SummaryScreen({ session, onFeedback, onTalk, onSupport }: { session: EmotionSession; onFeedback: (feedback: { fit?: SynthesisFit; correction?: string }) => void; onTalk: (answer: TalkToSomeone) => void; onSupport: () => void }) {
+function SummaryScreen({ session, onFeedback, onTalk, onUnderlying, onUnderlyingNote, onSupport }: { session: EmotionSession; onFeedback: (feedback: { fit?: SynthesisFit; correction?: string }) => void; onTalk: (answer: TalkToSomeone) => void; onUnderlying: (answer: UnderlyingFeeling) => void; onUnderlyingNote: (note: string) => void; onSupport: () => void }) {
   const t = useT();
   const deep = session.deepReflection;
   const play = useFirstReveal(`${session.id}:summary`);
@@ -986,6 +995,7 @@ function SummaryScreen({ session, onFeedback, onTalk, onSupport }: { session: Em
     <div className="reveal-rest reveal-step" style={delay(d.rest)}>
       <SynthesisSection session={session} onFeedback={onFeedback} />
       <TalkToSomeoneQuestion answer={session.talkToSomeone?.answer} onAnswer={onTalk} />
+      <UnderlyingFeelingQuestion answer={session.underlyingFeeling?.answer} note={session.underlyingFeeling?.note ?? ""} onAnswer={onUnderlying} onNote={onUnderlyingNote} />
       <div className="stack-actions"><button className="primary-button centered" onClick={onSupport}>{t("summary.support")} <span>→</span></button><a className="secondary-button centered" href="/">{t("common.backToStart")}</a></div>
     </div>
   </Screen>;
@@ -1005,6 +1015,27 @@ function TalkToSomeoneQuestion({ answer, onAnswer }: { answer?: TalkToSomeone; o
     <p className="small-note">{t("talkToSomeone.hint")}</p>
     <div className="inline-choices">{TALK_ANSWERS.map((value) => <button key={value} className={answer === value ? "selected" : ""} aria-pressed={answer === value} onClick={() => onAnswer(value)}><Mark on={answer === value} />{t(`talkToSomeone.answers.${value}`)}</button>)}</div>
     {answer && <p className="small-note" role="status">{t("talkToSomeone.saved")}</p>}
+  </section>;
+}
+
+/**
+ * A second question in the same form (owner's decision 2026-10-30, second round D):
+ * whether another feeling was there first, under this one. Kept and shown back
+ * only. No answer changes the next screen, and no word is offered. 있었다 opens one
+ * optional line for what it was, which stays with this answer, not the names layer.
+ */
+const UNDERLYING_ANSWERS: UnderlyingFeeling[] = ["yes", "no", "unsure"];
+function UnderlyingFeelingQuestion({ answer, note, onAnswer, onNote }: { answer?: UnderlyingFeeling; note: string; onAnswer: (answer: UnderlyingFeeling) => void; onNote: (note: string) => void }) {
+  const t = useT();
+  return <section className="talk-question" aria-labelledby="underlying-question-title">
+    <h2 className="subquestion" id="underlying-question-title">{t("underlyingFeeling.question")}</h2>
+    <p className="small-note">{t("underlyingFeeling.hint")}</p>
+    <div className="inline-choices">{UNDERLYING_ANSWERS.map((value) => <button key={value} className={answer === value ? "selected" : ""} aria-pressed={answer === value} onClick={() => onAnswer(value)}><Mark on={answer === value} />{t(`underlyingFeeling.answers.${value}`)}</button>)}</div>
+    {answer === "yes" && <div className="own-word-block">
+      <label className="field-label" htmlFor="underlying-note">{t("underlyingFeeling.noteLabel")} <em>{t("words.optional")}</em></label>
+      <input id="underlying-note" className="text-input" maxLength={INPUT_LIMITS.line} defaultValue={note} onChange={(event) => onNote(event.target.value)} />
+    </div>}
+    {answer && <p className="small-note" role="status">{t("underlyingFeeling.saved")}</p>}
   </section>;
 }
 
@@ -1133,11 +1164,12 @@ function RecordsScreen({ records, onOpen, onBack, onChanged }: { records: Emotio
   return <Screen className="entry-screen">
     <p className="eyebrow">{t("records.eyebrow")}</p>
     <h1>{t("records.title")}</h1>
+    {records.length > 0 && <DayStrip records={records} />}
     {records.length === 0
       ? <p className="lede">{t("records.empty")}</p>
       : <div className="record-list">{records.map((session) => {
           const item = summarise(session, t.locale);
-          return <button className="record-row" key={item.id} onClick={() => onOpen(session)}>
+          return <button className="record-row" id={`record-${item.id}`} key={item.id} onClick={() => onOpen(session)}>
             <span className="record-when">{formatWhen(item.at, t.locale)}<em>{item.depthLabel}</em></span>
             {(() => {
               // the moment's own words, else names given later, else the answer given then; a record with none is not lacking
@@ -1152,6 +1184,31 @@ function RecordsScreen({ records, onOpen, onBack, onChanged }: { records: Emotio
     <RecordTransfer count={records.length} onChanged={onChanged} />
     <div className="navigation"><button className="quiet-button" onClick={onBack}>{t("records.backToStart")}</button><span /></div>
   </Screen>;
+}
+
+/**
+ * The last fourteen days above the list (owner's decision 2026-10-30, second round C):
+ * a dot on a day with a record, an open dashed space on a day without, today at the
+ * right end. It only shows; a dot takes you to that day's first record in the list.
+ * No count, no run of days, and an open day is not coloured as missed.
+ */
+function DayStrip({ records }: { records: EmotionSession[] }) {
+  const t = useT();
+  const days = recentDays(records);
+  const jump = (id: string) => {
+    const row = document.getElementById(`record-${id}`);
+    row?.scrollIntoView?.({ block: "center", behavior: "smooth" });
+    row?.focus();
+  };
+  return <section className="day-strip" aria-labelledby="day-strip-title">
+    <p className="tier-label" id="day-strip-title">{t("records.days.title")}</p>
+    <ol className="day-cells">{days.map((day) => <li key={day.key}>
+      {day.firstId
+        ? <button className="day-cell has-record" aria-label={t("records.days.goTo", { date: formatDay(day.iso, t.locale) })} onClick={() => jump(day.firstId!)}><span className="day-dot" aria-hidden="true" /></button>
+        : <span className="day-cell is-open" aria-hidden="true" />}
+    </li>)}</ol>
+    <div className="day-ends" aria-hidden="true"><span>{formatDay(days[0].iso, t.locale)}</span><span>{t("records.days.today")}</span></div>
+  </section>;
 }
 
 type TransferNote = { kind: "status" | "alert"; text: string };
@@ -1364,6 +1421,7 @@ function RecordDetail({ session, onFollowUp, onAddLabel, onBack }: { session: Em
             <SummaryRow label={t("recordDetail.quickSpot")} value={t("recordDetail.spotValue")} source={mine("pressed")} />
             <SummaryRow label={t("recordDetail.quickAffect")} value={quickAffectValue(t, quickAffect)} source={app("sentence")} />
           </>)}
+      {session.quickCheck?.context?.eventText && <SummaryRow label={t("recordDetail.quickContext")} value={session.quickCheck.context.eventText} source={mine("wrote")} />}
       {deep?.body && deep.body.length > 0 && <SummaryRow label={t("recordDetail.body")} value={deep.body.map((entry) => entry.label).join(" · ")} source={mine(deep.body.some((entry) => entry.custom) ? "wrote" : "pressed")} />}
       {deep?.affect && (hasAffectPoint(deep.affect)
         ? <>
@@ -1375,6 +1433,8 @@ function RecordDetail({ session, onFollowUp, onAddLabel, onBack }: { session: Em
       {concernLines(session).map((line) => <SummaryRow key={line.how} label={t("recordDetail.concerns")} value={line.items.join(" · ")} source={mine(line.how)} />)}
       {item.personalMeanings.map((entry) => <SummaryRow key={entry.label} label={t("recordDetail.personalMeaning", { label: entry.label })} value={entry.meaning} source={mine("wrote")} />)}
       {session.talkToSomeone && <SummaryRow label={t("talkToSomeone.recordLabel")} value={t(`talkToSomeone.answers.${session.talkToSomeone.answer}`)} source={mine("pressed")} />}
+      {session.underlyingFeeling && <SummaryRow label={t("underlyingFeeling.recordLabel")} value={t(`underlyingFeeling.answers.${session.underlyingFeeling.answer}`)} source={mine("pressed")} />}
+      {session.underlyingFeeling?.answer === "yes" && session.underlyingFeeling.note && <SummaryRow label={t("underlyingFeeling.noteRecordLabel")} value={session.underlyingFeeling.note} source={mine("wrote")} />}
       {item.needLabel && <SummaryRow label={t("recordDetail.need")} value={item.needLabel} source={mine("pressed")} />}
       {item.responseLabels.length > 0 && <SummaryRow label={t("recordDetail.responses")} value={item.responseLabels.join(" / ")} source={mine("pressed")} />}
     </div>
@@ -1497,7 +1557,8 @@ function StopModal({ onClose, onStop }: { onClose: () => void; onStop: () => voi
 
 function Screen({ children, className = "" }: { children: React.ReactNode; className?: string }) { return <section className={`screen ${className}`}>{children}</section>; }
 /** The basis band, when given, says which moment the question is about, before the question itself. */
-function StepHeading({ step, title, hint, basis }: { step: string; title: string; hint: string; basis?: string }) { return <><p className="eyebrow">{step}</p>{basis && <p className="step-basis">{basis}</p>}<h1>{title}</h1><p className="hint">{hint}</p></>; }
+/** `pause`, when given, sits right under the title: that stopping here is fine (the body step, 2026-10-30). */
+function StepHeading({ step, title, hint, basis, pause }: { step: string; title: string; hint: string; basis?: string; pause?: string }) { return <><p className="eyebrow">{step}</p>{basis && <p className="step-basis">{basis}</p>}<h1>{title}</h1>{pause && <p className="pause-line">{pause}</p>}<p className="hint">{hint}</p></>; }
 function Navigation({ onNext, onSkip = onNext, disabled = false, note }: { onNext: () => void; onSkip?: () => void; disabled?: boolean; note?: string }) {
   const t = useT();
   return <><StepNote note={note} /><div className="navigation"><button className="skip-button" onClick={onSkip}>{t("common.skip")}</button><button className="primary-button" disabled={disabled} onClick={onNext}>{t("common.next")} <span>→</span></button></div></>;

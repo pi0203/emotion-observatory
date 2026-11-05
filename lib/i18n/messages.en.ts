@@ -295,6 +295,7 @@ export const en: Messages = {
     step: "Possible words",
     title: "Words that might come close to what you are experiencing.",
     hint: "This is not a verdict on your emotion. You can pick several, or none if nothing fits.",
+    pause: "You can leave it at this for now.",
     decline: {
       "none-close": "No word comes close",
       unsure: "Not sure",
@@ -307,6 +308,10 @@ export const en: Messages = {
     coach: "Look at the differences between words",
     deep: "Take a slower look",
     coachNote: "A short practice with an example situation. The words you picked stay as they are. Examples exist for only some words.",
+    context: {
+      label: "What happened",
+      hint: "Just the event is enough. What it meant can come later, or not at all.",
+    },
   },
   coach: {
     step: "Practice with an example",
@@ -363,6 +368,7 @@ export const en: Messages = {
     basis: "Only what you notice in your body right now",
     step: "Body",
     title: "First, what do you notice in your body?",
+    pause: "If paying attention to your body is uncomfortable, you can stop here. What you have recorded so far is kept.",
     hint: "Before looking for a name for the emotion, start with what you can notice in your body right now. No need to change how you are sitting. What you notice in this moment is enough.",
     more: "Show other body sensations",
     customLabel: "If there is something else, you can write it",
@@ -512,6 +518,19 @@ export const en: Messages = {
     saved: "Your answer is kept with this entry.",
     recordLabel: "Thinking of telling someone",
   },
+  underlyingFeeling: {
+    question: "Was a different feeling there first, underneath this one?",
+    hint: "You do not have to answer. Any answer is fine.",
+    answers: {
+      yes: "There was",
+      no: "There was not",
+      unsure: "I don’t know",
+    },
+    noteLabel: "What was it like?",
+    saved: "Your answer is kept with this entry.",
+    recordLabel: "A feeling there first, underneath",
+    noteRecordLabel: "That feeling",
+  },
   records: {
     eyebrow: "Past entries",
     title: "What you wrote before",
@@ -520,6 +539,11 @@ export const en: Messages = {
     needLine: "What you needed · {label}",
     responsesLine: "What you planned to try · {labels}",
     backToStart: "← Back to the start",
+    days: {
+      title: "The last 14 days",
+      today: "Today",
+      goTo: "Go to the entries from {date}",
+    },
     depth: {
       quick: "Quick look",
       "quick+deep": "Quick look + slow look",
@@ -590,6 +614,7 @@ export const en: Messages = {
     deepAffect: "After the slow look",
     personalMeaning: "“{label}” meant",
     context: "Situation",
+    quickContext: "What happened then",
     need: "What you needed",
     responses: "What you chose to try",
     quickSpot: "Where you tapped in the quick look",

@@ -125,3 +125,40 @@ export const helpedOptions = (locale: Locale = DEFAULT_LOCALE) => {
 export const TRIED = triedOptions(DEFAULT_LOCALE);
 
 export const HELPED = helpedOptions(DEFAULT_LOCALE);
+
+/** How many days the strip on the records screen shows, today at the right end. */
+export const DAY_STRIP_LENGTH = 14;
+
+export type StripDay = {
+  /** The viewer's local day, YYYY-MM-DD. */
+  key: string;
+  /** Local midnight of that day, for formatDay. */
+  iso: string;
+  /** The first record of the day in the list's own order; absent on a day with none. */
+  firstId?: string;
+};
+
+const localKey = (date: Date) =>
+  `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}-${String(date.getDate()).padStart(2, "0")}`;
+
+/**
+ * The last fourteen days for the strip above the records list (owner's decision
+ * 2026-10-30, second round C), oldest first, in the viewer's own time zone, by the
+ * same moment the list shows. A day holds at most one mark however many records
+ * it has. Nothing is counted: no number of days, no run of days, no day marked as
+ * missed — a day with no record is simply open.
+ */
+export const recentDays = (records: EmotionSession[], now: Date = new Date(), length: number = DAY_STRIP_LENGTH): StripDay[] => {
+  const first = new Map<string, string>();
+  for (const session of records) {
+    const at = new Date(session.completedAt ?? session.createdAt);
+    if (Number.isNaN(at.getTime())) continue;
+    const key = localKey(at);
+    if (!first.has(key)) first.set(key, session.id);
+  }
+  return Array.from({ length }, (_, index) => {
+    const day = new Date(now.getFullYear(), now.getMonth(), now.getDate() - (length - 1 - index));
+    const key = localKey(day);
+    return { key, iso: day.toISOString(), firstId: first.get(key) };
+  });
+};
