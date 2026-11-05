@@ -554,6 +554,11 @@ export const en: Messages = {
       today: "Today",
       goTo: "Go to the entries from {date}",
     },
+    /** 내 지도 under the strip (2026-11-05): one point per record with a spot, nothing counted. */
+    map: {
+      title: "My map",
+      open: "Open the entry from {when}",
+    },
     depth: {
       quick: "Quick look",
       "quick+deep": "Quick look + slow look",

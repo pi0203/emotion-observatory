@@ -10,7 +10,7 @@ type DeepOutcome = NonNullable<DeepReflection["outcome"]>;
 import { getStorageAdapter } from "../lib/storage-adapter";
 import { applyImport, buildExport, downloadExport, downloadJson, exportFileName, MAX_IMPORT_BYTES, parseImport, planImport, readFileText, type ImportError, type ImportPlan } from "../lib/record-transfer";
 import { isLockedText, lockedFileName, lockExport, MIN_PASSPHRASE_LENGTH, unlockExport } from "../lib/record-crypto";
-import { concernLines, formatDay, formatWhen, helpedOptions, recentDays, summarise, triedOptions, wordLines, type SourceKind, type WordHow } from "../lib/records";
+import { concernLines, formatDay, formatWhen, helpedOptions, mapPoints, recentDays, summarise, triedOptions, wordLines, type SourceKind, type WordHow } from "../lib/records";
 import { migrateLegacyStorage } from "../lib/migrations";
 import { expandCandidates, filterQuickCandidates, showsPauseLine } from "../lib/quick-check";
 import { activationLabel, hasAffectPoint, quickActivation, quickValence, scaleLabel } from "../lib/affect-labels";
@@ -1212,6 +1212,7 @@ function RecordsScreen({ records, onOpen, onBack, onChanged }: { records: Emotio
     <p className="eyebrow">{t("records.eyebrow")}</p>
     <h1>{t("records.title")}</h1>
     {records.length > 0 && <DayStrip records={records} />}
+    <RecordsMap records={records} onOpen={onOpen} />
     {records.length === 0
       ? <p className="lede">{t("records.empty")}</p>
       : <div className="record-list">{records.map((session) => {
@@ -1255,6 +1256,44 @@ function DayStrip({ records }: { records: EmotionSession[] }) {
         : <span className="day-cell is-open" aria-hidden="true" />}
     </li>)}</ol>
     <div className="day-ends" aria-hidden="true"><span>{formatDay(days[0].iso, t.locale)}</span><span>{t("records.days.today")}</span></div>
+  </section>;
+}
+
+/**
+ * 내 지도, under the 14-day strip (2026-11-05): every record with a spot, on one
+ * pad, joined in time order by a thin line. Older points are fainter, newer ones
+ * darker, and the latest a little larger. Where two records are more than 14
+ * days apart the line between them is dotted; nothing else marks the rest.
+ * Each point opens its record, by pointer or keyboard, in time order. No count,
+ * no next point, no reading of the shape. Not drawn when no record has a spot.
+ */
+function RecordsMap({ records, onOpen }: { records: EmotionSession[]; onOpen: (session: EmotionSession) => void }) {
+  const t = useT();
+  const points = mapPoints(records);
+  if (!points.length) return null;
+  const last = points.length - 1;
+  // oldest .3, newest 1: the fade carries time, never a colour per feeling (§19)
+  const strength = (index: number) => last === 0 ? 1 : 0.3 + 0.7 * (index / last);
+  const x = (valence: number) => valence * 100;
+  const y = (activation: number) => (1 - activation) * 100;
+  return <section className="records-map" aria-labelledby="records-map-title">
+    <p className="tier-label" id="records-map-title">{t("records.map.title")}</p>
+    <div className="map-wrap">
+      <div className="mini-axis top" aria-hidden="true">{t("affectPad.top")}</div>
+      <div className="map-pad">
+        {points.length > 1 && <svg className="map-lines" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">
+          {points.slice(1).map((point, index) => <line key={point.id} className={point.afterGap ? "is-gap" : undefined} x1={x(points[index].valence)} y1={y(points[index].activation)} x2={x(point.valence)} y2={y(point.activation)} style={{ opacity: strength(index + 1) }} />)}
+        </svg>}
+        {points.map((point, index) => {
+          const session = records.find((item) => item.id === point.id)!;
+          return <button key={point.id} className={`map-point${index === last ? " is-latest" : ""}`} style={{ left: `${x(point.valence)}%`, top: `${y(point.activation)}%` }} aria-label={t("records.map.open", { when: formatWhen(point.at, t.locale) })} onClick={() => onOpen(session)}>
+            <span className="map-dot" style={{ opacity: strength(index) }} aria-hidden="true" />
+          </button>;
+        })}
+      </div>
+      <div className="mini-axis-row" aria-hidden="true"><span>{t("affectPad.left")}</span><span>{t("affectPad.right")}</span></div>
+      <div className="mini-axis bottom" aria-hidden="true">{t("affectPad.bottom")}</div>
+    </div>
   </section>;
 }
 

@@ -162,3 +162,42 @@ export const recentDays = (records: EmotionSession[], now: Date = new Date(), le
     return { key, iso: day.toISOString(), firstId: first.get(key) };
   });
 };
+
+/** When a record happened, for ordering records in time: the moment the list shows. */
+export const recordTime = (session: EmotionSession) => new Date(session.completedAt ?? session.createdAt).getTime();
+
+/** Two records further apart than this are joined by a dotted line on the map: a rest is just a rest (2026-11-05). */
+export const MAP_GAP_DAYS = 14;
+
+export type MapPoint = {
+  id: string;
+  /** ISO time of the record, for the date in the button's name. */
+  at: string;
+  /** The pad position, 0..1 each, never shown as a number. */
+  valence: number;
+  activation: number;
+  /** True when the record before this one is more than MAP_GAP_DAYS earlier. Absent on the first point. */
+  afterGap?: boolean;
+};
+
+const hasSpot = (affect?: { valence?: number; activation?: number; unknown?: boolean }) =>
+  Boolean(affect && !affect.unknown && typeof affect.valence === "number" && typeof affect.activation === "number");
+
+/**
+ * 내 지도 on the records screen (2026-11-05): one point for every record with a
+ * spot on the pad, oldest first. A record with both keeps the spot from after the
+ * slower look, the later of the two. Records without a spot are left out, and a
+ * record whose time cannot be read is too. Nothing is computed from the points.
+ */
+export const mapPoints = (records: EmotionSession[]): MapPoint[] => {
+  const points = records.flatMap((session) => {
+    const time = recordTime(session);
+    if (Number.isNaN(time)) return [];
+    const deep = session.deepReflection?.affect;
+    const quick = session.quickCheck?.affect;
+    const spot = hasSpot(deep) ? deep : hasSpot(quick) ? quick : undefined;
+    return spot ? [{ id: session.id, at: new Date(time).toISOString(), valence: spot.valence!, activation: spot.activation!, time }] : [];
+  }).sort((a, b) => a.time - b.time);
+  return points.map(({ time, ...point }, index) => index === 0 ? point
+    : { ...point, afterGap: time - points[index - 1].time > MAP_GAP_DAYS * 24 * 60 * 60 * 1000 });
+};

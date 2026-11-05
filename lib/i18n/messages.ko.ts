@@ -535,6 +535,11 @@ export const ko = {
       today: "오늘",
       goTo: "{date} 기록으로 가기",
     },
+    /** 내 지도 under the strip (2026-11-05): one point per record with a spot, nothing counted. */
+    map: {
+      title: "내 지도",
+      open: "{when} 기록 열기",
+    },
     /** How far a record went. Derived from what it holds, never stored. */
     depth: {
       quick: "빠른 확인",
