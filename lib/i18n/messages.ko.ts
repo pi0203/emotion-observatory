@@ -612,9 +612,6 @@ export const ko = {
     quickContext: "그때 일어난 일",
     need: "필요했던 방향",
     responses: "해보기로 한 것",
-    quickSpot: "빠른 확인에서 누른 곳",
-    deepSpot: "자세히 본 뒤 누른 곳",
-    spotValue: "패드 위의 한 점",
     body: "몸",
     concerns: "중요했던 것",
     /** The label under each line: where it came from (2026-10-30). Never colour alone. */

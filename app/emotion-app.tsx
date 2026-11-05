@@ -884,7 +884,7 @@ function QuickSummaryScreen({ session, onDeep, onFeedback, onSupport }: { sessio
   return <Screen className={`reveal-screen${play ? " reveal" : ""}`}>
     <p className="eyebrow reveal-step" style={delay(0)}>{t("quickSummary.eyebrow")}</p>
     <h1 className="reveal-title reveal-step" style={delay(d.title)}>{t("quickSummary.title")}</h1>
-    <MiniPad affect={quick?.affect} />
+    <MiniPad quick={quick?.affect} />
     <div className="summary-card reveal-step" style={delay(d.card)}>{rows.map(([label, value], index) => <SummaryRow key={label} label={label} value={value} style={delay(d.rows[index])} />)}</div>
     <p className="summary-footnote reveal-step" style={delay(d.rest)}>{t("quickSummary.footnote")}</p>
     <div className="reveal-rest reveal-step" style={delay(d.rest)}>
@@ -1015,8 +1015,8 @@ function SummaryScreen({ session, onFeedback, onTalk, onUnderlying, onUnderlying
   return <Screen className={`reveal-screen${play ? " reveal" : ""}`}>
     <p className="eyebrow reveal-step" style={delay(0)}>{t("summary.eyebrow")}</p>
     <h1 className="reveal-title reveal-step" style={delay(d.title)}>{t("summary.title")}</h1>
-    {/* the point from the slower look; the quick one stays in its row, so two dots never read as a path */}
-    <MiniPad affect={deep?.affect} />
+    {/* both spots on one pad, each labelled, never joined (2026-11-05) */}
+    <MiniPad quick={quickAffect} deep={deep?.affect} />
     <div className="summary-card reveal-step" style={delay(d.card)}>{rows.map(([label, value], index) => <SummaryRow key={label} label={label} value={value ?? t("common.leftEmpty")} empty={value === undefined} style={delay(d.rows[index])} />)}</div>
     <p className="summary-footnote reveal-step" style={delay(d.rest)}>{t("summary.footnote")}</p>
     <div className="reveal-rest reveal-step" style={delay(d.rest)}>
@@ -1092,13 +1092,33 @@ const revealDelays = (count: number) => {
 };
 const delay = (seconds: number) => ({ "--d": `${seconds}s` }) as CSSProperties;
 
-/** The spot the person marked, drawn small on the same pad. Nothing when the pad was skipped or left as unsure. */
-function MiniPad({ affect }: { affect?: AffectPoint }) {
-  if (!hasAffectPoint(affect)) return null;
-  const at = { left: `${affect!.valence! * 100}%`, top: `${(1 - affect!.activation!) * 100}%` };
-  return <div className="mini-pad reveal-step" style={delay(0)} aria-hidden="true">
-    <span className="mini-ring" style={at} />
-    <span className="mini-dot" style={at} />
+/**
+ * The spots the person marked, drawn small on the same pad, with its axis names
+ * (2026-11-05). Read-only: no number, nothing to press. With both a quick and a
+ * slower spot, each carries a small label and the later one is the darker; they
+ * are never joined by a line. Nothing when no spot was marked (skipped, or left
+ * as unsure). The rows beside it say the same in words, so it is hidden from
+ * screen readers.
+ */
+function MiniPad({ quick, deep }: { quick?: AffectPoint; deep?: AffectPoint }) {
+  const t = useT();
+  const spots = ([[quick, "quick"], [deep, "deep"]] as const).filter(([affect]) => hasAffectPoint(affect));
+  if (!spots.length) return null;
+  const labelled = spots.length > 1;
+  return <div className="mini-pad-wrap reveal-step" style={delay(0)} aria-hidden="true">
+    <div className="mini-axis top">{t("affectPad.top")}</div>
+    <div className="mini-pad">
+      {spots.map(([affect, kind]) => {
+        const at = { left: `${affect!.valence! * 100}%`, top: `${(1 - affect!.activation!) * 100}%` };
+        return <span key={kind} className={`mini-spot mini-${kind}`}>
+          <span className="mini-ring" style={at} />
+          <span className="mini-dot" style={at} />
+          {labelled && <span className={`mini-label${affect!.valence! > 0.6 ? " to-left" : ""}`} style={at}>{t(kind === "quick" ? "recordDetail.quickAffect" : "recordDetail.deepAffect")}</span>}
+        </span>;
+      })}
+    </div>
+    <div className="mini-axis-row"><span>{t("affectPad.left")}</span><span>{t("affectPad.right")}</span></div>
+    <div className="mini-axis bottom">{t("affectPad.bottom")}</div>
   </div>;
 }
 
@@ -1440,21 +1460,16 @@ function RecordDetail({ session, onFollowUp, onAddLabel, onBack }: { session: Em
     <p className="eyebrow">{t("records.eyebrow")}</p>
     <h1>{formatWhen(item.at, t.locale)}</h1>
     <SourceLegend />
+    <MiniPad quick={quickAffect} deep={deep?.affect} />
     <div className="summary-card with-sources">
       <SummaryRow label={t("recordDetail.depth")} value={item.depthLabel} source={app("depth")} />
       {quickAffect && (quickAffect.unknown
         ? <SummaryRow label={t("recordDetail.quickAffect")} value={t("quickAffect.unknown")} source={mine("pressed")} />
-        : <>
-            <SummaryRow label={t("recordDetail.quickSpot")} value={t("recordDetail.spotValue")} source={mine("pressed")} />
-            <SummaryRow label={t("recordDetail.quickAffect")} value={quickAffectValue(t, quickAffect)} source={app("sentence")} />
-          </>)}
+        : <SummaryRow label={t("recordDetail.quickAffect")} value={quickAffectValue(t, quickAffect)} source={app("sentence")} />)}
       {session.quickCheck?.context?.eventText && <SummaryRow label={t("recordDetail.quickContext")} value={session.quickCheck.context.eventText} source={mine("wrote")} />}
       {deep?.body && deep.body.length > 0 && <SummaryRow label={t("recordDetail.body")} value={deep.body.map((entry) => entry.label).join(" · ")} source={mine(deep.body.some((entry) => entry.custom) ? "wrote" : "pressed")} />}
       {deep?.affect && (hasAffectPoint(deep.affect)
-        ? <>
-            <SummaryRow label={t("recordDetail.deepSpot")} value={t("recordDetail.spotValue")} source={mine("pressed")} />
-            <SummaryRow label={t("recordDetail.deepAffect")} value={deepAffectValue(t, deep.affect)!} source={app("sentence")} />
-          </>
+        ? <SummaryRow label={t("recordDetail.deepAffect")} value={deepAffectValue(t, deep.affect)!} source={app("sentence")} />
         : <LeftEmptyRow label={t("recordDetail.deepAffect")} value={deepAffectValue(t, deep.affect)} source={mine(deep.affect.unknown ? "pressed" : "skipped")} />)}
       {deep?.context?.eventText && <SummaryRow label={t("recordDetail.context")} value={deep.context.eventText} source={mine("wrote")} />}
       {concernLines(session).map((line) => <SummaryRow key={line.how} label={t("recordDetail.concerns")} value={line.items.join(" · ")} source={mine(line.how)} />)}

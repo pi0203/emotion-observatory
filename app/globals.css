@@ -406,10 +406,10 @@ p, .lede, .hint, .step-note, .small-note, .summary-footnote { text-wrap: pretty;
 .reveal-screen > * { order: 5; }
 .reveal-screen > .eyebrow { order: 0; }
 .reveal-screen > .reveal-title { order: 1; margin: 0 0 22px; }
-.reveal-screen > .mini-pad { order: 2; }
+.reveal-screen > .mini-pad-wrap { order: 2; }
 .reveal-screen > .summary-card { order: 3; margin-top: 4px; }
 .reveal-screen > .summary-footnote { order: 4; margin-top: 12px; }
-.mini-pad { position: relative; width: 168px; aspect-ratio: 1.35; margin: 6px 0 22px; border: 1px solid var(--line-strong); border-radius: 48% 52% 50% 48%; background: var(--card); }
+.mini-pad { position: relative; width: 100%; aspect-ratio: 1.35; margin: 0; border: 1px solid var(--line-strong); border-radius: 48% 52% 50% 48%; background: var(--card); }
 .mini-pad::before, .mini-pad::after { content: ""; position: absolute; background: var(--axis); }
 .mini-pad::before { left: 0; right: 0; top: 50%; height: 1px; }
 .mini-pad::after { top: 0; bottom: 0; left: 50%; width: 1px; }
@@ -584,3 +584,16 @@ html, body { transition: background-color .5s ease; }
   .split-play .split-lines, .split-play .split-stem { animation: none; clip-path: none; }
   .split-play .split-need { animation: none; opacity: 1; }
 }
+
+/* The small read-only pad on the closing screens and the record detail (2026-11-05): the pad's own axis names around it.
+   Two spots: the earlier one lighter and smaller, each with a small label; never a line between them. */
+.mini-pad-wrap { width: 200px; margin: 6px 0 22px; }
+.mini-axis, .mini-axis-row { color: var(--muted); font: .68rem/1.3 var(--font-sans); }
+.mini-axis { text-align: center; }
+.mini-axis.top { margin-bottom: 4px; }
+.mini-axis.bottom { margin-top: 2px; }
+.mini-axis-row { display: flex; justify-content: space-between; padding-top: 3px; }
+.mini-quick:not(:only-child) .mini-dot { width: 11px; height: 11px; opacity: .5; }
+.mini-label { position: absolute; transform: translate(10px, -50%); white-space: nowrap; color: var(--ink); font: 600 .68rem/1 var(--font-sans); text-shadow: 0 0 3px var(--card), 0 0 3px var(--card); }
+.mini-label.to-left { transform: translate(calc(-100% - 10px), -50%); }
+.with-sources ~ .mini-pad-wrap, .source-legend + .mini-pad-wrap { margin-top: 14px; }

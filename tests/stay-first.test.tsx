@@ -175,7 +175,8 @@ describe("each line of a past record says where it came from", () => {
       expect(row.querySelector(".source-label")!.textContent).toBe(label);
     };
     expectSource(rowOf(ko.recordDetail.depth, ko.records.depth["quick+deep"]), "app", ko.recordDetail.source.depth);
-    expectSource(rowOf(ko.recordDetail.quickSpot, ko.recordDetail.spotValue), "mine", ko.recordDetail.source.pressed);
+    // the spot itself is drawn on a small pad above the lines (2026-11-05), no longer a line of its own
+    expect(document.querySelectorAll(".mini-pad .mini-dot")).toHaveLength(1);
     // the spot and the sentence the app made of it are two lines, never one mixed line
     const sentence = [...document.querySelectorAll(".summary-row")].find((row) => row.querySelector("span")?.textContent === ko.recordDetail.quickAffect) as HTMLElement;
     expectSource(sentence, "app", ko.recordDetail.source.sentence);

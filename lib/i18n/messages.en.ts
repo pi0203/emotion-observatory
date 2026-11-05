@@ -627,9 +627,6 @@ export const en: Messages = {
     quickContext: "What happened then",
     need: "What you needed",
     responses: "What you chose to try",
-    quickSpot: "Where you tapped in the quick look",
-    deepSpot: "Where you tapped after the slow look",
-    spotValue: "One spot on the pad",
     body: "Body",
     concerns: "What mattered",
     source: {

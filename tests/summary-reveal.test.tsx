@@ -37,7 +37,7 @@ describe("the closing screen puts the chosen pieces together, once", () => {
     expect(dot).not.toBeNull();
     expect(parseFloat(dot.style.left)).toBeCloseTo(10, 5);
     expect(parseFloat(dot.style.top)).toBeCloseTo(10, 5);
-    expect(section.querySelector(".mini-pad")).toHaveAttribute("aria-hidden", "true");
+    expect(section.querySelector(".mini-pad-wrap")).toHaveAttribute("aria-hidden", "true");
   });
 
   it("keeps the title first in the document, so it is read before the summary", () => {
