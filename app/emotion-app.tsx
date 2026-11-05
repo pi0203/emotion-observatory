@@ -480,6 +480,8 @@ function AboutTool() {
         </li>)}
       </ol>
       <p className="why-principle">{renderRich(t("about.refsClosing"))}</p>
+      {/* the homepage brain map links back here; Korean only, like the map */}
+      {t.locale === "ko" && <p className="about-intro">{t("about.atlasLead")} <a href={`${HOMEPAGE}/map/brain/`}>{t("about.atlasLink")} →</a></p>}
     </details>
     {t.locale === "ko" && <details className="about-fold">
       <summary>{koOnly.practitioner.summary}</summary>
