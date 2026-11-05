@@ -43,6 +43,16 @@ describe("homepage frame on the landing and record screens", () => {
     for (const link of [...links, within(banner).getByRole("link", { name: "Eunchan Joe" })]) expect(link.getAttribute("target")).toBeNull();
   });
 
+  it("puts the homepage's wildflower mark before the wordmark, hidden from screen readers", () => {
+    render(<Home />);
+    const logo = within(screen.getByRole("banner")).getByRole("link", { name: "Eunchan Joe" });
+    const mark = logo.firstElementChild;
+    expect(mark?.tagName.toLowerCase()).toBe("svg");
+    expect(mark?.getAttribute("aria-hidden")).toBe("true");
+    expect(mark?.getAttribute("focusable")).toBe("false");
+    expect(logo.textContent).toBe("Eunchan Joe");
+  });
+
   it("keeps the app's own name in the eyebrow", () => {
     render(<Home />);
     expect(within(screen.getByRole("main")).getAllByText(ko.common.appName).length).toBeGreaterThan(0);

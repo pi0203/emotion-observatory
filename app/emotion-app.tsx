@@ -27,6 +27,7 @@ import { I18nProvider, renderRich, useT } from "../lib/i18n/react";
 import type { Translate } from "../lib/i18n/t";
 import { toneOf } from "../lib/tones";
 import { enOnly } from "../lib/i18n/messages.en";
+import { SiteLogo } from "./site-logo";
 
 // Every read and write of a record goes through the one storage seam. It is
 // synchronous, like the localStorage calls it wraps, so no call site changes.
@@ -223,7 +224,7 @@ const HOMEPAGE_NAV = [
 function SiteHeader({ onHelp }: { onHelp: () => void }) {
   const t = useT();
   return <header className="site-header">
-    <a className="site-logo" href={`${HOMEPAGE}/`}>Eunchan Joe</a>
+    <a className="site-logo" href={`${HOMEPAGE}/`}><SiteLogo /><span className="site-logo-text">Eunchan Joe</span></a>
     <nav className="site-nav" aria-label={t("shell.siteNav")}>
       <ul>{HOMEPAGE_NAV.map((item) => <li key={item.href}><a href={item.href}>{item.label}</a></li>)}</ul>
     </nav>
