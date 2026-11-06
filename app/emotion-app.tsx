@@ -1,18 +1,18 @@
 "use client";
 
-import { useEffect, useReducer, useRef, useState, type CSSProperties } from "react";
+import { createContext, useContext, useEffect, useReducer, useRef, useState, type CSSProperties } from "react";
 import { canGoBack, createSession, sessionReducer, understandRoute } from "../lib/session-types";
 import { appraisalEscapes, coachEscapes, coachResult, coachSetFor, getCoachSets } from "../lib/coach";
-import type { AffectPoint, BodyObservation, DeepReflection, EmotionSelection, EmotionSession, QuickNonSelection, SynthesisFit, TalkToSomeone } from "../lib/session-types";
+import type { AffectPoint, BodyObservation, DeepReflection, EmotionSelection, EmotionSession, QuickNonSelection, SynthesisFit, TalkToSomeone, UnderlyingFeeling } from "../lib/session-types";
 
 type DeepContext = NonNullable<DeepReflection["context"]>;
 type DeepOutcome = NonNullable<DeepReflection["outcome"]>;
 import { getStorageAdapter } from "../lib/storage-adapter";
 import { applyImport, buildExport, downloadExport, downloadJson, exportFileName, MAX_IMPORT_BYTES, parseImport, planImport, readFileText, type ImportError, type ImportPlan } from "../lib/record-transfer";
 import { isLockedText, lockedFileName, lockExport, MIN_PASSPHRASE_LENGTH, unlockExport } from "../lib/record-crypto";
-import { concernLines, formatDay, formatWhen, helpedOptions, summarise, triedOptions, wordLines, type SourceKind, type WordHow } from "../lib/records";
+import { concernLines, formatDay, formatWhen, helpedOptions, mapPoints, previousLines, previousRecord, recentDays, summarise, triedOptions, wordLines, type SourceKind, type WordHow } from "../lib/records";
 import { migrateLegacyStorage } from "../lib/migrations";
-import { expandCandidates, filterQuickCandidates } from "../lib/quick-check";
+import { expandCandidates, filterQuickCandidates, showsPauseLine } from "../lib/quick-check";
 import { activationLabel, hasAffectPoint, quickActivation, quickValence, scaleLabel } from "../lib/affect-labels";
 import { buildSynthesis, hasSynthesis } from "../lib/synthesis";
 import { requireContent, type LocaleContent } from "../lib/content";
@@ -67,7 +67,9 @@ function App() {
   // the helplines on every step, one tap away (SAFETY.md): a fixed card, no judgement of risk
   const [helpOpen, setHelpOpen] = useState(false);
 
-  const showRecords = () => { setRecords(loadCompleted()); setOpenRecord(null); };
+  // 기록 관리 starts open when the records were opened from 기록 보기·지우기 (2026-11-05)
+  const [manageOpen, setManageOpen] = useState(false);
+  const showRecords = (manage = false) => { setManageOpen(manage); setRecords(loadCompleted()); setOpenRecord(null); };
   const saveFollowUp = (session: EmotionSession, followUp: NonNullable<NonNullable<EmotionSession["support"]>["followUp"]>) => {
     // written straight to the completed store, which upserts by id; the reducer
     // session is on the landing screen here, so nothing can clobber it
@@ -141,10 +143,10 @@ function App() {
       <SiteHeader onHelp={() => setHelpOpen(true)} />
       <main id="main" tabIndex={-1} className="site-main">
       {openRecord
-        ? <RecordDetail session={openRecord} onFollowUp={(followUp) => saveFollowUp(openRecord, followUp)} onAddLabel={(label) => addLabelLater(openRecord, label)} onBack={() => setOpenRecord(null)} />
+        ? <RecordDetail session={openRecord} previous={previousRecord(openRecord, records ?? loadCompleted())} onHelp={() => setHelpOpen(true)} onFollowUp={(followUp) => saveFollowUp(openRecord, followUp)} onAddLabel={(label) => addLabelLater(openRecord, label)} onBack={() => setOpenRecord(null)} />
         : records
-          ? <RecordsScreen records={records} onOpen={setOpenRecord} onBack={() => setRecords(null)} onChanged={() => { setRecords(loadCompleted()); setDraft(loadDraft()); }} />
-          : <LandingScreen onStart={() => askToStart("quick")} draft={draft} onResume={resume} onRecords={showRecords} pendingStart={pendingStart} onDiscardAndStart={discardAndStart} onCancelStart={() => setPendingStart(null)} />}
+          ? <RecordsScreen records={records} manageOpen={manageOpen} onHelp={() => setHelpOpen(true)} onOpen={setOpenRecord} onBack={() => setRecords(null)} onChanged={() => { setRecords(loadCompleted()); setDraft(loadDraft()); }} />
+          : <LandingScreen onStart={() => askToStart("quick")} draft={draft} onResume={resume} onRecords={() => showRecords()} onManage={() => showRecords(true)} pendingStart={pendingStart} onDiscardAndStart={discardAndStart} onCancelStart={() => setPendingStart(null)} />}
       </main>
       <SiteFooter />
       {helpOpen && <HelpDialog onClose={() => setHelpOpen(false)} />}
@@ -173,6 +175,8 @@ function App() {
       </header>
 
       {saveFailed && <p className="save-warning" role="status">{t("common.saveFailed")}</p>}
+      {/* the person's own spot in the unpleasant, high-energy corner (lib/quick-check PAUSE_LINE_CORNER): one plain line at the top of the second step, no warning colour, nothing else changes */}
+      {session.stage === "quick-candidates" && showsPauseLine(session.quickCheck?.affect) && <p className="pause-line pause-line-banner">{t("quickCandidates.pause")}</p>}
 
       {progress[session.stage] && (
         <div className="progress-row" aria-label={t("common.progress", { step: progress[session.stage] })}>
@@ -182,7 +186,7 @@ function App() {
       )}
 
       {session.stage === "quick-affect" && <QuickAffectScreen onNext={(affect) => { dispatch({ type: "SET_QUICK_AFFECT", affect }); dispatch({ type: "SET_QUICK_CANDIDATES", candidatePool: filterQuickCandidates({ x: affect.valence ?? 0.5, y: affect.activation ?? 0.5 }, undefined, t.locale) }); }} onUnknown={() => dispatch({ type: "SET_QUICK_UNKNOWN" })} />}
-      {session.stage === "quick-candidates" && <QuickCandidatesScreen pool={session.quickCheck?.candidatePool ?? []} selected={session.quickCheck?.selected ?? []} response={session.quickCheck?.candidateResponse} revealed={Boolean(session.quickCheck?.wordsRevealed)} onReveal={() => dispatch({ type: "REVEAL_QUICK_WORDS" })} onToggle={(label) => dispatch({ type: "TOGGLE_QUICK_CANDIDATE", label })} onRespond={(response) => dispatch({ type: "SET_QUICK_CANDIDATE_RESPONSE", response })} onAddCustom={(label) => dispatch({ type: "ADD_QUICK_CUSTOM", label })} onMeaning={(label, meaning) => dispatch({ type: "SET_PERSONAL_MEANING", label, meaning })} onFinish={() => dispatch({ type: "COMPLETE_QUICK" })} onCoach={() => dispatch({ type: "OPEN_GRANULARITY" })} onDeep={() => { dispatch({ type: "COMPLETE_QUICK" }); dispatch({ type: "ENTER_DEEP" }); }} />}
+      {session.stage === "quick-candidates" && <QuickCandidatesScreen pool={session.quickCheck?.candidatePool ?? []} selected={session.quickCheck?.selected ?? []} response={session.quickCheck?.candidateResponse} revealed={Boolean(session.quickCheck?.wordsRevealed)} onReveal={() => dispatch({ type: "REVEAL_QUICK_WORDS" })} onToggle={(label) => dispatch({ type: "TOGGLE_QUICK_CANDIDATE", label })} onRespond={(response) => dispatch({ type: "SET_QUICK_CANDIDATE_RESPONSE", response })} onAddCustom={(label) => dispatch({ type: "ADD_QUICK_CUSTOM", label })} onMeaning={(label, meaning) => dispatch({ type: "SET_PERSONAL_MEANING", label, meaning })} eventText={session.quickCheck?.context?.eventText ?? ""} onEventText={(eventText) => dispatch({ type: "SET_QUICK_CONTEXT", eventText })} onFinish={() => dispatch({ type: "COMPLETE_QUICK" })} onCoach={() => dispatch({ type: "OPEN_GRANULARITY" })} onDeep={() => { dispatch({ type: "COMPLETE_QUICK" }); dispatch({ type: "ENTER_DEEP" }); }} />}
       {session.stage === "coach-appraisal" && <CoachAppraisalScreen session={session} onToggle={(id) => dispatch({ type: "TOGGLE_APPRAISAL", id })} onOwn={(label) => dispatch({ type: "SET_OWN_APPRAISAL", label })} onNext={() => dispatch({ type: "GO_TO_COACH_WORDS" })} onLeave={() => dispatch({ type: "CLOSE_COACH" })} />}
       {session.stage === "coach-words" && <CoachWordsScreen session={session} onToggle={(label) => dispatch({ type: "TOGGLE_COACH_WORD", label })} onOwnWord={(label) => dispatch({ type: "SET_COACH_OWN_WORD", label })} onNext={() => dispatch({ type: "FINISH_COACH" })} onLeave={() => dispatch({ type: "CLOSE_COACH" })} />}
       {session.stage === "coach-note" && <CoachNoteScreen session={session} onDone={() => dispatch({ type: "CLOSE_COACH" })} />}
@@ -197,7 +201,7 @@ function App() {
       {session.stage === "meaning" && <MeaningScreen initial={session.deepReflection?.concerns ?? []} onNext={(selected) => dispatch({ type: "SET_CONCERNS", concerns: selected })} />}
       {session.stage === "emotion" && <EmotionScreen initial={session.deepReflection?.emotionCandidates ?? []} affect={session.deepReflection?.affect} revealed={Boolean(session.deepReflection?.wordsRevealed)} onReveal={() => dispatch({ type: "REVEAL_DEEP_WORDS" })} onNext={(selected) => dispatch({ type: "SET_EMOTIONS", emotionCandidates: selected })} />}
       {session.stage === "outcome" && <OutcomeScreen onNext={(outcome) => dispatch({ type: "SET_OUTCOME", outcome })} />}
-      {session.stage === "summary" && <SummaryScreen session={session} onFeedback={(feedback) => dispatch({ type: "SET_SYNTHESIS_FEEDBACK", ...feedback })} onTalk={(answer) => dispatch({ type: "SET_TALK_TO_SOMEONE", answer })} onSupport={() => dispatch({ type: "OPEN_SUPPORT" })} />}
+      {session.stage === "summary" && <SummaryScreen session={session} onFeedback={(feedback) => dispatch({ type: "SET_SYNTHESIS_FEEDBACK", ...feedback })} onTalk={(answer) => dispatch({ type: "SET_TALK_TO_SOMEONE", answer })} onUnderlying={(answer) => dispatch({ type: "SET_UNDERLYING_FEELING", answer })} onUnderlyingNote={(note) => dispatch({ type: "SET_UNDERLYING_NOTE", note })} onSupport={() => dispatch({ type: "OPEN_SUPPORT" })} />}
       {session.stage === "support" && <NeedScreen session={session} onNeed={(id) => dispatch({ type: "CHOOSE_NEED", id })} onResponse={(id) => dispatch({ type: "TOGGLE_RESPONSE", id })} onDeep={() => dispatch({ type: "ENTER_DEEP" })} onCoach={() => dispatch({ type: "OPEN_COACH" })} onBack={() => dispatch({ type: "BACK" })} />}
       {session.stage === "stopped" && <StoppedScreen session={session} />}
 
@@ -371,7 +375,7 @@ function EntryScreen({ draft, onStart, onUnsure, onStop, onResume }: { draft: Em
  * 지금 기록 is the quick look; the slower look is reached from inside it, at the
  * end of its second step and on its summary. Everything else sits below the fold.
  */
-function LandingScreen({ onStart, draft, onResume, onRecords, pendingStart, onDiscardAndStart, onCancelStart }: { onStart: () => void; draft: EmotionSession | null; onResume: () => void; onRecords: () => void; pendingStart: "quick" | "deep" | null; onDiscardAndStart: () => void; onCancelStart: () => void }) {
+function LandingScreen({ onStart, draft, onResume, onRecords, onManage, pendingStart, onDiscardAndStart, onCancelStart }: { onStart: () => void; draft: EmotionSession | null; onResume: () => void; onRecords: () => void; onManage: () => void; pendingStart: "quick" | "deep" | null; onDiscardAndStart: () => void; onCancelStart: () => void }) {
   const t = useT();
   const confirmTitle = useRef<HTMLParagraphElement>(null);
   // the question takes the focus, so it is read before the choice is made
@@ -380,7 +384,7 @@ function LandingScreen({ onStart, draft, onResume, onRecords, pendingStart, onDi
     <section className="card hero-card single-entry">
       {/* a drawing of the pad used in the steps: four quiet colours and one dot (decoration only) */}
       <div className="hero-pad" aria-hidden="true"><span className="hero-dot" /></div>
-      <p className="eyebrow">{t("common.appName")}</p>
+      <p className="eyebrow">{t("landing.eyebrow")}</p>
       <h1>{renderRich(t("landing.title"))}</h1>
       <p className="lede">{renderRich(t("landing.lede"))}</p>
       {pendingStart
@@ -400,9 +404,10 @@ function LandingScreen({ onStart, draft, onResume, onRecords, pendingStart, onDi
     </section>
 
     {draft && !pendingStart && <div className="resume-card"><div><strong>{t("entry.resumeTitle")}</strong><span>{t("entry.resumeBody")}</span></div><button className="small-button" onClick={onResume}>{t("landing.resume")}</button></div>}
+    <SplitFigure />
     <div className="privacy-note">
       <span aria-hidden="true">💻</span>
-      <span>{t("landing.storageNote")} <button className="inline-link" onClick={onRecords}>{t("landing.storageManage")}</button></span>
+      <span>{t("landing.storageNote")} <button className="inline-link" onClick={onManage}>{t("landing.storageManage")}</button></span>
     </div>
 
     <div className="why-section">
@@ -413,6 +418,32 @@ function LandingScreen({ onStart, draft, onResume, onRecords, pendingStart, onDi
     <AboutTool />
     <CrisisCard />
   </Screen>;
+}
+
+/**
+ * Under the buttons (2026-11-05): the 답답함 example from the fold above, drawn.
+ * One word splits into two kinds, each with what it calls for. The lines draw
+ * themselves once per page load, in about a second; with reduced motion they are
+ * simply there. The words are real text, read in order; the lines are decoration.
+ * No colour per feeling (§19): one ink, one line weight.
+ */
+function SplitFigure() {
+  const t = useT();
+  const play = useFirstReveal("landing:split");
+  const branch = (kind: "tired" | "stuck") => <li className="split-branch">
+    <span className="split-kind">{t(`landing.split.${kind}`)}</span>
+    <svg className="split-stem" viewBox="0 0 2 24" aria-hidden="true"><path d="M1 0 V24" /></svg>
+    <span className="split-need">{t(`landing.split.${kind}Need`)}</span>
+  </li>;
+  return <figure className={`split-figure${play ? " split-play" : ""}`}>
+    <p className="split-word"><span>{t("landing.split.word")}</span></p>
+    <svg className="split-lines" viewBox="0 0 200 40" preserveAspectRatio="none" aria-hidden="true">
+      <path d="M100 0 C100 22 50 18 50 40" />
+      <path d="M100 0 C100 22 150 18 150 40" />
+    </svg>
+    <ul className="split-branches">{branch("tired")}{branch("stuck")}</ul>
+    <figcaption className="split-line">{t("landing.split.line")}</figcaption>
+  </figure>;
 }
 
 /** The question each step asks, in the order it is met; the preview on the landing lists them from the same messages the steps use. */
@@ -682,7 +713,7 @@ function TieredWords({ pool, selectedLabels, ownWords, onToggle, onAddCustom, me
   </>;
 }
 
-function QuickCandidatesScreen({ pool, selected, response, revealed, onReveal, onToggle, onRespond, onAddCustom, onMeaning, onFinish, onCoach, onDeep }: { pool: EmotionSelection[]; selected: EmotionSelection[]; response?: QuickNonSelection; revealed: boolean; onReveal: () => void; onToggle: (label: string) => void; onRespond: (response: QuickNonSelection) => void; onAddCustom: (label: string) => void; onMeaning: (label: string, meaning: string) => void; onFinish: () => void; onCoach: () => void; onDeep: () => void }) {
+function QuickCandidatesScreen({ pool, selected, response, revealed, onReveal, onToggle, onRespond, onAddCustom, onMeaning, eventText, onEventText, onFinish, onCoach, onDeep }: { pool: EmotionSelection[]; selected: EmotionSelection[]; response?: QuickNonSelection; revealed: boolean; onReveal: () => void; onToggle: (label: string) => void; onRespond: (response: QuickNonSelection) => void; onAddCustom: (label: string) => void; onMeaning: (label: string, meaning: string) => void; eventText: string; onEventText: (eventText: string) => void; onFinish: () => void; onCoach: () => void; onDeep: () => void }) {
   const t = useT();
   const canCoach = getCoachSets(t.locale).some((set) => selected.some((item) => set.words.includes(item.label)));
   return <Screen>
@@ -692,6 +723,13 @@ function QuickCandidatesScreen({ pool, selected, response, revealed, onReveal, o
 
     <div className="quick-option-row">{(["none-close", "unsure"] as const).map((value) => <button className={`secondary-button ${response === value ? "selected" : ""}`} aria-pressed={response === value} key={value} onClick={() => onRespond(value)}><Mark on={response === value} />{t(`quickCandidates.decline.${value}`)}</button>)}</div>
     {response && <p className="small-note">{t(`quickCandidates.declined.${response}`)}</p>}
+
+    {/* what happened, one optional line (owner's decision 2026-10-30): no source choice and no split into parts, so the quick look stays short */}
+    <div className="quick-context">
+      <label className="field-label" htmlFor="quick-event">{t("quickCandidates.context.label")} <em>{t("words.optional")}</em></label>
+      <input id="quick-event" className="text-input" maxLength={INPUT_LIMITS.text} defaultValue={eventText} onChange={(event) => onEventText(event.target.value)} />
+      <p className="small-note">{t("quickCandidates.context.hint")}</p>
+    </div>
 
     <div className="quick-bottom-actions">
       <button className="quiet-button" onClick={onFinish}>{t("quickCandidates.finish")}</button>
@@ -848,7 +886,7 @@ function QuickSummaryScreen({ session, onDeep, onFeedback, onSupport }: { sessio
   return <Screen className={`reveal-screen${play ? " reveal" : ""}`}>
     <p className="eyebrow reveal-step" style={delay(0)}>{t("quickSummary.eyebrow")}</p>
     <h1 className="reveal-title reveal-step" style={delay(d.title)}>{t("quickSummary.title")}</h1>
-    <MiniPad affect={quick?.affect} />
+    <MiniPad quick={quick?.affect} />
     <div className="summary-card reveal-step" style={delay(d.card)}>{rows.map(([label, value], index) => <SummaryRow key={label} label={label} value={value} style={delay(d.rows[index])} />)}</div>
     <p className="summary-footnote reveal-step" style={delay(d.rest)}>{t("quickSummary.footnote")}</p>
     <div className="reveal-rest reveal-step" style={delay(d.rest)}>
@@ -878,7 +916,7 @@ function BodyScreen({ initial, onNext }: { initial: BodyObservation[]; onNext: (
     .filter((group) => group.labels.length);
 
   return <Screen>
-    <StepHeading step={t("body.step")} title={t("body.title")} hint={t("body.hint")} basis={t("body.basis")} />
+    <StepHeading step={t("body.step")} title={t("body.title")} pause={t("body.pause")} hint={t("body.hint")} basis={t("body.basis")} />
     <div className="chip-grid">{first.map((item) => chip(item.label))}</div>
     {!showAll && <button className="reveal-button" onClick={() => setShowAll(true)}>{t("body.more")}</button>}
     {showAll && rest.map((group) => <div key={group.region}>
@@ -959,7 +997,7 @@ function OutcomeScreen({ onNext }: { onNext: (outcome: DeepOutcome) => void }) {
   return <Screen><StepHeading step={t("outcome.step")} title={t("outcome.title")} hint={t("outcome.hint")} basis={t("outcome.basis")} /><div className="choice-list compact">{(["much_clearer", "clearer", "same", "more_complex", "more_distressed"] as const).map((value) => <button className={clarity === value ? "selected" : ""} aria-pressed={clarity === value} key={value} onClick={() => setClarity(value)}><Mark on={clarity === value} />{t(`outcome.clarity.${value}`)}</button>)}</div><h2 className="subquestion">{t("outcome.usefulnessQuestion")}</h2><div className="inline-choices">{(["helpful", "unsure", "unhelpful"] as const).map((value) => <button className={usefulness === value ? "selected" : ""} aria-pressed={usefulness === value} key={value} onClick={() => setUsefulness(value)}><Mark on={usefulness === value} />{t(`outcome.usefulness.${value}`)}</button>)}</div><input className="text-input" maxLength={INPUT_LIMITS.line} value={note} onChange={(event) => setNote(event.target.value)} placeholder={t("outcome.notePlaceholder")} /><Navigation disabled={!clarity || !usefulness} onNext={() => onNext({ clarity: clarity!, usefulness: usefulness!, note })} /></Screen>;
 }
 
-function SummaryScreen({ session, onFeedback, onTalk, onSupport }: { session: EmotionSession; onFeedback: (feedback: { fit?: SynthesisFit; correction?: string }) => void; onTalk: (answer: TalkToSomeone) => void; onSupport: () => void }) {
+function SummaryScreen({ session, onFeedback, onTalk, onUnderlying, onUnderlyingNote, onSupport }: { session: EmotionSession; onFeedback: (feedback: { fit?: SynthesisFit; correction?: string }) => void; onTalk: (answer: TalkToSomeone) => void; onUnderlying: (answer: UnderlyingFeeling) => void; onUnderlyingNote: (note: string) => void; onSupport: () => void }) {
   const t = useT();
   const deep = session.deepReflection;
   const play = useFirstReveal(`${session.id}:summary`);
@@ -979,13 +1017,14 @@ function SummaryScreen({ session, onFeedback, onTalk, onSupport }: { session: Em
   return <Screen className={`reveal-screen${play ? " reveal" : ""}`}>
     <p className="eyebrow reveal-step" style={delay(0)}>{t("summary.eyebrow")}</p>
     <h1 className="reveal-title reveal-step" style={delay(d.title)}>{t("summary.title")}</h1>
-    {/* the point from the slower look; the quick one stays in its row, so two dots never read as a path */}
-    <MiniPad affect={deep?.affect} />
+    {/* both spots on one pad, each labelled, never joined (2026-11-05) */}
+    <MiniPad quick={quickAffect} deep={deep?.affect} />
     <div className="summary-card reveal-step" style={delay(d.card)}>{rows.map(([label, value], index) => <SummaryRow key={label} label={label} value={value ?? t("common.leftEmpty")} empty={value === undefined} style={delay(d.rows[index])} />)}</div>
     <p className="summary-footnote reveal-step" style={delay(d.rest)}>{t("summary.footnote")}</p>
     <div className="reveal-rest reveal-step" style={delay(d.rest)}>
       <SynthesisSection session={session} onFeedback={onFeedback} />
       <TalkToSomeoneQuestion answer={session.talkToSomeone?.answer} onAnswer={onTalk} />
+      <UnderlyingFeelingQuestion answer={session.underlyingFeeling?.answer} note={session.underlyingFeeling?.note ?? ""} onAnswer={onUnderlying} onNote={onUnderlyingNote} />
       <div className="stack-actions"><button className="primary-button centered" onClick={onSupport}>{t("summary.support")} <span>→</span></button><a className="secondary-button centered" href="/">{t("common.backToStart")}</a></div>
     </div>
   </Screen>;
@@ -1005,6 +1044,27 @@ function TalkToSomeoneQuestion({ answer, onAnswer }: { answer?: TalkToSomeone; o
     <p className="small-note">{t("talkToSomeone.hint")}</p>
     <div className="inline-choices">{TALK_ANSWERS.map((value) => <button key={value} className={answer === value ? "selected" : ""} aria-pressed={answer === value} onClick={() => onAnswer(value)}><Mark on={answer === value} />{t(`talkToSomeone.answers.${value}`)}</button>)}</div>
     {answer && <p className="small-note" role="status">{t("talkToSomeone.saved")}</p>}
+  </section>;
+}
+
+/**
+ * A second question in the same form (owner's decision 2026-10-30, second round D):
+ * whether another feeling was there first, under this one. Kept and shown back
+ * only. No answer changes the next screen, and no word is offered. 있었다 opens one
+ * optional line for what it was, which stays with this answer, not the names layer.
+ */
+const UNDERLYING_ANSWERS: UnderlyingFeeling[] = ["yes", "no", "unsure"];
+function UnderlyingFeelingQuestion({ answer, note, onAnswer, onNote }: { answer?: UnderlyingFeeling; note: string; onAnswer: (answer: UnderlyingFeeling) => void; onNote: (note: string) => void }) {
+  const t = useT();
+  return <section className="talk-question" aria-labelledby="underlying-question-title">
+    <h2 className="subquestion" id="underlying-question-title">{t("underlyingFeeling.question")}</h2>
+    <p className="small-note">{t("underlyingFeeling.hint")}</p>
+    <div className="inline-choices">{UNDERLYING_ANSWERS.map((value) => <button key={value} className={answer === value ? "selected" : ""} aria-pressed={answer === value} onClick={() => onAnswer(value)}><Mark on={answer === value} />{t(`underlyingFeeling.answers.${value}`)}</button>)}</div>
+    {answer === "yes" && <div className="own-word-block">
+      <label className="field-label" htmlFor="underlying-note">{t("underlyingFeeling.noteLabel")} <em>{t("words.optional")}</em></label>
+      <input id="underlying-note" className="text-input" maxLength={INPUT_LIMITS.line} defaultValue={note} onChange={(event) => onNote(event.target.value)} />
+    </div>}
+    {answer && <p className="small-note" role="status">{t("underlyingFeeling.saved")}</p>}
   </section>;
 }
 
@@ -1034,13 +1094,33 @@ const revealDelays = (count: number) => {
 };
 const delay = (seconds: number) => ({ "--d": `${seconds}s` }) as CSSProperties;
 
-/** The spot the person marked, drawn small on the same pad. Nothing when the pad was skipped or left as unsure. */
-function MiniPad({ affect }: { affect?: AffectPoint }) {
-  if (!hasAffectPoint(affect)) return null;
-  const at = { left: `${affect!.valence! * 100}%`, top: `${(1 - affect!.activation!) * 100}%` };
-  return <div className="mini-pad reveal-step" style={delay(0)} aria-hidden="true">
-    <span className="mini-ring" style={at} />
-    <span className="mini-dot" style={at} />
+/**
+ * The spots the person marked, drawn small on the same pad, with its axis names
+ * (2026-11-05). Read-only: no number, nothing to press. With both a quick and a
+ * slower spot, each carries a small label and the later one is the darker; they
+ * are never joined by a line. Nothing when no spot was marked (skipped, or left
+ * as unsure). The rows beside it say the same in words, so it is hidden from
+ * screen readers.
+ */
+function MiniPad({ quick, deep }: { quick?: AffectPoint; deep?: AffectPoint }) {
+  const t = useT();
+  const spots = ([[quick, "quick"], [deep, "deep"]] as const).filter(([affect]) => hasAffectPoint(affect));
+  if (!spots.length) return null;
+  const labelled = spots.length > 1;
+  return <div className="mini-pad-wrap reveal-step" style={delay(0)} aria-hidden="true">
+    <div className="mini-axis top">{t("affectPad.top")}</div>
+    <div className="mini-pad">
+      {spots.map(([affect, kind]) => {
+        const at = { left: `${affect!.valence! * 100}%`, top: `${(1 - affect!.activation!) * 100}%` };
+        return <span key={kind} className={`mini-spot mini-${kind}`}>
+          <span className="mini-ring" style={at} />
+          <span className="mini-dot" style={at} />
+          {labelled && <span className={`mini-label${affect!.valence! > 0.6 ? " to-left" : ""}`} style={at}>{t(kind === "quick" ? "recordDetail.quickAffect" : "recordDetail.deepAffect")}</span>}
+        </span>;
+      })}
+    </div>
+    <div className="mini-axis-row"><span>{t("affectPad.left")}</span><span>{t("affectPad.right")}</span></div>
+    <div className="mini-axis bottom">{t("affectPad.bottom")}</div>
   </div>;
 }
 
@@ -1128,16 +1208,18 @@ function NeedScreen({ session, onNeed, onResponse, onDeep, onCoach, onBack }: { 
 }
 
 /** A list of what was recorded. No scores, no patterns across records, no interpretation. */
-function RecordsScreen({ records, onOpen, onBack, onChanged }: { records: EmotionSession[]; onOpen: (session: EmotionSession) => void; onBack: () => void; onChanged: () => void }) {
+function RecordsScreen({ records, manageOpen = false, onHelp, onOpen, onBack, onChanged }: { records: EmotionSession[]; manageOpen?: boolean; onHelp: () => void; onOpen: (session: EmotionSession) => void; onBack: () => void; onChanged: () => void }) {
   const t = useT();
   return <Screen className="entry-screen">
     <p className="eyebrow">{t("records.eyebrow")}</p>
     <h1>{t("records.title")}</h1>
+    {records.length > 0 && <DayStrip records={records} />}
+    <RecordsMap records={records} onOpen={onOpen} />
     {records.length === 0
       ? <p className="lede">{t("records.empty")}</p>
       : <div className="record-list">{records.map((session) => {
           const item = summarise(session, t.locale);
-          return <button className="record-row" key={item.id} onClick={() => onOpen(session)}>
+          return <button className="record-row" id={`record-${item.id}`} key={item.id} onClick={() => onOpen(session)}>
             <span className="record-when">{formatWhen(item.at, t.locale)}<em>{item.depthLabel}</em></span>
             {(() => {
               // the moment's own words, else names given later, else the answer given then; a record with none is not lacking
@@ -1149,9 +1231,77 @@ function RecordsScreen({ records, onOpen, onBack, onChanged }: { records: Emotio
             {item.responseLabels.length > 0 && <span className="record-need">{t("records.responsesLine", { labels: item.responseLabels.join(" / ") })}</span>}
           </button>;
         })}</div>}
-    <RecordTransfer count={records.length} onChanged={onChanged} />
+    <HelpLine onHelp={onHelp} />
+    {/* moving and deleting, folded into one line (2026-11-05); open when the person came to manage them */}
+    <details className="record-manage" open={manageOpen}>
+      <summary>{t("records.manage")}</summary>
+      <RecordTransfer count={records.length} onChanged={onChanged} />
+    </details>
     <div className="navigation"><button className="quiet-button" onClick={onBack}>{t("records.backToStart")}</button><span /></div>
   </Screen>;
+}
+
+/**
+ * The last fourteen days above the list (owner's decision 2026-10-30, second round C):
+ * a dot on a day with a record, an open dashed space on a day without, today at the
+ * right end. It only shows; a dot takes you to that day's first record in the list.
+ * No count, no run of days, and an open day is not coloured as missed.
+ */
+function DayStrip({ records }: { records: EmotionSession[] }) {
+  const t = useT();
+  const days = recentDays(records);
+  const jump = (id: string) => {
+    const row = document.getElementById(`record-${id}`);
+    row?.scrollIntoView?.({ block: "center", behavior: "smooth" });
+    row?.focus();
+  };
+  return <section className="day-strip" aria-labelledby="day-strip-title">
+    <p className="tier-label" id="day-strip-title">{t("records.days.title")}</p>
+    <ol className="day-cells">{days.map((day) => <li key={day.key}>
+      {day.firstId
+        ? <button className="day-cell has-record" aria-label={t("records.days.goTo", { date: formatDay(day.iso, t.locale) })} onClick={() => jump(day.firstId!)}><span className="day-dot" aria-hidden="true" /></button>
+        : <span className="day-cell is-open" aria-hidden="true" />}
+    </li>)}</ol>
+    <div className="day-ends" aria-hidden="true"><span>{formatDay(days[0].iso, t.locale)}</span><span>{t("records.days.today")}</span></div>
+  </section>;
+}
+
+/**
+ * 내 지도, under the 14-day strip (2026-11-05): every record with a spot, on one
+ * pad, joined in time order by a thin line. Older points are fainter, newer ones
+ * darker, and the latest a little larger. Where two records are more than 14
+ * days apart the line between them is dotted; nothing else marks the rest.
+ * Each point opens its record, by pointer or keyboard, in time order. No count,
+ * no next point, no reading of the shape. Not drawn when no record has a spot.
+ */
+function RecordsMap({ records, onOpen }: { records: EmotionSession[]; onOpen: (session: EmotionSession) => void }) {
+  const t = useT();
+  const points = mapPoints(records);
+  if (!points.length) return null;
+  const last = points.length - 1;
+  // oldest .3, newest 1: the fade carries time, never a colour per feeling (§19)
+  const strength = (index: number) => last === 0 ? 1 : 0.3 + 0.7 * (index / last);
+  const x = (valence: number) => valence * 100;
+  const y = (activation: number) => (1 - activation) * 100;
+  return <section className="records-map" aria-labelledby="records-map-title">
+    <p className="tier-label" id="records-map-title">{t("records.map.title")}</p>
+    <div className="map-wrap">
+      <div className="mini-axis top" aria-hidden="true">{t("affectPad.top")}</div>
+      <div className="map-pad">
+        {points.length > 1 && <svg className="map-lines" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">
+          {points.slice(1).map((point, index) => <line key={point.id} className={point.afterGap ? "is-gap" : undefined} x1={x(points[index].valence)} y1={y(points[index].activation)} x2={x(point.valence)} y2={y(point.activation)} style={{ opacity: strength(index + 1) }} />)}
+        </svg>}
+        {points.map((point, index) => {
+          const session = records.find((item) => item.id === point.id)!;
+          return <button key={point.id} className={`map-point${index === last ? " is-latest" : ""}`} style={{ left: `${x(point.valence)}%`, top: `${y(point.activation)}%` }} aria-label={t("records.map.open", { when: formatWhen(point.at, t.locale) })} onClick={() => onOpen(session)}>
+            <span className="map-dot" style={{ opacity: strength(index) }} aria-hidden="true" />
+          </button>;
+        })}
+      </div>
+      <div className="mini-axis-row" aria-hidden="true"><span>{t("affectPad.left")}</span><span>{t("affectPad.right")}</span></div>
+      <div className="mini-axis bottom" aria-hidden="true">{t("affectPad.bottom")}</div>
+    </div>
+  </section>;
 }
 
 type TransferNote = { kind: "status" | "alert"; text: string };
@@ -1341,7 +1491,7 @@ function RecordTransfer({ count, onChanged }: { count: number; onChanged: () => 
  * from (owner's decision 2026-10-30): what the person pressed or wrote, what the
  * app worked out from it, and what was added later. Colour is never the only sign.
  */
-function RecordDetail({ session, onFollowUp, onAddLabel, onBack }: { session: EmotionSession; onFollowUp: (followUp: { tried?: "yes" | "partly" | "no"; helped?: "yes" | "somewhat" | "no" | "unsure" }) => void; onAddLabel: (label: string) => void; onBack: () => void }) {
+function RecordDetail({ session, previous, onHelp, onFollowUp, onAddLabel, onBack }: { session: EmotionSession; previous?: EmotionSession; onHelp: () => void; onFollowUp: (followUp: { tried?: "yes" | "partly" | "no"; helped?: "yes" | "somewhat" | "no" | "unsure" }) => void; onAddLabel: (label: string) => void; onBack: () => void }) {
   const t = useT();
   const item = summarise(session, t.locale);
   const followUp = session.support?.followUp;
@@ -1352,30 +1502,41 @@ function RecordDetail({ session, onFollowUp, onAddLabel, onBack }: { session: Em
   const lines = wordLines(session);
   const quickResponse = deep?.emotionCandidates?.length ? "" : quickResponseLabel(t, session.quickCheck?.candidateResponse);
   const endedUnsure = Boolean(quickAffect?.unknown && !deep);
-  return <Screen>
+  // the record just before, in the same four places only (2026-11-05): shown under the line, never compared
+  const before = previous ? previousLines(previous) : undefined;
+  const lastTime = (value?: string) => before && value ? <p className="previous-line">{t("recordDetail.previous", { date: formatDay(before.at, t.locale), value })}</p> : null;
+  const concernRows = concernLines(session);
+  // where each line came from, and how far the record went, wait behind one button (2026-11-05); the bands stay
+  const [sourcesShown, setSourcesShown] = useState(false);
+  return <SourcesShown.Provider value={sourcesShown}><Screen>
     <p className="eyebrow">{t("records.eyebrow")}</p>
     <h1>{formatWhen(item.at, t.locale)}</h1>
-    <SourceLegend />
+    {sourcesShown && <SourceLegend />}
+    <MiniPad quick={quickAffect} deep={deep?.affect} />
     <div className="summary-card with-sources">
-      <SummaryRow label={t("recordDetail.depth")} value={item.depthLabel} source={app("depth")} />
+      {sourcesShown && <SummaryRow label={t("recordDetail.depth")} value={item.depthLabel} source={app("depth")} />}
       {quickAffect && (quickAffect.unknown
         ? <SummaryRow label={t("recordDetail.quickAffect")} value={t("quickAffect.unknown")} source={mine("pressed")} />
-        : <>
-            <SummaryRow label={t("recordDetail.quickSpot")} value={t("recordDetail.spotValue")} source={mine("pressed")} />
-            <SummaryRow label={t("recordDetail.quickAffect")} value={quickAffectValue(t, quickAffect)} source={app("sentence")} />
-          </>)}
-      {deep?.body && deep.body.length > 0 && <SummaryRow label={t("recordDetail.body")} value={deep.body.map((entry) => entry.label).join(" · ")} source={mine(deep.body.some((entry) => entry.custom) ? "wrote" : "pressed")} />}
+        : <SummaryRow label={t("recordDetail.quickAffect")} value={quickAffectValue(t, quickAffect)} source={app("sentence")} />)}
+      {session.quickCheck?.context?.eventText && <SummaryRow label={t("recordDetail.quickContext")} value={session.quickCheck.context.eventText} source={mine("wrote")} />}
+      {deep?.body && deep.body.length > 0 && <>
+        <SummaryRow label={t("recordDetail.body")} value={deep.body.map((entry) => entry.label).join(" · ")} source={mine(deep.body.some((entry) => entry.custom) ? "wrote" : "pressed")} />
+        {lastTime(before?.body)}
+      </>}
       {deep?.affect && (hasAffectPoint(deep.affect)
-        ? <>
-            <SummaryRow label={t("recordDetail.deepSpot")} value={t("recordDetail.spotValue")} source={mine("pressed")} />
-            <SummaryRow label={t("recordDetail.deepAffect")} value={deepAffectValue(t, deep.affect)!} source={app("sentence")} />
-          </>
+        ? <SummaryRow label={t("recordDetail.deepAffect")} value={deepAffectValue(t, deep.affect)!} source={app("sentence")} />
         : <LeftEmptyRow label={t("recordDetail.deepAffect")} value={deepAffectValue(t, deep.affect)} source={mine(deep.affect.unknown ? "pressed" : "skipped")} />)}
       {deep?.context?.eventText && <SummaryRow label={t("recordDetail.context")} value={deep.context.eventText} source={mine("wrote")} />}
-      {concernLines(session).map((line) => <SummaryRow key={line.how} label={t("recordDetail.concerns")} value={line.items.join(" · ")} source={mine(line.how)} />)}
+      {concernRows.map((line) => <SummaryRow key={line.how} label={t("recordDetail.concerns")} value={line.items.join(" · ")} source={mine(line.how)} />)}
+      {concernRows.length > 0 && lastTime(before?.concerns)}
       {item.personalMeanings.map((entry) => <SummaryRow key={entry.label} label={t("recordDetail.personalMeaning", { label: entry.label })} value={entry.meaning} source={mine("wrote")} />)}
       {session.talkToSomeone && <SummaryRow label={t("talkToSomeone.recordLabel")} value={t(`talkToSomeone.answers.${session.talkToSomeone.answer}`)} source={mine("pressed")} />}
-      {item.needLabel && <SummaryRow label={t("recordDetail.need")} value={item.needLabel} source={mine("pressed")} />}
+      {session.underlyingFeeling && <SummaryRow label={t("underlyingFeeling.recordLabel")} value={t(`underlyingFeeling.answers.${session.underlyingFeeling.answer}`)} source={mine("pressed")} />}
+      {session.underlyingFeeling?.answer === "yes" && session.underlyingFeeling.note && <SummaryRow label={t("underlyingFeeling.noteRecordLabel")} value={session.underlyingFeeling.note} source={mine("wrote")} />}
+      {item.needLabel && <>
+        <SummaryRow label={t("recordDetail.need")} value={item.needLabel} source={mine("pressed")} />
+        {lastTime(before?.need)}
+      </>}
       {item.responseLabels.length > 0 && <SummaryRow label={t("recordDetail.responses")} value={item.responseLabels.join(" / ")} source={mine("pressed")} />}
     </div>
 
@@ -1387,6 +1548,7 @@ function RecordDetail({ session, onFollowUp, onAddLabel, onBack }: { session: Em
         : quickResponse ? [{ key: "response", value: quickResponse, source: mine("pressed") }] : []}
       later={session.labelsLater ?? []}
       onAdd={onAddLabel}
+      previous={lastTime(before?.names)}
     />
 
     {item.canFollowUp && <section className="synthesis">
@@ -1400,8 +1562,10 @@ function RecordDetail({ session, onFollowUp, onAddLabel, onBack }: { session: Em
       <p className="synthesis-caveat">{t("recordDetail.followUpCaveat")}</p>
     </section>}
 
+    <button className="inline-link sources-toggle" aria-expanded={sourcesShown} onClick={() => setSourcesShown((shown) => !shown)}>{sourcesShown ? t("recordDetail.sourcesHide") : t("recordDetail.sourcesShow")}</button>
     <div className="navigation"><button className="quiet-button" onClick={onBack}>{t("recordDetail.backToList")}</button><a className="primary-button" href="/">{t("recordDetail.toStart")} <span>→</span></a></div>
-  </Screen>;
+    <HelpLine onHelp={onHelp} />
+  </Screen></SourcesShown.Provider>;
 }
 
 /**
@@ -1410,7 +1574,7 @@ function RecordDetail({ session, onFollowUp, onAddLabel, onBack }: { session: Em
  * can be added, never edited or removed, and nothing is suggested. A record with
  * no name yet shows an open, dashed space, never the word for none.
  */
-function NamesLayer({ day, first, later, onAdd }: { day: string; first: { key: string; value: string; source: RowSource }[]; later: { label: string; at: string }[]; onAdd: (label: string) => void }) {
+function NamesLayer({ day, first, later, onAdd, previous }: { day: string; first: { key: string; value: string; source: RowSource }[]; later: { label: string; at: string }[]; onAdd: (label: string) => void; previous?: React.ReactNode }) {
   const t = useT();
   const [adding, setAdding] = useState(false);
   const [label, setLabel] = useState("");
@@ -1428,6 +1592,7 @@ function NamesLayer({ day, first, later, onAdd }: { day: string; first: { key: s
             const date = formatDay(entry.at, t.locale);
             return <SummaryRow key={`${entry.at}-${index}`} label={date} value={entry.label} source={{ kind: "later", label: t("recordDetail.addedOn", { date }) }} />;
           })}
+          {previous}
         </div>}
     {adding
       ? <div className="own-word-block">
@@ -1460,6 +1625,16 @@ function WorsenedScreen() {
     <p className="small-note">{t("worsened.kept")}</p>
     <HelpReveal />
   </Screen>;
+}
+
+/**
+ * The same line at the foot of the records list and of a record (2026-11-05): it
+ * opens the help card the header's 도움 opens. It is always there and always the
+ * same; nothing in a record changes it, and nothing is read for risk (SAFETY.md).
+ */
+function HelpLine({ onHelp }: { onHelp: () => void }) {
+  const t = useT();
+  return <p className="help-line"><button className="inline-link" onClick={onHelp}>{t("common.helpLine")} <span aria-hidden="true">→</span></button></p>;
 }
 
 /** The helplines, folded until asked for, so they are offered without being pressed on anyone. */
@@ -1497,7 +1672,8 @@ function StopModal({ onClose, onStop }: { onClose: () => void; onStop: () => voi
 
 function Screen({ children, className = "" }: { children: React.ReactNode; className?: string }) { return <section className={`screen ${className}`}>{children}</section>; }
 /** The basis band, when given, says which moment the question is about, before the question itself. */
-function StepHeading({ step, title, hint, basis }: { step: string; title: string; hint: string; basis?: string }) { return <><p className="eyebrow">{step}</p>{basis && <p className="step-basis">{basis}</p>}<h1>{title}</h1><p className="hint">{hint}</p></>; }
+/** `pause`, when given, sits right under the title: that stopping here is fine (the body step, 2026-10-30). */
+function StepHeading({ step, title, hint, basis, pause }: { step: string; title: string; hint: string; basis?: string; pause?: string }) { return <><p className="eyebrow">{step}</p>{basis && <p className="step-basis">{basis}</p>}<h1>{title}</h1>{pause && <p className="pause-line">{pause}</p>}<p className="hint">{hint}</p></>; }
 function Navigation({ onNext, onSkip = onNext, disabled = false, note }: { onNext: () => void; onSkip?: () => void; disabled?: boolean; note?: string }) {
   const t = useT();
   return <><StepNote note={note} /><div className="navigation"><button className="skip-button" onClick={onSkip}>{t("common.skip")}</button><button className="primary-button" disabled={disabled} onClick={onNext}>{t("common.next")} <span>→</span></button></div></>;
@@ -1507,8 +1683,11 @@ function StepNote({ note }: { note?: string }) { return note ? <p className="ste
 function LeftEmptyRow({ label, value, source }: { label: string; value?: string; source?: RowSource }) { const t = useT(); return <SummaryRow label={label} value={value ?? t("common.leftEmpty")} empty={value === undefined} source={source} />; }
 /** Where a record line came from: a band at its left edge and a short label under it (record detail only). */
 type RowSource = { kind: SourceKind; label: string };
+/** Whether the short source labels are shown; the band always is. The record detail folds them (2026-11-05). */
+const SourcesShown = createContext(true);
 function SummaryRow({ label, value, empty = false, style, source }: { label: string; value: string; empty?: boolean; style?: CSSProperties; source?: RowSource }) {
-  return <div className={`summary-row reveal-step${empty ? " is-empty" : ""}${source ? ` has-source source-${source.kind}` : ""}`} style={style}><span>{label}</span><strong>{value}</strong>{source && <em className="source-label">{source.label}</em>}</div>;
+  const labelShown = useContext(SourcesShown);
+  return <div className={`summary-row reveal-step${empty ? " is-empty" : ""}${source ? ` has-source source-${source.kind}` : ""}`} style={style}><span>{label}</span><strong>{value}</strong>{source && labelShown && <em className="source-label">{source.label}</em>}</div>;
 }
 /** The three bands, named once above the record. */
 function SourceLegend() {

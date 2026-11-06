@@ -165,6 +165,7 @@ describe("each line of a past record says where it came from", () => {
     render(<Home />);
     fireEvent.click(screen.getByRole("button", { name: ko.landing.records }));
     fireEvent.click(document.querySelector(".record-row")!);
+    fireEvent.click(screen.getByRole("button", { name: ko.recordDetail.sourcesShow })); // the source labels are folded by default (2026-11-05)
     expect(screen.getByRole("list", { name: ko.recordDetail.legend.title })).toBeTruthy();
     const rows = [...document.querySelectorAll(".with-sources .summary-row")];
     expect(rows.every((row) => row.classList.contains("has-source") && row.querySelector(".source-label"))).toBe(true);
@@ -175,7 +176,8 @@ describe("each line of a past record says where it came from", () => {
       expect(row.querySelector(".source-label")!.textContent).toBe(label);
     };
     expectSource(rowOf(ko.recordDetail.depth, ko.records.depth["quick+deep"]), "app", ko.recordDetail.source.depth);
-    expectSource(rowOf(ko.recordDetail.quickSpot, ko.recordDetail.spotValue), "mine", ko.recordDetail.source.pressed);
+    // the spot itself is drawn on a small pad above the lines (2026-11-05), no longer a line of its own
+    expect(document.querySelectorAll(".mini-pad .mini-dot")).toHaveLength(1);
     // the spot and the sentence the app made of it are two lines, never one mixed line
     const sentence = [...document.querySelectorAll(".summary-row")].find((row) => row.querySelector("span")?.textContent === ko.recordDetail.quickAffect) as HTMLElement;
     expectSource(sentence, "app", ko.recordDetail.source.sentence);
@@ -191,6 +193,7 @@ describe("each line of a past record says where it came from", () => {
     render(<Home />);
     fireEvent.click(screen.getByRole("button", { name: ko.landing.records }));
     fireEvent.click(document.querySelector(".record-row")!);
+    fireEvent.click(screen.getByRole("button", { name: ko.recordDetail.sourcesShow })); // the source labels are folded by default (2026-11-05)
     expect(nameOf("짜증").querySelector(".source-label")!.textContent).toBe(ko.recordDetail.source.pickedAfterReveal);
   });
 });
@@ -253,6 +256,7 @@ describe("names are written over, never in place of", () => {
     it("adds today's name below, dated, with nothing suggested, and keeps it", () => {
       openDetail();
       fireEvent.click(document.querySelector(".record-row")!);
+      fireEvent.click(screen.getByRole("button", { name: ko.recordDetail.sourcesShow })); // the source labels are folded by default (2026-11-05)
       const layer = document.querySelector(".names-layer") as HTMLElement;
       fireEvent.click(within(layer).getByRole("button", { name: ko.recordDetail.names.add }));
       expect(layer.querySelectorAll(".chip")).toHaveLength(0);

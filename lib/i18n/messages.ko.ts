@@ -42,12 +42,25 @@ export const ko = {
     provisionalNote: "임시 단어 모음 · 스스로 고른 표현만 기록됩니다",
     helpLink: "도움받을 수 있는 곳",
     helpShort: "도움",
+    /** The same line at the foot of the records list and of a record (2026-11-05); opens the help card. */
+    helpLine: "힘들 때 연락할 수 있는 곳",
     close: "닫기",
     saveFailed: "이 브라우저에 기록을 저장하지 못하고 있습니다. 저장 공간이 가득 찼거나 브라우저가 저장을 막고 있을 수 있습니다. 계속할 수는 있지만, 이 화면을 닫으면 지금 기록은 남지 않습니다. 지난 기록 화면에서 오래된 기록을 파일로 내보내고 지우면 공간이 생깁니다.",
     quoted: "“{value}”",
     listSeparator: ", ",
   },
   landing: {
+    /** The small label above the title (2026-11-05): the nickname 이쯤 joins the pad's own hint, 「‘이쯤’이라고 느껴지는 곳」. Korean only; the tab title, meta, header and footer keep 감정 관찰실. */
+    eyebrow: "이쯤 · 감정 관찰실",
+    /** The drawing under the buttons (2026-11-05): the 답답함 example from 「왜 감정을 조금 더 자세히 살펴볼까요?」, as one word that splits in two. */
+    split: {
+      word: "답답해",
+      tired: "지쳐서 답답함",
+      tiredNeed: "쉬는 게 필요할 때",
+      stuck: "할 말이 막혀 답답함",
+      stuckNeed: "말을 정리하는 게 필요할 때",
+      line: "좋은지 싫은지 잘 몰라도 괜찮아요. 이쯤이라고 눌러 두면, 쌓인 점들이 내 쪽을 보여 줘요.",
+    },
     // the one-way-in title and subtitle (owner kept the proposed wording, 2026-10-30)
     title: "이름 붙이기 전에, 지금 느껴지는 것을 그대로 남겨 둡니다.",
     lede: "맞히는 검사가 아닙니다. 1분이면 됩니다.",
@@ -266,6 +279,8 @@ export const ko = {
     step: "가능한 표현",
     title: "지금 경험을 표현할 때 가까울 수도 있는 말입니다.",
     hint: "감정을 판정하는 결과가 아닙니다. 여러 개를 골라도 되고, 맞지 않으면 고르지 않아도 됩니다.",
+    /** Shown only after a spot in the unpleasant, high-energy corner (lib/quick-check PAUSE_LINE_CORNER). */
+    pause: "지금은 여기까지만 남겨도 됩니다.",
     decline: {
       "none-close": "가까운 말이 없음",
       unsure: "잘 모르겠음",
@@ -278,6 +293,11 @@ export const ko = {
     coach: "표현 사이의 차이 살펴보기",
     deep: "조금 더 천천히 들여다보기",
     coachNote: "예시 상황으로 해보는 짧은 연습입니다. 지금 고른 표현은 그대로 남습니다. 예시는 일부 후보에만 준비되어 있습니다.",
+    context: {
+      // one optional line under the second step (owner's decision 2026-10-30)
+      label: "무슨 일이 있었나요",
+      hint: "일어난 일만 적어도 됩니다. 뜻은 나중에 붙여도 됩니다.",
+    },
   },
   coach: {
     step: "예시로 연습하기",
@@ -335,6 +355,8 @@ export const ko = {
     basis: "지금 이 순간 몸에서 알아차린 것만",
     step: "몸",
     title: "먼저, 몸에서는 무엇이 느껴지나요?",
+    // under the title: stopping is fine, and 그만하기 is already in the top bar (2026-10-30)
+    pause: "몸을 살피는 게 불편하면 여기서 멈춰도 됩니다. 멈춘 기록도 그대로 남습니다.",
     hint: "감정 이름을 찾기 전에 지금 몸에서 알아차릴 수 있는 것부터 봅니다. 자세를 고쳐 앉을 필요는 없습니다 — 지금 이 순간 알아차린 것이면 충분합니다.",
     more: "다른 몸의 느낌 보기",
     customLabel: "다른 느낌이 있다면 적어도 됩니다",
@@ -486,6 +508,20 @@ export const ko = {
     saved: "이 기록에 남겨 두었습니다.",
     recordLabel: "사람에게 말해 볼 생각",
   },
+  /** A second question in the same form, under talkToSomeone (owner's decision 2026-10-30). Kept and shown back only. */
+  underlyingFeeling: {
+    question: "이 느낌 아래에 다른 느낌이 먼저 있었나요?",
+    hint: "답하지 않아도 됩니다. 어느 답이든 괜찮습니다.",
+    answers: {
+      yes: "있었다",
+      no: "없었다",
+      unsure: "모르겠다",
+    },
+    noteLabel: "어떤 느낌이었나요",
+    saved: "이 기록에 남겨 두었습니다.",
+    recordLabel: "아래에 먼저 있던 느낌",
+    noteRecordLabel: "그 느낌",
+  },
   records: {
     eyebrow: "지난 기록",
     title: "이전에 적은 것들",
@@ -495,6 +531,19 @@ export const ko = {
     needLine: "필요했던 방향 · {label}",
     responsesLine: "해보기로 한 것 · {labels}",
     backToStart: "← 처음으로",
+    /** The strip of the last 14 days above the list (2026-10-30). No counts, no 안 한 날. */
+    days: {
+      title: "최근 14일",
+      today: "오늘",
+      goTo: "{date} 기록으로 가기",
+    },
+    /** 기록 옮기기와 지우기, folded into one line (2026-11-05). */
+    manage: "기록 관리",
+    /** 내 지도 under the strip (2026-11-05): one point per record with a spot, nothing counted. */
+    map: {
+      title: "내 지도",
+      open: "{when} 기록 열기",
+    },
     /** How far a record went. Derived from what it holds, never stored. */
     depth: {
       quick: "빠른 확인",
@@ -564,16 +613,19 @@ export const ko = {
     deletedAll: "이 기기의 기록을 모두 지웠습니다.",
   },
   recordDetail: {
+    /** The one button that shows the source labels and how far the record went (2026-11-05). */
+    sourcesShow: "어디서 온 줄인지 보기",
+    sourcesHide: "어디서 온 줄인지 접기",
+    /** Under a line, when the record just before had the same one (2026-11-05). Side by side only: no comparing word. */
+    previous: "지난번 ({date}): {value}",
     depth: "살펴본 정도",
     quickAffect: "빠른 확인",
     deepAffect: "자세히 본 뒤",
     personalMeaning: "‘{label}’은",
     context: "상황",
+    quickContext: "그때 일어난 일",
     need: "필요했던 방향",
     responses: "해보기로 한 것",
-    quickSpot: "빠른 확인에서 누른 곳",
-    deepSpot: "자세히 본 뒤 누른 곳",
-    spotValue: "패드 위의 한 점",
     body: "몸",
     concerns: "중요했던 것",
     /** The label under each line: where it came from (2026-10-30). Never colour alone. */

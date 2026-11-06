@@ -74,12 +74,24 @@ export const en: Messages = {
     provisionalNote: "A starter set of words · Only what you choose is kept",
     helpLink: "Where to get help",
     helpShort: "Help",
+    /** The same line at the foot of the records list and of a record (2026-11-05); opens the help card. */
+    helpLine: "Where to reach out when it’s hard",
     close: "Close",
     saveFailed: "This browser is not saving this entry. Its storage may be full, or the browser may be blocking it. You can go on, but if you close this screen, this entry will not be kept. You can free up space on the past entries screen by exporting older entries to a file and then deleting them.",
     quoted: "“{value}”",
     listSeparator: ", ",
   },
   landing: {
+    /** The nickname 이쯤 is not used in English (2026-11-05): the label stays the app's name. */
+    eyebrow: "Emotion Observatory",
+    split: {
+      word: "I feel stuck",
+      tired: "Stuck because I’m worn out",
+      tiredNeed: "When rest is what’s needed",
+      stuck: "Stuck because the words won’t come",
+      stuckNeed: "When sorting out what to say is what’s needed",
+      line: "It’s fine not to know whether it feels good or bad. Tap roughly where it is, and the dots that gather show you your own side.",
+    },
     // same meaning as the Korean (owner kept the proposed wording, 2026-10-30)
     title: "Before you name it, keep what you feel just as it is.",
     lede: "This is not a test to get right. It takes about a minute.",
@@ -295,6 +307,7 @@ export const en: Messages = {
     step: "Possible words",
     title: "Words that might come close to what you are experiencing.",
     hint: "This is not a verdict on your emotion. You can pick several, or none if nothing fits.",
+    pause: "You can leave it at this for now.",
     decline: {
       "none-close": "No word comes close",
       unsure: "Not sure",
@@ -307,6 +320,10 @@ export const en: Messages = {
     coach: "Look at the differences between words",
     deep: "Take a slower look",
     coachNote: "A short practice with an example situation. The words you picked stay as they are. Examples exist for only some words.",
+    context: {
+      label: "What happened",
+      hint: "Just the event is enough. What it meant can come later, or not at all.",
+    },
   },
   coach: {
     step: "Practice with an example",
@@ -363,6 +380,7 @@ export const en: Messages = {
     basis: "Only what you notice in your body right now",
     step: "Body",
     title: "First, what do you notice in your body?",
+    pause: "If paying attention to your body is uncomfortable, you can stop here. What you have recorded so far is kept.",
     hint: "Before looking for a name for the emotion, start with what you can notice in your body right now. No need to change how you are sitting. What you notice in this moment is enough.",
     more: "Show other body sensations",
     customLabel: "If there is something else, you can write it",
@@ -512,6 +530,19 @@ export const en: Messages = {
     saved: "Your answer is kept with this entry.",
     recordLabel: "Thinking of telling someone",
   },
+  underlyingFeeling: {
+    question: "Was a different feeling there first, underneath this one?",
+    hint: "You do not have to answer. Any answer is fine.",
+    answers: {
+      yes: "There was",
+      no: "There was not",
+      unsure: "I don’t know",
+    },
+    noteLabel: "What was it like?",
+    saved: "Your answer is kept with this entry.",
+    recordLabel: "A feeling there first, underneath",
+    noteRecordLabel: "That feeling",
+  },
   records: {
     eyebrow: "Past entries",
     title: "What you wrote before",
@@ -520,6 +551,18 @@ export const en: Messages = {
     needLine: "What you needed · {label}",
     responsesLine: "What you planned to try · {labels}",
     backToStart: "← Back to the start",
+    days: {
+      title: "The last 14 days",
+      today: "Today",
+      goTo: "Go to the entries from {date}",
+    },
+    /** 기록 옮기기와 지우기, folded into one line (2026-11-05). */
+    manage: "Manage entries",
+    /** 내 지도 under the strip (2026-11-05): one point per record with a spot, nothing counted. */
+    map: {
+      title: "My map",
+      open: "Open the entry from {when}",
+    },
     depth: {
       quick: "Quick look",
       "quick+deep": "Quick look + slow look",
@@ -585,16 +628,19 @@ export const en: Messages = {
     deletedAll: "All entries on this device have been deleted.",
   },
   recordDetail: {
+    /** The one button that shows the source labels and how far the record went (2026-11-05). */
+    sourcesShow: "See where each line came from",
+    sourcesHide: "Hide where each line came from",
+    /** Under a line, when the record just before had the same one (2026-11-05). Side by side only: no comparing word. */
+    previous: "Last time ({date}): {value}",
     depth: "How far you went",
     quickAffect: "Quick look",
     deepAffect: "After the slow look",
     personalMeaning: "“{label}” meant",
     context: "Situation",
+    quickContext: "What happened then",
     need: "What you needed",
     responses: "What you chose to try",
-    quickSpot: "Where you tapped in the quick look",
-    deepSpot: "Where you tapped after the slow look",
-    spotValue: "One spot on the pad",
     body: "Body",
     concerns: "What mattered",
     source: {

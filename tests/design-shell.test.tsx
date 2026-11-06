@@ -55,9 +55,10 @@ describe("homepage frame on the landing and record screens", () => {
     expect(logo.textContent).toBe("Eunchan Joe");
   });
 
-  it("keeps the app's own name in the eyebrow", () => {
+  it("keeps the app's own name in the eyebrow, after the nickname 이쯤 (2026-11-05)", () => {
     render(<Home />);
-    expect(within(screen.getByRole("main")).getAllByText(ko.common.appName).length).toBeGreaterThan(0);
+    expect(ko.landing.eyebrow).toBe(`이쯤 · ${ko.common.appName}`);
+    expect(within(screen.getByRole("main")).getByText(ko.landing.eyebrow).className).toBe("eyebrow");
   });
 
   it("has a small footer without a mail address or a licence line", () => {
