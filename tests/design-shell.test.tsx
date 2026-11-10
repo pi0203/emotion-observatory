@@ -1,4 +1,6 @@
 import { afterEach, beforeEach, describe, expect, it } from "vitest";
+import { readFileSync } from "node:fs";
+import { join } from "node:path";
 import { cleanup, fireEvent, render, screen, within } from "@testing-library/react";
 import Home from "../app/(ko)/page";
 import EmotionApp from "../app/emotion-app";
@@ -55,10 +57,24 @@ describe("homepage frame on the landing and record screens", () => {
     expect(logo.textContent).toBe("Eunchan Joe");
   });
 
-  it("keeps the app's own name in the eyebrow, after the nickname 이쯤 (2026-11-05)", () => {
+  it("titles the first screen with the app's name, the nickname 이쯤 in a small line under it (2026-11-10)", () => {
     render(<Home />);
-    expect(ko.landing.eyebrow).toBe(`이쯤 · ${ko.common.appName}`);
-    expect(within(screen.getByRole("main")).getByText(ko.landing.eyebrow).className).toBe("eyebrow");
+    const main = within(screen.getByRole("main"));
+    const title = main.getByRole("heading", { level: 1 });
+    expect(title.textContent).toBe(ko.common.appName);
+    expect(title.nextElementSibling!.textContent).toBe(koOnly.alias);
+    expect(title.nextElementSibling!.className).toBe("hero-alias");
+    // the old title sentence stays, word for word, right after the nickname
+    expect(title.nextElementSibling!.nextElementSibling!.textContent).toBe(ko.landing.title);
+    // the header keeps its link to the homepage
+    expect(within(screen.getByRole("banner")).getByRole("link", { name: "Eunchan Joe" }).getAttribute("href")).toBe("https://eunchanjoe.vercel.app/");
+  });
+
+  it("sets the header wordmark at the homepage's size, below the title's", () => {
+    const css = readFileSync(join(process.cwd(), "app/globals.css"), "utf8");
+    expect(css).toMatch(/--site-wordmark: 1\.3rem;/);
+    expect(css).toMatch(/\.site-logo \{[^}]*font-size: var\(--site-wordmark\);[^}]*letter-spacing: \.01em;/);
+    expect(css).toMatch(/\.hero-title \{[^}]*font-size: var\(--t-lead\)/);
   });
 
   it("has a small footer without a mail address or a licence line", () => {

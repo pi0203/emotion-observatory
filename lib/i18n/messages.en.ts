@@ -85,8 +85,6 @@ export const en: Messages = {
     listSeparator: ", ",
   },
   landing: {
-    /** The nickname 이쯤 is not used in English (2026-11-05): the label stays the app's name. */
-    eyebrow: "Emotion Observatory",
     split: {
       word: "I feel stuck",
       tired: "Stuck because I’m worn out",

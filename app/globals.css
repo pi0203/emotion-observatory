@@ -55,6 +55,7 @@
   --t-body: 1rem;           /* text, ledes, choices (was 16, 17 and 18px) */
   --t-lead: 1.6rem;         /* section titles (was 23 and 26px) */
   --t-scene: clamp(2.25rem, 6vw, 3.2rem); /* screen titles (was 35 to 54px, 36px on phones) */
+  --site-wordmark: 1.3rem;  /* the homepage frame only: its wordmark's own size (homepage .wordmark, 2026-11-10), like the --site-* colours; not a step of the app's scale */
 }
 }
 
@@ -254,7 +255,9 @@ p, .lede, .hint, .step-note, .small-note, .summary-footnote { text-wrap: pretty;
 .site-main .entry-screen { padding-top: 36px; }
 .site-main .screen { padding-top: 40px; }
 .site-header { display: flex; align-items: baseline; justify-content: space-between; gap: 12px 24px; flex-wrap: wrap; padding: 28px 0 18px; border-bottom: 1px solid var(--site-line); }
-.site-logo { display: inline-flex; align-items: center; min-height: 24px; color: var(--site-ink); text-decoration: none; font-family: var(--font-serif), serif; font-size: var(--t-lead); line-height: 1.1; letter-spacing: -.01em; }
+/* the homepage's own wordmark size and spacing (.wordmark: 1.3rem, .01em, read from eunchanjoe.vercel.app on 2026-11-10),
+   so the landing's title, the app's name, is the largest text and the header still reads as the homepage's */
+.site-logo { display: inline-flex; align-items: center; min-height: 24px; color: var(--site-ink); text-decoration: none; font-family: var(--font-serif), serif; font-size: var(--site-wordmark); line-height: 1.1; letter-spacing: .01em; }
 /* the homepage's plum-blossom mark (2026-11-05): 1.45 x the text height, 0.4em from it, as on the homepage; negative block margins keep the row height */
 .site-logo-mark { flex: none; display: block; width: 1.45em; height: 1.45em; margin-right: .4em; margin-block: -.3em; }
 .site-logo-mark img { display: block; width: 100%; height: 100%; }
@@ -371,7 +374,6 @@ p, .lede, .hint, .step-note, .small-note, .summary-footnote { text-wrap: pretty;
   .site-header { padding: 14px 0 10px; }
   .site-main .entry-screen { padding-top: 16px; }
   .hero-card { padding: 22px 18px; }
-  .hero-card .eyebrow { margin-bottom: 10px; }
   .hero-card .lede { margin-top: 12px; font-size: var(--t-small); line-height: 1.6; }
   .badges { gap: 2px 12px; margin: 12px 0 18px; }
   .badge { padding: 0; border: 0; background: none; box-shadow: none; color: var(--muted); font-weight: 500; }
@@ -472,7 +474,9 @@ html, body { transition: background-color .5s ease; }
   background: radial-gradient(circle at 78% 26%, var(--tone-peach-blob) 0, transparent 60%), radial-gradient(circle at 22% 26%, var(--tone-lilac-blob) 0, transparent 60%),
     radial-gradient(circle at 22% 76%, var(--tone-blue-blob) 0, transparent 60%), radial-gradient(circle at 78% 76%, var(--tone-mint-blob) 0, transparent 60%), var(--card); }
 .hero-dot { position: absolute; left: 72%; top: 30%; width: 14px; height: 14px; border-radius: 50%; background: var(--accent); box-shadow: 0 0 0 5px var(--focus-ring); transform: translate(-50%, -50%); }
-.hero-card > .eyebrow { display: inline-block; padding: 4px 10px; border-radius: 99px; background: var(--accent-subtle); }
+/* the first screen's title is the app's name (2026-11-10): the largest text on the page; the nickname under it, then the old title sentence a step smaller */
+.hero-alias { margin: 8px 0 0; color: var(--muted); font: var(--t-aside) var(--font-sans); letter-spacing: .08em; }
+.hero-title { margin: 20px 0 0; font-family: var(--font-serif), serif; font-size: var(--t-lead); font-weight: 400; line-height: 1.35; letter-spacing: -.015em; text-wrap: balance; }
 
 /* the four badges as coloured pills, on phones too */
 .badges { display: flex; flex-wrap: wrap; gap: 8px; }
@@ -503,7 +507,7 @@ html, body { transition: background-color .5s ease; }
   .hero-card { display: grid; grid-template-columns: 1fr auto; column-gap: 12px; }
   .hero-card > * { grid-column: 1 / -1; }
   .hero-card > .hero-pad { grid-column: 2; grid-row: 1; width: 84px; margin: 0; align-self: start; }
-  .hero-card > .eyebrow { grid-column: 1; grid-row: 1; align-self: center; justify-self: start; }
+  .hero-card .hero-title { margin-top: 14px; }
   .hero-dot { width: 10px; height: 10px; box-shadow: 0 0 0 3px var(--focus-ring); }
   .badges { gap: 6px; }
   .badges .badge { padding: 3px 10px; border: 1px solid; color: var(--ink); font-weight: 500; }
@@ -515,7 +519,6 @@ html, body { transition: background-color .5s ease; }
 @media (max-width: 560px) {
   :lang(en) .hero-card { --t-scene: 1.85rem; }  /* the scene step, a size down for English on phones */
   :lang(en) .hero-card h1 { line-height: 1.2; }
-  :lang(en) .hero-card .eyebrow { letter-spacing: .06em; }
 }
 
 /* One way in (2026-10-30): the hero holds the first screen, so the notes, folds and crisis card start below the fold */

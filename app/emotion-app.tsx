@@ -387,8 +387,11 @@ function LandingScreen({ onStart, draft, onResume, onRecords, onManage, pendingS
     <section className="card hero-card single-entry">
       {/* a drawing of the pad used in the steps: four quiet colours and one dot (decoration only) */}
       <div className="hero-pad" aria-hidden="true"><span className="hero-dot" /></div>
-      <p className="eyebrow">{t("landing.eyebrow")}</p>
-      <h1>{renderRich(t("landing.title"))}</h1>
+      {/* the app's name is the screen's title and its largest text, so a first visitor knows where they are (2026-11-10);
+          the nickname 이쯤 sits under it, Korean only; the old title sentence follows as the hero's line */}
+      <h1 className="hero-name">{t("common.appName")}</h1>
+      {t.locale === "ko" && <p className="hero-alias">{koOnly.alias}</p>}
+      <p className="hero-title">{renderRich(t("landing.title"))}</p>
       <p className="lede">{renderRich(t("landing.lede"))}</p>
       {pendingStart
         ? <div className="draft-confirm" role="group" aria-labelledby="draft-confirm-title">

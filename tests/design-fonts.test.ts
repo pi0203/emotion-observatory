@@ -41,7 +41,9 @@ describe("fonts", () => {
   it("sizes text with the five steps of the type scale, never a raw pixel size", () => {
     const sizes = [...css.matchAll(/font-size:\s*([^;}]+)/g)].map((match) => match[1].trim());
     expect(sizes.length).toBeGreaterThan(10);
-    for (const size of sizes) expect(size).toMatch(/^var\(--t-(aside|small|body|lead|scene)\)$/);
+    // one exception, the homepage frame's wordmark at the homepage's own size (2026-11-10), used once
+    for (const size of sizes) expect(size).toMatch(/^var\(--(t-(aside|small|body|lead|scene)|site-wordmark)\)$/);
+    expect(sizes.filter((size) => size === "var(--site-wordmark)")).toHaveLength(1);
     expect(css).not.toMatch(/font:\s*(\d{3}\s+)?\d+px/);
   });
 });
