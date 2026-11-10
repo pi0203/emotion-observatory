@@ -139,7 +139,7 @@ describe("the links to and from the terms", () => {
     expect(TERMS_MAIL).toBe("mailto:a5897@icloud.com");
   });
 
-  it("send the Korean storage answer to 제6조, and the English one nowhere", () => {
+  it("send the Korean storage answer to 제6조, and the English one nowhere (the English footer's 「Terms」 goes to /terms itself)", () => {
     render(<Home />);
     expect(screen.getByRole("link", { name: koOnly.termsStorageLink }).getAttribute("href")).toBe(`${TERMS_PATH}#article-6`);
     cleanup();
@@ -147,7 +147,8 @@ describe("the links to and from the terms", () => {
     expect(article("article-6").querySelector("h2")!.textContent!.startsWith("제6조")).toBe(true);
     cleanup();
     render(<EmotionApp locale="en" />);
-    expect([...document.querySelectorAll("a")].some((a) => a.getAttribute("href")?.startsWith(TERMS_PATH))).toBe(false);
+    expect([...screen.getByRole("main").querySelectorAll("a")].some((a) => a.getAttribute("href")?.startsWith(TERMS_PATH))).toBe(false);
+    expect([...document.querySelectorAll("a")].filter((a) => a.getAttribute("href")?.startsWith(TERMS_PATH)).map((a) => a.getAttribute("href"))).toEqual([TERMS_PATH]);
   });
 });
 

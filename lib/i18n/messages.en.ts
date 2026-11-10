@@ -34,6 +34,9 @@ export const enOnly = {
    * Korean has no such line.
    */
   outsideKorea: "All numbers on this card are for South Korea. If you are outside Korea, call your local emergency number.",
+  /** In the footer, where the Korean one has 이용약관 · 개인정보 처리방침; both lead to the Korean pages (2026-11-10). */
+  termsLink: "Terms",
+  privacyLink: "Privacy",
 } as const;
 
 /**

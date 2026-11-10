@@ -40,6 +40,13 @@ describe("/privacy", () => {
     expect(all).not.toMatch(/\{[a-z0-9]+\}|\]\((mail|home)\)/);
   });
 
+  it("names section 2 for what is true now: no login is open, so no 「로그인하지 않으면」 (2026-11-10)", () => {
+    render(<Privacy />);
+    const main = screen.getByRole("main");
+    expect(within(main).getByRole("heading", { level: 2, name: "2. 기록이 남는 곳" })).toBeTruthy();
+    expect(main.textContent).not.toContain("로그인하지 않으면");
+  });
+
   it("is in the sitemap", () => {
     expect(sitemap().map((page) => page.url)).toContain(`${SITE_URL}/privacy`);
   });
@@ -59,8 +66,9 @@ describe("the footer", () => {
     }
   });
 
-  it("has no link to it on the English screen, which has no Korean pages to point to", () => {
+  it("links to the Korean policy from the English screen too, as 「Privacy」 marked hreflang ko (2026-11-10)", () => {
     render(<EmotionApp locale="en" />);
-    expect(footerLinks().map(([, href]) => href)).not.toContain(PRIVACY_PATH);
+    expect(footerLinks().at(-1)).toEqual(["Privacy", PRIVACY_PATH]);
+    expect(within(screen.getByRole("contentinfo")).getByRole("link", { name: "Privacy" }).getAttribute("hreflang")).toBe("ko");
   });
 });

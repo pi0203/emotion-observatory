@@ -73,11 +73,26 @@ describe("homepage frame on the landing and record screens", () => {
     expect(footer.textContent).not.toMatch(/위기|crisis/i);
   });
 
-  it("leaves the terms link out of the English footer, since the terms are Korean only", () => {
+  it("links the English footer to the Korean terms and privacy policy in the same places, as Terms · Privacy (2026-11-10)", () => {
     render(<EmotionApp locale="en" />);
     const footer = screen.getByRole("contentinfo");
-    expect(within(footer).getAllByRole("link").map((link) => link.getAttribute("href"))).toEqual(["https://eunchanjoe.vercel.app/"]);
+    const links = within(footer).getAllByRole("link");
+    expect(links.map((link) => [link.textContent, link.getAttribute("href")])).toEqual([
+      ["eunchanjoe.vercel.app", "https://eunchanjoe.vercel.app/"], ["Terms", "/terms"], ["Privacy", "/privacy"],
+    ]);
+    // there is no English text behind them yet: say so to the browser and to screen readers
+    expect(links.slice(1).map((link) => link.getAttribute("hreflang"))).toEqual(["ko", "ko"]);
     expect(footer.textContent).not.toContain(koOnly.termsLink);
+  });
+
+  it("sends the English menu to the homepage's English reading where it exists: only /en/me/ for now (2026-11-10)", () => {
+    render(<EmotionApp locale="en" />);
+    const nav = within(screen.getByRole("banner")).getByRole("navigation");
+    const links = within(nav).getAllByRole("link");
+    expect(links.map((link) => link.textContent)).toEqual(["Me", "Reading", "Threads", "Map"]);
+    expect(links.map((link) => link.getAttribute("href"))).toEqual([
+      "https://eunchanjoe.vercel.app/en/me/", "https://eunchanjoe.vercel.app/reading/", "https://eunchanjoe.vercel.app/threads/", "https://eunchanjoe.vercel.app/map/",
+    ]);
   });
 
   it("starts with a skip link to the main content", () => {
