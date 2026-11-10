@@ -24,7 +24,7 @@ describe("the English landing's three draft blocks", () => {
 
   it("has the brain map line, with the draft line right after it", () => {
     const link = english().querySelector('a[href="https://eunchanjoe.vercel.app/map/brain/"]')!;
-    expect(link.textContent).toBe(`${en.about.atlasLink} →`);
+    expect(link.textContent).toBe(`${en.about.atlasLink}${enOnly.koreanMark.short}${enOnly.koreanMark.label} →`);
     expect(link.getAttribute("hreflang")).toBe("ko");
     const line = link.parentElement!;
     expect(line.textContent).toContain(en.about.atlasLead);

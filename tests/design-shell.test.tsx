@@ -94,10 +94,10 @@ describe("homepage frame on the landing and record screens", () => {
     const footer = screen.getByRole("contentinfo");
     const links = within(footer).getAllByRole("link");
     expect(links.map((link) => [link.textContent, link.getAttribute("href")])).toEqual([
-      ["eunchanjoe.vercel.app", "https://eunchanjoe.vercel.app/"], ["Terms", "/terms"], ["Privacy", "/privacy"],
+      ["eunchanjoe.vercel.appKO (in Korean)", "https://eunchanjoe.vercel.app/"], ["TermsKO (in Korean)", "/terms"], ["PrivacyKO (in Korean)", "/privacy"],
     ]);
     // there is no English text behind them yet: say so to the browser and to screen readers
-    expect(links.slice(1).map((link) => link.getAttribute("hreflang"))).toEqual(["ko", "ko"]);
+    expect(links.map((link) => link.getAttribute("hreflang"))).toEqual(["ko", "ko", "ko"]);
     expect(footer.textContent).not.toContain(koOnly.termsLink);
   });
 
@@ -105,10 +105,34 @@ describe("homepage frame on the landing and record screens", () => {
     render(<EmotionApp locale="en" />);
     const nav = within(screen.getByRole("banner")).getByRole("navigation");
     const links = within(nav).getAllByRole("link");
-    expect(links.map((link) => link.textContent)).toEqual(["Me", "Reading", "Threads", "Map"]);
+    // the Korean-only pages carry a small KO mark, read as "(in Korean)", and hreflang ko (2026-11-10)
+    expect(links.map((link) => link.textContent)).toEqual(["Me", "ReadingKO (in Korean)", "ThreadsKO (in Korean)", "MapKO (in Korean)"]);
+    expect(links.map((link) => link.getAttribute("hreflang"))).toEqual([null, "ko", "ko", "ko"]);
     expect(links.map((link) => link.getAttribute("href"))).toEqual([
       "https://eunchanjoe.vercel.app/en/me/", "https://eunchanjoe.vercel.app/reading/", "https://eunchanjoe.vercel.app/threads/", "https://eunchanjoe.vercel.app/map/",
     ]);
+  });
+
+  it("marks every English-screen link that opens a Korean page, and none on the Korean screen (2026-11-10)", () => {
+    const toKorean = (a: HTMLAnchorElement) => {
+      const href = a.getAttribute("href") ?? "";
+      if (href.startsWith("#") || href.startsWith("mailto:") || href.startsWith("https://doi.org/")) return false;
+      if (href === "/" ) return false; // the language switch, marked by its own lang
+      if (href.startsWith("https://eunchanjoe.vercel.app/en/")) return false;
+      return href.startsWith("/") || href.startsWith("https://eunchanjoe.vercel.app");
+    };
+    const { container } = render(<EmotionApp locale="en" />);
+    const korean = [...container.querySelectorAll("a")].filter(toKorean);
+    expect(korean.length).toBeGreaterThanOrEqual(8);
+    for (const a of korean) {
+      expect(a.getAttribute("hreflang"), a.outerHTML).toBe("ko");
+      // the word list link says "(in Korean)" in its own words
+      if (a.getAttribute("href") === "/words") expect(a.textContent).toContain("(in Korean)");
+      else expect(a.querySelector(".ko-mark"), a.outerHTML).not.toBeNull();
+    }
+    cleanup();
+    render(<Home />);
+    expect(document.querySelector(".ko-mark")).toBeNull();
   });
 
   it("starts with a skip link to the main content", () => {
