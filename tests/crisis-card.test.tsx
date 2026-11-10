@@ -14,7 +14,7 @@ import EmotionApp from "../app/emotion-app";
  */
 const KOREAN_LINES = [
   { name: "자살예방상담전화", number: "109", href: "tel:109" },
-  { name: "정신건강 상담전화", number: "1577-0199", href: "tel:1577-0199" },
+  { name: "정신건강 위기상담전화", number: "1577-0199", href: "tel:1577-0199" },
   { name: "청소년상담전화", number: "1388", href: "tel:1388" },
 ];
 
@@ -63,7 +63,7 @@ describe("crisis card wording (owner, 2026-10-13)", () => {
     expect(ko.crisis.emergency).toBe("몸을 다쳤거나 지금 당장 위험하다면 <b>119</b>(구급) 또는 <b>112</b>(경찰)에 바로 연락하세요.");
     expect(ko.crisis.intro).toBe("이야기를 나눌 사람이 필요하다면, 24시간 열려 있는 상담 전화가 있습니다.");
     expect([ko.crisis.lifeline109, ko.crisis.mental1577, ko.crisis.youth1388]).toEqual([
-      "자살예방상담전화 (24시간)", "정신건강 상담전화 (24시간)", "청소년상담전화 (9~24세)",
+      "자살예방상담전화 (24시간)", "정신건강 위기상담전화 (24시간)", "청소년상담전화 (9~24세)",
     ]);
     render(<Home />);
     const card = screen.getByRole("complementary", { name: ko.crisis.title });
@@ -83,6 +83,11 @@ describe("crisis card wording (owner, 2026-10-13)", () => {
       expect(text).not.toMatch(US_LINES);
     });
   }
+
+  it("names 1577-0199 as the ministry does (mohw.go.kr, 2026-11-10), in both languages", () => {
+    expect(ko.crisis.mental1577).toBe("정신건강 위기상담전화 (24시간)");
+    expect(en.crisis.mental1577).toBe("Mental Health Crisis Counseling Line (24 hours)");
+  });
 
   it("English keeps the meaning of (24시간) and (9~24세)", () => {
     expect(en.crisis.lifeline109).toMatch(/\(24 hours\)$/);

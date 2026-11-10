@@ -1219,7 +1219,8 @@ function RecordsScreen({ records, manageOpen = false, onHelp, onOpen, onBack, on
       ? <p className="lede">{t("records.empty")}</p>
       : <div className="record-list">{records.map((session) => {
           const item = summarise(session, t.locale);
-          return <button className="record-row" id={`record-${item.id}`} key={item.id} onClick={() => onOpen(session)}>
+          // the card and its 도움 are two buttons side by side, so pressing 도움 never opens the record (2026-11-10)
+          return <div className="record-card" key={item.id}><button className="record-row" id={`record-${item.id}`} onClick={() => onOpen(session)}>
             <span className="record-when">{formatWhen(item.at, t.locale)}<em>{item.depthLabel}</em></span>
             {(() => {
               // the moment's own words, else names given later, else the answer given then; a record with none is not lacking
@@ -1229,7 +1230,7 @@ function RecordsScreen({ records, manageOpen = false, onHelp, onOpen, onBack, on
             })()}
             {item.needLabel && <span className="record-need">{t("records.needLine", { label: item.needLabel })}</span>}
             {item.responseLabels.length > 0 && <span className="record-need">{t("records.responsesLine", { labels: item.responseLabels.join(" / ") })}</span>}
-          </button>;
+          </button><RecordHelp onHelp={onHelp} /></div>;
         })}</div>}
     <HelpLine onHelp={onHelp} />
     {/* moving and deleting, folded into one line (2026-11-05); open when the person came to manage them */}
@@ -1509,7 +1510,7 @@ function RecordDetail({ session, previous, onHelp, onFollowUp, onAddLabel, onBac
   // where each line came from, and how far the record went, wait behind one button (2026-11-05); the bands stay
   const [sourcesShown, setSourcesShown] = useState(false);
   return <SourcesShown.Provider value={sourcesShown}><Screen>
-    <p className="eyebrow">{t("records.eyebrow")}</p>
+    <div className="record-detail-top"><p className="eyebrow">{t("records.eyebrow")}</p><RecordHelp onHelp={onHelp} /></div>
     <h1>{formatWhen(item.at, t.locale)}</h1>
     {sourcesShown && <SourceLegend />}
     <MiniPad quick={quickAffect} deep={deep?.affect} />
@@ -1635,6 +1636,16 @@ function WorsenedScreen() {
 function HelpLine({ onHelp }: { onHelp: () => void }) {
   const t = useT();
   return <p className="help-line"><button className="inline-link" onClick={onHelp}>{t("common.helpLine")} <span aria-hidden="true">→</span></button></p>;
+}
+
+/**
+ * The small 도움 on every card of the records list and at the top of a record
+ * (2026-11-10). Every card gets the same one in the same place: nothing in a
+ * record is read to show, hide or change it (SAFETY.md). It opens the header's card.
+ */
+function RecordHelp({ onHelp }: { onHelp: () => void }) {
+  const t = useT();
+  return <button type="button" className="record-help" aria-label={t("common.helpLink")} onClick={onHelp}>{t("common.helpShort")}</button>;
 }
 
 /** The helplines, folded until asked for, so they are offered without being pressed on anyone. */
