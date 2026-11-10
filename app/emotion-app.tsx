@@ -442,6 +442,7 @@ function LandingScreen({ onStart, draft, onResume, onRecords, onManage, pendingS
 
     <AboutTool />
     <CrisisCard />
+    <NextStep />
   </Screen>;
 }
 
@@ -566,6 +567,7 @@ function AboutTool() {
         </div>)}
       </dl>
     </details>
+    <p className="about-stage">{t("about.stage")}</p>
     <p className="about-not">{renderRich(t("about.not"))}</p>
   </section>;
 }
@@ -597,6 +599,24 @@ function CrisisCard() {
       </div>
     </aside>
   );
+}
+
+/**
+ * Right under the crisis card on the landing only (2026-11-10): the next step for
+ * someone who is not in crisis. Plain text with no links and no region to pick,
+ * so nothing is stored or sent. The help dialog keeps the crisis card alone.
+ */
+function NextStep() {
+  const t = useT();
+  // a number or date is never split across lines (1577-0199 and 2026-11-10 broke at 390px)
+  const keepNumbers = (text: string) => text.split(/(\d+(?:-\d+)+)/).map((piece, index) => index % 2 ? <span key={index} className="nowrap">{piece}</span> : piece);
+  return <section className="next-step" aria-labelledby="next-step-title">
+    <h2 id="next-step-title">{t("nextStep.title")}</h2>
+    <p>{keepNumbers(t("nextStep.center"))}</p>
+    <p>{keepNumbers(t("nextStep.voucher"))}</p>
+    <p>{keepNumbers(t("nextStep.person"))}</p>
+    <p className="next-step-checked">{keepNumbers(t("nextStep.checked"))}</p>
+  </section>;
 }
 
 /**

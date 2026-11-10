@@ -97,10 +97,24 @@ export const ko = {
     href119: "tel:119",
     href112: "tel:112",
   },
+  /**
+   * Right under the crisis card on the landing (2026-11-10, owner's approval 「좋아. 넣어줘.」):
+   * where to go when it is not a crisis but too much to carry alone. Text only; nothing here is a link,
+   * and no region is asked for. Sources and the date checked are in SAFETY.md.
+   */
+  nextStep: {
+    title: "위기는 아니지만, 혼자 감당하기 어렵다면",
+    center: "사는 곳의 정신건강복지센터에서 우울·불안·스트레스 상담과 검사를 무료로 받을 수 있어요. 시·군·구마다 있고, 평일 9시부터 18시까지예요. 어디인지 모르겠다면 1577-0199에 걸어 보세요. 휴대전화가 있는 곳에서 가까운 센터로 이어져요.",
+    voucher: "정신건강복지센터나 대학 상담센터에서 심리상담이 필요하다는 의뢰서를 받으면, 전문 심리상담을 8회까지 지원받을 수 있어요(정신건강 심리상담 바우처, 문의 129). 본인 부담은 소득에 따라 달라요.",
+    person: "여기서 기록하는 대신 사람에게 먼저 가는 것도 잘 고른 길이에요.",
+    checked: "번호와 제도는 보건복지부 누리집에서 2026-11-10에 확인했습니다.",
+  },
   /** Below the landing buttons: what the tool is, the studies behind it (docs/EVIDENCE_CHAIN.md), and common questions. */
   about: {
     title: "이 도구에 대하여",
     what: "지금의 경험을 몸 · 상황 · 중요했던 것 · 표현으로 나누어 살펴보는 자기관찰 도구입니다. 빠르게 살펴보기는 화면을 한 번 누르고 가까운 말을 고르는 두 단계, 천천히 살펴보기는 몸에서 시작해 표현까지 가는 여섯 단계입니다.",
+    /** The stage line, the same sentence as 이방IN (2026-11-10); it sits just above `not`, once per screen. */
+    stage: "개념 시제품입니다. 연구나 전문가 검토를 거치기 전, 아이디어를 보여 주려고 만든 시험판입니다.",
     not: "의료 도구나 위기 상담 도구가 아니고, 감정에 점수를 매기거나 판정하지 않습니다. <b>감정 구별이나 정신건강을 나아지게 한다는 효과는 아직 검증되지 않았습니다.</b>",
     refsSummary: "참고한 연구 6편",
     refsIntro: "앱의 생각이 연구로 어디까지 뒷받침되는지 정리했습니다. 연구마다 나온 것과 한계를 함께 적었습니다.",

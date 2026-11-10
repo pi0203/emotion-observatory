@@ -282,6 +282,13 @@ p, .lede, .hint, .step-note, .small-note, .summary-footnote { text-wrap: pretty;
 .about > p strong { color: var(--ink); font-weight: 700; }
 .about > .about-not { margin: 16px 0 0; color: var(--ink); }
 .about + .crisis-card { margin-top: 12px; }
+.about > .about-stage { margin: 16px 0 0; }
+/* the next step for someone not in crisis, under the crisis card (2026-11-10): plain text, no card */
+.next-step { margin-top: 28px; }
+.next-step h2 { margin: 0 0 12px; font-size: var(--t-body); font-weight: 700; line-height: 1.5; }
+.next-step p { margin: 0 0 10px; color: var(--ink); font-size: var(--t-small); line-height: 1.75; text-wrap: pretty; }
+.next-step .nowrap { white-space: nowrap; }
+.next-step .next-step-checked { margin: 14px 0 0; color: var(--muted); font-size: var(--t-aside); }
 .about-fold { margin-top: 12px; border: 1px solid var(--line); border-radius: 12px; background: var(--card); box-shadow: 0 2px 8px var(--shadow); }
 .about-fold > summary { display: flex; justify-content: space-between; align-items: center; padding: 18px 20px; color: var(--ink); font: 600 var(--t-small) var(--font-sans); cursor: pointer; list-style: none; }
 .about-fold > summary::-webkit-details-marker { display: none; }
