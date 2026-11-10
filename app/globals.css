@@ -330,6 +330,8 @@ p, .lede, .hint, .step-note, .small-note, .summary-footnote { text-wrap: pretty;
 .terms .word-card .word-source { margin-top: 4px; color: var(--muted); font-size: var(--t-aside); }
 .about-words { margin: 12px 0 0; font-size: var(--t-small); }
 .about-words a { color: var(--accent-ink); text-underline-offset: .2em; }
+/* English only (2026-11-10): the small line closing a block whose English the owner has not reviewed yet */
+.draft-note { margin: 8px 0 0; color: var(--muted); font: italic var(--t-aside) var(--font-sans); }
 
 /* Printing /words on A4: two columns, a card never split across pages. The header,
    help button, footer and crisis card are kept, so the helplines stay on the paper.
