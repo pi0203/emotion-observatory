@@ -46,4 +46,17 @@ describe("fonts", () => {
     expect(sizes.filter((size) => size === "var(--site-wordmark)")).toHaveLength(1);
     expect(css).not.toMatch(/font:\s*(\d{3}\s+)?\d+px/);
   });
+
+  it("sizes the font shorthand with the type scale too, so no em or px size slips under 13px (2026-11-10)", () => {
+    const shorthands = [...css.matchAll(/(?:^|[;{\s])font:\s*([^;}]+)/g)].map((match) => match[1].replace(/\s*!important$/, "").trim()).filter((value) => value !== "inherit");
+    expect(shorthands.length).toBeGreaterThan(10);
+    for (const value of shorthands) expect(value).toMatch(/^(?:(?:italic|\d{3})\s+)?var\(--t-(aside|small|body|lead|scene)\)(?:\/[\d.]+)?\s+var\(--font-(sans|serif)\)/);
+  });
+
+  it("draws the English screen's KO mark at the 13px floor, not a fraction of the menu's size (2026-11-10)", () => {
+    const rule = css.match(/\.ko-mark \{([^}]*)\}/)?.[1] ?? "";
+    expect(rule).toMatch(/font: 600 var\(--t-aside\)/);
+    expect(rule).not.toMatch(/font-size|[\d.]+em\//);
+    expect(css).toMatch(/--t-aside: \.8125rem;/);
+  });
 });
