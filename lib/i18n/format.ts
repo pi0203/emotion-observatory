@@ -13,12 +13,17 @@ export type Params = Record<string, ParamValue>;
 
 const PLACEHOLDER = /\{(~?)([A-Za-z][A-Za-z0-9]*)(?:\|([^/{}]*)\/([^{}]*))?\}/g;
 
-/** Picks the Korean particle that fits the last syllable of `word`. */
+/**
+ * Picks the Korean particle that fits the last syllable of `word`.
+ * A word typed or pasted in decomposed form (NFD, as macOS and iOS can give)
+ * is composed first, so its final consonant is read (「“피곤함”를」, 2026-11-10).
+ * A word that ends in Latin, a digit or a symbol gets both forms: 「을(를)」.
+ */
 export const particleFor = (word: string, afterConsonant: string, afterVowel: string) => {
-  const last = word.trim().at(-1) ?? "";
+  const last = word.normalize("NFC").trim().at(-1) ?? "";
   const code = last.charCodeAt(0);
   const isHangulSyllable = code >= 0xac00 && code <= 0xd7a3;
-  if (!isHangulSyllable) return afterVowel;
+  if (!isHangulSyllable) return `${afterConsonant}(${afterVowel})`;
   return (code - 0xac00) % 28 === 0 ? afterVowel : afterConsonant;
 };
 
