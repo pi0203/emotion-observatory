@@ -52,7 +52,7 @@ export const enOnly = {
     lines: [
       "This is a self-observation tool for adults to use on their own. If you use it in counseling, please have the client choose and write on their own device. It was not made for someone else to fill in an entry for them or to be used as assessment material.",
       "Nothing written here is sent anywhere off this device. If it was used on a shared device at an institution, please go to “Past entries” afterward and press “Delete all entries on this device.”",
-      "When two or more people use it together, one device per person is recommended. Choosing together on one screen makes it easy to choose with an eye on each other.",
+      "When two or more people use it together, one device per person is recommended. Choosing together on one screen, it is easy to end up choosing by the other person’s reaction rather than your own feeling.",
     ],
     mailBefore: "If the word list, the wording or the safety information needs improving anywhere, please write to ",
     mailAfter: ". Please do not include client information or case details.",

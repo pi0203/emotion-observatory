@@ -16,7 +16,7 @@
 | 2 | 상담·수련 칸 | `enOnly.practitioner.summary` | 상담·수련 현장에서 보시는 분께 | For those using this in counseling or clinical training | 검토 전 |
 | 3 | 상담·수련 칸 | `enOnly.practitioner.lines[0]` | 이 도구는 성인이 스스로 쓰는 자기관찰 도구입니다. 상담에서 함께 쓰신다면, 내담자가 자기 기기에서 직접 고르고 적게 해 주세요. 기록을 대신 적거나 평가 자료로 쓰도록 만들지 않았습니다. | This is a self-observation tool for adults to use on their own. If you use it in counseling, please have the client choose and write on their own device. It was not made for someone else to fill in an entry for them or to be used as assessment material. | 검토 전 |
 | 4 | 상담·수련 칸 | `enOnly.practitioner.lines[1]` | 적은 내용은 이 기기 밖 어디로도 보내지지 않습니다. 기관의 공용 기기에서 썼다면 마친 뒤 「지난 기록」에서 「이 기기의 기록 모두 지우기」를 눌러 주세요. | Nothing written here is sent anywhere off this device. If it was used on a shared device at an institution, please go to “Past entries” afterward and press “Delete all entries on this device.” | 검토 전 |
-| 5 | 상담·수련 칸 | `enOnly.practitioner.lines[2]` | 두 사람 이상이 함께 쓸 때는 한 사람에 기기 하나를 권합니다. 한 화면에서 함께 고르면 서로 눈치를 보며 고르기 쉽습니다. | When two or more people use it together, one device per person is recommended. Choosing together on one screen makes it easy to choose with an eye on each other. | 검토 전 |
+| 5 | 상담·수련 칸 | `enOnly.practitioner.lines[2]` | 두 사람 이상이 함께 쓸 때는 한 사람에 기기 하나를 권합니다. 한 화면에서 함께 고르면, 내 느낌보다 옆 사람의 반응에 맞춰 고르게 되기 쉽습니다. | When two or more people use it together, one device per person is recommended. Choosing together on one screen, it is easy to end up choosing by the other person’s reaction rather than your own feeling. | 검토 전 |
 | 6 | 상담·수련 칸 | `enOnly.practitioner.mailBefore` | 단어 목록, 문장, 안전 안내에서 개선이 필요한 곳이 있으면 (메일 주소) | If the word list, the wording or the safety information needs improving anywhere, please write to (mail address) | 검토 전 |
 | 7 | 상담·수련 칸 | `enOnly.practitioner.mailAfter` | 으로 알려 주세요. 내담자 정보나 사례는 적지 말아 주세요. | . Please do not include client information or case details. | 검토 전 |
 | 8 | 단어 목록 링크 | `enOnly.practitioner.wordsLink` | 단어 목록 보기 → | See the word list (in Korean) → | 검토 전 |
@@ -27,7 +27,7 @@
 
 - 2: 「수련」은 상담·임상 수련(수련생)으로 읽어 clinical training으로 했다. 「보시는 분」은 화면을 보는 사람이 아니라 현장에서 일하는 사람이라 using this in으로 했다.
 - 4: 단추 이름은 영어 화면의 실제 이름(`landing.records` 「Past entries」, `records.deleteAll` 「Delete all entries on this device」)을 그대로 썼다.
-- 5: 「눈치를 보며」는 with an eye on each other로 했다. 더 풀면 「서로의 반응을 살피며」.
+- 5: 2026-11-10 사용자 의견으로 한국어부터 바꿈.
 - 6–7: 한국어처럼 메일 주소가 두 조각 사이에 링크로 들어간다. 주소는 한국어와 같은 것을 쓴다(`koOnly.practitioner.mailAddress`).
 - 8: /words 쪽이 한국어뿐이라 (in Korean)을 더했다. 링크에는 `hrefLang="ko"`를 달았다(꼬리말의 약관 링크와 같은 방식).
 - 9–10: 2026-11-05에 써 두고 화면에 내지 않았던 문장이다(커밋 46145b5). 이번에 처음 화면에 나온다. 뇌 지도 링크에도 `hrefLang="ko"`를 달았다.
