@@ -38,6 +38,14 @@ export const enOnly = {
   termsLink: "Terms",
   privacyLink: "Privacy",
   /**
+   * After every English-screen link that opens a page in Korean (the homepage
+   * menu's Reading, Threads and Map, the homepage itself, the brain map, the
+   * terms and the policy): `short` is drawn small, `label` is read by screen
+   * readers in its place. The links also carry hrefLang="ko" (2026-11-10).
+   * The word list link says "(in Korean)" in its own words, so it has no mark.
+   */
+  koreanMark: { short: "KO", label: " (in Korean)" },
+  /**
    * DRAFT, not reviewed by the owner (2026-11-10). The English of three things
    * that were on the Korean landing only: the practitioner fold, the brain map
    * line (its words are `about.atlasLead` and `about.atlasLink`, written

@@ -68,7 +68,7 @@ describe("the footer", () => {
 
   it("links to the Korean policy from the English screen too, as 「Privacy」 marked hreflang ko (2026-11-10)", () => {
     render(<EmotionApp locale="en" />);
-    expect(footerLinks().at(-1)).toEqual(["Privacy", PRIVACY_PATH]);
-    expect(within(screen.getByRole("contentinfo")).getByRole("link", { name: "Privacy" }).getAttribute("hreflang")).toBe("ko");
+    expect(footerLinks().at(-1)).toEqual(["PrivacyKO (in Korean)", PRIVACY_PATH]);
+    expect(within(screen.getByRole("contentinfo")).getByRole("link", { name: "Privacy (in Korean)" }).getAttribute("hreflang")).toBe("ko");
   });
 });

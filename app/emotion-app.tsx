@@ -222,6 +222,22 @@ const HOMEPAGE_NAV: { href: string; en?: string; label: string }[] = [
 ];
 
 /**
+ * On the English screen, the mark after a link that opens a page in Korean:
+ * a small "KO" for the eye and "(in Korean)" for screen readers. Nothing on
+ * the Korean screen. Use with `koreanLink(locale)` on the same link.
+ */
+function KoreanMark() {
+  const t = useT();
+  if (t.locale !== "en") return null;
+  return <span className="ko-mark"><span aria-hidden="true">{enOnly.koreanMark.short}</span><span className="visually-hidden">{enOnly.koreanMark.label}</span></span>;
+}
+
+/** hrefLang="ko" for a link from the English screen to a page in Korean. */
+function koreanLink(locale: string) {
+  return locale === "en" ? { hrefLang: "ko" } : {};
+}
+
+/**
  * The homepage's header: its wordmark and menu, as on eunchanjoe.vercel.app,
  * and the same help button the steps carry, so the helplines are one tap away
  * before anything is started too (SAFETY.md).
@@ -229,9 +245,12 @@ const HOMEPAGE_NAV: { href: string; en?: string; label: string }[] = [
 function SiteHeader({ onHelp }: { onHelp: () => void }) {
   const t = useT();
   return <header className="site-header">
-    <a className="site-logo" href={`${HOMEPAGE}/`}><SiteLogo /><span className="site-logo-text">Eunchan Joe</span></a>
+    <a className="site-logo" href={`${HOMEPAGE}/`} {...koreanLink(t.locale)}><SiteLogo /><span className="site-logo-text">Eunchan Joe</span><KoreanMark /></a>
     <nav className="site-nav" aria-label={t("shell.siteNav")}>
-      <ul>{HOMEPAGE_NAV.map((item) => <li key={item.href}><a href={t.locale === "en" && item.en ? item.en : item.href}>{item.label}</a></li>)}</ul>
+      <ul>{HOMEPAGE_NAV.map((item) => {
+        const toKorean = t.locale === "en" && !item.en;
+        return <li key={item.href}><a href={t.locale === "en" && item.en ? item.en : item.href} {...(toKorean ? { hrefLang: "ko" } : {})}>{item.label}{toKorean && <KoreanMark />}</a></li>;
+      })}</ul>
     </nav>
     {/* the other language, only where it is open: development always, production once the owner has reviewed it */}
     <button className="text-button help-button" aria-label={t("common.helpLink")} onClick={onHelp}><span className="label-wide">{t("common.helpLink")}</span><span className="label-narrow" aria-hidden="true">{t("common.helpShort")}</span></button>
@@ -247,11 +266,11 @@ function SiteFooter() {
     <span aria-hidden="true">·</span>
     <span>{t("shell.owner")}</span>
     <span aria-hidden="true">·</span>
-    <a href={`${HOMEPAGE}/`}>eunchanjoe.vercel.app</a>
+    <a href={`${HOMEPAGE}/`} {...koreanLink(t.locale)}>eunchanjoe.vercel.app<KoreanMark /></a>
     {/* the terms and the policy are Korean only for now (lib/terms.ts): the English footer links to the Korean pages, marked hrefLang="ko" (2026-11-10) */}
     {t.locale === "ko"
       ? <><span aria-hidden="true">·</span><a href={TERMS_PATH}>{koOnly.termsLink}</a><span aria-hidden="true">·</span><a href={PRIVACY_PATH}>{koOnly.privacyLink}</a></>
-      : <><span aria-hidden="true">·</span><a href={TERMS_PATH} hrefLang="ko">{enOnly.termsLink}</a><span aria-hidden="true">·</span><a href={PRIVACY_PATH} hrefLang="ko">{enOnly.privacyLink}</a></>}
+      : <><span aria-hidden="true">·</span><a href={TERMS_PATH} hrefLang="ko">{enOnly.termsLink}<KoreanMark /></a><span aria-hidden="true">·</span><a href={PRIVACY_PATH} hrefLang="ko">{enOnly.privacyLink}<KoreanMark /></a></>}
   </footer>;
 }
 
@@ -524,7 +543,7 @@ function AboutTool() {
       </ol>
       <p className="why-principle">{renderRich(t("about.refsClosing"))}</p>
       {/* the homepage brain map links back here; the map is in Korean, and the English line says so (draft, 2026-11-10) */}
-      <p className="about-intro">{t("about.atlasLead")} <a href={`${HOMEPAGE}/map/brain/`} {...(t.locale === "en" ? { hrefLang: "ko" } : {})}>{t("about.atlasLink")} →</a></p>
+      <p className="about-intro">{t("about.atlasLead")} <a href={`${HOMEPAGE}/map/brain/`} {...koreanLink(t.locale)}>{t("about.atlasLink")}<KoreanMark /> →</a></p>
       {draftNote}
     </details>
     <details className="about-fold">
