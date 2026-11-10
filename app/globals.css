@@ -50,7 +50,7 @@
   --tone-butter-paper: #F7F1DE; --tone-butter-card: #FFFCF2; --tone-butter-line: #E3D29E;
   --tone-mist-paper: #E3EEF3;   --tone-mist-card: #F5FAFC;   --tone-mist-line: #AFCBD8;
   /* Type scale, after the homepage (docs/DESIGN_ALIGNMENT.md §4): five steps instead of eleven sizes. */
-  --t-aside: .76rem;        /* labels, meta, eyebrows (was 12 and 13px) */
+  --t-aside: .8125rem;      /* labels, meta, eyebrows: 13px, the floor for any text (was .76rem = 12.16px until 2026-11-10) */
   --t-small: .875rem;       /* notes and hints (was 14 and 15px) */
   --t-body: 1rem;           /* text, ledes, choices (was 16, 17 and 18px) */
   --t-lead: 1.6rem;         /* section titles (was 23 and 26px) */
