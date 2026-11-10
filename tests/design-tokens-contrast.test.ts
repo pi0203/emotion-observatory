@@ -234,3 +234,18 @@ describe("palette structure", () => {
     }
   });
 });
+
+describe("the ✓ on a selected segmented choice", () => {
+  // The question label in .segmented is a bare <span>, and so is the ✓ inside each button.
+  // A descendant rule (.segmented span) outranked .choice-mark and drew the ✓ in --muted on
+  // the selected fill (1.12:1 light, 1.19:1 dark). Only the direct child may take --muted.
+  it("keeps the muted colour on the question label only", () => {
+    expect(css).not.toMatch(/\.segmented span\s*\{/);
+    expect(css).toMatch(/\.segmented > span\s*\{\s*color: var\(--muted\)/);
+  });
+  it("draws the ✓ itself at 4.5:1 or more on the selected fill, in both themes", () => {
+    for (const tokens of Object.values(themes)) {
+      expect(ratio(tokens["check"], tokens["accent-soft"])).toBeGreaterThanOrEqual(4.5);
+    }
+  });
+});
