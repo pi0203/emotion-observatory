@@ -213,8 +213,9 @@ function App() {
 
 /** The homepage this app belongs to. Menu links open there, in the same tab. */
 const HOMEPAGE = "https://eunchanjoe.vercel.app";
-const HOMEPAGE_NAV = [
-  { href: `${HOMEPAGE}/me/`, label: "Me" },
+/** `en`: the homepage's English reading, where it has one (only /en/me/ answered 200 on 2026-11-10; /en/reading/, /en/threads/, /en/map/ were 404). */
+const HOMEPAGE_NAV: { href: string; en?: string; label: string }[] = [
+  { href: `${HOMEPAGE}/me/`, en: `${HOMEPAGE}/en/me/`, label: "Me" },
   { href: `${HOMEPAGE}/reading/`, label: "Reading" },
   { href: `${HOMEPAGE}/threads/`, label: "Threads" },
   { href: `${HOMEPAGE}/map/`, label: "Map" },
@@ -230,7 +231,7 @@ function SiteHeader({ onHelp }: { onHelp: () => void }) {
   return <header className="site-header">
     <a className="site-logo" href={`${HOMEPAGE}/`}><SiteLogo /><span className="site-logo-text">Eunchan Joe</span></a>
     <nav className="site-nav" aria-label={t("shell.siteNav")}>
-      <ul>{HOMEPAGE_NAV.map((item) => <li key={item.href}><a href={item.href}>{item.label}</a></li>)}</ul>
+      <ul>{HOMEPAGE_NAV.map((item) => <li key={item.href}><a href={t.locale === "en" && item.en ? item.en : item.href}>{item.label}</a></li>)}</ul>
     </nav>
     {/* the other language, only where it is open: development always, production once the owner has reviewed it */}
     <button className="text-button help-button" aria-label={t("common.helpLink")} onClick={onHelp}><span className="label-wide">{t("common.helpLink")}</span><span className="label-narrow" aria-hidden="true">{t("common.helpShort")}</span></button>
@@ -238,7 +239,7 @@ function SiteHeader({ onHelp }: { onHelp: () => void }) {
   </header>;
 }
 
-/** A small footer: the app, its maker, the way back and, in Korean, the terms and the privacy policy. No mail address, no licence line. */
+/** A small footer: the app, its maker, the way back, the terms and the privacy policy. No mail address, no licence line. */
 function SiteFooter() {
   const t = useT();
   return <footer className="site-footer">
@@ -247,8 +248,10 @@ function SiteFooter() {
     <span>{t("shell.owner")}</span>
     <span aria-hidden="true">·</span>
     <a href={`${HOMEPAGE}/`}>eunchanjoe.vercel.app</a>
-    {/* the terms are Korean only for now (lib/terms.ts), so the English footer has no link to them */}
-    {t.locale === "ko" && <><span aria-hidden="true">·</span><a href={TERMS_PATH}>{koOnly.termsLink}</a><span aria-hidden="true">·</span><a href={PRIVACY_PATH}>{koOnly.privacyLink}</a></>}
+    {/* the terms and the policy are Korean only for now (lib/terms.ts): the English footer links to the Korean pages, marked hrefLang="ko" (2026-11-10) */}
+    {t.locale === "ko"
+      ? <><span aria-hidden="true">·</span><a href={TERMS_PATH}>{koOnly.termsLink}</a><span aria-hidden="true">·</span><a href={PRIVACY_PATH}>{koOnly.privacyLink}</a></>
+      : <><span aria-hidden="true">·</span><a href={TERMS_PATH} hrefLang="ko">{enOnly.termsLink}</a><span aria-hidden="true">·</span><a href={PRIVACY_PATH} hrefLang="ko">{enOnly.privacyLink}</a></>}
   </footer>;
 }
 
