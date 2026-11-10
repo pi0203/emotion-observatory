@@ -50,8 +50,6 @@ export const ko = {
     listSeparator: ", ",
   },
   landing: {
-    /** The small label above the title (2026-11-05): the nickname 이쯤 joins the pad's own hint, 「‘이쯤’이라고 느껴지는 곳」. Korean only; the tab title, meta, header and footer keep 감정 관찰실. */
-    eyebrow: "이쯤 · 감정 관찰실",
     /** The drawing under the buttons (2026-11-05): the 답답함 example from 「왜 감정을 조금 더 자세히 살펴볼까요?」, as one word that splits in two. */
     split: {
       word: "답답해",
@@ -704,6 +702,11 @@ export const ko = {
  * `enOnly` in messages.en.ts.
  */
 export const koOnly = {
+  /**
+   * 첫 화면 제목 「감정 관찰실」 바로 아래 작은 줄 (2026-11-10). 별칭 이쯤은 좌표판의 힌트 「‘이쯤’이라고 느껴지는 곳」에서 왔다(2026-11-05).
+   * 전에는 제목 위 표지 「이쯤 · 감정 관찰실」이었고, 앱 이름이 제목이 되면서 별칭만 남았다. 영어에는 없다.
+   */
+  alias: "이쯤",
   /** In the footer, after eunchanjoe.vercel.app. */
   termsLink: "이용약관",
   /** In the footer, after 이용약관 (2026-11-02). */

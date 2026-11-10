@@ -387,8 +387,11 @@ function LandingScreen({ onStart, draft, onResume, onRecords, onManage, pendingS
     <section className="card hero-card single-entry">
       {/* a drawing of the pad used in the steps: four quiet colours and one dot (decoration only) */}
       <div className="hero-pad" aria-hidden="true"><span className="hero-dot" /></div>
-      <p className="eyebrow">{t("landing.eyebrow")}</p>
-      <h1>{renderRich(t("landing.title"))}</h1>
+      {/* the app's name is the screen's title and its largest text, so a first visitor knows where they are (2026-11-10);
+          the nickname 이쯤 sits under it, Korean only; the old title sentence follows as the hero's line */}
+      <h1 className="hero-name">{t("common.appName")}</h1>
+      {t.locale === "ko" && <p className="hero-alias">{koOnly.alias}</p>}
+      <p className="hero-title">{renderRich(t("landing.title"))}</p>
       <p className="lede">{renderRich(t("landing.lede"))}</p>
       {pendingStart
         ? <div className="draft-confirm" role="group" aria-labelledby="draft-confirm-title">
@@ -488,6 +491,11 @@ const LAST_CHECKED = Object.values(REFERENCE_CHECKED_ON).sort().at(-1) ?? "";
  */
 function AboutTool() {
   const t = useT();
+  // the practitioner fold, the brain map line and the word list link were Korean only until 2026-11-10;
+  // their English is a draft the owner has not read (lib/i18n/messages.en.ts enOnly, docs/EN_REVIEW.md),
+  // so each English block ends with one small line saying so
+  const practitioner = t.locale === "ko" ? koOnly.practitioner : enOnly.practitioner;
+  const draftNote = t.locale === "en" ? <p className="draft-note">{enOnly.draftNote}</p> : null;
   return <section className="about" aria-labelledby="about-title">
     <h2 id="about-title">{t("about.title")}</h2>
     <p>{t("about.what")}</p>
@@ -515,17 +523,21 @@ function AboutTool() {
         </li>)}
       </ol>
       <p className="why-principle">{renderRich(t("about.refsClosing"))}</p>
-      {/* the homepage brain map links back here; Korean only, like the map */}
-      {t.locale === "ko" && <p className="about-intro">{t("about.atlasLead")} <a href={`${HOMEPAGE}/map/brain/`}>{t("about.atlasLink")} →</a></p>}
+      {/* the homepage brain map links back here; the map is in Korean, and the English line says so (draft, 2026-11-10) */}
+      <p className="about-intro">{t("about.atlasLead")} <a href={`${HOMEPAGE}/map/brain/`} {...(t.locale === "en" ? { hrefLang: "ko" } : {})}>{t("about.atlasLink")} →</a></p>
+      {draftNote}
     </details>
-    {t.locale === "ko" && <details className="about-fold">
-      <summary>{koOnly.practitioner.summary}</summary>
+    <details className="about-fold">
+      <summary>{practitioner.summary}</summary>
       <ul className="about-list">
-        {koOnly.practitioner.lines.map((line, index) => <li key={index} style={{ "--rise-order": index } as CSSProperties}><p>{line}</p></li>)}
-        <li style={{ "--rise-order": koOnly.practitioner.lines.length } as CSSProperties}><p className="about-mail">{koOnly.practitioner.mailBefore}<a href={`mailto:${koOnly.practitioner.mailAddress}`}>{koOnly.practitioner.mailAddress}</a>{koOnly.practitioner.mailAfter}</p></li>
+        {practitioner.lines.map((line, index) => <li key={index} style={{ "--rise-order": index } as CSSProperties}><p>{line}</p></li>)}
+        <li style={{ "--rise-order": practitioner.lines.length } as CSSProperties}><p className="about-mail">{practitioner.mailBefore}<a href={`mailto:${koOnly.practitioner.mailAddress}`}>{koOnly.practitioner.mailAddress}</a>{practitioner.mailAfter}</p></li>
       </ul>
-    </details>}
-    {t.locale === "ko" && <p className="about-words"><a href={WORDS_PATH}>{koOnly.practitioner.wordsLink}</a></p>}
+      {draftNote}
+    </details>
+    {/* /words is in Korean only; the English link says so and carries hrefLang="ko", as the footer's links do */}
+    <p className="about-words"><a href={WORDS_PATH} {...(t.locale === "en" ? { hrefLang: "ko" } : {})}>{practitioner.wordsLink}</a></p>
+    {draftNote}
     <details className="about-fold">
       <summary>{t("about.faqSummary")}</summary>
       <dl className="about-list">

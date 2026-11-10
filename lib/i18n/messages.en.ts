@@ -37,6 +37,28 @@ export const enOnly = {
   /** In the footer, where the Korean one has 이용약관 · 개인정보 처리방침; both lead to the Korean pages (2026-11-10). */
   termsLink: "Terms",
   privacyLink: "Privacy",
+  /**
+   * DRAFT, not reviewed by the owner (2026-11-10). The English of three things
+   * that were on the Korean landing only: the practitioner fold, the brain map
+   * line (its words are `about.atlasLead` and `about.atlasLink`, written
+   * 2026-11-05 and also not reviewed) and the link to the word list. Each is
+   * listed in docs/EN_REVIEW.md as 「검토 전」, and each block on the screen ends
+   * with `draftNote` until the owner has read it. Same meaning as the Korean
+   * (koOnly.practitioner), with nothing added except where a page is in Korean.
+   */
+  draftNote: "Draft, not yet reviewed by the author.",
+  practitioner: {
+    summary: "For those using this in counseling or clinical training",
+    lines: [
+      "This is a self-observation tool for adults to use on their own. If you use it in counseling, please have the client choose and write on their own device. It was not made for someone else to fill in an entry for them or to be used as assessment material.",
+      "Nothing written here is sent anywhere off this device. If it was used on a shared device at an institution, please go to “Past entries” afterward and press “Delete all entries on this device.”",
+      "When two or more people use it together, one device per person is recommended. Choosing together on one screen makes it easy to choose with an eye on each other.",
+    ],
+    mailBefore: "If the word list, the wording or the safety information needs improving anywhere, please write to ",
+    mailAfter: ". Please do not include client information or case details.",
+    /** The word list page is in Korean only, so the link says so. */
+    wordsLink: "See the word list (in Korean) →",
+  },
 } as const;
 
 /**
@@ -85,8 +107,6 @@ export const en: Messages = {
     listSeparator: ", ",
   },
   landing: {
-    /** The nickname 이쯤 is not used in English (2026-11-05): the label stays the app's name. */
-    eyebrow: "Emotion Observatory",
     split: {
       word: "I feel stuck",
       tired: "Stuck because I’m worn out",
@@ -143,7 +163,7 @@ export const en: Messages = {
     refsChecked: "Last checked {year}-{month}-{day}. For each study we looked again at its publication status and any correction or retraction notice on Crossref.",
     checkedOn: "Checked {year}-{month}-{day}",
     doiLink: "Source",
-    // 검토 전, 화면에 안 나옴 — not reviewed, not shown: the about section renders this line for Korean only, like the brain map
+    // 검토 전 (not reviewed): shown on the English screen since 2026-11-10 with enOnly.draftNote after it; listed in docs/EN_REVIEW.md
     atlasLead: "How the body and brain relate to emotion, what textbooks and studies say and where they disagree, is collected on the maker’s homepage (in Korean, a work in progress).",
     atlasLink: "Brain map",
     refs: {
