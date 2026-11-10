@@ -40,6 +40,13 @@ describe("/privacy", () => {
     expect(all).not.toMatch(/\{[a-z0-9]+\}|\]\((mail|home)\)/);
   });
 
+  it("names section 2 for what is true now: no login is open, so no 「로그인하지 않으면」 (2026-11-10)", () => {
+    render(<Privacy />);
+    const main = screen.getByRole("main");
+    expect(within(main).getByRole("heading", { level: 2, name: "2. 기록이 남는 곳" })).toBeTruthy();
+    expect(main.textContent).not.toContain("로그인하지 않으면");
+  });
+
   it("is in the sitemap", () => {
     expect(sitemap().map((page) => page.url)).toContain(`${SITE_URL}/privacy`);
   });
