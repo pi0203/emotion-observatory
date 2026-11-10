@@ -39,8 +39,9 @@ describe("/en route", () => {
     // the app's name is the title since 2026-11-10; the 2026-10-30 sentence follows it
     expect(screen.getByRole("heading", { level: 1 }).textContent).toBe("Emotion Observatory");
     expect(document.querySelector(".hero-title")!.textContent).toMatch(/Before you name it/);
-    // the only Korean on the English landing is the name of the other language, on the switch
-    expect(document.body.textContent?.replace("한국어", "")).not.toMatch(HANGUL);
+    // the only Korean on the English landing is the name of the other language, on the switch, and
+    // the centre's Korean name in the next-step paragraph, so a reader can find it (2026-11-10)
+    expect(document.body.textContent?.replace("한국어", "").replace("(정신건강복지센터)", "")).not.toMatch(HANGUL);
   });
 
   it("keeps the development status frame plain English, with no Korean in its place", () => {

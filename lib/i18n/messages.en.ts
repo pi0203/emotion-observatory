@@ -159,9 +159,17 @@ export const en: Messages = {
     href119: "tel:119",
     href112: "tel:112",
   },
+  nextStep: {
+    title: "Not in crisis, but hard to carry alone",
+    center: "Your local mental health welfare center (정신건강복지센터) offers free counseling and screening for depression, anxiety and stress. There is one in every city, county and district, open weekdays 9:00 to 18:00. If you don’t know which one is yours, call 1577-0199; it connects you to a center near where your phone is.",
+    voucher: "With a referral from a mental health welfare center or a university counseling center, you can get up to eight sessions of professional counseling through the national counseling voucher (ask 129). How much you pay depends on your income.",
+    person: "Going to a person first, instead of writing here, is also a good choice.",
+    checked: "Numbers and programs checked on the Ministry of Health and Welfare website on 2026-11-10.",
+  },
   about: {
     title: "About this tool",
     what: "A self-observation tool for looking at what you are experiencing in parts: the body, the situation, what mattered, and the words for it. The quick look has two steps: tap once, then pick words that feel close. The slow look has six steps, from the body to the words.",
+    stage: "This is a concept prototype: a trial version made to show an idea before research or expert review.",
     not: "It is not a medical tool or a crisis service, and it does not score or judge emotions. <b>It has not yet been shown to help people tell emotions apart better or to benefit mental health.</b>",
     refsSummary: "Six studies consulted",
     refsIntro: "How far research supports the ideas behind this app. Each study is listed with what it found and where it falls short.",
