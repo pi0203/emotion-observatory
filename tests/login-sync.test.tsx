@@ -313,6 +313,16 @@ describe("coming back signed in", () => {
     expect(await within(panel()).findByText(copy.notes["login-failed"])).toBeTruthy();
     expect(window.location.search).toBe("");
   });
+
+  it("wipes the tokens even when the client cannot be loaded (offline)", async () => {
+    loginOn("google");
+    setClientFactoryForTests(async () => { throw new Error("offline"); });
+    arriveAt("/?keep=1&code=good-code&state=xyz#access_token=good-access&refresh_token=good-refresh");
+    await waitFor(() => expect(getAccountState().note).toBe("network"));
+    expect(window.location.hash).toBe("");
+    expect(window.location.search).toBe("?keep=1");
+    expect(window.location.href).not.toMatch(/access|refresh|good-code|state=/);
+  });
 });
 
 describe("coming back from a failed sign-in while an earlier login is still held", () => {

@@ -247,8 +247,14 @@ export const resumeAccount = async () => {
   const back = isLinkReturn() ? readReturn() : null;
   if (!back && !hasStoredLogin()) return;
   await run(async () => {
-    const auth = (await client()).auth;
-    if (back) clearLinkFromAddress();
+    let loaded: SupabaseLike;
+    try {
+      loaded = await client();
+    } finally {
+      // also when the client cannot be loaded (offline): the tokens never stay in the address bar
+      if (back) clearLinkFromAddress();
+    }
+    const auth = loaded.auth;
     if (back && !back.failed) {
       const result = back.access && back.refresh ? await auth.setSession({ access_token: back.access, refresh_token: back.refresh })
         : back.code ? await auth.exchangeCodeForSession(back.code) : null;
