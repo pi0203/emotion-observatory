@@ -385,6 +385,27 @@ describe("an account without an email", () => {
 });
 
 describe("the records on the server", () => {
+  it("count for 「지난번」: the record just before may be one only the account holds", async () => {
+    const withBody = (id: string, at: string, label: string): EmotionSession => {
+      const base = record(id, at);
+      return { ...base, deepReflection: { ...base.deepReflection!, body: [{ label }] } };
+    };
+    const older = withBody(ID_A, "2026-10-01T09:04:00.000Z", "어깨가 뭉침");
+    const onlyOnAccount = withBody(ID_B, "2026-10-02T09:04:00.000Z", "숨이 얕음");
+    const now = withBody("33333333-3333-4333-8333-333333333333", "2026-10-03T09:04:00.000Z", "배가 아픔");
+    window.localStorage.setItem("emotion-lab:account-import:v1", JSON.stringify({ [USER]: { choice: "kept", keptIds: [] } }));
+    getStorageAdapter().saveCompleted(older);
+    getStorageAdapter().saveCompleted(now);
+    loginOn();
+    setClientFactoryForTests(factory);
+    fake.db.records = [{ user_id: USER, id: ID_B, data: onlyOnAccount, updated_at: "2026-10-02T09:04:00+00:00" }];
+    await signInByReturn();
+    fireEvent.click(document.getElementById(`record-${now.id}`)!);
+    const lines = [...document.querySelectorAll(".previous-line")].map((line) => line.textContent);
+    expect(lines).toContain(ko.recordDetail.previous.replace("{date}", "10/02").replace("{value}", "숨이 얕음"));
+    expect(lines.join(" ")).not.toContain("어깨가 뭉침");
+  });
+
   it("come in as soon as the person signs in, shown in the list but not written into this browser", async () => {
     loginOn();
     setClientFactoryForTests(factory);

@@ -156,7 +156,7 @@ function App() {
       <SiteHeader onHelp={() => setHelpOpen(true)} />
       <main id="main" tabIndex={-1} className="site-main">
       {openRecord
-        ? <RecordDetail session={openRecord} previous={previousRecord(openRecord, records ?? loadCompleted())} onHelp={() => setHelpOpen(true)} onFollowUp={(followUp) => saveFollowUp(openRecord, followUp)} onAddLabel={(label) => addLabelLater(openRecord, label)} onBack={() => setOpenRecord(null)} />
+        ? <RecordDetail session={openRecord} previous={previousRecord(openRecord, mergeRecords(records ?? loadCompleted(), account.remote))} onHelp={() => setHelpOpen(true)} onFollowUp={(followUp) => saveFollowUp(openRecord, followUp)} onAddLabel={(label) => addLabelLater(openRecord, label)} onBack={() => setOpenRecord(null)} />
         : records
           ? <RecordsScreen records={mergeRecords(records, account.remote)} localCount={records.length} manageOpen={manageOpen} onHelp={() => setHelpOpen(true)} onOpen={setOpenRecord} onBack={() => setRecords(null)} onChanged={() => { setRecords(loadCompleted()); setDraft(loadDraft()); }} />
           : <LandingScreen onStart={() => askToStart("quick")} draft={draft} onResume={resume} onRecords={() => showRecords()} onManage={() => showRecords(true)} pendingStart={pendingStart} onDiscardAndStart={discardAndStart} onCancelStart={() => setPendingStart(null)} />}
