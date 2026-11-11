@@ -184,3 +184,26 @@ create index emotion_sessions_ended_at_idx on public.emotion_sessions(ended_at d
 
 먼저 Phase 0(Storage Seam)부터 안전하게 구현해주세요.
 ```
+
+---
+
+## 6. 운영 설정과 대시보드 확인 (2026-11-12, 합치기 전 점검에서)
+
+코드와 SQL만으로는 알 수 없는 설정이다. 운영에 로그인을 열기 전에 Supabase 대시보드에서 확인한다.
+
+### naver-userinfo는 `verify_jwt = false`로 배포한다
+- Supabase Auth가 사용자 지정 공급자 `custom:naver`의 사용자 정보 주소로 이 함수를 부를 때, `Authorization: Bearer` 머리에 **네이버가 준 접근 토큰**을 실어 보낸다. Supabase가 발급한 JWT가 아니다.
+- JWT 확인을 켠 채 배포하면 Edge Functions 입구가 이 요청을 함수에 닿기 전에 401로 돌려보내, 네이버 로그인이 늘 실패한다.
+- 확인을 꺼도 함수가 하는 일은 받은 토큰을 네이버(`openapi.naver.com/v1/nid/me`)로 그대로 보내고, 네이버가 맞다고 답한 경우에만 식별자 하나(`{"sub": id}`)를 돌려주는 것뿐이다. 토큰이 틀리면 네이버가 거절하고 함수도 401을 돌려준다. 토큰은 어디에도 기록하지 않는다.
+- 배포 명령: `supabase functions deploy naver-userinfo --no-verify-jwt`. `supabase/config.toml`을 저장소에 둘 때는 `[functions.naver-userinfo]` 아래 `verify_jwt = false`.
+
+### Supabase Auth에서 Email·Anonymous 로그인을 끈다
+- 화면에서는 이메일 로그인을 뺐지만(2026-11-02), Supabase에서 Email 공급자나 익명 로그인(anonymous sign-in)이 켜져 있으면 공개 키(publishable key)만으로 Auth API를 직접 불러 계정을 만들 수 있다.
+- 그렇게 만든 계정도 `authenticated`이므로 RLS 정책에 따라 자기 행을 records에 쓸 수 있다. 동의 화면을 거치지 않은 계정이 생기고, 저장 공간을 채우는 데 쓰일 수 있다(크기 제한은 `0004_limits.sql`).
+- 그래서 Auth → Providers에서 Email을 끄고(또는 가입을 막고), Anonymous sign-ins를 끈다.
+
+### 대시보드에서 확인할 것 (점검 보고서 1절 「대시보드 확인 필요」 항목)
+1. Supabase Auth 설정: 화면에서 이메일 로그인을 뺐지만, Supabase에서 Email 공급자나 익명 로그인(anonymous sign-in)이 켜져 있으면 공개 키만으로 API를 직접 불러 계정을 만들고 records에 쓸 수 있음. → Auth → Providers에서 Email 끄기(또는 가입 막기), Anonymous sign-ins 끄기.
+2. `0001_login_sync.sql:60-75`의 `delete_my_account()`: 코드는 바르지만, Supabase 보안 점검은 「로그인한 사람이 실행할 수 있는 security definer 함수」를 경고로 띄우는 경우가 있음. 대시보드 경고 4개 중 하나일 수 있음. → 경고 내용을 확인한 뒤 그대로 두는 이유를 문서에 적기(본인 계정만 지우므로 의도된 것).
+3. naver-userinfo 배포 설정: Supabase가 이 함수를 네이버 토큰으로 부르므로 JWT 확인을 꺼서 배포했을 것인데, 그 설정이 저장소 어디에도 적혀 있지 않음. → 이 문서 6절 첫 항목대로 `verify_jwt = false`인지 확인.
+4. 대시보드 경고 4개: 대시보드를 볼 수 없어 무엇인지 모름. 코드·SQL로 짐작할 수 있는 후보는 위 1의 Email·익명 로그인 설정, 2의 security definer 함수, 겹치는 색인(`records_user_id_idx`, `0004_limits.sql`에서 지움), 그리고 Auth 쪽 기본 경고(유출 비밀번호 확인 꺼짐, OTP 유효 시간 등, 이메일 로그인을 안 쓰면 영향 없음).
