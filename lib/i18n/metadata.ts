@@ -22,9 +22,17 @@ import { getT, hasMessages } from "./t";
 export const documentTitle = (locale: Locale): string =>
   locale === "ko" ? `${getT("ko")("meta.title")} · ${getT("en")("meta.title")}` : getT(locale)("meta.title");
 
+/**
+ * Naver Search Advisor's ownership tag (owner's decision 2026-11-11). Every page
+ * takes its <head> from metadataFor through its root layout, and the pages that
+ * set their own title (/terms, /privacy, /words) do not touch `verification`,
+ * so the tag is on every page once.
+ */
+const verification: Metadata["verification"] = { other: { "naver-site-verification": "76a44d979154532ba02f91cb1b13f44e3f335f87" } };
+
 export const metadataFor = (locale: Locale): Metadata => {
   if (!hasMessages(locale)) {
-    return { metadataBase: new URL(SITE_URL), title: `[${locale}] messages not written`, description: `Development only: no messages for "${locale}" yet. See docs/I18N_PLAN.md.`, robots: { index: false } };
+    return { metadataBase: new URL(SITE_URL), verification, title: `[${locale}] messages not written`, description: `Development only: no messages for "${locale}" yet. See docs/I18N_PLAN.md.`, robots: { index: false } };
   }
   const t = getT(locale);
   const path = locale === "ko" ? "/" : `/${locale}`;
@@ -32,6 +40,7 @@ export const metadataFor = (locale: Locale): Metadata => {
   const image = { url: "/og-image.png", width: 1200, height: 630, alt: t("meta.shareImageAlt") };
   return {
     metadataBase: new URL(SITE_URL),
+    verification,
     title,
     description: t("meta.description"),
     // each language names the other, so search engines treat them as one page in two languages

@@ -40,8 +40,11 @@ describe("/en route", () => {
     expect(screen.getByRole("heading", { level: 1 }).textContent).toBe("Emotion Observatory");
     expect(document.querySelector(".hero-title")!.textContent).toMatch(/Before you name it/);
     // the only Korean on the English landing is the name of the other language, on the switch, and
-    // the centre's Korean name in the next-step paragraph, so a reader can find it (2026-11-10)
-    expect(document.body.textContent?.replace("한국어", "").replace("(정신건강복지센터)", "")).not.toMatch(HANGUL);
+    // the centre's Korean name in the next-step paragraph, so a reader can find it (2026-11-10).
+    // The JSON-LD is not on screen and names the app and its maker in Korean too (2026-11-11), so it is left out.
+    const onScreen = document.body.cloneNode(true) as HTMLElement;
+    onScreen.querySelectorAll('script[type="application/ld+json"]').forEach((script) => script.remove());
+    expect(onScreen.textContent?.replace("한국어", "").replace("(정신건강복지센터)", "")).not.toMatch(HANGUL);
   });
 
   it("keeps the development status frame plain English, with no Korean in its place", () => {
