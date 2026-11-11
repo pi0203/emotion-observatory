@@ -1,0 +1,10 @@
+{
+  "note": "첫 화면(/)의 JSON-LD(lib/structured-data.ts)에 들어가는 한국어 값. 화면에는 보이지 않고, 검색엔진과 AI가 이 도구가 무엇이고 무엇이 아닌지, 누가 만들었는지 읽어 가는 글이다. Aside 지시문(2026-11-11)의 값을 글자 그대로 옮겼다. 사람(creator)은 /en에도 같은 값으로 들어간다.",
+  "disambiguatingDescription": "글을 분석하거나 감정을 판정하는 도구가 아닙니다. 지금 느껴지는 것을 몸, 상황, 의미로 나누어 내가 직접 적어 보는 자기관찰 기록 도구이고, 기록은 쓰는 브라우저 안에만 저장됩니다.",
+  "operatingSystem": "웹 브라우저",
+  "creator": {
+    "name": "조은찬",
+    "alternateName": "Eunchan Joe",
+    "description": "임상심리학을 공부합니다."
+  }
+}

@@ -1,6 +1,7 @@
 import { notFound } from "next/navigation";
 import EnglishStatus from "./EnglishStatus";
 import EmotionApp from "../../emotion-app";
+import StructuredData from "../../structured-data";
 import { hasContent } from "../../../lib/content";
 import { hasMessages } from "../../../lib/i18n/t";
 
@@ -11,7 +12,14 @@ import { hasMessages } from "../../../lib/i18n/t";
  * what is missing. It never falls back to Korean.
  */
 export default function EnglishPage() {
-  if (hasMessages("en") && hasContent("en")) return <EmotionApp locale="en" />;
+  if (hasMessages("en") && hasContent("en")) {
+    return (
+      <>
+        <StructuredData locale="en" />
+        <EmotionApp locale="en" />
+      </>
+    );
+  }
   if (process.env.NODE_ENV === "production") notFound();
   return <EnglishStatus />;
 }
