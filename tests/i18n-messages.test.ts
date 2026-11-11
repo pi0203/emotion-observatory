@@ -84,13 +84,41 @@ describe("Korean particles chosen inside the messages", () => {
     expect(interpolate("{x}{~x|으로/로}", { x: "중간 · 활성됨" })).toBe("중간 · 활성됨으로");
     expect(interpolate("{x}{~x|으로/로}", { x: "잘 모르겠음" })).toBe("잘 모르겠음으로");
     expect(interpolate("{x}{~x|으로/로}", { x: "매우 유쾌" })).toBe("매우 유쾌로");
-    // not a Hangul syllable: the vowel form, as particleFor always did
-    expect(interpolate("{x}{~x|을/를}", { x: "OK" })).toBe("OK를");
+    // not a Hangul syllable (Latin, digit, symbol): both forms, 「을(를)」 (2026-11-10; it was the vowel form before)
+    expect(interpolate("{x}{~x|을/를}", { x: "OK" })).toBe("OK을(를)");
+    expect(interpolate("{x}{~x|을/를}", { x: "3" })).toBe("3을(를)");
+    expect(interpolate("{x}{~x|을/를}", { x: "짜증!" })).toBe("짜증!을(를)");
+    expect(interpolate("{x}{~x|으로/로}", { x: "OK" })).toBe("OK으로(로)");
+  });
+
+  it("takes 「로」, not 「으로」, after a final ㄹ (2026-11-10)", () => {
+    expect(interpolate("{x}{~x|으로/로}", { x: "말" })).toBe("말로");
+    expect(interpolate("{x}{~x|으로/로}", { x: "물" })).toBe("물로");
+    expect(interpolate("{x}{~x|으로/로}", { x: "하늘" })).toBe("하늘로");
+    expect(interpolate("{x}{~x|으로/로}", { x: "말".normalize("NFD") })).toBe(`${"말".normalize("NFD")}로`);
+    // only 으로/로: other particles keep the consonant form after ㄹ
+    expect(interpolate("{x}{~x|을/를}", { x: "말" })).toBe("말을");
+    expect(interpolate("{x}{~x|이/가}", { x: "물" })).toBe("물이");
+    expect(interpolate("{x}{~x|은/는}", { x: "말" })).toBe("말은");
+    // other final consonants still take 으로
+    expect(interpolate("{x}{~x|으로/로}", { x: "밥" })).toBe("밥으로");
+    expect(particleFor("말", "으로", "로")).toBe("로");
+    expect(particleFor("말", "으로서", "로서")).toBe("로서");
+    expect(particleFor("물", "으로써", "로써")).toBe("로써");
   });
 
   it("reads the particle from the raw word, not from the quotation mark around it", () => {
     expect(getT()("synthesis.observed.quickEmotion", { list: "“짜증”, “억울함”", last: "억울함" })).toBe("가까운 말로는 “짜증”, “억울함”을 골랐습니다.");
-    expect(particleFor("“억울함”", "을", "를")).toBe("를");
+    expect(particleFor("“억울함”", "을", "를")).toBe("을(를)");
+  });
+
+  it("reads a final consonant from a word typed or pasted in decomposed form (NFD), as 「“피곤함”를」 showed (2026-11-10)", () => {
+    const quick = (word: string) => getT()("synthesis.observed.quickEmotion", { list: `“${word}”`, last: word });
+    for (const form of ["NFC", "NFD"] as const) {
+      expect(quick("피곤함".normalize(form))).toBe(`가까운 말로는 “${"피곤함".normalize(form)}”을 골랐습니다.`);
+      expect(quick("불안".normalize(form))).toBe(`가까운 말로는 “${"불안".normalize(form)}”을 골랐습니다.`);
+      expect(quick("아파".normalize(form))).toBe(`가까운 말로는 “${"아파".normalize(form)}”를 골랐습니다.`);
+    }
   });
 });
 

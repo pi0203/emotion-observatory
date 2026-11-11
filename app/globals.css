@@ -1,3 +1,6 @@
+/* The two token layers: light first, dark over it. Rules outside the layers still win, as before. */
+@layer tokens-light, tokens-dark;
+@layer tokens-light {
 :root {
   /* The lab's own palette (owner's settled choice, 2026-10-12): light blue paper with a coral
      point. Token names are unchanged; only values moved, the same way the shelf, study notes and
@@ -47,19 +50,22 @@
   --tone-butter-paper: #F7F1DE; --tone-butter-card: #FFFCF2; --tone-butter-line: #E3D29E;
   --tone-mist-paper: #E3EEF3;   --tone-mist-card: #F5FAFC;   --tone-mist-line: #AFCBD8;
   /* Type scale, after the homepage (docs/DESIGN_ALIGNMENT.md §4): five steps instead of eleven sizes. */
+  --t-aside: .8125rem;      /* labels, meta, eyebrows: 13px, the floor for any text (was .76rem = 12.16px until 2026-11-10) */
   /* sign-in buttons (login preview, 2026-11-02): each company's own colours, the same in both themes */
   --brand-google-bg: #FFFFFF;  --brand-google-ink: #1F1F1F; --brand-google-line: #747775;
   --brand-kakao-bg: #FEE500;   --brand-kakao-ink: rgba(0, 0, 0, .85);
   --brand-naver-bg: #03C75A;   --brand-naver-ink: #FFFFFF;
   --brand-apple-bg: #000000;   --brand-apple-ink: #FFFFFF;
-  --t-aside: .76rem;        /* labels, meta, eyebrows (was 12 and 13px) */
   --t-small: .875rem;       /* notes and hints (was 14 and 15px) */
   --t-body: 1rem;           /* text, ledes, choices (was 16, 17 and 18px) */
   --t-lead: 1.6rem;         /* section titles (was 23 and 26px) */
   --t-scene: clamp(2.25rem, 6vw, 3.2rem); /* screen titles (was 35 to 54px, 36px on phones) */
+  --site-wordmark: 1.3rem;  /* the homepage frame only: its wordmark's own size (homepage .wordmark, 2026-11-10), like the --site-* colours; not a step of the app's scale */
+}
 }
 
 /* Dark follows the device setting only; there is no switch. Same tokens, darker values. */
+@layer tokens-dark {
 @media (prefers-color-scheme: dark) {
   :root {
     color-scheme: dark;
@@ -103,6 +109,16 @@
     --tone-butter-paper: #1E1A0D; --tone-butter-card: #2D2814; --tone-butter-line: #5E5530;
     --tone-mist-paper: #0D1A21;   --tone-mist-card: #172A33;   --tone-mist-line: #2E4D5B;
   }
+  /* /words printed from a dark device: back to the light tokens, so the paper gets dark text on white
+     (2026-11-02). revert-layer drops this layer's dark values for the light layer's; the screen and the
+     other pages' printing are unchanged. */
+  @media print {
+    :root:has(.words-page) {
+      color-scheme: revert-layer;
+      --accent: revert-layer; --accent-hover: revert-layer; --accent-press: revert-layer; --accent-soft: revert-layer; --accent-subtle: revert-layer; --accent-ink: revert-layer; --ink: revert-layer; --muted: revert-layer; --line: revert-layer; --line-strong: revert-layer; --paper: revert-layer; --card: revert-layer; --warm: revert-layer; --on-accent: revert-layer; --check: revert-layer; --badge: revert-layer; --pick-underline: revert-layer; --site-ink: revert-layer; --site-muted: revert-layer; --site-line: revert-layer; --site-hover: revert-layer; --focus-ring: revert-layer; --backdrop: revert-layer; --shadow: revert-layer; --axis: revert-layer; --source-mine: revert-layer; --source-app: revert-layer; --source-later: revert-layer; --tone-blue-paper: revert-layer; --tone-blue-card: revert-layer; --tone-blue-line: revert-layer; --tone-blue-blob: revert-layer; --tone-lilac-paper: revert-layer; --tone-lilac-card: revert-layer; --tone-lilac-line: revert-layer; --tone-lilac-blob: revert-layer; --tone-lilac-ink: revert-layer; --tone-mint-paper: revert-layer; --tone-mint-card: revert-layer; --tone-mint-line: revert-layer; --tone-mint-blob: revert-layer; --tone-mint-ink: revert-layer; --tone-peach-paper: revert-layer; --tone-peach-card: revert-layer; --tone-peach-line: revert-layer; --tone-peach-blob: revert-layer; --tone-peach-ink: revert-layer; --tone-butter-paper: revert-layer; --tone-butter-card: revert-layer; --tone-butter-line: revert-layer; --tone-mist-paper: revert-layer; --tone-mist-card: revert-layer; --tone-mist-line: revert-layer;
+    }
+  }
+}
 }
 * { box-sizing: border-box; }
 html { background: var(--paper); }
@@ -131,6 +147,8 @@ button:focus-visible, a:focus-visible, input:focus-visible, textarea:focus-visib
 h1 { margin: 0; font-family: var(--font-serif), serif; font-size: var(--t-scene); font-weight: 400; line-height: 1.25; letter-spacing: -.022em; }
 h2 { font-family: var(--font-serif), serif; font-size: var(--t-lead); font-weight: 400; line-height: 1.3; }
 .lede, .hint { margin: 20px 0 0; color: var(--muted); font-size: var(--t-body); line-height: 1.7; }
+/* 「멈춰도 됩니다」 lines (2026-10-30): plain muted text, no warning colour. The quick one sits at the top of the step, on the step's own width */
+.pause-line { margin: 14px 0 0; color: var(--muted); font-size: var(--t-small); line-height: 1.6; }.pause-line-banner { width: 100%; max-width: 560px; margin: 36px auto 0; }.pause-line-banner + .screen { padding-top: 24px; }
 .hint { max-width: 460px; font-size: var(--t-body); }
 .stack-actions { display: grid; gap: 12px; width: 100%; max-width: 100%; margin-top: 32px; }
 .primary-button, .secondary-button, .small-button { display: inline-flex; align-items: center; justify-content: center; gap: 14px; min-height: 52px; border-radius: 12px; padding: 15px 22px; text-decoration: none; border: 1px solid var(--accent); font: 600 var(--t-small) var(--font-sans); transition: border-color .15s ease, background-color .15s ease, color .15s ease, box-shadow .15s ease, transform .15s ease; }
@@ -175,9 +193,9 @@ h2 { font-family: var(--font-serif), serif; font-size: var(--t-lead); font-weigh
 .choice-list { display: grid; gap: 10px; margin-top: 40px; }.choice-list button, .inline-choices button { padding: 17px 18px; color: var(--ink); text-align: left; background: var(--card); border: 1px solid var(--line-strong); border-radius: 3px; transition: border-color .15s ease, background-color .15s ease, box-shadow .15s ease; }.choice-list button:hover, .inline-choices button:hover { border-color: var(--accent-ink); background: var(--accent-subtle); }.choice-list button.selected, .inline-choices button.selected { color: var(--on-accent); border-color: var(--accent-ink); background: var(--accent-soft); box-shadow: inset 0 0 0 1px var(--accent-ink), 0 3px 0 var(--pick-underline); }.choice-list.compact { margin-top: 32px; }
 .chip-grid { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 34px; }.chip { padding: 12px 15px; border: 1px solid var(--line-strong); border-radius: 99px; color: var(--ink); background: var(--card); transition: border-color .15s ease, background-color .15s ease, box-shadow .15s ease; }.chip:hover { border-color: var(--accent-ink); background: var(--accent-subtle); }.chip.selected { color: var(--on-accent); border-color: var(--accent-ink); background: var(--accent-soft); box-shadow: inset 0 0 0 1px var(--accent-ink), 0 3px 0 var(--pick-underline); }
 .field-label, .subquestion { display: block; margin: 32px 0 10px; font: var(--t-aside) var(--font-sans); color: var(--muted); }.text-input, .text-area { width: 100%; border: 1px solid var(--line-strong); border-radius: 3px; background: var(--card); color: var(--ink); padding: 15px; outline: none; }.text-input:focus, .text-area:focus { border-color: var(--accent-ink); box-shadow: 0 0 0 3px var(--focus-ring); }.text-area { min-height: 180px; resize: vertical; line-height: 1.6; }.navigation { display: flex; align-items: center; justify-content: space-between; margin-top: 48px; }
-.affect-grid-wrap { margin-top: 34px; }.affect-grid { position: relative; width: min(100%, 480px); aspect-ratio: 1.35; margin: 0 auto; border: 1px solid var(--line-strong); border-radius: 48% 52% 50% 48%; background: radial-gradient(circle at 50% 50%, var(--card) 0%, var(--card) 55%, var(--paper) 100%); cursor: crosshair; touch-action: manipulation; }.affect-grid::before, .affect-grid::after { content: ""; position: absolute; background: var(--axis); }.affect-grid::before { left: 0; right: 0; top: 50%; height: 1px; }.affect-grid::after { top: 0; bottom: 0; left: 50%; width: 1px; }.affect-axis-label { color: var(--muted); text-align: center; font: var(--t-aside) var(--font-sans); }.affect-axis-label.top { margin-bottom: 12px; }.affect-axis-label.bottom { margin-top: 12px; }.affect-axis-row { display: flex; justify-content: space-between; padding: 10px 2px 0; color: var(--muted); font: var(--t-aside) var(--font-sans); }.affect-dot { position: absolute; width: 20px; height: 20px; transform: translate(-50%, -50%); border: 3px solid var(--accent-ink); border-radius: 50%; background: var(--accent); box-shadow: 0 0 0 3px var(--paper), 0 2px 8px var(--shadow); }.quick-actions, .quick-bottom-actions, .quick-option-row { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-top: 28px; }.quick-bottom-actions { margin-top: 40px; }.quick-option-row { justify-content: flex-start; flex-wrap: wrap; }.quick-option-row .secondary-button { min-height: 42px; padding: 10px 14px; gap: 6px; }.quick-option-row .secondary-button.selected { color: var(--on-accent); border-color: var(--accent-ink); background: var(--accent-soft); box-shadow: inset 0 0 0 1px var(--accent-ink), 0 3px 0 var(--pick-underline); }
+.affect-grid-wrap { margin-top: 34px; }.affect-grid { position: relative; width: min(100%, 480px); aspect-ratio: 1.35; margin: 0 auto; border: 1px solid var(--line-strong); border-radius: 48% 52% 50% 48%; background: radial-gradient(circle at 50% 50%, var(--card) 0%, var(--card) 55%, var(--paper) 100%); cursor: crosshair; touch-action: manipulation; }.affect-grid::before, .affect-grid::after { content: ""; position: absolute; background: var(--axis); }.affect-grid::before { left: 0; right: 0; top: 50%; height: 1px; }.affect-grid::after { top: 0; bottom: 0; left: 50%; width: 1px; }.affect-axis-label { color: var(--muted); text-align: center; font: var(--t-aside) var(--font-sans); }.affect-axis-label.top { margin-bottom: 12px; }.affect-axis-label.bottom { margin-top: 12px; }.affect-axis-row { display: flex; justify-content: space-between; padding: 10px 2px 0; color: var(--muted); font: var(--t-aside) var(--font-sans); }.affect-dot { position: absolute; width: 20px; height: 20px; transform: translate(-50%, -50%); border: 3px solid var(--accent-ink); border-radius: 50%; background: var(--accent); box-shadow: 0 0 0 3px var(--paper), 0 2px 8px var(--shadow); }.quick-actions, .quick-bottom-actions, .quick-option-row { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-top: 28px; }.quick-bottom-actions { margin-top: 40px; }.quick-context { margin-top: 32px; }.quick-context .small-note { margin-top: 8px; }.quick-option-row { justify-content: flex-start; flex-wrap: wrap; }.quick-option-row .secondary-button { min-height: 42px; padding: 10px 14px; gap: 6px; }.quick-option-row .secondary-button.selected { color: var(--on-accent); border-color: var(--accent-ink); background: var(--accent-soft); box-shadow: inset 0 0 0 1px var(--accent-ink), 0 3px 0 var(--pick-underline); }
 .response-block { margin-top: 34px; padding-top: 26px; border-top: 1px solid var(--line); }.response-block .tier-label { margin-top: 0; font-weight: 500; color: var(--accent-ink); }.response-block .step-note { margin-top: 12px; }.response-block .choice-list { margin-top: 18px; }.response-block .primary-button { margin-top: 20px; width: 100%; }
-.segmented { display: grid; gap: 10px; margin-top: 26px; font: var(--t-aside) var(--font-sans); }.segmented span { color: var(--muted); }.segmented button, .inline-choices button { text-align: center; }.segmented button { padding: 10px; color: var(--ink); border: 1px solid var(--line-strong); background: var(--card); }.segmented button:hover { border-color: var(--accent-ink); background: var(--accent-subtle); }.segmented button.selected { color: var(--on-accent); background: var(--accent-soft); border-color: var(--accent-ink); box-shadow: inset 0 0 0 1px var(--accent-ink), 0 3px 0 var(--pick-underline); }
+.segmented { display: grid; gap: 10px; margin-top: 26px; font: var(--t-aside) var(--font-sans); }.segmented > span { color: var(--muted); } /* the question only: a bare descendant rule also painted the ✓ inside the selected button in --muted (1.12:1 light, 1.19:1 dark), 2026-11-11 */.segmented button, .inline-choices button { text-align: center; }.segmented button { padding: 10px; color: var(--ink); border: 1px solid var(--line-strong); background: var(--card); }.segmented button:hover { border-color: var(--accent-ink); background: var(--accent-subtle); }.segmented button.selected { color: var(--on-accent); background: var(--accent-soft); border-color: var(--accent-ink); box-shadow: inset 0 0 0 1px var(--accent-ink), 0 3px 0 var(--pick-underline); }
 .inline-choices { display: flex; gap: 8px; }.inline-choices button { flex: 1; padding: 13px 8px; font-size: var(--t-aside); }.subquestion { margin-top: 50px; color: var(--ink); font-size: var(--t-body); }.provisional-note { margin-top: 32px; padding: 12px 14px; color: var(--muted); background: var(--warm); font: var(--t-aside) var(--font-sans); }
 .step-note { max-width: 460px; margin: 38px 0 0; padding: 14px 16px; border-left: 3px solid var(--accent); background: var(--accent-subtle); color: var(--ink); font-size: var(--t-small); line-height: 1.65; }.step-note + .navigation { margin-top: 22px; }
 .reveal-button { margin-top: 22px; padding: 11px 0; border: 0; background: transparent; color: var(--accent-ink); font: 500 var(--t-aside) var(--font-sans); text-decoration: underline; text-underline-offset: 4px; }.reveal-button:hover { color: var(--ink); }
@@ -190,6 +208,14 @@ h2 { font-family: var(--font-serif), serif; font-size: var(--t-lead); font-weigh
 .record-row { display: grid; gap: 7px; padding: 18px 20px; text-align: left; background: var(--card); border: 1px solid var(--line-strong); border-radius: 3px; }.record-row:hover { border-color: var(--accent-ink); background: var(--accent-subtle); }.record-row strong { font-weight: 400; font-size: var(--t-body); line-height: 1.4; }
 .record-when { display: flex; align-items: baseline; gap: 10px; color: var(--muted); font: var(--t-aside) var(--font-sans); }.record-when em { padding: 2px 8px; font-style: normal; background: var(--badge); color: var(--ink); border: 1px solid var(--line); border-radius: 99px; }
 .record-need { color: var(--muted); font: var(--t-aside) var(--font-sans); line-height: 1.5; }
+/* 도움 on every card and at the top of a record (2026-11-10): the same small link in the same corner; a sibling of the card's button, never inside it */
+.record-card { position: relative; display: grid; }
+.record-card .record-when { padding-right: 52px; }
+.record-help { min-height: 44px; min-width: 44px; padding: 0 10px; border: 0; background: none; color: var(--muted); font: var(--t-aside) var(--font-sans); text-decoration: underline; text-underline-offset: .2em; cursor: pointer; }
+.record-help:hover { color: var(--accent-ink); }
+.record-card .record-help { position: absolute; top: 4px; right: 4px; }
+.record-detail-top { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin: -13px -10px 1px 0; } /* the 44px tap area, without moving the eyebrow */
+.record-detail-top .eyebrow { margin-bottom: 0; }
 .summary-card { margin-top: 38px; padding: 8px 22px; background: var(--card); border: 1px solid var(--line); }.summary-row { display: grid; grid-template-columns: 115px 1fr; gap: 16px; padding: 18px 0; border-bottom: 1px solid var(--line); }.summary-row:last-child { border-bottom: 0; }.summary-row span { color: var(--muted); font: var(--t-aside) var(--font-sans); }.summary-row strong { font-weight: 400; line-height: 1.5; }.summary-row.is-empty strong { color: var(--muted); }.summary-footnote, .small-note { margin: 24px 0; color: var(--muted); font-size: var(--t-small); line-height: 1.6; }.centered { margin-top: 18px; }
 .modal-backdrop { position: fixed; inset: 0; display: grid; place-items: center; padding: 24px; background: var(--backdrop); }.modal { width: min(100%, 450px); padding: 34px; background: var(--paper); box-shadow: 0 20px 70px var(--shadow); }.modal h2 { margin: 0; }.modal p:not(.eyebrow) { color: var(--muted); line-height: 1.6; }.modal-actions { display: grid; gap: 10px; margin-top: 28px; }
 @media (max-width: 560px) { .app-shell { padding: 0 20px 48px; }.topbar { height: 70px; }.screen { padding-top: 52px; }.entry-screen { padding-top: 84px; }.resume-card { align-items: flex-start; flex-direction: column; margin-top: 52px; }.resume-card .small-button { width: 100%; }.summary-row { grid-template-columns: 90px 1fr; }.inline-choices { display: grid; grid-template-columns: 1fr; }.own-word-row { flex-direction: column; }.synthesis { margin-top: 44px; }.synthesis-title { font-size: var(--t-lead); }.affect-grid { aspect-ratio: 1.15; border-radius: 42% 58% 47% 53%; }.quick-actions, .quick-bottom-actions { align-items: stretch; flex-direction: column-reverse; }.quick-actions .primary-button, .quick-bottom-actions .primary-button { width: 100%; }.quick-actions .quiet-button, .quick-bottom-actions .quiet-button { align-self: center; } }
@@ -239,7 +265,14 @@ p, .lede, .hint, .step-note, .small-note, .summary-footnote { text-wrap: pretty;
 .site-main .entry-screen { padding-top: 36px; }
 .site-main .screen { padding-top: 40px; }
 .site-header { display: flex; align-items: baseline; justify-content: space-between; gap: 12px 24px; flex-wrap: wrap; padding: 28px 0 18px; border-bottom: 1px solid var(--site-line); }
-.site-logo { display: inline-flex; align-items: center; min-height: 24px; color: var(--site-ink); text-decoration: none; font-family: var(--font-serif), serif; font-size: var(--t-lead); line-height: 1.1; letter-spacing: -.01em; }
+/* the homepage's own wordmark size and spacing (.wordmark: 1.3rem, .01em, read from eunchanjoe.vercel.app on 2026-11-10),
+   so the landing's title, the app's name, is the largest text and the header still reads as the homepage's */
+.site-logo { display: inline-flex; align-items: center; min-height: 24px; color: var(--site-ink); text-decoration: none; font-family: var(--font-serif), serif; font-size: var(--site-wordmark); line-height: 1.1; letter-spacing: .01em; }
+/* the homepage's plum-blossom mark (2026-11-05): 1.45 x the text height, 0.4em from it, as on the homepage; negative block margins keep the row height */
+.site-logo-mark { flex: none; display: block; width: 1.45em; height: 1.45em; margin-right: .4em; margin-block: -.3em; }
+.site-logo-mark img { display: block; width: 100%; height: 100%; }
+/* the words, not the mark, give the header its baseline, so the menu lines up with them as before */
+.site-logo-text { align-self: baseline; }
 .site-nav ul { display: flex; flex-wrap: wrap; gap: 4px 18px; margin: 0; padding: 0; list-style: none; }
 .site-nav a { display: inline-flex; align-items: center; min-height: 24px; min-width: 24px; color: var(--site-muted); text-decoration: none; font-size: var(--t-aside); letter-spacing: .09em; text-transform: uppercase; }
 .site-logo:hover, .site-nav a:hover, .site-footer a:hover { color: var(--site-hover); }
@@ -259,6 +292,13 @@ p, .lede, .hint, .step-note, .small-note, .summary-footnote { text-wrap: pretty;
 .about > p strong { color: var(--ink); font-weight: 700; }
 .about > .about-not { margin: 16px 0 0; color: var(--ink); }
 .about + .crisis-card { margin-top: 12px; }
+.about > .about-stage { margin: 16px 0 0; }
+/* the next step for someone not in crisis, under the crisis card (2026-11-10): plain text, no card */
+.next-step { margin-top: 28px; }
+.next-step h2 { margin: 0 0 12px; font-size: var(--t-body); font-weight: 700; line-height: 1.5; }
+.next-step p { margin: 0 0 10px; color: var(--ink); font-size: var(--t-small); line-height: 1.75; text-wrap: pretty; }
+.next-step .nowrap { white-space: nowrap; }
+.next-step .next-step-checked { margin: 14px 0 0; color: var(--muted); font-size: var(--t-aside); }
 .about-fold { margin-top: 12px; border: 1px solid var(--line); border-radius: 12px; background: var(--card); box-shadow: 0 2px 8px var(--shadow); }
 .about-fold > summary { display: flex; justify-content: space-between; align-items: center; padding: 18px 20px; color: var(--ink); font: 600 var(--t-small) var(--font-sans); cursor: pointer; list-style: none; }
 .about-fold > summary::-webkit-details-marker { display: none; }
@@ -289,6 +329,42 @@ p, .lede, .hint, .step-note, .small-note, .summary-footnote { text-wrap: pretty;
 .terms p { margin: 0 0 12px; }
 .terms ul, .terms ol { margin: 0 0 12px; padding-left: 1.4em; }
 .terms li { margin-bottom: 6px; }
+
+/* /words (2026-11-02): one card per word, no colour per feeling (PRODUCT_SPEC §19). */
+.words-page { max-width: 960px; }
+.words-page .terms-intro { max-width: 640px; }
+.words-print { margin: 20px 0 0; }
+.terms .words-list { padding: 0; }
+.words-list { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 12px; margin: 28px 0 0; padding: 0; list-style: none; }
+.word-card { margin: 0; padding: 16px 18px; border: 1px solid var(--line); border-radius: 12px; background: var(--card); scroll-margin-top: 24px; break-inside: avoid; }
+.word-card:target { border-color: var(--accent-ink); }
+.terms .word-card h2 { margin: 0; font-size: var(--t-lead); }
+.word-card h3 { margin: 14px 0 4px; color: var(--muted); font: 600 var(--t-aside) var(--font-sans); }
+.terms .word-card p, .terms .word-card li { margin: 0; font-size: var(--t-small); line-height: 1.7; }
+.terms .word-card ul { margin: 0; padding-left: 1.2em; list-style: disc; }
+.terms .word-card li { margin: 0; }
+.terms .word-card .word-aliases { margin-top: 2px; color: var(--muted); font-size: var(--t-aside); }
+.terms .word-card .word-source { margin-top: 4px; color: var(--muted); font-size: var(--t-aside); }
+.about-words { margin: 12px 0 0; font-size: var(--t-small); }
+.about-words a { color: var(--accent-ink); text-underline-offset: .2em; }
+/* English only (2026-11-10): the small line closing a block whose English the owner has not reviewed yet */
+.draft-note { margin: 8px 0 0; color: var(--muted); font: italic var(--t-aside) var(--font-sans); }
+
+/* Printing /words on A4: two columns, a card never split across pages. The header,
+   help button, footer and crisis card are kept, so the helplines stay on the paper.
+   No @page rule: it would reach every page of the site, so the paper is the print dialog's (A4 in Korea).  */
+@media print {
+  /* white paper: only where the page holds the word list, so /terms and /privacy print as before (2026-11-02) */
+  html:has(.words-page), html:has(.words-page) body { background: transparent; }
+  .word-card { background: transparent; }
+  .words-page { max-width: none; padding-top: 0; }
+  .words-print { display: none; }
+  .words-list { display: block; columns: 2; column-gap: 8mm; margin-top: 16px; }
+  .word-card { display: block; margin: 0 0 4mm; padding: 3mm 4mm; border-radius: 6px; box-shadow: none; break-inside: avoid; page-break-inside: avoid; }
+  .terms .word-card h2 { font-size: var(--t-body); }
+  .terms .word-card p, .terms .word-card li { line-height: 1.5; }
+  .word-card h3 { margin-top: 6px; }
+}
 .terms strong { font-weight: 700; }
 .terms-tel { text-wrap: nowrap; } /* a number is never split across lines (1577-0199 broke at 390px), as on the crisis card */
 @keyframes rise-in { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: none; } }
@@ -305,7 +381,7 @@ p, .lede, .hint, .step-note, .small-note, .summary-footnote { text-wrap: pretty;
 .inline-link { display: inline; min-height: 24px; padding: 0; border: 0; background: none; color: var(--accent-ink); font: inherit; text-decoration: underline; text-underline-offset: .2em; cursor: pointer; }
 .draft-confirm .synthesis-question { margin-top: 0; outline: none; }
 .draft-confirm .small-note { margin: 8px 0 18px; }
-.about-cite a { color: var(--accent-ink); text-underline-offset: .2em; }
+.about-cite a, .about-mail a { color: var(--accent-ink); text-underline-offset: .2em; }
 .about-checked { margin-top: 4px; font: 400 var(--t-aside) var(--font-sans) !important; font-variant-numeric: tabular-nums; }
 .help-reveal { margin-top: 32px; }
 .help-reveal .crisis-card { margin: 0 0 16px; }
@@ -317,7 +393,6 @@ p, .lede, .hint, .step-note, .small-note, .summary-footnote { text-wrap: pretty;
   .site-header { padding: 14px 0 10px; }
   .site-main .entry-screen { padding-top: 16px; }
   .hero-card { padding: 22px 18px; }
-  .hero-card .eyebrow { margin-bottom: 10px; }
   .hero-card .lede { margin-top: 12px; font-size: var(--t-small); line-height: 1.6; }
   .badges { gap: 2px 12px; margin: 12px 0 18px; }
   .badge { padding: 0; border: 0; background: none; box-shadow: none; color: var(--muted); font-weight: 500; }
@@ -360,10 +435,10 @@ p, .lede, .hint, .step-note, .small-note, .summary-footnote { text-wrap: pretty;
 .reveal-screen > * { order: 5; }
 .reveal-screen > .eyebrow { order: 0; }
 .reveal-screen > .reveal-title { order: 1; margin: 0 0 22px; }
-.reveal-screen > .mini-pad { order: 2; }
+.reveal-screen > .mini-pad-wrap { order: 2; }
 .reveal-screen > .summary-card { order: 3; margin-top: 4px; }
 .reveal-screen > .summary-footnote { order: 4; margin-top: 12px; }
-.mini-pad { position: relative; width: 168px; aspect-ratio: 1.35; margin: 6px 0 22px; border: 1px solid var(--line-strong); border-radius: 48% 52% 50% 48%; background: var(--card); }
+.mini-pad { position: relative; width: 100%; aspect-ratio: 1.35; margin: 0; border: 1px solid var(--line-strong); border-radius: 48% 52% 50% 48%; background: var(--card); }
 .mini-pad::before, .mini-pad::after { content: ""; position: absolute; background: var(--axis); }
 .mini-pad::before { left: 0; right: 0; top: 50%; height: 1px; }
 .mini-pad::after { top: 0; bottom: 0; left: 50%; width: 1px; }
@@ -405,6 +480,9 @@ p, .lede, .hint, .step-note, .small-note, .summary-footnote { text-wrap: pretty;
 /* The other language, at the end of the homepage frame's header. */
 .lang-switch { margin-left: 18px; color: var(--site-muted); font: var(--t-aside) var(--font-sans); letter-spacing: .06em; text-decoration: none; border: 1px solid var(--site-line); border-radius: 99px; padding: 4px 10px; white-space: nowrap; }
 .lang-switch:hover { color: var(--site-hover); }
+/* After an English-screen link that opens a page in Korean (KoreanMark): a tag at the 13px floor like every other text (was .68em, 8.8px in the menu, until 2026-11-10), not uppercase-spaced like the menu. */
+.ko-mark { margin-left: .4em; padding: 0 .3em; border: 1px solid currentColor; border-radius: 3px; font: 600 var(--t-aside)/1.4 var(--font-sans); letter-spacing: .04em; text-transform: none; text-decoration: none; display: inline-block; vertical-align: .1em; opacity: .85; }
+.visually-hidden { position: absolute; width: 1px; height: 1px; margin: -1px; padding: 0; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0; }
 @media (max-width: 560px) {
   /* on a phone the menu takes its own line, so the switch sits beside the name instead of falling under the menu */
   .site-header .lang-switch { order: 1; margin-left: auto; align-self: center; }
@@ -430,7 +508,9 @@ html, body { transition: background-color .5s ease; }
   background: radial-gradient(circle at 78% 26%, var(--tone-peach-blob) 0, transparent 60%), radial-gradient(circle at 22% 26%, var(--tone-lilac-blob) 0, transparent 60%),
     radial-gradient(circle at 22% 76%, var(--tone-blue-blob) 0, transparent 60%), radial-gradient(circle at 78% 76%, var(--tone-mint-blob) 0, transparent 60%), var(--card); }
 .hero-dot { position: absolute; left: 72%; top: 30%; width: 14px; height: 14px; border-radius: 50%; background: var(--accent); box-shadow: 0 0 0 5px var(--focus-ring); transform: translate(-50%, -50%); }
-.hero-card > .eyebrow { display: inline-block; padding: 4px 10px; border-radius: 99px; background: var(--accent-subtle); }
+/* the first screen's title is the app's name (2026-11-10): the largest text on the page; the nickname under it, then the old title sentence a step smaller */
+.hero-alias { margin: 8px 0 0; color: var(--muted); font: var(--t-aside) var(--font-sans); letter-spacing: .08em; }
+.hero-title { margin: 20px 0 0; font-family: var(--font-serif), serif; font-size: var(--t-lead); font-weight: 400; line-height: 1.35; letter-spacing: -.015em; text-wrap: balance; }
 
 /* the four badges as coloured pills, on phones too */
 .badges { display: flex; flex-wrap: wrap; gap: 8px; }
@@ -461,7 +541,7 @@ html, body { transition: background-color .5s ease; }
   .hero-card { display: grid; grid-template-columns: 1fr auto; column-gap: 12px; }
   .hero-card > * { grid-column: 1 / -1; }
   .hero-card > .hero-pad { grid-column: 2; grid-row: 1; width: 84px; margin: 0; align-self: start; }
-  .hero-card > .eyebrow { grid-column: 1; grid-row: 1; align-self: center; justify-self: start; }
+  .hero-card .hero-title { margin-top: 14px; }
   .hero-dot { width: 10px; height: 10px; box-shadow: 0 0 0 3px var(--focus-ring); }
   .badges { gap: 6px; }
   .badges .badge { padding: 3px 10px; border: 1px solid; color: var(--ink); font-weight: 500; }
@@ -473,7 +553,6 @@ html, body { transition: background-color .5s ease; }
 @media (max-width: 560px) {
   :lang(en) .hero-card { --t-scene: 1.85rem; }  /* the scene step, a size down for English on phones */
   :lang(en) .hero-card h1 { line-height: 1.2; }
-  :lang(en) .hero-card .eyebrow { letter-spacing: .06em; }
 }
 
 /* One way in (2026-10-30): the hero holds the first screen, so the notes, folds and crisis card start below the fold */
@@ -511,3 +590,92 @@ html, body { transition: background-color .5s ease; }
 .names-empty { margin: 12px 0 0; padding: 16px 18px; border: 1.5px dashed var(--line-strong); border-radius: 10px; background: transparent; }
 .record-row .names-not-yet { display: inline-block; padding: 2px 10px; border: 1.5px dashed var(--line-strong); border-radius: 8px; }
 .names-add { margin-top: 14px; min-height: 44px; }
+
+/* the last 14 days above the records list (2026-10-30): a dot on a day with a record, an open dashed space otherwise.
+   Fourteen equal columns always fit the width, so 390px and 375px take one line; each dot is a button whose
+   centre sits more than 24px from the next (WCAG 2.5.8 spacing). No fill marks a day without a record. */
+.day-strip { margin: 28px 0 8px; }
+.day-cells { list-style: none; margin: 10px 0 0; padding: 0; display: grid; grid-template-columns: repeat(14, minmax(0, 1fr)); gap: 2px; }
+.day-cells li { display: flex; }
+.day-cell { flex: 1; min-width: 0; height: 40px; display: flex; align-items: center; justify-content: center; border-radius: 8px; }
+.day-cell.is-open { border: 1px dashed var(--line-strong); background: transparent; height: 38px; }
+.day-cell.has-record { border: 1px solid var(--line); background: var(--card); padding: 0; cursor: pointer; }
+.day-cell.has-record:hover { border-color: var(--accent-ink); }
+.day-dot { width: 10px; height: 10px; border-radius: 50%; background: var(--accent-ink); }
+.day-ends { display: flex; justify-content: space-between; margin-top: 6px; color: var(--muted); font: var(--t-aside) var(--font-sans); }
+
+/* The landing drawing (2026-11-05): 답답해 splits in two. One ink and one line weight, no colour per feeling (§19).
+   Two equal columns whose centres sit at a quarter and three quarters, where the branch lines land. */
+.split-figure { margin: 28px 0 0; padding: 22px 16px 18px; border: 1px solid var(--line); border-radius: 12px; background: var(--card); }
+.split-word { margin: 0; text-align: center; }
+.split-word span { position: relative; display: inline-block; padding: 8px 18px; border: 1.5px solid var(--line-strong); border-radius: 18px; background: var(--paper); font-weight: 600; }
+.split-word span::after { content: ""; position: absolute; left: 50%; bottom: -7px; width: 10px; height: 10px; border-right: 1.5px solid var(--line-strong); border-bottom: 1.5px solid var(--line-strong); background: var(--paper); transform: translateX(-50%) rotate(45deg); }
+.split-lines { display: block; width: 100%; height: 40px; margin-top: 6px; overflow: visible; }
+.split-lines, .split-stem { fill: none; stroke: var(--line-strong); stroke-width: 1.5; stroke-linecap: round; }
+.split-lines path, .split-stem path { vector-effect: non-scaling-stroke; }
+.split-branches { list-style: none; display: grid; grid-template-columns: 1fr 1fr; gap: 0; margin: 0; padding: 0; }
+.split-branch { display: flex; flex-direction: column; align-items: center; padding: 0 6px; text-align: center; }
+.split-kind { padding: 6px 10px; border: 1px solid var(--line-strong); border-radius: 10px; background: var(--paper); font-size: var(--t-small); word-break: keep-all; }
+.split-stem { display: block; width: 2px; height: 24px; overflow: visible; }
+.split-need { color: var(--muted); font-size: var(--t-small); line-height: 1.45; word-break: keep-all; text-wrap: balance; }
+.split-line { margin: 18px 0 0; color: var(--muted); font-size: var(--t-small); line-height: 1.6; text-align: center; word-break: keep-all; }
+/* the lines are uncovered from the top down, so they seem to be drawn; the words under them then appear */
+.split-play .split-lines { clip-path: inset(0 0 100% 0); animation: split-draw .55s ease-out .15s forwards; }
+.split-play .split-stem { clip-path: inset(0 0 100% 0); animation: split-draw .3s ease-out .7s forwards; }
+.split-play .split-need { opacity: 0; animation: split-show .3s ease-out .9s forwards; }
+@keyframes split-draw { to { clip-path: inset(0 0 0 0); } }
+@keyframes split-show { to { opacity: 1; } }
+@media (prefers-reduced-motion: reduce) {
+  .split-play .split-lines, .split-play .split-stem { animation: none; clip-path: none; }
+  .split-play .split-need { animation: none; opacity: 1; }
+}
+
+/* The small read-only pad on the closing screens and the record detail (2026-11-05): the pad's own axis names around it.
+   Two spots: the earlier one lighter and smaller, each with a small label; never a line between them. */
+.mini-pad-wrap { width: 200px; margin: 6px 0 22px; }
+.mini-axis, .mini-axis-row { color: var(--muted); font: var(--t-aside)/1.3 var(--font-sans); }
+.mini-axis { text-align: center; }
+.mini-axis.top { margin-bottom: 4px; }
+.mini-axis.bottom { margin-top: 2px; }
+.mini-axis-row { display: flex; justify-content: space-between; padding-top: 3px; }
+.mini-quick:not(:only-child) .mini-dot { width: 11px; height: 11px; opacity: .5; }
+.mini-label { position: absolute; transform: translate(10px, -50%); white-space: nowrap; color: var(--ink); font: 600 var(--t-aside)/1 var(--font-sans); text-shadow: 0 0 3px var(--card), 0 0 3px var(--card); }
+.mini-label.to-left { transform: translate(calc(-100% - 10px), -50%); }
+.screen > h1 + .mini-pad-wrap, .source-legend + .mini-pad-wrap { margin-top: 20px; }
+
+/* 내 지도 on the records screen (2026-11-05): the pad's shape, every spot on it, a thin line in time order.
+   Time is carried by how strong a point is and how large the latest is; there is no colour per feeling (§19).
+   Each point is a 32px button around a small dot, so neighbours stay pressable at 390px. */
+.records-map { margin: 24px 0 8px; }
+.map-wrap { width: min(100%, 300px); margin: 10px auto 0; }
+.map-pad { position: relative; aspect-ratio: 1.35; border: 1px solid var(--line-strong); border-radius: 48% 52% 50% 48%; background: var(--card); }
+.map-pad::before, .map-pad::after { content: ""; position: absolute; background: var(--axis); }
+.map-pad::before { left: 0; right: 0; top: 50%; height: 1px; }
+.map-pad::after { top: 0; bottom: 0; left: 50%; width: 1px; }
+.map-lines { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; pointer-events: none; }
+.map-lines line { stroke: var(--accent-ink); stroke-width: 1.25; vector-effect: non-scaling-stroke; }
+.map-lines line.is-gap { stroke-dasharray: 2 4; stroke-linecap: round; }
+.map-point { position: absolute; z-index: 1; width: 32px; height: 32px; padding: 0; transform: translate(-50%, -50%); border: 0; border-radius: 50%; background: transparent; cursor: pointer; display: flex; align-items: center; justify-content: center; }
+.map-point:hover .map-dot { box-shadow: 0 0 0 3px var(--focus-ring); }
+.map-dot { width: 10px; height: 10px; border-radius: 50%; background: var(--accent-ink); box-shadow: 0 0 0 2px var(--card); }
+.map-point.is-latest { z-index: 2; }
+.map-point.is-latest .map-dot { width: 15px; height: 15px; }
+
+/* 「지난번 (11/3): …」 under a record line (2026-11-05): small and grey, in the value column, no band of its own */
+.previous-line { margin: -10px 0 0; padding: 0 0 14px calc(115px + 16px + 16px); border-bottom: 1px solid var(--line); color: var(--muted); font: var(--t-aside)/1.5 var(--font-sans); overflow-wrap: anywhere; }
+.summary-card .summary-row:has(+ .previous-line) { border-bottom: 0; }
+.previous-line:last-child { border-bottom: 0; }
+@media (max-width: 560px) { .previous-line { padding-left: calc(90px + 16px + 16px); } }
+
+/* 덜 중요한 것 접어 두기 (2026-11-05): the records' moving and deleting behind one line, the record's source labels behind one button */
+.record-manage { margin-top: 36px; border-top: 1px solid var(--line); }
+.record-manage > summary { display: flex; align-items: center; justify-content: space-between; min-height: 48px; color: var(--muted); font: 600 var(--t-aside) var(--font-sans); cursor: pointer; list-style: none; }
+.record-manage > summary::-webkit-details-marker { display: none; }
+.record-manage > summary::after { content: "+"; font-size: var(--t-body); }
+.record-manage[open] > summary::after { content: "−"; }
+.record-manage > .synthesis { margin-top: 8px; }
+.sources-toggle { display: block; min-height: 44px; margin-top: 28px; color: var(--muted); font-size: var(--t-aside); }
+
+/* 도움 한 줄 (2026-11-05): the same quiet line at the foot of the records list and of a record */
+.help-line { margin: 24px 0 0; }
+.help-line .inline-link { min-height: 44px; color: var(--muted); font-size: var(--t-small); }

@@ -36,9 +36,15 @@ describe("/en route", () => {
   it("shows the English app in a production build, since the owner opened English (2026-10-19)", () => {
     vi.stubEnv("NODE_ENV", "production");
     render(EnglishPage());
-    expect(screen.getByRole("heading", { level: 1 }).textContent).toMatch(/Before you name it/); // placeholder title since 2026-10-30
-    // the only Korean on the English landing is the name of the other language, on the switch
-    expect(document.body.textContent?.replace("한국어", "")).not.toMatch(HANGUL);
+    // the app's name is the title since 2026-11-10; the 2026-10-30 sentence follows it
+    expect(screen.getByRole("heading", { level: 1 }).textContent).toBe("Emotion Observatory");
+    expect(document.querySelector(".hero-title")!.textContent).toMatch(/Before you name it/);
+    // the only Korean on the English landing is the name of the other language, on the switch, and
+    // the centre's Korean name in the next-step paragraph, so a reader can find it (2026-11-10).
+    // The JSON-LD is not on screen and names the app and its maker in Korean too (2026-11-11), so it is left out.
+    const onScreen = document.body.cloneNode(true) as HTMLElement;
+    onScreen.querySelectorAll('script[type="application/ld+json"]').forEach((script) => script.remove());
+    expect(onScreen.textContent?.replace("한국어", "").replace("(정신건강복지센터)", "")).not.toMatch(HANGUL);
   });
 
   it("keeps the development status frame plain English, with no Korean in its place", () => {
@@ -55,11 +61,14 @@ describe("/en route", () => {
     expect(en.robots).toBeUndefined();
     expect(String(en.description)).not.toMatch(HANGUL);
     const ko = metadataFor("ko");
-    expect(ko).toMatchObject({ title: "감정 관찰실", description: "몸, 상황, 의미를 천천히 구별해보는 자기관찰 도구" });
+    expect(ko).toMatchObject({ title: "감정 관찰실 · Emotion Observatory", description: "몸, 상황, 의미를 천천히 구별해보는 자기관찰 도구" });
     // the share card and canonical address point at the public site, not at a preview
     expect(String(ko.metadataBase)).toBe("https://emotion-observatory.vercel.app/");
     expect(ko.alternates?.canonical).toBe("/");
-    expect(ko.openGraph).toMatchObject({ title: "감정 관찰실", locale: "ko_KR", url: "/" });
+    expect(ko.openGraph).toMatchObject({ title: "감정 관찰실 · Emotion Observatory", siteName: "감정 관찰실", locale: "ko_KR", url: "/" });
+    expect(ko.twitter).toMatchObject({ title: "감정 관찰실 · Emotion Observatory" });
+    expect(en.openGraph).toMatchObject({ title: "Emotion Observatory" });
+    expect(en.twitter).toMatchObject({ title: "Emotion Observatory" });
     expect(ko.alternates).toMatchObject({ languages: { ko: "/", en: "/en" } });
   });
 });

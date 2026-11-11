@@ -1399,6 +1399,7 @@ type EmotionSession = {
     contrastAnswer?: string
     microLearningSeen?: boolean
     wordsRevealed?: { at: string }      // 「단어 보기」를 처음 누른 시각 (2026-10-30). 누르지 않았으면 없음
+    context?: { eventText?: string }    // 「무슨 일이 있었나요」 한 줄 (2026-10-30 2차 A). 출처 선택 없음. 빠른 확인이 끝나면 고정
     endedAt?: string
   }
 
@@ -1433,6 +1434,10 @@ type EmotionSession = {
   stopReason?: "user" | "entry"
   migratedFromV1?: true
   labelsLater?: { label: string; at: string }[]  // 나중에 붙인 이름, 끝에 더하기만 (2026-10-30). 날것 층은 그대로
+  talkToSomeone?: { answer: "yes" | "no" | "not-yet"; at: string }       // 요약의 질문 (2026-10-19)
+  underlyingFeeling?: { answer: "yes" | "no" | "unsure"; note?: string; at: string }
+                                                 // 「이 느낌 아래에 다른 느낌이 먼저 있었나요?」 (2026-10-30 2차 D).
+                                                 // 보여 주기만 한다. note는 「있었다」일 때만, 이름 층이 아니라 이 답에 붙는다
 }
 ```
 
@@ -1643,7 +1648,11 @@ additional neighbors       1차 후보의 neighbors 중 아직 보이지 않은 
 # 14-A. Records (최소 History, 구현됨)
 
 `completed:v4`를 그대로 읽는다. ~~스키마 변경 없음.~~ (2026-10-30 변경 전) 2026-10-30부터 선택 필드
-`labelsLater`·`wordsRevealed`가 더해졌다. 선택 필드라 저장소 버전은 v4 그대로다.
+`labelsLater`·`wordsRevealed`가 더해졌다. 같은 날 2차에서 `quickCheck.context`·`underlyingFeeling`이 더해졌다. 모두 선택 필드라 저장소 버전은 v4 그대로다.
+
+**최근 14일 띠 (2026-10-30 2차 C).** 목록 맨 위. 기록이 있는 날은 점, 없는 날은 점선 빈칸, 오늘이 오른쪽 끝.
+하루에 기록이 여럿이어도 점 하나다. 점을 누르면 목록에서 그 날 첫 기록으로 초점이 간다. 빈칸은 누를 수 없다.
+숫자(기록 수, 연속 일수)를 붙이지 않고, 빈칸을 「안 한 날」로 칠하지 않는다. 14칸 균등 격자라 390px 폭에서 한 줄이다.
 
 랜딩에서만 들어간다 — 세션 도중에 들어가면 reducer의 현재 세션과 편집 대상이
 충돌할 수 있는데, 랜딩에서는 persist가 건너뛰므로 안전하다.
@@ -1664,6 +1673,7 @@ additional neighbors       1차 후보의 neighbors 중 아직 보이지 않은 
 - pad는 두 줄로 나눈다: 「누른 곳」(직접 누름)과 그 좌표를 앱이 말로 바꾼 문장(좌표를 앱이 말로 바꿈). 한 줄에 두 출처를 섞지 않는다.
 - 고른 말은 「직접 씀」(`source: "custom"`) / 「목록에서 고름」 / 「단어 보기 뒤 고름」(`wordsRevealed`가 있을 때)으로 나눈다. 목록에서 고른 말도 사용자가 고른 것이므로 직접 쪽 띠로 칠하고, 목록에서 왔다는 사실은 글 라벨이 말한다(2026-10-30 본인 결정).
 - 몸·상황·중요했던 것은 직접(누름 또는 씀), 살펴본 정도는 앱이 셈.
+- 빠른 확인의 한 줄(`quickCheck.context`)은 적었을 때만 「그때 일어난 일」(직접 씀)로 보인다. 「먼저 있었던 느낌」의 답(직접 누름)과 한 줄(직접 씀)도 있을 때만 보인다(2026-10-30 2차).
 - **이름 칸.** 그때의 말(또는 「아직 모르겠다」)을 첫 줄에 기록 날짜와 함께, 그 아래 `labelsLater`를 날짜순으로 한 줄씩(「MM/DD 덧붙임」).
   맨 아래 「+ 오늘 이름 붙이기」(44px 이상)를 누르면 한 줄 칸(`INPUT_LIMITS.word`)이 열리고, 저장하면 오늘 날짜가 붙는다. 자동 제안은 없다.
   더하기만 있고 고치기·지우기는 없다(`ADD_LABEL_LATER`, 끝난 기록에만). 그때의 말(`quickCheck.selected`, `deepReflection.emotionCandidates`)은 바뀌지 않는다.

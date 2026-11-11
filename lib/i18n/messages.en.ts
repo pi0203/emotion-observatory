@@ -34,6 +34,39 @@ export const enOnly = {
    * Korean has no such line.
    */
   outsideKorea: "All numbers on this card are for South Korea. If you are outside Korea, call your local emergency number.",
+  /** In the footer, where the Korean one has 이용약관 · 개인정보 처리방침; both lead to the Korean pages (2026-11-10). */
+  termsLink: "Terms",
+  privacyLink: "Privacy",
+  /**
+   * After every English-screen link that opens a page in Korean (the homepage
+   * menu's Reading, Threads and Map, the homepage itself, the brain map, the
+   * terms and the policy): `short` is drawn small, `label` is read by screen
+   * readers in its place. The links also carry hrefLang="ko" (2026-11-10).
+   * The word list link says "(in Korean)" in its own words, so it has no mark.
+   */
+  koreanMark: { short: "KO", label: " (in Korean)" },
+  /**
+   * DRAFT, not reviewed by the owner (2026-11-10). The English of three things
+   * that were on the Korean landing only: the practitioner fold, the brain map
+   * line (its words are `about.atlasLead` and `about.atlasLink`, written
+   * 2026-11-05 and also not reviewed) and the link to the word list. Each is
+   * listed in docs/EN_REVIEW.md as 「검토 전」, and each block on the screen ends
+   * with `draftNote` until the owner has read it. Same meaning as the Korean
+   * (koOnly.practitioner), with nothing added except where a page is in Korean.
+   */
+  draftNote: "Draft, not yet reviewed by the author.",
+  practitioner: {
+    summary: "For those using this in counseling or clinical training",
+    lines: [
+      "This is a self-observation tool for adults to use on their own. If you use it in counseling, please have the client choose and write on their own device. It was not made for someone else to fill in an entry for them or to be used as assessment material.",
+      "Nothing written here is sent anywhere off this device. If it was used on a shared device at an institution, please go to “Past entries” afterward and press “Delete all entries on this device.”",
+      "When two or more people use it together, one device per person is recommended. When people choose together on one screen, it is easy to end up choosing by the other person’s reaction rather than their own feeling.",
+    ],
+    mailBefore: "If the word list, the wording or the safety information needs improving anywhere, please write to ",
+    mailAfter: ". Please do not include client information or case details.",
+    /** The word list page is in Korean only, so the link says so. */
+    wordsLink: "See the word list (in Korean) →",
+  },
 } as const;
 
 /**
@@ -74,12 +107,22 @@ export const en: Messages = {
     provisionalNote: "A starter set of words · Only what you choose is kept",
     helpLink: "Where to get help",
     helpShort: "Help",
+    /** The same line at the foot of the records list and of a record (2026-11-05); opens the help card. */
+    helpLine: "Where to reach out when it’s hard",
     close: "Close",
     saveFailed: "This browser is not saving this entry. Its storage may be full, or the browser may be blocking it. You can go on, but if you close this screen, this entry will not be kept. You can free up space on the past entries screen by exporting older entries to a file and then deleting them.",
     quoted: "“{value}”",
     listSeparator: ", ",
   },
   landing: {
+    split: {
+      word: "I feel stuck",
+      tired: "Stuck because I’m worn out",
+      tiredNeed: "When rest is what’s needed",
+      stuck: "Stuck because the words won’t come",
+      stuckNeed: "When sorting out what to say is what’s needed",
+      line: "It’s fine not to know whether it feels good or bad. Tap roughly where it is, and the dots that gather show you your own side.",
+    },
     // same meaning as the Korean (owner kept the proposed wording, 2026-10-30)
     title: "Before you name it, keep what you feel just as it is.",
     lede: "This is not a test to get right. It takes about a minute.",
@@ -103,7 +146,7 @@ export const en: Messages = {
     intro: "If you need someone to talk to, these counseling lines in South Korea are open 24 hours.",
     lifeline109: "Suicide Prevention Counseling Line (24 hours)",
     num109: "109",
-    mental1577: "Mental Health Counseling Line (24 hours)",
+    mental1577: "Mental Health Crisis Counseling Line (24 hours)",
     num1577: "1577-0199",
     youth1388: "Youth Counseling Line (ages 9 to 24)",
     num1388: "1388",
@@ -116,9 +159,17 @@ export const en: Messages = {
     href119: "tel:119",
     href112: "tel:112",
   },
+  nextStep: {
+    title: "Not in crisis, but hard to carry alone",
+    center: "Your local mental health welfare center (정신건강복지센터) offers free counseling and screening for depression, anxiety and stress. There is one in every city, county and district, open weekdays 9:00 to 18:00. If you don’t know which one is yours, call 1577-0199; it connects you to a center near where your phone is.",
+    voucher: "With a referral from a mental health welfare center or a university counseling center, you can get up to eight sessions of professional counseling through the national counseling voucher (ask 129). How much you pay depends on your income.",
+    person: "Going to a person first, instead of writing here, is also a good choice.",
+    checked: "Numbers and programs checked on the Ministry of Health and Welfare website on 2026-11-10.",
+  },
   about: {
     title: "About this tool",
     what: "A self-observation tool for looking at what you are experiencing in parts: the body, the situation, what mattered, and the words for it. The quick look has two steps: tap once, then pick words that feel close. The slow look has six steps, from the body to the words.",
+    stage: "This is a concept prototype: a trial version made to show an idea before research or expert review.",
     not: "It is not a medical tool or a crisis service, and it does not score or judge emotions. <b>It has not yet been shown to help people tell emotions apart better or to benefit mental health.</b>",
     refsSummary: "Six studies consulted",
     refsIntro: "How far research supports the ideas behind this app. Each study is listed with what it found and where it falls short.",
@@ -128,6 +179,9 @@ export const en: Messages = {
     refsChecked: "Last checked {year}-{month}-{day}. For each study we looked again at its publication status and any correction or retraction notice on Crossref.",
     checkedOn: "Checked {year}-{month}-{day}",
     doiLink: "Source",
+    // 검토 전 (not reviewed): shown on the English screen since 2026-11-10 with enOnly.draftNote after it; listed in docs/EN_REVIEW.md
+    atlasLead: "How the body and brain relate to emotion, what textbooks and studies say and where they disagree, is collected on the maker’s homepage (in Korean, a work in progress).",
+    atlasLink: "Brain map",
     refs: {
       vedernikova: {
         cite: "Vedernikova, Kuppens, & Erbas (2021). From knowledge to differentiation. Frontiers in Psychology.",
@@ -292,6 +346,7 @@ export const en: Messages = {
     step: "Possible words",
     title: "Words that might come close to what you are experiencing.",
     hint: "This is not a verdict on your emotion. You can pick several, or none if nothing fits.",
+    pause: "You can leave it at this for now.",
     decline: {
       "none-close": "No word comes close",
       unsure: "Not sure",
@@ -304,6 +359,10 @@ export const en: Messages = {
     coach: "Look at the differences between words",
     deep: "Take a slower look",
     coachNote: "A short practice with an example situation. The words you picked stay as they are. Examples exist for only some words.",
+    context: {
+      label: "What happened",
+      hint: "Just the event is enough. What it meant can come later, or not at all.",
+    },
   },
   coach: {
     step: "Practice with an example",
@@ -360,6 +419,7 @@ export const en: Messages = {
     basis: "Only what you notice in your body right now",
     step: "Body",
     title: "First, what do you notice in your body?",
+    pause: "If paying attention to your body is uncomfortable, you can stop here. What you have recorded so far is kept.",
     hint: "Before looking for a name for the emotion, start with what you can notice in your body right now. No need to change how you are sitting. What you notice in this moment is enough.",
     more: "Show other body sensations",
     customLabel: "If there is something else, you can write it",
@@ -509,6 +569,19 @@ export const en: Messages = {
     saved: "Your answer is kept with this entry.",
     recordLabel: "Thinking of telling someone",
   },
+  underlyingFeeling: {
+    question: "Was a different feeling there first, underneath this one?",
+    hint: "You do not have to answer. Any answer is fine.",
+    answers: {
+      yes: "There was",
+      no: "There was not",
+      unsure: "I don’t know",
+    },
+    noteLabel: "What was it like?",
+    saved: "Your answer is kept with this entry.",
+    recordLabel: "A feeling there first, underneath",
+    noteRecordLabel: "That feeling",
+  },
   records: {
     eyebrow: "Past entries",
     title: "What you wrote before",
@@ -517,6 +590,18 @@ export const en: Messages = {
     needLine: "What you needed · {label}",
     responsesLine: "What you planned to try · {labels}",
     backToStart: "← Back to the start",
+    days: {
+      title: "The last 14 days",
+      today: "Today",
+      goTo: "Go to the entries from {date}",
+    },
+    /** 기록 옮기기와 지우기, folded into one line (2026-11-05). */
+    manage: "Manage entries",
+    /** 내 지도 under the strip (2026-11-05): one point per record with a spot, nothing counted. */
+    map: {
+      title: "My map",
+      open: "Open the entry from {when}",
+    },
     depth: {
       quick: "Quick look",
       "quick+deep": "Quick look + slow look",
@@ -582,16 +667,19 @@ export const en: Messages = {
     deletedAll: "All entries on this device have been deleted.",
   },
   recordDetail: {
+    /** The one button that shows the source labels and how far the record went (2026-11-05). */
+    sourcesShow: "See where each line came from",
+    sourcesHide: "Hide where each line came from",
+    /** Under a line, when the record just before had the same one (2026-11-05). Side by side only: no comparing word. */
+    previous: "Last time ({date}): {value}",
     depth: "How far you went",
     quickAffect: "Quick look",
     deepAffect: "After the slow look",
     personalMeaning: "“{label}” meant",
     context: "Situation",
+    quickContext: "What happened then",
     need: "What you needed",
     responses: "What you chose to try",
-    quickSpot: "Where you tapped in the quick look",
-    deepSpot: "Where you tapped after the slow look",
-    spotValue: "One spot on the pad",
     body: "Body",
     concerns: "What mattered",
     source: {

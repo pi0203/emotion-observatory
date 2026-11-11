@@ -1,0 +1,5 @@
+{
+  "note": "The English values in the JSON-LD on /en (lib/structured-data.ts), copied word for word from the Aside instruction of 2026-11-11. Not shown on screen. The description is the /en meta description; the creator is the same as on /.",
+  "disambiguatingDescription": "Not a tool that analyzes text or judges emotions. A self-observation log where you write down, yourself, what you notice in your body, the situation, and what it meant to you. Records stay only in the browser you use.",
+  "operatingSystem": "Web browser"
+}

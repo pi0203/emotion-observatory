@@ -24,6 +24,9 @@ export const TERMS_MAIL = "mailto:a5897@icloud.com";
 
 export const TERMS_PATH = "/terms";
 
+/** The privacy policy (data/privacy.ko.json), drawn in the same frame as the terms. */
+export const PRIVACY_PATH = "/privacy";
+
 /** A paragraph, a bulleted list, or a numbered list. */
 export type TermsBlock = string | { list: string[] } | { ordered: string[] };
 export type TermsSection = { id: string; title: string; blocks: TermsBlock[] };

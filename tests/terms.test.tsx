@@ -6,6 +6,7 @@ import Home from "../app/(ko)/page";
 import EmotionApp from "../app/emotion-app";
 import sitemap from "../app/sitemap";
 import terms from "../data/terms.ko.json";
+import { en } from "../lib/i18n/messages.en";
 import { ko, koOnly } from "../lib/i18n/messages.ko";
 import { SITE_URL } from "../lib/site";
 import { CONTACTS_CHECKED_ON, parseTerms, TERMS_EFFECTIVE, TERMS_MAIL, TERMS_PATH } from "../lib/terms";
@@ -42,10 +43,11 @@ describe("the terms page", () => {
   });
 
   it("is titled and addressed as its own page", () => {
-    expect(metadata.title).toBe(`${terms.title} · ${ko.meta.title}`);
-    expect(metadata.title).toBe("이용약관 · 감정 관찰실");
+    expect(metadata.title).toBe(`${terms.title} · ${ko.meta.title} · ${en.meta.title}`);
+    expect(metadata.title).toBe("이용약관 · 감정 관찰실 · Emotion Observatory");
     expect(metadata.alternates).toEqual({ canonical: "/terms" });
     expect(metadata.openGraph).toMatchObject({ url: "/terms", title: metadata.title });
+    expect(metadata.twitter).toMatchObject({ title: metadata.title });
   });
 
   it("is in the sitemap", () => {
@@ -137,7 +139,7 @@ describe("the links to and from the terms", () => {
     expect(TERMS_MAIL).toBe("mailto:a5897@icloud.com");
   });
 
-  it("send the Korean storage answer to 제6조, and the English one nowhere", () => {
+  it("send the Korean storage answer to 제6조, and the English one nowhere (the English footer's 「Terms」 goes to /terms itself)", () => {
     render(<Home />);
     expect(screen.getByRole("link", { name: koOnly.termsStorageLink }).getAttribute("href")).toBe(`${TERMS_PATH}#article-6`);
     cleanup();
@@ -145,7 +147,8 @@ describe("the links to and from the terms", () => {
     expect(article("article-6").querySelector("h2")!.textContent!.startsWith("제6조")).toBe(true);
     cleanup();
     render(<EmotionApp locale="en" />);
-    expect([...document.querySelectorAll("a")].some((a) => a.getAttribute("href")?.startsWith(TERMS_PATH))).toBe(false);
+    expect([...screen.getByRole("main").querySelectorAll("a")].some((a) => a.getAttribute("href")?.startsWith(TERMS_PATH))).toBe(false);
+    expect([...document.querySelectorAll("a")].filter((a) => a.getAttribute("href")?.startsWith(TERMS_PATH)).map((a) => a.getAttribute("href"))).toEqual([TERMS_PATH]);
   });
 });
 

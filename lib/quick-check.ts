@@ -99,3 +99,16 @@ export const expandCandidates = (shown: EmotionSelection[], limit = 6, locale: L
   }
   return asSelections(added.slice(0, limit));
 };
+
+/**
+ * Where on the quick pad the second step opens with one plain line, 지금은 여기까지만
+ * 남겨도 됩니다 (owner's decision 2026-10-30, second round B): the unpleasant,
+ * high-energy corner. Strict on both edges. It is not a risk check: the spot is the
+ * person's own tap, nothing about it is stored or said back, the line names no
+ * state, and every button on the step stays as it is.
+ */
+export const PAUSE_LINE_CORNER = { valenceBelow: 0.35, activationAbove: 0.65 } as const;
+
+export const showsPauseLine = (affect?: { valence?: number; activation?: number; unknown?: boolean }) =>
+  Boolean(affect && !affect.unknown && affect.valence !== undefined && affect.activation !== undefined
+    && affect.valence < PAUSE_LINE_CORNER.valenceBelow && affect.activation > PAUSE_LINE_CORNER.activationAbove);

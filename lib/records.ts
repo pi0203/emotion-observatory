@@ -125,3 +125,118 @@ export const helpedOptions = (locale: Locale = DEFAULT_LOCALE) => {
 export const TRIED = triedOptions(DEFAULT_LOCALE);
 
 export const HELPED = helpedOptions(DEFAULT_LOCALE);
+
+/** How many days the strip on the records screen shows, today at the right end. */
+export const DAY_STRIP_LENGTH = 14;
+
+export type StripDay = {
+  /** The viewer's local day, YYYY-MM-DD. */
+  key: string;
+  /** Local midnight of that day, for formatDay. */
+  iso: string;
+  /** The first record of the day in the list's own order; absent on a day with none. */
+  firstId?: string;
+};
+
+const localKey = (date: Date) =>
+  `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}-${String(date.getDate()).padStart(2, "0")}`;
+
+/**
+ * The last fourteen days for the strip above the records list (owner's decision
+ * 2026-10-30, second round C), oldest first, in the viewer's own time zone, by the
+ * same moment the list shows. A day holds at most one mark however many records
+ * it has. Nothing is counted: no number of days, no run of days, no day marked as
+ * missed — a day with no record is simply open.
+ */
+export const recentDays = (records: EmotionSession[], now: Date = new Date(), length: number = DAY_STRIP_LENGTH): StripDay[] => {
+  const first = new Map<string, string>();
+  for (const session of records) {
+    const at = new Date(session.completedAt ?? session.createdAt);
+    if (Number.isNaN(at.getTime())) continue;
+    const key = localKey(at);
+    if (!first.has(key)) first.set(key, session.id);
+  }
+  return Array.from({ length }, (_, index) => {
+    const day = new Date(now.getFullYear(), now.getMonth(), now.getDate() - (length - 1 - index));
+    const key = localKey(day);
+    return { key, iso: day.toISOString(), firstId: first.get(key) };
+  });
+};
+
+/** When a record happened, for ordering records in time: the moment the list shows. */
+export const recordTime = (session: EmotionSession) => new Date(session.completedAt ?? session.createdAt).getTime();
+
+/** Two records further apart than this are joined by a dotted line on the map: a rest is just a rest (2026-11-05). */
+export const MAP_GAP_DAYS = 14;
+
+export type MapPoint = {
+  id: string;
+  /** ISO time of the record, for the date in the button's name. */
+  at: string;
+  /** The pad position, 0..1 each, never shown as a number. */
+  valence: number;
+  activation: number;
+  /** True when the record before this one is more than MAP_GAP_DAYS earlier. Absent on the first point. */
+  afterGap?: boolean;
+};
+
+const hasSpot = (affect?: { valence?: number; activation?: number; unknown?: boolean }) =>
+  Boolean(affect && !affect.unknown && typeof affect.valence === "number" && typeof affect.activation === "number");
+
+/**
+ * 내 지도 on the records screen (2026-11-05): one point for every record with a
+ * spot on the pad, oldest first. A record with both keeps the spot from after the
+ * slower look, the later of the two. Records without a spot are left out, and a
+ * record whose time cannot be read is too. Nothing is computed from the points.
+ */
+export const mapPoints = (records: EmotionSession[]): MapPoint[] => {
+  const points = records.flatMap((session) => {
+    const time = recordTime(session);
+    if (Number.isNaN(time)) return [];
+    const deep = session.deepReflection?.affect;
+    const quick = session.quickCheck?.affect;
+    const spot = hasSpot(deep) ? deep : hasSpot(quick) ? quick : undefined;
+    return spot ? [{ id: session.id, at: new Date(time).toISOString(), valence: spot.valence!, activation: spot.activation!, time }] : [];
+  }).sort((a, b) => a.time - b.time);
+  return points.map(({ time, ...point }, index) => index === 0 ? point
+    : { ...point, afterGap: time - points[index - 1].time > MAP_GAP_DAYS * 24 * 60 * 60 * 1000 });
+};
+
+/**
+ * The record just before this one in time (2026-11-05), for the record detail's
+ * 「지난번」 lines. Undefined for the first record.
+ */
+export const previousRecord = (session: EmotionSession, records: EmotionSession[]): EmotionSession | undefined => {
+  const time = recordTime(session);
+  if (Number.isNaN(time)) return undefined;
+  return records
+    .filter((other) => other.id !== session.id && !Number.isNaN(recordTime(other)) && recordTime(other) < time)
+    .sort((a, b) => recordTime(b) - recordTime(a))[0];
+};
+
+export type PreviousLines = {
+  /** ISO time of the record before, for the date in 「지난번 (11/3)」. */
+  at: string;
+  body?: string;
+  names?: string;
+  concerns?: string;
+  need?: string;
+};
+
+/**
+ * What the record just before held in the same four places (2026-11-05): body,
+ * names, what mattered and the direction needed, each exactly as it was shown
+ * there, joined with " · ". A place left empty there is absent here. Nothing is
+ * compared: the lines are only set side by side.
+ */
+export const previousLines = (previous: EmotionSession): PreviousLines => {
+  const item = summarise(previous, localeOf(previous));
+  const join = (values: string[]) => values.join(" · ") || undefined;
+  return {
+    at: item.at,
+    body: join((previous.deepReflection?.body ?? []).map((entry) => entry.label)),
+    names: join(item.words) ?? join((previous.labelsLater ?? []).map((entry) => entry.label)),
+    concerns: join(previous.deepReflection?.concerns ?? []),
+    need: item.needLabel,
+  };
+};

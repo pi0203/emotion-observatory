@@ -16,7 +16,7 @@ export const ko = {
   meta: {
     title: "감정 관찰실",
     description: "몸, 상황, 의미를 천천히 구별해보는 자기관찰 도구",
-    shareImageAlt: "감정 관찰실 — 지금의 경험을 조금 더 알아보기. 감정을 맞히는 검사가 아닌 자기관찰 도구.",
+    shareImageAlt: "감정 관찰실: 지금의 경험을 조금 더 알아보기. 감정을 맞히는 검사가 아닌 자기관찰 도구.",
   },
   /** The homepage frame on the landing and record screens (docs/DESIGN_ALIGNMENT.md §5). */
   shell: {
@@ -42,12 +42,23 @@ export const ko = {
     provisionalNote: "임시 단어 모음 · 스스로 고른 표현만 기록됩니다",
     helpLink: "도움받을 수 있는 곳",
     helpShort: "도움",
+    /** The same line at the foot of the records list and of a record (2026-11-05); opens the help card. */
+    helpLine: "힘들 때 연락할 수 있는 곳",
     close: "닫기",
     saveFailed: "이 브라우저에 기록을 저장하지 못하고 있습니다. 저장 공간이 가득 찼거나 브라우저가 저장을 막고 있을 수 있습니다. 계속할 수는 있지만, 이 화면을 닫으면 지금 기록은 남지 않습니다. 지난 기록 화면에서 오래된 기록을 파일로 내보내고 지우면 공간이 생깁니다.",
     quoted: "“{value}”",
     listSeparator: ", ",
   },
   landing: {
+    /** The drawing under the buttons (2026-11-05): the 답답함 example from 「왜 감정을 조금 더 자세히 살펴볼까요?」, as one word that splits in two. */
+    split: {
+      word: "답답해",
+      tired: "지쳐서 답답함",
+      tiredNeed: "쉬는 게 필요할 때",
+      stuck: "할 말이 막혀 답답함",
+      stuckNeed: "말을 정리하는 게 필요할 때",
+      line: "좋은지 싫은지 잘 몰라도 괜찮아요. 이쯤이라고 눌러 두면, 쌓인 점들이 내 쪽을 보여 줘요.",
+    },
     // the one-way-in title and subtitle (owner kept the proposed wording, 2026-10-30)
     title: "이름 붙이기 전에, 지금 느껴지는 것을 그대로 남겨 둡니다.",
     lede: "맞히는 검사가 아닙니다. 1분이면 됩니다.",
@@ -72,7 +83,7 @@ export const ko = {
     intro: "이야기를 나눌 사람이 필요하다면, 24시간 열려 있는 상담 전화가 있습니다.",
     lifeline109: "자살예방상담전화 (24시간)",
     num109: "109",
-    mental1577: "정신건강 상담전화 (24시간)",
+    mental1577: "정신건강 위기상담전화 (24시간)",
     num1577: "1577-0199",
     youth1388: "청소년상담전화 (9~24세)",
     num1388: "1388",
@@ -86,10 +97,24 @@ export const ko = {
     href119: "tel:119",
     href112: "tel:112",
   },
+  /**
+   * Right under the crisis card on the landing (2026-11-10, owner's approval 「좋아. 넣어줘.」):
+   * where to go when it is not a crisis but too much to carry alone. Text only; nothing here is a link,
+   * and no region is asked for. Sources and the date checked are in SAFETY.md.
+   */
+  nextStep: {
+    title: "위기는 아니지만, 혼자 감당하기 어렵다면",
+    center: "사는 곳의 정신건강복지센터에서 우울·불안·스트레스 상담과 검사를 무료로 받을 수 있어요. 시·군·구마다 있고, 평일 9시부터 18시까지예요. 어디인지 모르겠다면 1577-0199에 걸어 보세요. 휴대전화가 있는 곳에서 가까운 센터로 이어져요.",
+    voucher: "정신건강복지센터나 대학 상담센터에서 심리상담이 필요하다는 의뢰서를 받으면, 전문 심리상담을 8회까지 지원받을 수 있어요(정신건강 심리상담 바우처, 문의 129). 본인 부담은 소득에 따라 달라요.",
+    person: "여기서 기록하는 대신 사람에게 먼저 가는 것도 잘 고른 길이에요.",
+    checked: "번호와 제도는 보건복지부 누리집에서 2026-11-10에 확인했습니다.",
+  },
   /** Below the landing buttons: what the tool is, the studies behind it (docs/EVIDENCE_CHAIN.md), and common questions. */
   about: {
     title: "이 도구에 대하여",
     what: "지금의 경험을 몸 · 상황 · 중요했던 것 · 표현으로 나누어 살펴보는 자기관찰 도구입니다. 빠르게 살펴보기는 화면을 한 번 누르고 가까운 말을 고르는 두 단계, 천천히 살펴보기는 몸에서 시작해 표현까지 가는 여섯 단계입니다.",
+    /** The stage line, the same sentence as 이방IN (2026-11-10); it sits just above `not`, once per screen. */
+    stage: "개념 시제품입니다. 연구나 전문가 검토를 거치기 전, 아이디어를 보여 주려고 만든 시험판입니다.",
     not: "의료 도구나 위기 상담 도구가 아니고, 감정에 점수를 매기거나 판정하지 않습니다. <b>감정 구별이나 정신건강을 나아지게 한다는 효과는 아직 검증되지 않았습니다.</b>",
     refsSummary: "참고한 연구 6편",
     refsIntro: "앱의 생각이 연구로 어디까지 뒷받침되는지 정리했습니다. 연구마다 나온 것과 한계를 함께 적었습니다.",
@@ -99,6 +124,8 @@ export const ko = {
     limit: "한계",
     refsClosing: "<b>이 앱을 직접 시험한 연구는 아직 없습니다.</b> 이 앱처럼 가끔, 10~30초씩 쓰는 방식은 위 어느 연구보다도 훨씬 적게 쓰는 것입니다. 위 연구들은 앱의 생각이 어디쯤 서 있는지 보여 줄 뿐입니다.",
     doiLink: "원문",
+    atlasLead: "몸과 뇌가 감정과 어떻게 이어지는지, 교과서와 연구가 어디까지 말하고 어디서 의견이 갈리는지는 만든 사람의 홈페이지에 따로 모으고 있습니다(작업 중).",
+    atlasLink: "뇌 지도",
     refs: {
       vedernikova: {
         cite: "Vedernikova, Kuppens, & Erbas (2021). From knowledge to differentiation. Frontiers in Psychology.",
@@ -189,7 +216,7 @@ export const ko = {
     shaped: "우리가 감정을 표현하는 방식은 몸의 느낌과 상황뿐 아니라, 살아온 경험과 언어, 관계와 문화의 영향을 받습니다. 같은 경험도 사람이나 공동체에 따라 조금 다르게 나누고 부를 수 있어요.",
     notJudging: "그래서 이 앱은 당신의 ‘진짜 감정’을 찾아내려 하지 않습니다. 대신 지금 경험을 이해하는 데 도움이 되는 말을 함께 찾아봅니다. 여기 있는 단어들은 완전한 목록이 아니라 <b>출발점</b>이고, <b>내 말로 적는 것이 예외가 아니라 정상적인 길</b>입니다.",
     principle: "언어를 가로질러 비교적 널리 통하는 것은 <b>불쾌함–유쾌함</b>과 <b>가라앉음–활성됨</b> 같은 넓은 방향입니다. 반면 그 안을 어떤 단어로 나누는지는 언어와 문화에 따라 달라질 수 있습니다. 그래서 이 앱은 방향은 함께 짚어보고, <b>이름은 당신이 고릅니다.</b>",
-    deeperSummary: "조금 더 — 감정이 사회적으로 만들어진다는 말",
+    deeperSummary: "조금 더: 감정이 사회적으로 만들어진다는 말",
     deeperReal: "감정이 사회적으로 구성된다는 것은 감정이 가짜라는 뜻이 아닙니다. 한 과학적 관점에서는 몸과 뇌의 변화가 실제로 존재하면서도, 사람들이 공유하고 배운 감정 개념이 그 경험에 의미와 기능을 부여한다고 봅니다.",
     deeperMoney: "화폐의 가치가 종이의 물리적 성질만으로 설명되지 않지만 실제로 우리 삶에서 작동하는 것과 비슷한 비유를 생각해볼 수 있습니다.",
     deeperOpen: "다만 이것은 <b>하나의 이론적 입장이고</b>, 감정이 얼마나 보편적이고 얼마나 문화적으로 구성되는지는 <b>여전히 연구 중</b>입니다.",
@@ -264,6 +291,8 @@ export const ko = {
     step: "가능한 표현",
     title: "지금 경험을 표현할 때 가까울 수도 있는 말입니다.",
     hint: "감정을 판정하는 결과가 아닙니다. 여러 개를 골라도 되고, 맞지 않으면 고르지 않아도 됩니다.",
+    /** Shown only after a spot in the unpleasant, high-energy corner (lib/quick-check PAUSE_LINE_CORNER). */
+    pause: "지금은 여기까지만 남겨도 됩니다.",
     decline: {
       "none-close": "가까운 말이 없음",
       unsure: "잘 모르겠음",
@@ -276,6 +305,11 @@ export const ko = {
     coach: "표현 사이의 차이 살펴보기",
     deep: "조금 더 천천히 들여다보기",
     coachNote: "예시 상황으로 해보는 짧은 연습입니다. 지금 고른 표현은 그대로 남습니다. 예시는 일부 후보에만 준비되어 있습니다.",
+    context: {
+      // one optional line under the second step (owner's decision 2026-10-30)
+      label: "무슨 일이 있었나요",
+      hint: "일어난 일만 적어도 됩니다. 뜻은 나중에 붙여도 됩니다.",
+    },
   },
   coach: {
     step: "예시로 연습하기",
@@ -333,7 +367,9 @@ export const ko = {
     basis: "지금 이 순간 몸에서 알아차린 것만",
     step: "몸",
     title: "먼저, 몸에서는 무엇이 느껴지나요?",
-    hint: "감정 이름을 찾기 전에 지금 몸에서 알아차릴 수 있는 것부터 봅니다. 자세를 고쳐 앉을 필요는 없습니다 — 지금 이 순간 알아차린 것이면 충분합니다.",
+    // under the title: stopping is fine, and 그만하기 is already in the top bar (2026-10-30)
+    pause: "몸을 살피는 게 불편하면 여기서 멈춰도 됩니다. 멈춘 기록도 그대로 남습니다.",
+    hint: "감정 이름을 찾기 전에 지금 몸에서 알아차릴 수 있는 것부터 봅니다. 자세를 고쳐 앉을 필요는 없습니다. 지금 이 순간 알아차린 것이면 충분합니다.",
     more: "다른 몸의 느낌 보기",
     customLabel: "다른 느낌이 있다면 적어도 됩니다",
     customPlaceholder: "예: 손이 차가움",
@@ -484,6 +520,20 @@ export const ko = {
     saved: "이 기록에 남겨 두었습니다.",
     recordLabel: "사람에게 말해 볼 생각",
   },
+  /** A second question in the same form, under talkToSomeone (owner's decision 2026-10-30). Kept and shown back only. */
+  underlyingFeeling: {
+    question: "이 느낌 아래에 다른 느낌이 먼저 있었나요?",
+    hint: "답하지 않아도 됩니다. 어느 답이든 괜찮습니다.",
+    answers: {
+      yes: "있었다",
+      no: "없었다",
+      unsure: "모르겠다",
+    },
+    noteLabel: "어떤 느낌이었나요",
+    saved: "이 기록에 남겨 두었습니다.",
+    recordLabel: "아래에 먼저 있던 느낌",
+    noteRecordLabel: "그 느낌",
+  },
   records: {
     eyebrow: "지난 기록",
     title: "이전에 적은 것들",
@@ -493,6 +543,19 @@ export const ko = {
     needLine: "필요했던 방향 · {label}",
     responsesLine: "해보기로 한 것 · {labels}",
     backToStart: "← 처음으로",
+    /** The strip of the last 14 days above the list (2026-10-30). No counts, no 안 한 날. */
+    days: {
+      title: "최근 14일",
+      today: "오늘",
+      goTo: "{date} 기록으로 가기",
+    },
+    /** 기록 옮기기와 지우기, folded into one line (2026-11-05). */
+    manage: "기록 관리",
+    /** 내 지도 under the strip (2026-11-05): one point per record with a spot, nothing counted. */
+    map: {
+      title: "내 지도",
+      open: "{when} 기록 열기",
+    },
     /** How far a record went. Derived from what it holds, never stored. */
     depth: {
       quick: "빠른 확인",
@@ -562,16 +625,19 @@ export const ko = {
     deletedAll: "이 기기의 기록을 모두 지웠습니다.",
   },
   recordDetail: {
+    /** The one button that shows the source labels and how far the record went (2026-11-05). */
+    sourcesShow: "어디서 온 줄인지 보기",
+    sourcesHide: "어디서 온 줄인지 접기",
+    /** Under a line, when the record just before had the same one (2026-11-05). Side by side only: no comparing word. */
+    previous: "지난번 ({date}): {value}",
     depth: "살펴본 정도",
     quickAffect: "빠른 확인",
     deepAffect: "자세히 본 뒤",
     personalMeaning: "‘{label}’은",
     context: "상황",
+    quickContext: "그때 일어난 일",
     need: "필요했던 방향",
     responses: "해보기로 한 것",
-    quickSpot: "빠른 확인에서 누른 곳",
-    deepSpot: "자세히 본 뒤 누른 곳",
-    spotValue: "패드 위의 한 점",
     body: "몸",
     concerns: "중요했던 것",
     /** The label under each line: where it came from (2026-10-30). Never colour alone. */
@@ -650,10 +716,44 @@ export const ko = {
  * `enOnly` in messages.en.ts.
  */
 export const koOnly = {
+  /**
+   * 첫 화면 제목 「감정 관찰실」 바로 아래 작은 줄 (2026-11-10). 별칭 이쯤은 좌표판의 힌트 「‘이쯤’이라고 느껴지는 곳」에서 왔다(2026-11-05).
+   * 전에는 제목 위 표지 「이쯤 · 감정 관찰실」이었고, 앱 이름이 제목이 되면서 별칭만 남았다. 영어에는 없다.
+   */
+  alias: "이쯤",
   /** In the footer, after eunchanjoe.vercel.app. */
   termsLink: "이용약관",
+  /** In the footer, after 이용약관 (2026-11-02). */
+  privacyLink: "개인정보 처리방침",
   /** After the answer to 「기록은 어디에 저장되나요?」. */
   termsStorageLink: "자세히: 이용약관 제6조",
+  /**
+   * 「이 도구에 대하여」 안, 「참고한 연구」 다음 접힌 칸 (2026-11-02, 작성자 확인 전 문구).
+   * 근거: docs/FIELD_NOTES_2026-11-02.md. 영어는 따로 쓴다(docs/I18N_PLAN.md).
+   * 마지막 줄의 메일 주소는 `mailBefore` 와 `mailAfter` 사이에 링크로 들어간다.
+   */
+  practitioner: {
+    summary: "상담·수련 현장에서 보시는 분께",
+    lines: [
+      "이 도구는 성인이 스스로 쓰는 자기관찰 도구입니다. 상담에서 함께 쓰신다면, 내담자가 자기 기기에서 직접 고르고 적게 해 주세요. 기록을 대신 적거나 평가 자료로 쓰도록 만들지 않았습니다.",
+      "적은 내용은 이 기기 밖 어디로도 보내지지 않습니다. 기관의 공용 기기에서 썼다면 마친 뒤 「지난 기록」에서 「이 기기의 기록 모두 지우기」를 눌러 주세요.",
+      "두 사람 이상이 함께 쓸 때는 한 사람에 기기 하나를 권합니다. 한 화면에서 함께 고르면, 내 느낌보다 옆 사람의 반응에 맞춰 고르게 되기 쉽습니다.",
+    ],
+    mailBefore: "단어 목록, 문장, 안전 안내에서 개선이 필요한 곳이 있으면 ",
+    mailAddress: "a5897@icloud.com",
+    mailAfter: "으로 알려 주세요. 내담자 정보나 사례는 적지 말아 주세요.",
+    /** 칸 바로 아래, /words 로 가는 링크 (2026-11-02). 기록 흐름 안에는 두지 않는다. */
+    wordsLink: "단어 목록 보기 →",
+  },
+  /** /words, 단어 목록 쪽 (2026-11-02, 작성자 확인 전 문구). `{count}`는 단어 수로 채운다. */
+  words: {
+    title: "감정 관찰실의 단어 목록",
+    intro: "감정 관찰실에서 쓰는 단어 {count}개를 한곳에 모았습니다. 완전한 목록이 아니라 출발점이고, 맞는 말이 없으면 내 말로 적는 것이 정상적인 길입니다. 단어 아래의 힌트는 그 감정의 정의가 아니라, 비슷한 단어와 견줘 볼 때 쓸 수 있는 실마리입니다. 이 목록은 아직 연구와 검토를 거치는 중입니다.",
+    aliases: "비슷하게: {words}",
+    hints: "이럴 때 쓰기도 해요",
+    neighbors: "견줘 볼 말",
+    print: "인쇄하기",
+  },
   /**
    * 「다른 기기에서도 보기」 on the records screen: login, and records stored on
    * the server (owner's decision 2026-11-02, changed the same day: no 기록 암호;
