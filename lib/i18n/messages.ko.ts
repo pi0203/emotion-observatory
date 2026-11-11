@@ -754,6 +754,65 @@ export const koOnly = {
     neighbors: "견줘 볼 말",
     print: "인쇄하기",
   },
+  /**
+   * 「다른 기기에서도 보기」 on the records screen: login, and records stored on
+   * the server (owner's decision 2026-11-02, changed the same day: no 기록 암호;
+   * preview only; shown only where the login values are set).
+   */
+  account: {
+    title: "다른 기기에서도 보기",
+    open: "다른 기기에서도 보기",
+    // 본인 확정 2026-11-02: from here to consentAge, with the link to /privacy after the points
+    consentLead: "로그인하면 다른 기기에서도 기록을 볼 수 있어요.",
+    consentPoints: [
+      "받는 것: 로그인한 계정의 이메일 주소(네이버는 식별 번호), 기록",
+      "기록은 서버에 저장돼요. 다른 사용자는 볼 수 없어요.",
+      "서비스를 관리하는 만든 사람은 관리 화면에서 기록을 볼 수 있어요. 필요한 경우에만 열어요.",
+      "서버는 Supabase(미국 회사)이고, 서울에 있어요.",
+      "만 14세 미만은 로그인할 수 없어요.",
+      "언제든 「계정 지우기」로 서버의 계정과 기록을 모두 지울 수 있어요.",
+    ],
+    privacyLink: "개인정보 처리방침 보기",
+    consentAccount: "위 내용을 읽었고, 계정 정보와 기록을 맡기는 데 동의해요 (필수)",
+    consentRecords: "감정 기록을 맡기는 데 따로 동의해요 (필수)",
+    consentAge: "만 14세 이상이에요 (필수)",
+    continueAsGuest: "로그인 안 하고 계속 쓰기",
+    // the buttons, in this order (2026-11-02; no email login, Apple later); Google and Apple keep their names in Latin letters as their guides ask
+    providers: {
+      google: "Google로 계속하기",
+      kakao: "카카오로 계속하기",
+      naver: "네이버로 계속하기",
+      apple: "Apple로 계속하기",
+    },
+    agreeFirst: "위 세 칸에 체크하면 로그인할 수 있어요.",
+    // the first line right after signing in, however it was done (2026-11-02)
+    arrived: "로그인했어요.",
+    signedInAs: "{email} 계정이에요.",
+    // in place of the line above when the account has no email, as a Naver account never does (2026-11-02)
+    signedInWith: "{provider} 계정으로 로그인했어요.",
+    providerNames: { google: "Google", kakao: "카카오", naver: "네이버", apple: "Apple" },
+    syncOn: "이 기기에서 저장하는 기록은 계정에도 올라가요.",
+    importQuestion: "이 기기의 기록 {count}개를 계정으로 가져올까요?",
+    importNote: "고르지 않은 기록은 이 기기에만 남아요. 고른 것은 다시 묻지 않아요.",
+    importConfirm: "가져오기",
+    importKeep: "이 기기에만 두기",
+    signOut: "로그아웃",
+    deleteAccount: "계정 지우기",
+    deleteConfirmTitle: "계정과 계정의 기록을 모두 지울까요?",
+    deleteConfirmBody: "서버의 이메일과 기록은 되살릴 수 없어요. 이 기기의 기록은 그대로 남아요.",
+    deleteConfirm: "계정 지우기",
+    deleteCancel: "그만두기",
+    working: "잠시만요…",
+    notes: {
+      "login-failed": "로그인하지 못했어요. 다시 해 주세요.",
+      "attempt-failed": "방금 시도한 로그인은 되지 않았어요.",
+      "provider-failed": "지금은 이 방법으로 로그인할 수 없어요. 다른 방법을 써 주세요.",
+      network: "연결이 안 됐어요. 조금 뒤에 다시 해 주세요.",
+      "sync-failed": "계정에 올리지 못했어요. 이 기기의 기록은 그대로 있어요.",
+      deleted: "계정을 지웠어요. 이 기기의 기록은 그대로 있어요.",
+      "signed-out": "로그아웃했어요. 이 기기의 기록은 그대로 있어요.",
+    },
+  },
 } as const;
 
 /**
