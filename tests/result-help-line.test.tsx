@@ -12,8 +12,15 @@ import { getStorageKeys } from "../lib/storage";
  * Check H1 (2026-11-11): someone wrote 「죽고 싶어」 in 내 말로 적기, pressed
  * 여기까지, and the closing screen showed no helpline number, only the small
  * 도움 button in the header. Nothing reads the entry for risk (SAFETY.md), so
- * both closing screens now end with one small sentence that carries 109,
- * 1577-0199 and 1388 as tel: links, the same for every entry.
+ * both closing screens now carry one small sentence with 109, 1577-0199 and
+ * 1388 as tel: links, the same for every entry. Since 2026-11-12 ((나)안) it
+ * sits right under the summary card, above the footnote, so it is on the first
+ * screen at 390px without scrolling.
+ *
+ * jsdom has no layout, so the 390px check is made here by order: the line is the
+ * card's next sibling in the DOM, and globals.css gives it the card's flex order
+ * (3), ahead of the footnote (4) and the rest (5). The height itself is measured
+ * on the preview with Playwright.
  */
 const escape = (text: string) => text.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
 const button = (name: string) => screen.getByRole("button", { name: new RegExp(`^${escape(name)}`) });
@@ -32,8 +39,24 @@ const quickSummaryWith = (messages: Messages, ownWord: string) => {
 
 const dialled = (line: Element) => Array.from(line.querySelectorAll("a")).map((link) => [link.textContent, link.getAttribute("href")]);
 const NUMBERS = [["109", "tel:109"], ["1577-0199", "tel:1577-0199"], ["1388", "tel:1388"]];
+const css = readFileSync(join(process.cwd(), "app/globals.css"), "utf8");
+const orderOf = (selector: string) => {
+  const rule = css.split("\n").find((text) => text.startsWith(".reveal-screen > ") && text.split("{")[0].split(",").map((part) => part.trim().replace(/^\.reveal-screen > /, "")).includes(selector));
+  return Number(rule?.match(/order:\s*(\d+)/)?.[1]);
+};
 
-describe("the help sentence at the foot of the closing screens", () => {
+// right under the summary card, above the footnote and everything after it
+const expectRightUnderCard = (screenEl: Element, line: Element) => {
+  const card = screenEl.querySelector(":scope > .summary-card")!;
+  expect(card.nextElementSibling).toBe(line);
+  expect(line.compareDocumentPosition(screenEl.querySelector(":scope > .summary-footnote")!) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
+  expect(line.compareDocumentPosition(screenEl.querySelector(".stack-actions")!) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
+  // it comes in with the card, not after the rest
+  expect(line.classList.contains("reveal-step")).toBe(true);
+  expect((line as HTMLElement).style.getPropertyValue("--d")).toBe((card as HTMLElement).style.getPropertyValue("--d"));
+};
+
+describe("the help sentence under the summary on the closing screens", () => {
   beforeEach(() => window.localStorage.clear());
   afterEach(cleanup);
 
@@ -43,9 +66,15 @@ describe("the help sentence at the foot of the closing screens", () => {
     const line = screenEl.querySelector(".result-help")!;
     expect(line.textContent).toBe("지금 많이 힘드시다면 혼자 견디지 않아도 돼요. 자살예방상담전화 109, 정신건강 위기상담전화 1577-0199(24시간). 청소년은 1388.");
     expect(dialled(line)).toEqual(NUMBERS);
-    // the last thing on the screen, below the questions and the buttons
-    expect(screenEl.lastElementChild).toBe(line);
-    expect(screenEl.querySelector(".stack-actions")!.compareDocumentPosition(line) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
+    expectRightUnderCard(screenEl, line);
+  });
+
+  it("is laid out in the card's place, ahead of the footnote, so it stays on the first screen", () => {
+    expect(orderOf(".summary-card")).toBe(3);
+    expect(orderOf(".result-help")).toBe(3);
+    expect(orderOf(".result-help + .draft-note")).toBe(3);
+    expect(orderOf(".summary-footnote")).toBe(4);
+    expect(orderOf("*")).toBe(5);
   });
 
   it("is the same line whatever was written, since nothing reads the entry", () => {
@@ -59,7 +88,7 @@ describe("the help sentence at the foot of the closing screens", () => {
     expect(lines[0]).toBe(lines[1]);
   });
 
-  it("ends the summary of the slower look too", () => {
+  it("sits under the summary of the slower look too", () => {
     const { DRAFT_KEY } = getStorageKeys();
     window.localStorage.setItem(DRAFT_KEY, JSON.stringify({
       id: "draft-1", createdAt: "2026-11-12T09:00:00.000Z", status: "draft", entry: "deep", locale: "ko", stage: "outcome",
@@ -72,8 +101,9 @@ describe("the help sentence at the foot of the closing screens", () => {
     fireEvent.click(button(ko.common.next));
     expect(screen.getByText(ko.summary.title)).toBeTruthy();
     const screenEl = document.querySelector("section.screen")!;
-    expect(screenEl.lastElementChild!.className).toBe("result-help");
-    expect(dialled(screenEl.lastElementChild!)).toEqual(NUMBERS);
+    const line = screenEl.querySelector(".result-help")!;
+    expect(dialled(line)).toEqual(NUMBERS);
+    expectRightUnderCard(screenEl, line);
   });
 
   it("takes its numbers from the crisis card's own messages", () => {
@@ -91,8 +121,9 @@ describe("the help sentence at the foot of the closing screens", () => {
     const line = screenEl.querySelector(".result-help")!;
     expect(line.textContent).toBe("If things are very hard right now, you don’t have to get through it alone. Suicide Prevention Counseling Line 109, Mental Health Crisis Counseling Line 1577-0199 (24 hours). For young people, 1388.");
     expect(dialled(line)).toEqual(NUMBERS);
+    expectRightUnderCard(screenEl, line);
     expect(line.nextElementSibling!.textContent).toBe(enOnly.draftNote);
-    expect(screenEl.lastElementChild).toBe(line.nextElementSibling);
+    expect(line.nextElementSibling!.nextElementSibling!.className).toContain("summary-footnote");
   });
 
   it("lists the English sentence in docs/EN_REVIEW.md as 검토 전", () => {
