@@ -30,6 +30,9 @@ export const documentTitle = (locale: Locale): string =>
  */
 const verification: Metadata["verification"] = { other: { "naver-site-verification": "76a44d979154532ba02f91cb1b13f44e3f335f87" } };
 
+/** The Korean and English addresses of the landing, as hreflang pairs (only while English is open). */
+export const LANGUAGES = { ko: "/", en: "/en", "x-default": "/" } as const;
+
 export const metadataFor = (locale: Locale): Metadata => {
   if (!hasMessages(locale)) {
     return { metadataBase: new URL(SITE_URL), verification, title: `[${locale}] messages not written`, description: `Development only: no messages for "${locale}" yet. See docs/I18N_PLAN.md.`, robots: { index: false } };
@@ -43,8 +46,9 @@ export const metadataFor = (locale: Locale): Metadata => {
     verification,
     title,
     description: t("meta.description"),
-    // each language names the other, so search engines treat them as one page in two languages
-    alternates: englishAvailable() ? { canonical: path, languages: { ko: "/", en: "/en" } } : { canonical: path },
+    // each language names the other, so search engines treat them as one page in two languages;
+    // x-default (for a reader who chose neither) is the Korean page (2026-11-12). app/sitemap.ts writes the same pairs.
+    alternates: englishAvailable() ? { canonical: path, languages: { ...LANGUAGES } } : { canonical: path },
     openGraph: { type: "website", siteName: t("meta.title"), title, description: t("meta.description"), url: path, locale: locale === "ko" ? "ko_KR" : "en_US", images: [image] },
     twitter: { card: "summary_large_image", title, description: t("meta.description"), images: [image] },
   };
