@@ -942,12 +942,13 @@ function QuickSummaryScreen({ session, onDeep, onFeedback, onSupport }: { sessio
     <h1 className="reveal-title reveal-step" style={delay(d.title)}>{t("quickSummary.title")}</h1>
     <MiniPad quick={quick?.affect} />
     <div className="summary-card reveal-step" style={delay(d.card)}>{rows.map(([label, value], index) => <SummaryRow key={label} label={label} value={value} style={delay(d.rows[index])} />)}</div>
+    {/* right under the summary, inside the first screen at 390px, at the same moment as the card (2026-11-12, (나)안) */}
+    <ResultHelpLine style={delay(d.card)} />
     <p className="summary-footnote reveal-step" style={delay(d.rest)}>{t("quickSummary.footnote")}</p>
     <div className="reveal-rest reveal-step" style={delay(d.rest)}>
       <SynthesisSection session={session} onFeedback={onFeedback} />
       <div className="stack-actions"><button className="primary-button centered" onClick={onDeep}>{t("quickSummary.deep")} <span>→</span></button><button className="secondary-button" onClick={onSupport}>{t("quickSummary.support")}</button><a className="secondary-button centered" href="/">{t("common.backToStart")}</a></div>
     </div>
-    <ResultHelpLine />
   </Screen>;
 }
 
@@ -1075,6 +1076,8 @@ function SummaryScreen({ session, onFeedback, onTalk, onUnderlying, onUnderlying
     {/* both spots on one pad, each labelled, never joined (2026-11-05) */}
     <MiniPad quick={quickAffect} deep={deep?.affect} />
     <div className="summary-card reveal-step" style={delay(d.card)}>{rows.map(([label, value], index) => <SummaryRow key={label} label={label} value={value ?? t("common.leftEmpty")} empty={value === undefined} style={delay(d.rows[index])} />)}</div>
+    {/* right under the summary, inside the first screen at 390px, at the same moment as the card (2026-11-12, (나)안) */}
+    <ResultHelpLine style={delay(d.card)} />
     <p className="summary-footnote reveal-step" style={delay(d.rest)}>{t("summary.footnote")}</p>
     <div className="reveal-rest reveal-step" style={delay(d.rest)}>
       <SynthesisSection session={session} onFeedback={onFeedback} />
@@ -1082,7 +1085,6 @@ function SummaryScreen({ session, onFeedback, onTalk, onUnderlying, onUnderlying
       <UnderlyingFeelingQuestion answer={session.underlyingFeeling?.answer} note={session.underlyingFeeling?.note ?? ""} onAnswer={onUnderlying} onNote={onUnderlyingNote} />
       <div className="stack-actions"><button className="primary-button centered" onClick={onSupport}>{t("summary.support")} <span>→</span></button><a className="secondary-button centered" href="/">{t("common.backToStart")}</a></div>
     </div>
-    <ResultHelpLine />
   </Screen>;
 }
 
@@ -1695,13 +1697,13 @@ function WorsenedScreen() {
  * own numbers. Always there and never animated, whatever the entry says;
  * nothing reads the entry for risk (SAFETY.md). The English is a draft.
  */
-function ResultHelpLine() {
+function ResultHelpLine({ style }: { style?: CSSProperties }) {
   const t = useT();
   // the numbers go back in as their own marks, so TermsText draws them as links
   const text = t("common.resultHelp", { num109: "{num109}", num1577: "{num1577}", num1388: "{num1388}" });
   return <>
-    <p className="result-help"><TermsText text={text} /></p>
-    {t.locale === "en" && <p className="draft-note">{enOnly.draftNote}</p>}
+    <p className="result-help reveal-step" style={style}><TermsText text={text} /></p>
+    {t.locale === "en" && <p className="draft-note reveal-step" style={style}>{enOnly.draftNote}</p>}
   </>;
 }
 

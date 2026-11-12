@@ -427,6 +427,8 @@ p, .lede, .hint, .step-note, .small-note, .summary-footnote { text-wrap: pretty;
 .reveal-screen > .reveal-title { order: 1; margin: 0 0 22px; }
 .reveal-screen > .mini-pad-wrap { order: 2; }
 .reveal-screen > .summary-card { order: 3; margin-top: 4px; }
+/* the help line follows the card, before the footnote (2026-11-12); in English its draft note comes with it */
+.reveal-screen > .result-help, .reveal-screen > .result-help + .draft-note { order: 3; }
 .reveal-screen > .summary-footnote { order: 4; margin-top: 12px; }
 .mini-pad { position: relative; width: 100%; aspect-ratio: 1.35; margin: 0; border: 1px solid var(--line-strong); border-radius: 48% 52% 50% 48%; background: var(--card); }
 .mini-pad::before, .mini-pad::after { content: ""; position: absolute; background: var(--axis); }
