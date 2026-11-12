@@ -3,6 +3,7 @@ import "../../globals.css";
 import { metadataFor } from "../../../lib/i18n/metadata";
 import KoreanDocument from "../../korean-document";
 import { fontVariables } from "../../fonts";
+import { GROUND_INIT } from "../../../lib/ground";
 
 import { englishAvailable } from "../../../lib/i18n/availability";
 
@@ -22,7 +23,8 @@ export const metadata: Metadata = metadataFor(blocked ? "ko" : "en");
 export default function EnglishRootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   if (blocked) return <KoreanDocument>{children}</KoreanDocument>;
   return (
-    <html lang="en" className={fontVariables}>
+    <html lang="en" className={fontVariables} suppressHydrationWarning>
+      <head><script dangerouslySetInnerHTML={{ __html: GROUND_INIT }} /></head>
       <body>{children}</body>
     </html>
   );

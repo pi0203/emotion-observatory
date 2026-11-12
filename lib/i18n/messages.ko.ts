@@ -24,6 +24,10 @@ export const ko = {
     siteNav: "홈페이지 메뉴",
     owner: "조은찬",
     otherLanguage: "English",
+    /** The paper colour picker beside the language link (2026-11-13). */
+    ground: "바탕색",
+    groundNow: "바탕색: {name}",
+    groundNames: { blue: "파랑", sage: "세이지", blush: "블러시", lilac: "연보라" },
   },
   common: {
     appName: "감정 관찰실",

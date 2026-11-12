@@ -10,19 +10,21 @@
      The site frame (header, footer, menu) keeps the homepage's own values in --site-*.
      Contrast is checked by tests/design-tokens-contrast.test.ts in light and dark. */
   color-scheme: light;
-  --accent: #2543D1;        /* main button, progress bar, the affect dot: 6.12:1 on paper */
-  --accent-hover: #1E37B0;
-  --accent-press: #182C8F;
-  --accent-soft: #2543D1;   /* a selected choice's background (blue); its text is --on-accent */
-  --accent-subtle: #E9EFFF; /* hover and step notes */
-  --accent-ink: #2543D1;    /* the accent as text (section labels), focus ring and selected edge */
-  --ink: #111A3D;           /* 13.85:1 on paper */
-  --muted: #3F4B7A;         /* 7.91:1 on card */
-  --line: #B5C5F5;          /* dividers, card edges and badge borders */
-  --line-strong: #6474B0;   /* interactive control borders: 3.68:1 on paper, 4.23:1 on card */
-  --paper: #E0E8FF;
-  --card: #F5F8FF;
-  --warm: #EAEEFB;          /* example zone and asides: no yellow or coral surface, so a quiet cool tint */
+  /* 2026-11-13: the default blue is the quieter blue of the four pickable sets below (owner's mock-ups);
+     the other three only replace these values under <html data-ground-pick>. */
+  --accent: #4A5C9A;        /* main button, progress bar, the affect dot: 5.29:1 on paper */
+  --accent-hover: #3F4E83;  /* the accent 15% darker */
+  --accent-press: #35426F;  /* the accent 28% darker */
+  --accent-soft: #4A5C9A;   /* a selected choice's background; its text is --on-accent */
+  --accent-subtle: #EDEFF5; /* hover and step notes: the accent at 10% on white */
+  --accent-ink: #4A5C9A;    /* the accent as text (section labels), focus ring and selected edge */
+  --ink: #1B2340;           /* 12.79:1 on paper */
+  --muted: #47506E;         /* 7.48:1 on card */
+  --line: #C5CEE3;          /* dividers, card edges and badge borders */
+  --line-strong: #7884A8;   /* interactive control borders: 3.07:1 on paper (mock-up #7C88AD, darkened to reach 3:1) */
+  --paper: #E5EAF4;
+  --card: #F6F8FC;
+  --warm: #ECF0F7;          /* example zone and asides: no yellow or coral surface, so a quiet cool tint */
   --on-accent: #FFFFFF;     /* text on the main button and on a selected choice: 7.49:1 */
   --check: #FFFFFF;         /* the ✓ on the selected background */
   --badge: #FFFFFF;         /* badge background */
@@ -31,10 +33,12 @@
   --site-muted: #46513F;    /* 6.84:1 on this paper */
   --site-line: #B2C4AC;
   --site-hover: #984024;    /* 5.55:1 on this paper */
-  --focus-ring: rgba(37, 67, 209, .2);
-  --backdrop: rgba(17, 26, 61, .4);
-  --shadow: rgba(17, 26, 61, .14);
-  --axis: #B5C5F5;          /* the affect pad's centre lines (same as --line in light) */
+  --focus-ring: rgba(74, 92, 154, .2);
+  --backdrop: rgba(27, 35, 64, .4);
+  --shadow: rgba(27, 35, 64, .14);
+  --axis: #C5CEE3;          /* the affect pad's centre lines (same as --line in light) */
+  /* the landing's wash, from this set's paper to its card (2026-11-13; was blue, lilac, peach tone papers) */
+  --landing-wash: linear-gradient(180deg, var(--paper) 0%, var(--warm) 48%, var(--card) 100%);
   /* Where a record line came from (2026-10-30): a band at its left, with a text label; the three
      also differ in line style (solid, dashed, double), so colour is never the only sign. 3:1 on card and paper. */
   --source-mine: #2543D1;   /* what the person pressed or wrote */
@@ -56,6 +60,32 @@
   --t-lead: 1.6rem;         /* section titles (was 23 and 26px) */
   --t-scene: clamp(2.25rem, 6vw, 3.2rem); /* screen titles (was 35 to 54px, 36px on phones) */
   --site-wordmark: 1.3rem;  /* the homepage frame only: its wordmark's own size (homepage .wordmark, 2026-11-10), like the --site-* colours; not a step of the app's scale */
+  /* the picker's swatches: each set's paper and accent, fixed so a dot never changes with the pick */
+  --swatch-blue-paper: #E5EAF4;  --swatch-blue-accent: #4A5C9A;  --swatch-sage-paper: #DDEAD8;  --swatch-sage-accent: #4E6848;
+  --swatch-blush-paper: #F3DDD6; --swatch-blush-accent: #984024; --swatch-lilac-paper: #ECE6F3; --swatch-lilac-accent: #6A5A8C;
+  --ground-ui: inline-flex; /* the paper colour picker (.ground-pick); dark hides it, having one set */
+}
+/* The visitor's paper colour (2026-11-13, app/ground-pick.tsx, lib/ground.ts). Same names, other values;
+   light only: the dark layer comes later and wins. hover, press and subtle follow the accent as in blue
+   (15% darker, 28% darker, 10% on white). --line-strong is the mock-up's value darkened just enough for 3:1
+   on every paper and tone; the contrast test reads these blocks too. */
+:root[data-ground-pick="sage"] {
+  --paper: #DDEAD8; --card: #EEF4EA; --warm: #E6EFE2; --ink: #1E271F; --muted: #46513F; --line: #B2C4AC; --axis: #B2C4AC;
+  --line-strong: #76896F; /* mock-up #7D9276 */
+  --accent: #4E6848; --accent-ink: #4E6848; --accent-soft: #4E6848; --accent-hover: #42583D; --accent-press: #384B34; --accent-subtle: #EDF0ED;
+  --focus-ring: rgba(78, 104, 72, .2); --backdrop: rgba(30, 39, 31, .4); --shadow: rgba(30, 39, 31, .14);
+}
+:root[data-ground-pick="blush"] {
+  --paper: #F3DDD6; --card: #FBEFEA; --warm: #F6E5DF; --ink: #2A1F1C; --muted: #5A453F; --line: #D9BCB2; --axis: #D9BCB2;
+  --line-strong: #987A71; /* mock-up #A9887D */
+  --accent: #984024; --accent-ink: #984024; --accent-soft: #984024; --accent-hover: #81361F; --accent-press: #6D2E1A; --accent-subtle: #F5ECE9;
+  --focus-ring: rgba(152, 64, 36, .2); --backdrop: rgba(42, 31, 28, .4); --shadow: rgba(42, 31, 28, .14);
+}
+:root[data-ground-pick="lilac"] {
+  --paper: #ECE6F3; --card: #F8F5FB; --warm: #EFE9F5; --ink: #2A2433; --muted: #574B66; --line: #D4C9E2; --axis: #D4C9E2;
+  --line-strong: #8C7DA3; /* mock-up #8F80A6 */
+  --accent: #6A5A8C; --accent-ink: #6A5A8C; --accent-soft: #6A5A8C; --accent-hover: #5A4D77; --accent-press: #4C4165; --accent-subtle: #F0EFF4;
+  --focus-ring: rgba(106, 90, 140, .2); --backdrop: rgba(42, 36, 51, .4); --shadow: rgba(42, 36, 51, .14);
 }
 }
 
@@ -98,6 +128,11 @@
     --tone-peach-paper: #22140F;  --tone-peach-card: #33211A;  --tone-peach-line: #6B4636;  --tone-peach-blob: #5A3527;  --tone-peach-ink: #FF9C78;
     --tone-butter-paper: #1E1A0D; --tone-butter-card: #2D2814; --tone-butter-line: #5E5530;
     --tone-mist-paper: #0D1A21;   --tone-mist-card: #172A33;   --tone-mist-line: #2E4D5B;
+    --landing-wash: linear-gradient(180deg, var(--tone-blue-paper) 0%, var(--tone-lilac-paper) 48%, var(--tone-peach-paper) 100%); /* dark keeps its wash */
+    --ground-ui: none;
+    /* the picker is hidden in dark; its swatches keep the light values */
+    --swatch-blue-paper: #E5EAF4;  --swatch-blue-accent: #4A5C9A;  --swatch-sage-paper: #DDEAD8;  --swatch-sage-accent: #4E6848;
+    --swatch-blush-paper: #F3DDD6; --swatch-blush-accent: #984024; --swatch-lilac-paper: #ECE6F3; --swatch-lilac-accent: #6A5A8C;
   }
   /* /words printed from a dark device: back to the light tokens, so the paper gets dark text on white
      (2026-11-02). revert-layer drops this layer's dark values for the light layer's; the screen and the
@@ -467,7 +502,28 @@ p, .lede, .hint, .step-note, .small-note, .summary-footnote { text-wrap: pretty;
   /* on a phone the menu takes its own line, so the switch sits beside the name instead of falling under the menu */
   .site-header .lang-switch { order: 1; margin-left: auto; align-self: center; }
   .site-header .site-nav { order: 2; flex-basis: 100%; }
+  /* the first row is full (name, help, language), so the dot ends the menu's row, at the right so its list opens on screen */
+  .site-header .site-nav { flex: 1 1 auto; }
+  .site-header .ground-pick { order: 3; margin-left: auto; }
 }
+
+/* The paper colour picker (2026-11-13, app/ground-pick.tsx): a small dot beside the language link; its list
+   opens below it. Each dot shows its set's own paper and accent, so the dots never move with the pick.
+   Every target is 44px or more. Frame colours (--site-*) as the rest of the header. */
+.ground-pick { position: relative; display: var(--ground-ui); align-self: center; margin-left: 6px; }
+.ground-toggle { display: inline-flex; align-items: center; justify-content: center; width: 44px; height: 44px; padding: 0; border: 0; border-radius: 50%; background: transparent; }
+.ground-toggle .ground-dot { width: 18px; height: 18px; }
+.ground-dot { flex: none; display: inline-block; width: 16px; height: 16px; border-radius: 50%; border: 1px solid var(--site-line); }
+.ground-dot[data-ground="blue"] { background: linear-gradient(135deg, var(--swatch-blue-paper) 50%, var(--swatch-blue-accent) 50%); }
+.ground-dot[data-ground="sage"] { background: linear-gradient(135deg, var(--swatch-sage-paper) 50%, var(--swatch-sage-accent) 50%); }
+.ground-dot[data-ground="blush"] { background: linear-gradient(135deg, var(--swatch-blush-paper) 50%, var(--swatch-blush-accent) 50%); }
+.ground-dot[data-ground="lilac"] { background: linear-gradient(135deg, var(--swatch-lilac-paper) 50%, var(--swatch-lilac-accent) 50%); }
+.ground-list { position: absolute; right: 0; top: calc(100% + 4px); z-index: 20; display: grid; min-width: 168px; padding: 8px; background: var(--card); border: 1px solid var(--site-line); border-radius: 12px; box-shadow: 0 6px 20px var(--shadow); }
+.ground-title { padding: 4px 10px 6px; color: var(--site-muted); font: var(--t-aside) var(--font-sans); letter-spacing: .04em; }
+.ground-option { display: flex; align-items: center; gap: 10px; min-height: 44px; padding: 0 10px; border: 0; border-radius: 8px; background: transparent; color: var(--site-ink); font: var(--t-small) var(--font-sans); text-align: left; }
+.ground-option:hover { background: var(--accent-subtle); }
+.ground-option[aria-checked="true"] { font-weight: 700; }
+.ground-option[aria-checked="true"]::after { content: "✓"; margin-left: auto; }
 
 
 /* ---- Option B (owner's choice, 2026-10-19): a tone per step and colour points on the landing ---- */
@@ -480,7 +536,7 @@ p, .lede, .hint, .step-note, .small-note, .summary-footnote { text-wrap: pretty;
 :root[data-tone="mist"] { --paper: var(--tone-mist-paper); --card: var(--tone-mist-card); --line: var(--tone-mist-line); }
 html, body { transition: background-color .5s ease; }
 @media (prefers-reduced-motion: reduce) { html, body { transition: none; } }
-:root[data-tone="landing"] body { background: linear-gradient(180deg, var(--tone-blue-paper) 0%, var(--tone-lilac-paper) 48%, var(--tone-peach-paper) 100%); }
+:root[data-tone="landing"] body { background: var(--landing-wash); }
 
 /* the landing card: a soft wash, a drawing of the pad, the app name as a pill */
 .hero-card { background: linear-gradient(165deg, var(--card) 0%, var(--tone-peach-card) 100%); }

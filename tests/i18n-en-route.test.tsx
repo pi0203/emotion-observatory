@@ -118,6 +118,7 @@ describe("the English screen meeting a record written in Korean", () => {
 describe("the English document", () => {
   it("uses the same type as Korean, so headings stay in the serif face", () => {
     const layout = readFileSync(join(__dirname, "../app/(en)/en/layout.tsx"), "utf8");
-    expect(layout).toMatch(/<html lang="en" className=\{fontVariables\}>/);
+    // suppressHydrationWarning: the paper colour script sets an attribute on <html> before React (2026-11-13)
+    expect(layout).toMatch(/<html lang="en" className=\{fontVariables\} suppressHydrationWarning>/);
   });
 });

@@ -90,6 +90,9 @@ export const en: Messages = {
     siteNav: "Homepage menu",
     owner: "Eunchan Joe",
     otherLanguage: "한국어",
+    ground: "Background",
+    groundNow: "Background: {name}",
+    groundNames: { blue: "Blue", sage: "Sage", blush: "Blush", lilac: "Lilac" },
   },
   common: {
     appName: "Emotion Observatory",

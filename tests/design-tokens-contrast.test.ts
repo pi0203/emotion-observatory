@@ -18,7 +18,16 @@ const darkBlock = block(css.indexOf(":root", darkStart));
 
 const tokensOf = (source: string) =>
   Object.fromEntries([...source.matchAll(/--([\w-]+):\s*(#[0-9a-fA-F]{6})\b/g)].map((match) => [match[1], match[2]]));
-const themes = { light: tokensOf(lightBlock), dark: tokensOf(darkBlock) };
+// the visitor's paper colours (2026-11-13): each set is the light tokens with its own values over them
+const pickBlock = (name: string) => block(css.indexOf(`:root[data-ground-pick="${name}"]`));
+const light = tokensOf(lightBlock);
+const themes = {
+  light,
+  dark: tokensOf(darkBlock),
+  "light, sage": { ...light, ...tokensOf(pickBlock("sage")) },
+  "light, blush": { ...light, ...tokensOf(pickBlock("blush")) },
+  "light, lilac": { ...light, ...tokensOf(pickBlock("lilac")) },
+};
 
 const luminance = (hex: string) => {
   const [r, g, b] = [1, 3, 5].map((at) => parseInt(hex.slice(at, at + 2), 16) / 255)
@@ -135,11 +144,12 @@ describe.each(Object.entries(themes))("%s theme", (_name, tokens) => {
 
 const upper = (tokens: Record<string, string>) => Object.fromEntries(Object.entries(tokens).map(([k, v]) => [k, v.toUpperCase()]));
 
-describe("settled values (owner's choices, 2026-10-12)", () => {
+describe("settled values (owner's choices, 2026-10-12; light blue moved 2026-11-13)", () => {
   it("uses the light blue palette with a coral point, exactly as settled", () => {
     expect(upper(themes.light)).toMatchObject({
-      paper: "#E0E8FF", card: "#F5F8FF", accent: "#2543D1", "on-accent": "#FFFFFF", ink: "#111A3D",
-      muted: "#3F4B7A", line: "#B5C5F5", "pick-underline": "#FF7A52",
+      // the default blue of the four pickable sets (owner's mock-ups, 2026-11-13; was #E0E8FF paper and #2543D1 accent)
+      paper: "#E5EAF4", card: "#F6F8FC", accent: "#4A5C9A", "on-accent": "#FFFFFF", ink: "#1B2340",
+      muted: "#47506E", line: "#C5CEE3", "pick-underline": "#FF7A52",
     });
     expect(upper(themes.dark)).toMatchObject({
       paper: "#0F1633", card: "#192250", accent: "#8CA2FF", "on-accent": "#0F1633", ink: "#EEF1FF",
@@ -216,7 +226,8 @@ describe("palette structure", () => {
   });
 
   it("writes no colour outside the token blocks", () => {
-    const outside = css.replace(lightBlock, "").replace(darkBlock, "").replace(/\/\*[\s\S]*?\*\//g, "");
+    const outside = ["sage", "blush", "lilac"].reduce((rest, name) => rest.replace(pickBlock(name), ""), css.replace(lightBlock, "").replace(darkBlock, ""))
+      .replace(/\/\*[\s\S]*?\*\//g, "");
     // colour keywords only: `white-space` is a property, not a colour
     expect(outside.match(/#[0-9a-fA-F]{3,8}\b|rgba?\(|hsla?\(|(?<![-\w])(?:white|black)(?![-\w])/g) ?? []).toEqual([]);
   });
