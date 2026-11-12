@@ -44,6 +44,12 @@ export const ko = {
     helpShort: "도움",
     /** The same line at the foot of the records list and of a record (2026-11-05); opens the help card. */
     helpLine: "힘들 때 연락할 수 있는 곳",
+    /**
+     * At the foot of both closing screens, the same for everyone whatever was written (2026-11-12, check H1).
+     * Nothing reads the entry for risk (SAFETY.md). {num109} and the like are drawn as tel: links from the
+     * crisis card's own numbers, as the terms do; tests/result-help-line.test.tsx keeps the numbers.
+     */
+    resultHelp: "지금 많이 힘드시다면 혼자 견디지 않아도 돼요. 자살예방상담전화 {num109}, 정신건강 위기상담전화 {num1577}(24시간). 청소년은 {num1388}.",
     close: "닫기",
     saveFailed: "이 브라우저에 기록을 저장하지 못하고 있습니다. 저장 공간이 가득 찼거나 브라우저가 저장을 막고 있을 수 있습니다. 계속할 수는 있지만, 이 화면을 닫으면 지금 기록은 남지 않습니다. 지난 기록 화면에서 오래된 기록을 파일로 내보내고 지우면 공간이 생깁니다.",
     quoted: "“{value}”",

@@ -947,6 +947,7 @@ function QuickSummaryScreen({ session, onDeep, onFeedback, onSupport }: { sessio
       <SynthesisSection session={session} onFeedback={onFeedback} />
       <div className="stack-actions"><button className="primary-button centered" onClick={onDeep}>{t("quickSummary.deep")} <span>→</span></button><button className="secondary-button" onClick={onSupport}>{t("quickSummary.support")}</button><a className="secondary-button centered" href="/">{t("common.backToStart")}</a></div>
     </div>
+    <ResultHelpLine />
   </Screen>;
 }
 
@@ -1081,6 +1082,7 @@ function SummaryScreen({ session, onFeedback, onTalk, onUnderlying, onUnderlying
       <UnderlyingFeelingQuestion answer={session.underlyingFeeling?.answer} note={session.underlyingFeeling?.note ?? ""} onAnswer={onUnderlying} onNote={onUnderlyingNote} />
       <div className="stack-actions"><button className="primary-button centered" onClick={onSupport}>{t("summary.support")} <span>→</span></button><a className="secondary-button centered" href="/">{t("common.backToStart")}</a></div>
     </div>
+    <ResultHelpLine />
   </Screen>;
 }
 
@@ -1687,6 +1689,22 @@ function WorsenedScreen() {
  * opens the help card the header's 도움 opens. It is always there and always the
  * same; nothing in a record changes it, and nothing is read for risk (SAFETY.md).
  */
+/**
+ * The last line of both closing screens (2026-11-12, check H1): 109, 1577-0199
+ * and 1388 in one small sentence, each a tel: link drawn from the crisis card's
+ * own numbers. Always there and never animated, whatever the entry says;
+ * nothing reads the entry for risk (SAFETY.md). The English is a draft.
+ */
+function ResultHelpLine() {
+  const t = useT();
+  // the numbers go back in as their own marks, so TermsText draws them as links
+  const text = t("common.resultHelp", { num109: "{num109}", num1577: "{num1577}", num1388: "{num1388}" });
+  return <>
+    <p className="result-help"><TermsText text={text} /></p>
+    {t.locale === "en" && <p className="draft-note">{enOnly.draftNote}</p>}
+  </>;
+}
+
 function HelpLine({ onHelp }: { onHelp: () => void }) {
   const t = useT();
   return <p className="help-line"><button className="inline-link" onClick={onHelp}>{t("common.helpLine")} <span aria-hidden="true">→</span></button></p>;
