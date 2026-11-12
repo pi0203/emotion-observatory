@@ -28,6 +28,7 @@ import type { Translate } from "../lib/i18n/t";
 import { toneOf } from "../lib/tones";
 import { enOnly } from "../lib/i18n/messages.en";
 import { SiteLogo } from "./site-logo";
+import { GroundPick } from "./ground-pick";
 
 // Every read and write of a record goes through the one storage seam. It is
 // synchronous, like the localStorage calls it wraps, so no call site changes.
@@ -255,6 +256,8 @@ function SiteHeader({ onHelp }: { onHelp: () => void }) {
     {/* the other language, only where it is open: development always, production once the owner has reviewed it */}
     <button className="text-button help-button" aria-label={t("common.helpLink")} onClick={onHelp}><span className="label-wide">{t("common.helpLink")}</span><span className="label-narrow" aria-hidden="true">{t("common.helpShort")}</span></button>
     {englishAvailable() && <a className="lang-switch" href={t.locale === "ko" ? "/en" : "/"} lang={t.locale === "ko" ? "en" : "ko"} hrefLang={t.locale === "ko" ? "en" : "ko"}>{t("shell.otherLanguage")}</a>}
+    {/* the visitor's paper colour, beside the language link (2026-11-13, app/ground-pick.tsx) */}
+    <GroundPick />
   </header>;
 }
 
