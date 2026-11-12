@@ -31,3 +31,13 @@
 - 6–7: 한국어처럼 메일 주소가 두 조각 사이에 링크로 들어간다. 주소는 한국어와 같은 것을 쓴다(`koOnly.practitioner.mailAddress`).
 - 8: /words 쪽이 한국어뿐이라 (in Korean)을 더했다. 링크에는 `hrefLang="ko"`를 달았다(꼬리말의 약관 링크와 같은 방식).
 - 9–10: 2026-11-05에 써 두고 화면에 내지 않았던 문장이다(커밋 46145b5). 이번에 처음 화면에 나온다. 뇌 지도 링크에도 `hrefLang="ko"`를 달았다.
+
+## 2026-11-12 · 결과 화면 맨 아래 도움 한 줄 (초안)
+
+11/11 점검 H1에 따라 두 결과 화면(빠른 확인 요약, 천천히 들여다보기 요약) 맨 아래에 한 줄을 두었다. 영어 화면에서는 그 바로 아래에 `enOnly.draftNote`가 붙는다. 기관 이름은 영어 위기 카드(`crisis.lifeline109`, `crisis.mental1577`)에 이미 쓰는 이름을 그대로 썼다.
+
+| # | 칸 | 키 | 한국어 | 영어 초안 | 상태 |
+|---|---|---|---|---|---|
+| 11 | 결과 화면 도움 한 줄 | `common.resultHelp` | 지금 많이 힘드시다면 혼자 견디지 않아도 돼요. 자살예방상담전화 {num109}, 정신건강 위기상담전화 {num1577}(24시간). 청소년은 {num1388}. | If things are very hard right now, you don’t have to get through it alone. Suicide Prevention Counseling Line {num109}, Mental Health Crisis Counseling Line {num1577} (24 hours). For young people, {num1388}. | 검토 전 |
+
+- 11: 「청소년은」은 영어 카드의 「Youth Counseling Line」을 다시 쓰지 않고 For young people로 했다. 한국어 문장이 기관 이름 없이 「청소년은 1388」로 짧게 쓰기 때문이다.

@@ -656,4 +656,7 @@ html, body { transition: background-color .5s ease; }
 
 /* 도움 한 줄 (2026-11-05): the same quiet line at the foot of the records list and of a record */
 .help-line { margin: 24px 0 0; }
+/* The help sentence at the foot of the closing screens (2026-11-12): small, muted, the numbers bold and dialable. */
+.result-help { margin: 28px 0 0; color: var(--muted); font-size: var(--t-small); line-height: 1.6; text-wrap: pretty; }
+.result-help a { color: var(--ink); font-weight: 700; font-variant-numeric: tabular-nums; text-underline-offset: 3px; white-space: nowrap; }
 .help-line .inline-link { min-height: 44px; color: var(--muted); font-size: var(--t-small); }
