@@ -56,7 +56,7 @@ describe("/en route", () => {
 
   it("gives English its own title, description and address, and names both languages", () => {
     const en = metadataFor("en");
-    expect(en).toMatchObject({ title: "Emotion Observatory", alternates: { canonical: "/en", languages: { ko: "/", en: "/en" } } });
+    expect(en).toMatchObject({ title: "Emotion Observatory", alternates: { canonical: "/en", languages: { ko: "/", en: "/en", "x-default": "/" } } });
     expect(en.openGraph).toMatchObject({ locale: "en_US", url: "/en" });
     expect(en.robots).toBeUndefined();
     expect(String(en.description)).not.toMatch(HANGUL);
@@ -69,7 +69,7 @@ describe("/en route", () => {
     expect(ko.twitter).toMatchObject({ title: "감정 관찰실 · Emotion Observatory" });
     expect(en.openGraph).toMatchObject({ title: "Emotion Observatory" });
     expect(en.twitter).toMatchObject({ title: "Emotion Observatory" });
-    expect(ko.alternates).toMatchObject({ languages: { ko: "/", en: "/en" } });
+    expect(ko.alternates).toEqual({ canonical: "/", languages: { ko: "/", en: "/en", "x-default": "/" } });
   });
 });
 
