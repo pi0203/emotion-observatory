@@ -1859,6 +1859,10 @@ Apply as:
 
 ## Palette
 
+2026-11-13: 이 표는 옛 값이다. 지금 값은 docs/design.md와 app/globals.css
+
+### 옛 값(기록)
+
 ```text
 --accent        #B4FF00   채움 전용
 --accent-hover  #A6EE00
@@ -1871,6 +1875,22 @@ Apply as:
 --line          #DCE7DF   구분선·카드 경계
 --line-strong   #7E9487   입력·버튼 등 조작 요소 경계
 --paper         #FCFDFB   배경
+```
+
+### 지금 값 (2026-11-13, app/globals.css 밝은 화면 기본 파랑)
+
+```text
+--accent        #4A5C9A   주요 단추, 진행 막대 (paper 위 5.29:1)
+--accent-hover  #3F4E83
+--accent-press  #35426F
+--accent-soft   #4A5C9A   선택 상태 바탕, 글자는 --on-accent
+--accent-subtle #EDEFF5   hover, 단계 안내
+--accent-ink    #4A5C9A   글자로 쓰는 accent, focus ring, 선택 테두리
+--ink           #1B2340   본문
+--muted         #47506E   보조 텍스트
+--line          #C5CEE3   구분선·카드 경계
+--line-strong   #7884A8   입력·버튼 등 조작 요소 경계
+--paper         #E5EAF4   배경
 ```
 
 규칙:
