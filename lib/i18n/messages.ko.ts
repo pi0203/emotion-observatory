@@ -281,7 +281,7 @@ export const ko = {
     more: "비슷한 표현 더 보기",
     similar: "비슷한 표현",
     mine: "내가 적은 말",
-    meaningLabel: "‘{label}’은 지금 나에게 어떤 느낌을 담고 있나요?",
+    meaningLabel: "‘{label}’{~label|은/는} 지금 나에게 어떤 느낌을 담고 있나요?",
     optional: "(선택)",
     meaningPlaceholder: "적지 않아도 됩니다",
     notListed: "여기 없는 말이 더 가깝다면",
@@ -469,7 +469,7 @@ export const ko = {
   /** Sentences the summary builds from the user's own entries (lib/synthesis.ts). */
   synthesis: {
     lead: "당신이 고른 내용을 연결하면 이렇게 정리해볼 수 있습니다.",
-    caveat: "이것은 해석이나 진단이 아니라, 당신이 고른 내용을 이어 붙이고 그 사이의 관계만 짚은 것입니다. 맞지 않으면 아래에서 고쳐 쓸 수 있습니다.",
+    caveat: "이것은 해석이나 진단이 아니라, 당신이 고른 내용을 이어 붙이고 그 사이의 관계만 이어 본 것입니다. 맞지 않으면 아래에서 고쳐 쓸 수 있습니다.",
     notEnough: "지금 기록만으로는 연결해볼 만한 정보가 충분하지 않습니다.",
     observed: {
       quickAffect: "빠른 확인에서 전체적인 느낌을 {text}{~text|으로/로} 표시했습니다.",
@@ -643,7 +643,7 @@ export const ko = {
     depth: "살펴본 정도",
     quickAffect: "빠른 확인",
     deepAffect: "자세히 본 뒤",
-    personalMeaning: "‘{label}’은",
+    personalMeaning: "‘{label}’{~label|은/는}",
     context: "상황",
     quickContext: "그때 일어난 일",
     need: "필요했던 방향",

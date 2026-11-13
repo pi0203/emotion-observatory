@@ -120,6 +120,16 @@ describe("Korean particles chosen inside the messages", () => {
       expect(quick("아파".normalize(form))).toBe(`가까운 말로는 “${"아파".normalize(form)}”를 골랐습니다.`);
     }
   });
+
+  it("chooses 은/는 after a word the user wrote inside ‘ ’, not a fixed 「은」 (2026-11-13)", () => {
+    const t = getT();
+    expect(t("words.meaningLabel", { label: "죽고 싶어" })).toBe("‘죽고 싶어’는 지금 나에게 어떤 느낌을 담고 있나요?");
+    expect(t("words.meaningLabel", { label: "마음" })).toBe("‘마음’은 지금 나에게 어떤 느낌을 담고 있나요?");
+    expect(t("words.meaningLabel", { label: "OK" })).toBe("‘OK’은(는) 지금 나에게 어떤 느낌을 담고 있나요?");
+    expect(t("recordDetail.personalMeaning", { label: "죽고 싶어" })).toBe("‘죽고 싶어’는");
+    expect(t("recordDetail.personalMeaning", { label: "마음" })).toBe("‘마음’은");
+    expect(t("recordDetail.personalMeaning", { label: "OK" })).toBe("‘OK’은(는)");
+  });
 });
 
 describe("dates", () => {
