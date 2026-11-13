@@ -5,22 +5,26 @@ import { describe, expect, it } from "vitest";
 
 /**
  * Type, after the homepage (docs/DESIGN_ALIGNMENT.md §4, owner's alternative 3):
- * Noto Sans KR 400 and Noto Serif KR 400 only, served by next/font from this
- * site, no English face while English is off, no system or Georgia stacks.
+ * Noto Sans KR 400 and Noto Serif KR 400, served by next/font from this
+ * site, no English text face, no system or Georgia stacks. One exception
+ * (2026-11-13): Instrument Serif 400 for the header wordmark only, the homepage's face.
  */
 const fonts = readFileSync(join(__dirname, "../app/fonts.ts"), "utf8");
 const css = readFileSync(join(__dirname, "../app/globals.css"), "utf8");
 const code = fonts.replace(/\/\*[\s\S]*?\*\//g, "").replace(/\/\/.*$/gm, "");
 
 describe("fonts", () => {
-  it("loads Noto Sans KR and Noto Serif KR only, through next/font/google", () => {
+  it("loads Noto Sans KR, Noto Serif KR and the wordmark's Instrument Serif only, through next/font/google", () => {
     const imported = code.match(/import\s*\{([^}]*)\}\s*from\s*"next\/font\/google"/)?.[1].split(",").map((name) => name.trim()).filter(Boolean);
-    expect(imported?.sort()).toEqual(["Noto_Sans_KR", "Noto_Serif_KR"]);
+    expect(imported?.sort()).toEqual(["Instrument_Serif", "Noto_Sans_KR", "Noto_Serif_KR"]);
     expect(code).not.toMatch(/next\/font\/local|fonts\.googleapis|fonts\.gstatic/);
   });
 
-  it("loads no English face (Newsreader, Instrument Serif or any other) while English is off", () => {
-    expect(code).not.toMatch(/Newsreader|Instrument_Serif|Inter\b|Roboto|Source_Serif/);
+  it("loads no English text face (Newsreader or any other); Instrument Serif is for the wordmark only", () => {
+    expect(code).not.toMatch(/Newsreader|Inter\b|Roboto|Source_Serif/);
+    expect(code.match(/Instrument_Serif\(\{[^}]*\}\)/g)).toEqual([expect.stringMatching(/weight:\s*"400"[^}]*display:\s*"swap"[^}]*adjustFontFallback:\s*true[^}]*variable:\s*"--font-wordmark"/)]);
+    const uses = [...css.matchAll(/([^{}]+)\{[^}]*var\(--font-wordmark\)/g)].map((match) => match[1].replace(/\/\*[\s\S]*?\*\//g, "").trim());
+    expect(uses).toEqual([".site-logo-text"]);
   });
 
   it("loads the regular weight only, with swap and a size-matched fallback", () => {
