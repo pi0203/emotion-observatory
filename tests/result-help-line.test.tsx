@@ -119,7 +119,7 @@ describe("the help sentence under the summary on the closing screens", () => {
     render(<EmotionApp locale="en" />);
     const screenEl = quickSummaryWith(en, "I want to die");
     const line = screenEl.querySelector(".result-help")!;
-    expect(line.textContent).toBe("If things are very hard right now, you don’t have to get through it alone. Suicide Prevention Counseling Line 109, Mental Health Crisis Counseling Line 1577-0199 (24 hours). For young people, 1388.");
+    expect(line.textContent).toBe("If things are very hard right now, you don’t have to get through it alone. In Korea: Suicide Prevention Counseling Line 109, Mental Health Crisis Counseling Line 1577-0199 (24 hours). For young people, 1388.");
     expect(dialled(line)).toEqual(NUMBERS);
     expectRightUnderCard(screenEl, line);
     expect(line.nextElementSibling!.textContent).toBe(enOnly.draftNote);

@@ -38,6 +38,6 @@
 
 | # | 칸 | 키 | 한국어 | 영어 초안 | 상태 |
 |---|---|---|---|---|---|
-| 11 | 결과 화면 도움 한 줄 | `common.resultHelp` | 지금 많이 힘드시다면 혼자 견디지 않아도 돼요. 자살예방상담전화 {num109}, 정신건강 위기상담전화 {num1577}(24시간). 청소년은 {num1388}. | If things are very hard right now, you don’t have to get through it alone. Suicide Prevention Counseling Line {num109}, Mental Health Crisis Counseling Line {num1577} (24 hours). For young people, {num1388}. | 검토 전 |
+| 11 | 결과 화면 도움 한 줄 | `common.resultHelp` | 지금 많이 힘드시다면 혼자 견디지 않아도 돼요. 자살예방상담전화 {num109}, 정신건강 위기상담전화 {num1577}(24시간). 청소년은 {num1388}. | If things are very hard right now, you don’t have to get through it alone. In Korea: Suicide Prevention Counseling Line {num109}, Mental Health Crisis Counseling Line {num1577} (24 hours). For young people, {num1388}. | 검토 전 |
 
 - 11: 「청소년은」은 영어 카드의 「Youth Counseling Line」을 다시 쓰지 않고 For young people로 했다. 한국어 문장이 기관 이름 없이 「청소년은 1388」로 짧게 쓰기 때문이다.
