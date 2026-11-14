@@ -37,7 +37,7 @@
 - 2026-10-12 safety-note 브랜치의 「검토 전에는 번호를 넣지 않는다」 방침은, 본인이 2026-10-13 아래 공식 출처로 번호를 확인한 것으로 충족된 것으로 본다.
 - (2026-11-10) 첫 화면에서만 위기 카드 바로 아래에 위기가 아닌 사람의 다음 단계 단락(정신건강복지센터, 심리상담 바우처)을 둔다. 「AI와 디지털 심리치료」 12단원의 「의뢰는 실패가 아니라 기능」을 따른 것이고, 본인 승인(「좋아. 넣어줘.」)으로 넣었다. 글만 있고 링크나 지역 선택은 없어서 저장하거나 보내는 것이 없다. 도움 창과 다른 화면의 카드는 그대로다. 문구는 `tests/next-step.test.tsx`가 지킨다.
 - 카드 문구(위에서 아래): 119·112 응급 안내 한 줄, 상담 전화 안내 한 줄, 109, 1577-0199, 1388. 붉은 강조나 경고 아이콘은 쓰지 않고 번호만 굵게 한다. 문구와 번호는 `tests/crisis-card.test.tsx`가 지킨다.
-- 영어 문구는 한국 번호를 원문 그대로 쓰고 미국 번호는 쓰지 않는다. 응급 안내 문장은 2026-10-19 영어 전체와 함께 본인 검토를 거쳤고, 그날 /en이 열렸다. 같은 날 본인 승인(「넣어줘」)으로 영어 카드에만 119/112 줄 바로 아래 해외 이용자 문장을 넣었다: 「All numbers on this card are for South Korea. If you are outside Korea, call your local emergency number.」(`enOnly.outsideKorea`). 영어 검토([docs/EN_REVIEW_2026_10_19.md](docs/EN_REVIEW_2026_10_19.md))에서 응급 문장을 원문대로 「physically hurt」로, 상담 전화 안내에 「in South Korea」를 더했다. 나라별 상담 전화 찾기 링크(Find A Helpline)는 넣지 않았고 본인이 정한다.
+- 영어 문구는 한국 번호를 원문 그대로 쓰고 미국 번호는 쓰지 않는다. 응급 안내 문장은 2026-10-19 영어 전체와 함께 본인 검토를 거쳤고, 그날 /en이 열렸다. 같은 날 본인 승인(「넣어줘」)으로 영어 카드에만 119/112 줄 바로 아래 해외 이용자 문장을 넣었다: 「All numbers on this card are for South Korea. If you are outside Korea, call your local emergency number.」(`enOnly.outsideKorea`). 영어 검토([docs/EN_REVIEW_2026_10_19.md](docs/EN_REVIEW_2026_10_19.md))에서 응급 문장을 원문대로 「physically hurt」로, 상담 전화 안내에 「in South Korea」를 더했다. 나라별 상담 전화 찾기 링크(Find A Helpline)는 넣지 않았고 본인이 정한다. (2026-11-14) 본인 답으로 영어 결과 화면 한 줄에 「In Korea:」, 첫 화면 다음 단계의 1577-0199·129에 한국 번호라는 말을 더했다. crisis.intro 는 「there are … open 24 hours」로 한국어와 세기를 맞췄다. 「더 불편해짐」 화면의 접힌 도움은 그대로 둔다(10/13 결정 유지).
 
 ### 연락처 확인 기록
 
