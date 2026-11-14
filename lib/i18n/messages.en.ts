@@ -166,7 +166,7 @@ export const en: Messages = {
   },
   nextStep: {
     title: "Not in crisis, but hard to carry alone",
-    center: "Your local mental health welfare center (정신건강복지센터) offers free counseling and screening for depression, anxiety and stress. There is one in every city, county and district, open weekdays 9:00 to 18:00. If you don’t know which one is yours, call 1577-0199; it connects you to a center near where your phone is.",
+    center: "Your local mental health welfare center (정신건강복지센터) offers free counseling and screening for depression, anxiety and stress. There is one in every city, county and district, open weekdays 9:00 to 18:00. If you don’t know which one is yours, call 1577-0199 (Korea); it connects you to a center near where your phone is.",
     voucher: "With a referral from a mental health welfare center or a university counseling center, you can get up to eight sessions of professional counseling through the national counseling voucher (ask 129). How much you pay depends on your income.",
     person: "Going to a person first, instead of writing here, is also a good choice.",
     checked: "Numbers and programs checked on the Ministry of Health and Welfare website on 2026-11-10.",
