@@ -113,7 +113,7 @@ export const en: Messages = {
     /** The same line at the foot of the records list and of a record (2026-11-05); opens the help card. */
     helpLine: "Where to reach out when it’s hard",
     /** DRAFT, not reviewed by the owner (2026-11-12). Listed in docs/EN_REVIEW.md as 검토 전; the line is followed by `enOnly.draftNote`. */
-    resultHelp: "If things are very hard right now, you don’t have to get through it alone. Suicide Prevention Counseling Line {num109}, Mental Health Crisis Counseling Line {num1577} (24 hours). For young people, {num1388}.",
+    resultHelp: "If things are very hard right now, you don’t have to get through it alone. In Korea: Suicide Prevention Counseling Line {num109}, Mental Health Crisis Counseling Line {num1577} (24 hours). For young people, {num1388}.",
     close: "Close",
     saveFailed: "This browser is not saving this entry. Its storage may be full, or the browser may be blocking it. You can go on, but if you close this screen, this entry will not be kept. You can free up space on the past entries screen by exporting older entries to a file and then deleting them.",
     quoted: "“{value}”",
@@ -148,7 +148,7 @@ export const en: Messages = {
     title: "Emergency help and crisis lines",
     /** Reviewed by the owner with the rest of the English, 2026-10-19. */
     emergency: "If you are physically hurt or in immediate danger, call <b>119</b> (ambulance) or <b>112</b> (police) right away.",
-    intro: "If you need someone to talk to, these counseling lines in South Korea are open 24 hours.",
+    intro: "If you need someone to talk to, there are counseling lines in South Korea open 24 hours.",
     lifeline109: "Suicide Prevention Counseling Line (24 hours)",
     num109: "109",
     mental1577: "Mental Health Crisis Counseling Line (24 hours)",
@@ -166,8 +166,8 @@ export const en: Messages = {
   },
   nextStep: {
     title: "Not in crisis, but hard to carry alone",
-    center: "Your local mental health welfare center (정신건강복지센터) offers free counseling and screening for depression, anxiety and stress. There is one in every city, county and district, open weekdays 9:00 to 18:00. If you don’t know which one is yours, call 1577-0199; it connects you to a center near where your phone is.",
-    voucher: "With a referral from a mental health welfare center or a university counseling center, you can get up to eight sessions of professional counseling through the national counseling voucher (ask 129). How much you pay depends on your income.",
+    center: "Your local mental health welfare center (정신건강복지센터) offers free counseling and screening for depression, anxiety and stress. There is one in every city, county and district, open weekdays 9:00 to 18:00. If you don’t know which one is yours, call 1577-0199 (Korea); it connects you to a center near where your phone is.",
+    voucher: "With a referral from a mental health welfare center or a university counseling center, you can get up to eight sessions of professional counseling through the national counseling voucher (ask 129 in Korea). How much you pay depends on your income.",
     person: "Going to a person first, instead of writing here, is also a good choice.",
     checked: "Numbers and programs checked on the Ministry of Health and Welfare website on 2026-11-10.",
   },
