@@ -679,7 +679,7 @@ export const ko = {
     followUpTitle: "그 뒤에는 어땠나요",
     triedQuestion: "그때 골랐던 것을 실제로 해봤나요?",
     helpedQuestion: "조금이라도 도움이 됐나요?",
-    followUpCaveat: "평가가 아닙니다. “아니요”도 그대로 정상적인 답입니다. 이 답으로 방법을 추천하거나 점수를 매기지 않습니다.",
+    followUpCaveat: "평가가 아닙니다. “아니요”도 “예”와 똑같은 답입니다. 이 답으로 방법을 추천하거나 점수를 매기지 않습니다.",
     backToList: "← 목록으로",
     toStart: "처음으로",
     tried: {
