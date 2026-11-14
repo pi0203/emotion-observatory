@@ -286,7 +286,7 @@ export const ko = {
     meaningPlaceholder: "적지 않아도 됩니다",
     notListed: "여기 없는 말이 더 가깝다면",
     add: "추가",
-    startingPoint: "이 목록은 완전한 목록이 아니라 출발점입니다. 내 말로 적는 것도 똑같이 정상적인 길이에요.",
+    startingPoint: "이 목록은 완전한 목록이 아니라 출발점입니다. 내 말로 적는 것도 똑같이 고를 수 있는 길이에요.",
     // before 단어 보기, on both word steps (owner kept the proposed wording, 2026-10-30)
     beforeTitle: "지금 느낌을 내 말로 적는다면?",
     beforeHint: "적지 않아도 됩니다. 단어 목록은 원하면 볼 수 있습니다.",
