@@ -743,7 +743,6 @@ export const en: Messages = {
     lede: "Stepping back from an experience is a choice too. This entry stays on this device as a stopped entry, not a finished one.",
     home: "Back to the start",
     delete: "Delete this entry",
-    entryNote: "You could choose something that is possible right now, like having a glass of water, taking a short walk, or turning your attention to something else.",
   },
   stopModal: {
     eyebrow: "A moment to check in",
