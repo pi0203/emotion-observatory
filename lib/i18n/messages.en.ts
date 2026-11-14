@@ -714,7 +714,7 @@ export const en: Messages = {
     followUpTitle: "How did it go afterward",
     triedQuestion: "Did you actually try what you picked?",
     helpedQuestion: "Did it help, even a little?",
-    followUpCaveat: "This is not an evaluation. “No” is a normal answer too. Your answer is not used to recommend anything or to give a score.",
+    followUpCaveat: "This is not an evaluation. “No” is just as much an answer as “Yes.” Your answer is not used to recommend anything or to give a score.",
     backToList: "← Back to the list",
     toStart: "Back to the start",
     tried: {
