@@ -148,7 +148,7 @@ export const en: Messages = {
     title: "Emergency help and crisis lines",
     /** Reviewed by the owner with the rest of the English, 2026-10-19. */
     emergency: "If you are physically hurt or in immediate danger, call <b>119</b> (ambulance) or <b>112</b> (police) right away.",
-    intro: "If you need someone to talk to, these counseling lines in South Korea are open 24 hours.",
+    intro: "If you need someone to talk to, there are counseling lines in South Korea open 24 hours.",
     lifeline109: "Suicide Prevention Counseling Line (24 hours)",
     num109: "109",
     mental1577: "Mental Health Crisis Counseling Line (24 hours)",
