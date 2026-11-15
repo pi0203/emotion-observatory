@@ -576,6 +576,12 @@ export const ko = {
     when: "{year}. {month}. {day}  {hour}:{minute}",
     /** `formatDay`: the day a later name was given. */
     day: "{month}/{day}",
+    /**
+     * Under the list once three or more entries are kept (2026-11-15). Shown by the
+     * count alone. {counselor} is a button back to the landing's nextStep section.
+     */
+    withCounselor: "기록이 몇 번 쌓였어요. 비슷한 날이 이어지거나 혼자 보기 버겁다면, 이 기록을 내려받아 {counselor}와 함께 보는 방법도 있어요.",
+    withCounselorWord: "상담자",
   },
   /** Export, import and delete-all, at the foot of the records screen (lib/record-transfer.ts). */
   recordTransfer: {
