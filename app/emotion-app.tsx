@@ -114,6 +114,24 @@ function App() {
     return () => window.removeEventListener("popstate", onPop);
   }, []);
 
+  // a new step opens at its top, with focus on its title (2026-11-15): the page kept the
+  // last step's scroll, so the quick summary opened about 650px down with its title out
+  // of view. The jump is instant, never smooth, so nothing moves with reduced motion on.
+  // The title takes focus as a reading stop (tabindex -1, no ring), so keyboard and
+  // screen reader users start the new step from its top too.
+  const shell = useRef<HTMLElement>(null);
+  const lastStage = useRef(session.stage);
+  useEffect(() => {
+    if (lastStage.current === session.stage) return;
+    lastStage.current = session.stage;
+    if (session.stage === "landing") return;
+    window.scrollTo({ top: 0, left: 0, behavior: "instant" });
+    const title = shell.current?.querySelector<HTMLElement>(".screen h1");
+    if (!title) return;
+    title.tabIndex = -1;
+    title.focus({ preventScroll: true });
+  }, [session.stage]);
+
   // option B: a quiet paper colour per step, set on <html> so the whole page follows (lib/tones.ts)
   const tone = toneOf(session.stage, Boolean(records || openRecord));
   useEffect(() => {
@@ -160,7 +178,7 @@ function App() {
   };
 
   return (
-    <main className="app-shell">
+    <main className="app-shell" ref={shell}>
       <header className="topbar">
         <a className="wordmark" href="#" onClick={() => window.location.reload()}>
           {t("common.appName")}

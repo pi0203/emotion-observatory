@@ -411,6 +411,8 @@ p, .lede, .hint, .step-note, .small-note, .summary-footnote { text-wrap: pretty;
 .draft-confirm .synthesis-question { margin-top: 0; }
 /* questions the code moves focus to (tabindex -1) are a reading stop, not a control: no ring */
 .synthesis-question[tabindex="-1"] { outline: none; }
+/* a step's title takes focus when the step opens (app/emotion-app.tsx): the same reading stop, no ring */
+.screen h1[tabindex="-1"] { outline: none; }
 .draft-confirm .small-note { margin: 8px 0 18px; }
 .about-cite a, .about-mail a { color: var(--accent-ink); text-underline-offset: .2em; }
 .about-checked { margin-top: 4px; font: 400 var(--t-aside) var(--font-sans) !important; font-variant-numeric: tabular-nums; }
