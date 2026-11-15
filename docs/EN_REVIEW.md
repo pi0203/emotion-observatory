@@ -41,3 +41,14 @@
 | 11 | 결과 화면 도움 한 줄 | `common.resultHelp` | 지금 많이 힘드시다면 혼자 견디지 않아도 돼요. 자살예방상담전화 {num109}, 정신건강 위기상담전화 {num1577}(24시간). 청소년은 {num1388}. | If things are very hard right now, you don’t have to get through it alone. In Korea: Suicide Prevention Counseling Line {num109}, Mental Health Crisis Counseling Line {num1577} (24 hours). For young people, {num1388}. | 검토 전 |
 
 - 11: 「청소년은」은 영어 카드의 「Youth Counseling Line」을 다시 쓰지 않고 For young people로 했다. 한국어 문장이 기관 이름 없이 「청소년은 1388」로 짧게 쓰기 때문이다.
+
+## 2026-11-15 · 「지난 기록」 목록 아래 상담자 안내 한 줄 (초안)
+
+마친 기록이 3개 이상일 때만 목록 아래, 「힘들 때 연락할 곳」 줄 위에 나온다. 영어 화면에서는 그 바로 아래에 `enOnly.draftNote`가 붙는다. `{counselor}` 자리에는 첫 화면 「위기는 아니지만」 칸으로 돌아가는 단추가 들어간다.
+
+| # | 칸 | 키 | 한국어 | 영어 초안 | 상태 |
+|---|---|---|---|---|---|
+| 12 | 지난 기록 상담자 한 줄 | `records.withCounselor` | 기록이 몇 번 쌓였어요. 비슷한 날이 이어지거나 혼자 보기 버겁다면, 이 기록을 내려받아 {counselor}와 함께 보는 방법도 있어요. | You’ve saved a few entries. If similar days keep coming or they feel heavy to look at alone, you can download them and go over them with {counselor}. | 검토 전 |
+| 13 | 지난 기록 상담자 한 줄 | `records.withCounselorWord` | 상담자 | a counselor | 검토 전 |
+
+- 12: 지시문 영어 문장의 「records」를 「entries」로 바꿨다. 영어 화면은 기록을 모두 entries로 부르고, `tests/i18n-en-review.test.ts`가 records를 막는다. 「You’ve」의 따옴표는 다른 영어 문장처럼 굽은 따옴표다.

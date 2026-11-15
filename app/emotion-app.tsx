@@ -12,6 +12,7 @@ import { applyImport, buildExport, downloadExport, downloadJson, exportFileName,
 import { isLockedText, lockedFileName, lockExport, MIN_PASSPHRASE_LENGTH, unlockExport } from "../lib/record-crypto";
 import { concernLines, formatDay, formatWhen, helpedOptions, mapPoints, previousLines, previousRecord, recentDays, summarise, triedOptions, wordLines, type SourceKind, type WordHow } from "../lib/records";
 import { migrateLegacyStorage } from "../lib/migrations";
+import { flushSync } from "react-dom";
 import { expandCandidates, filterQuickCandidates, showsPauseLine } from "../lib/quick-check";
 import { activationLabel, hasAffectPoint, quickActivation, quickValence, scaleLabel } from "../lib/affect-labels";
 import { buildSynthesis, hasSynthesis } from "../lib/synthesis";
@@ -1293,6 +1294,7 @@ function RecordsScreen({ records, manageOpen = false, onHelp, onOpen, onBack, on
             {item.responseLabels.length > 0 && <span className="record-need">{t("records.responsesLine", { labels: item.responseLabels.join(" / ") })}</span>}
           </button><RecordHelp onHelp={onHelp} /></div>;
         })}</div>}
+    <WithCounselor count={records.length} onBack={onBack} />
     <HelpLine onHelp={onHelp} />
     {/* moving and deleting, folded into one line (2026-11-05); open when the person came to manage them */}
     <details className="record-manage" open={manageOpen}>
@@ -1301,6 +1303,32 @@ function RecordsScreen({ records, manageOpen = false, onHelp, onOpen, onBack, on
     </details>
     <div className="navigation"><button className="quiet-button" onClick={onBack}>{t("records.backToStart")}</button><span /></div>
   </Screen>;
+}
+
+/**
+ * Under the records list once three or more entries are kept (2026-11-15): one way
+ * to take them to a person, for the step after a self-help tool (textbook unit 5).
+ * The count of entries in the list is the only condition. No word, spot or note in a
+ * record is read, so any three entries show the same line (SAFETY.md). 상담자 goes
+ * back to the landing's 「위기는 아니지만」 section (NextStep); no new outside link.
+ */
+const WITH_COUNSELOR_FROM = 3;
+function WithCounselor({ count, onBack }: { count: number; onBack: () => void }) {
+  const t = useT();
+  if (count < WITH_COUNSELOR_FROM) return null;
+  const [before, after] = t("records.withCounselor", { counselor: "{counselor}" }).split("{counselor}");
+  const toNextStep = () => {
+    flushSync(onBack);
+    const title = document.getElementById("next-step-title");
+    if (!title) return;
+    title.tabIndex = -1;
+    title.scrollIntoView?.({ block: "start" });
+    title.focus({ preventScroll: true });
+  };
+  return <>
+    <p className="small-note with-counselor">{before}<button type="button" className="inline-link" onClick={toNextStep}>{t("records.withCounselorWord")}</button>{after}</p>
+    {t.locale === "en" && <p className="draft-note">{enOnly.draftNote}</p>}
+  </>;
 }
 
 /**

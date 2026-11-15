@@ -614,6 +614,9 @@ export const en: Messages = {
     },
     when: "{year}-{month}-{day}  {hour}:{minute}",
     day: "{month}/{day}",
+    /** DRAFT, not reviewed by the owner (2026-11-15). Listed in docs/EN_REVIEW.md as 검토 전; the line is followed by `enOnly.draftNote`. */
+    withCounselor: "You’ve saved a few entries. If similar days keep coming or they feel heavy to look at alone, you can download them and go over them with {counselor}.",
+    withCounselorWord: "a counselor",
   },
   recordTransfer: {
     title: "Move or delete entries",
