@@ -30,6 +30,7 @@ import { toneOf } from "../lib/tones";
 import { enOnly } from "../lib/i18n/messages.en";
 import { SiteLogo } from "./site-logo";
 import { GroundPick } from "./ground-pick";
+import { SaveIsland } from "./save-island";
 
 // Every read and write of a record goes through the one storage seam. It is
 // synchronous, like the localStorage calls it wraps, so no call site changes.
@@ -1123,7 +1124,7 @@ function TalkToSomeoneQuestion({ answer, onAnswer }: { answer?: TalkToSomeone; o
     <h2 className="subquestion" id="talk-question-title">{t("talkToSomeone.question")}</h2>
     <p className="small-note">{t("talkToSomeone.hint")}</p>
     <div className="inline-choices">{TALK_ANSWERS.map((value) => <button key={value} className={answer === value ? "selected" : ""} aria-pressed={answer === value} onClick={() => onAnswer(value)}><Mark on={answer === value} />{t(`talkToSomeone.answers.${value}`)}</button>)}</div>
-    {answer && <p className="small-note" role="status">{t("talkToSomeone.saved")}</p>}
+    <SaveIsland show={!!answer} replay={answer}>{t("talkToSomeone.saved")}</SaveIsland>
   </section>;
 }
 
@@ -1144,7 +1145,7 @@ function UnderlyingFeelingQuestion({ answer, note, onAnswer, onNote }: { answer?
       <label className="field-label" htmlFor="underlying-note">{t("underlyingFeeling.noteLabel")} <em>{t("words.optional")}</em></label>
       <input id="underlying-note" className="text-input" maxLength={INPUT_LIMITS.line} defaultValue={note} onChange={(event) => onNote(event.target.value)} />
     </div>}
-    {answer && <p className="small-note" role="status">{t("underlyingFeeling.saved")}</p>}
+    <SaveIsland show={!!answer} replay={answer}>{t("underlyingFeeling.saved")}</SaveIsland>
   </section>;
 }
 

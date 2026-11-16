@@ -1,0 +1,17 @@
+/* The saved note under the closing questions (app/save-island.tsx): a small card in the
+   site's colours, sized to its text. The motion sets width, height and corner inline
+   while it runs and clears them when it settles. */
+p.island {
+  display: inline-block;
+  max-width: 100%;
+  padding: 10px 14px;
+  border: 1px solid var(--accent);
+  border-radius: 12px;
+  background: var(--card);
+  color: var(--ink);
+  vertical-align: top;
+}
+
+.text {
+  display: block;
+}
