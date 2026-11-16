@@ -15,7 +15,7 @@ import type { EmotionSession } from "../lib/session-types";
  * so two sets of three entries with different contents show the same line.
  */
 const KO_LINE = "기록이 몇 번 쌓였어요. 비슷한 날이 이어지거나 혼자 보기 버겁다면, 이 기록을 내려받아 상담자와 함께 보는 방법도 있어요.";
-const EN_LINE = "You’ve saved a few entries. If similar days keep coming or they feel heavy to look at alone, you can download them and go over them with a counselor.";
+const EN_LINE = "You’ve saved a few entries. If similar days keep coming or they feel heavy to look at alone, you can export them to a file and go over them with a counselor.";
 
 const record = (id: string, minute: number, body: Partial<EmotionSession>, locale: "ko" | "en" = "ko"): EmotionSession => ({
   id, createdAt: `2026-11-0${3 + minute}T02:00:00.000Z`, completedAt: `2026-11-0${3 + minute}T02:05:00.000Z`, status: "completed",
