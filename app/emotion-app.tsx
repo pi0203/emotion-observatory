@@ -771,7 +771,7 @@ function TieredWords({ pool, selectedLabels, ownWords, onToggle, onAddCustom, me
   const chip = (label: string, extra = "") => <button className={`chip ${pickHost} ${selectedLabels.includes(label) ? "selected" : ""} ${extra}`} aria-pressed={selectedLabels.includes(label)} key={label} onClick={() => onToggle(label)} onAnimationEnd={(event) => { if (event.target === event.currentTarget) motion.done(label); }}><Mark on={selectedLabels.includes(label)} />{label}<PickUnderline on={selectedLabels.includes(label)} /></button>;
   const addCustom = () => { onAddCustom(custom); setCustom(""); };
 
-  const mine = ownWords.length > 0 && <>
+  const mine = (ownWords.length > 0 || motion.leaving.length > 0) && <>
     <p className="tier-label">{t("words.mine")}</p>
     <div className="chip-grid">{ownWords.map((label) => chip(label, motion.entering.includes(label) ? tagEnter : ""))}{motion.leaving.map((item) => <span className={`chip ${tagLeave}`} aria-hidden="true" key={`leaving-${item.label}`}>{item.label}</span>)}</div>
     {onMeaning && ownWords.map((label) => <div className="own-meaning" key={label}>
