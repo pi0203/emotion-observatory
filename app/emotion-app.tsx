@@ -32,6 +32,7 @@ import { SiteLogo } from "./site-logo";
 import { FIRST_OPEN_INIT, firstOpenPending, introPhrases, markFirstOpenPlayed } from "./first-open";
 import { GroundPick } from "./ground-pick";
 import { PickUnderline, pickHost } from "./pick-underline";
+import { tagEnter, tagLeave, useTagMotion } from "./tag-motion";
 import { SaveIsland } from "./save-island";
 import { VoiceNote, VoicePlayback } from "./voice-note";
 import { getVoiceStore } from "../lib/voice-store";
@@ -766,12 +767,13 @@ function TieredWords({ pool, selectedLabels, ownWords, onToggle, onAddCustom, me
   const poolLabels = pool.map((item) => item.label);
   const selectedAsItems = selectedLabels.map((label) => ({ label, source: "suggested" as const }));
   const expanded = expandCandidates([...pool, ...selectedAsItems], undefined, t.locale).filter((item) => !poolLabels.includes(item.label));
-  const chip = (label: string) => <button className={`chip ${pickHost} ${selectedLabels.includes(label) ? "selected" : ""}`} aria-pressed={selectedLabels.includes(label)} key={label} onClick={() => onToggle(label)}><Mark on={selectedLabels.includes(label)} />{label}<PickUnderline on={selectedLabels.includes(label)} /></button>;
+  const motion = useTagMotion(ownWords);
+  const chip = (label: string, extra = "") => <button className={`chip ${pickHost} ${selectedLabels.includes(label) ? "selected" : ""} ${extra}`} aria-pressed={selectedLabels.includes(label)} key={label} onClick={() => onToggle(label)} onAnimationEnd={(event) => { if (event.target === event.currentTarget) motion.done(label); }}><Mark on={selectedLabels.includes(label)} />{label}<PickUnderline on={selectedLabels.includes(label)} /></button>;
   const addCustom = () => { onAddCustom(custom); setCustom(""); };
 
   const mine = ownWords.length > 0 && <>
     <p className="tier-label">{t("words.mine")}</p>
-    <div className="chip-grid">{ownWords.map((label) => chip(label))}</div>
+    <div className="chip-grid">{ownWords.map((label) => chip(label, motion.entering.includes(label) ? tagEnter : ""))}{motion.leaving.map((item) => <span className={`chip ${tagLeave}`} aria-hidden="true" key={`leaving-${item.label}`}>{item.label}</span>)}</div>
     {onMeaning && ownWords.map((label) => <div className="own-meaning" key={label}>
       <label className="field-label" htmlFor={`meaning-${label}`}>{t("words.meaningLabel", { label })} <em>{t("words.optional")}</em></label>
       <input id={`meaning-${label}`} className="text-input" maxLength={INPUT_LIMITS.line} defaultValue={meanings?.[label] ?? ""} onChange={(event) => onMeaning(label, event.target.value)} placeholder={t("words.meaningPlaceholder")} />

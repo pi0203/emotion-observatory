@@ -1,0 +1,30 @@
+/* A word added in 「내 말로 적기」 grows in and a removed one shrinks out
+   (app/tag-motion.tsx). Spring values are Tag input's, written as CSS easing:
+   the overshoot is kept under 2% of the size. */
+.enter {
+  animation: tag-in 420ms cubic-bezier(0.3, 1.1, 0.5, 1) both;
+  transform-origin: left center;
+}
+
+.leave {
+  animation: tag-out 300ms cubic-bezier(0.4, 0, 0.8, 0.6) both;
+  transform-origin: left center;
+  pointer-events: none;
+  overflow: hidden;
+  white-space: nowrap;
+}
+
+@keyframes tag-in {
+  from { opacity: 0; transform: scale(0.6); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+@keyframes tag-out {
+  from { opacity: 1; transform: scale(1); }
+  to { opacity: 0; transform: scale(0.6); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .enter, .leave { animation: none; }
+  .leave { display: none; }
+}
