@@ -76,7 +76,7 @@ export const ko = {
     start: "지금 기록",
     resume: "지난 기록 이어하기",
     records: "지난 기록",
-    storageNote: "기록은 이 브라우저에만 저장되고 암호화되지 않습니다. 같은 기기와 브라우저를 쓰는 사람은 볼 수 있으니 공용 기기에서는 주의해 주세요. 브라우저 데이터를 지우면 함께 사라집니다.",
+    storageNote: "기록은 이 브라우저에만 저장되고 암호화되지 않습니다. 같은 기기와 브라우저를 쓰는 사람은 볼 수 있으니 공용 기기에서는 주의해 주세요. 브라우저 데이터를 지우면 함께 사라집니다. 녹음도 같은 기기를 쓰는 사람은 들을 수 있습니다.",
     storageManage: "기록 보기·지우기",
     draftConfirm: {
       title: "이어하던 기록이 있습니다",
@@ -399,6 +399,22 @@ export const ko = {
     placeholder: "지금 떠오르는 일을 적어보세요",
     privacyHint: "다른 사람의 이름은 ‘친구’, ‘팀장’처럼 바꿔 적어도 됩니다. 기록은 이 기기에 남고, 파일로 내보내면 그 파일에도 그대로 들어갑니다.",
     sourceQuestion: "이것은 무엇에 가까운가요?",
+  },
+  /**
+   * 말로 남기기, under the two 무슨 일이 있었나요 fields (2026-11-16, Aside draft,
+   * not yet confirmed by the owner). Recording only: the sound stays in this
+   * browser, nothing turns it into words or reads it.
+   */
+  voice: {
+    open: "말로 남기기",
+    notice: "소리는 이 브라우저 안에만 저장되고 어디로도 보내지 않아요. 같은 기기를 쓰는 사람은 들을 수 있어요. 녹음하지 않아도 모든 기능을 쓸 수 있고, 언제든 지울 수 있어요.",
+    start: "녹음 시작",
+    writeOnly: "글로만 남길게요",
+    recording: "녹음 중",
+    stop: "멈추기",
+    limit: "3분이 지나서 여기까지 저장했어요.",
+    unavailable: "마이크를 쓸 수 없어서 녹음하지 못했어요. 글로 남겨도 괜찮아요.",
+    delete: "이 녹음 지우기",
   },
   meaning: {
     basis: "그 일이 있던 순간을 기준으로",

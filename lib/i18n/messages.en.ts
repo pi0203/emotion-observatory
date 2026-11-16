@@ -446,6 +446,18 @@ export const en: Messages = {
     privacyHint: "You can write “a friend” or “my manager” instead of someone’s name. The entry stays on this device, and if you export it, the file contains it exactly as written.",
     sourceQuestion: "Which is this closest to?",
   },
+  // the voice note (2026-11-16): new keys only, not yet reviewed with the owner
+  voice: {
+    open: "Record a voice note",
+    notice: "Your voice stays in this browser and is never sent anywhere. Anyone using this device can play it. You can use everything without recording, and you can delete it any time.",
+    start: "Start recording",
+    writeOnly: "I’ll just write",
+    recording: "Recording",
+    stop: "Stop",
+    limit: "Saved up to 3 minutes.",
+    unavailable: "The microphone isn’t available, so nothing was recorded. Writing works just as well.",
+    delete: "Delete this recording",
+  },
   meaning: {
     basis: "As of the moment it happened",
     step: "What mattered",

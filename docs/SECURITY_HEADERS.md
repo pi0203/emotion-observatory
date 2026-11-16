@@ -10,7 +10,8 @@
 | `Content-Security-Policy` `object-src 'none'`, `base-uri 'self'`, `form-action 'self'` | | 플러그인 삽입, `<base>` 바꿔치기, 폼을 다른 곳으로 제출 |
 | `X-Content-Type-Options` | `nosniff` | 브라우저가 파일 내용을 보고 스크립트로 추측 실행하는 것 |
 | `Referrer-Policy` | `strict-origin-when-cross-origin` | DOI·상담 전화 링크를 누를 때 상대 사이트에 경로가 넘어가는 것(origin만 전달) |
-| `Permissions-Policy` | 카메라·마이크·위치·결제·USB 끔 | 쓰지 않는 기기 기능을 명시적으로 닫음 |
+| `Content-Security-Policy` `media-src 'self' blob:` | 자기 origin과 이 브라우저 안의 blob: 주소만 | 「말로 남기기」 녹음을 이 브라우저 저장소(IndexedDB)에서 꺼내 다시 듣는 것만 허용(2026-11-16). 바깥 주소는 없다 |
+| `Permissions-Policy` | 카메라·위치·결제·USB 끔, 마이크는 이 사이트만(`microphone=(self)`, 2026-11-16) | 쓰지 않는 기기 기능을 명시적으로 닫음. 마이크는 「말로 남기기」에서 「녹음 시작」을 누를 때만 쓰고, 다른 사이트가 이 앱을 틀에 넣어도 마이크를 쓸 수 없다 |
 | `X-Frame-Options` | `SAMEORIGIN` | `frame-ancestors`를 모르는 오래된 브라우저용 보조 |
 | `X-Powered-By` | 제거 | 프레임워크 버전 힌트 |
 

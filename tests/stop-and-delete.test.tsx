@@ -1,5 +1,5 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import { cleanup, fireEvent, render, screen } from "@testing-library/react";
+import { cleanup, fireEvent, render, screen, waitFor } from "@testing-library/react";
 import Home from "../app/(ko)/page";
 import { createSession, sessionReducer } from "../lib/session-types";
 import { loadCompleted, loadDraft, persistSession, saveCompleted } from "../lib/storage";
@@ -36,13 +36,14 @@ describe("deleting a stopped record", () => {
     expect(loadCompleted().map((item) => [item.id, item.status])).toEqual([[draft.id, "stopped"]]);
   });
 
-  it("removes the stopped record from this device when asked", () => {
+  it("removes the stopped record from this device when asked", async () => {
     const draft = atCandidates();
     stopFromDraft(draft);
     fireEvent.click(screen.getByRole("button", { name: "이 기록을 지우기" }));
     expect(loadCompleted()).toEqual([]);
     expect(loadDraft()).toBeNull();
-    expect(reload).toHaveBeenCalled();
+    // the page reloads once the record's voice notes are gone too (2026-11-16)
+    await waitFor(() => expect(reload).toHaveBeenCalled());
   });
 
   it("deletes only that record, leaving every other one alone", () => {

@@ -1,0 +1,89 @@
+/* 말로 남기기 (app/voice-note.tsx). Blue tokens only (docs/design.md §3): no coral, no warning red.
+   The buttons keep the shared classes, so their focus ring and contrast come from app/globals.css. */
+.voice {
+  margin-top: 14px;
+}
+
+.open {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.mic {
+  flex: none;
+}
+
+.notice {
+  margin-top: 4px;
+  padding: 14px 16px;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: var(--card);
+}
+
+.noticeText {
+  margin: 0 0 4px;
+  color: var(--ink);
+  font-size: var(--t-small);
+  line-height: 1.6;
+}
+
+.noticeText:focus {
+  outline: none;
+}
+
+.recording {
+  display: grid;
+  gap: 10px;
+  padding: 14px 16px;
+  border: 1px solid var(--line-strong);
+  border-radius: 12px;
+  background: var(--card);
+}
+
+.recording > button {
+  justify-self: start;
+}
+
+.status {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0;
+  color: var(--ink);
+  font-size: var(--t-small);
+}
+
+.dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--accent);
+}
+
+.clock {
+  font-variant-numeric: tabular-nums;
+  color: var(--muted);
+}
+
+.bars {
+  display: block;
+  width: 100%;
+  max-width: 360px;
+  height: 32px;
+}
+
+.bars rect {
+  fill: var(--accent);
+}
+
+.player {
+  display: grid;
+  gap: 6px;
+}
+
+.audio {
+  width: 100%;
+  max-width: 420px;
+}
