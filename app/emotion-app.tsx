@@ -31,6 +31,7 @@ import { enOnly } from "../lib/i18n/messages.en";
 import { SiteLogo } from "./site-logo";
 import { FIRST_OPEN_INIT, firstOpenPending, introPhrases, markFirstOpenPlayed } from "./first-open";
 import { GroundPick } from "./ground-pick";
+import { PickUnderline, pickHost } from "./pick-underline";
 import { SaveIsland } from "./save-island";
 import { VoiceNote, VoicePlayback } from "./voice-note";
 import { getVoiceStore } from "../lib/voice-store";
@@ -765,7 +766,7 @@ function TieredWords({ pool, selectedLabels, ownWords, onToggle, onAddCustom, me
   const poolLabels = pool.map((item) => item.label);
   const selectedAsItems = selectedLabels.map((label) => ({ label, source: "suggested" as const }));
   const expanded = expandCandidates([...pool, ...selectedAsItems], undefined, t.locale).filter((item) => !poolLabels.includes(item.label));
-  const chip = (label: string) => <button className={`chip ${selectedLabels.includes(label) ? "selected" : ""}`} aria-pressed={selectedLabels.includes(label)} key={label} onClick={() => onToggle(label)}><Mark on={selectedLabels.includes(label)} />{label}</button>;
+  const chip = (label: string) => <button className={`chip ${pickHost} ${selectedLabels.includes(label) ? "selected" : ""}`} aria-pressed={selectedLabels.includes(label)} key={label} onClick={() => onToggle(label)}><Mark on={selectedLabels.includes(label)} />{label}<PickUnderline on={selectedLabels.includes(label)} /></button>;
   const addCustom = () => { onAddCustom(custom); setCustom(""); };
 
   const mine = ownWords.length > 0 && <>
@@ -941,7 +942,7 @@ function CoachWordsScreen({ session, onToggle, onOwnWord, onNext, onLeave }: { s
     {set && <ExampleZone label={t("coach.exampleZone")} id="coach-example-words">{set.event}</ExampleZone>}
     <MineZone>
     {observations.length > 0 && <p className="zone-recap">{t("coach.recap", { observations: observations.join(" ") })}</p>}
-    <div className="chip-grid" role="group" aria-label={t("coach.wordsGroup")}>{[...(set?.words ?? []), ...coachEscapes(t.locale)].map((label) => <button className={`chip ${picked.includes(label) ? "selected" : ""}`} aria-pressed={picked.includes(label)} key={label} onClick={() => onToggle(label)}><Mark on={picked.includes(label)} />{label}</button>)}</div>
+    <div className="chip-grid" role="group" aria-label={t("coach.wordsGroup")}>{[...(set?.words ?? []), ...coachEscapes(t.locale)].map((label) => <button className={`chip ${pickHost} ${picked.includes(label) ? "selected" : ""}`} aria-pressed={picked.includes(label)} key={label} onClick={() => onToggle(label)}><Mark on={picked.includes(label)} />{label}<PickUnderline on={picked.includes(label)} /></button>)}</div>
     <label className="field-label" htmlFor="coach-own">{t("coach.ownWordLabel")}</label>
     <input id="coach-own" className="text-input" maxLength={INPUT_LIMITS.word} value={own} onChange={(event) => { setOwn(event.target.value); onOwnWord(event.target.value); }} placeholder={t("coach.ownWordPlaceholder")} />
     <p className="small-note">{t("coach.wordsPickNote")}</p>

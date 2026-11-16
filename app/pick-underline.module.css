@@ -1,0 +1,36 @@
+/* The line under a picked emotion word (app/pick-underline.tsx). The chip keeps its blue
+   fill and inner ring; the coral 3px line is drawn by this layer instead of the chip's own
+   shadow, so it can be uncovered from left to right. Same shape and colour as the other
+   picked items: a 3px shadow that follows the chip's rounded corners. */
+button.host {
+  position: relative;
+}
+
+button.host:global(.selected) {
+  box-shadow: inset 0 0 0 1px var(--accent-ink);
+}
+
+.line {
+  position: absolute;
+  inset: -1px; /* over the 1px border, so the shadow sits where the chip's own did */
+  border-radius: inherit;
+  box-shadow: 0 3px 0 var(--pick-underline);
+  pointer-events: none;
+}
+
+.draw {
+  animation-name: pick-draw;
+  animation-duration: 260ms; /* set from the chip's width when it is drawn */
+  animation-timing-function: cubic-bezier(0.45, 0.05, 0.25, 1);
+  animation-fill-mode: both;
+  animation-iteration-count: 1;
+}
+
+@keyframes pick-draw {
+  from { clip-path: inset(0 100% -4px 0); }
+  to { clip-path: inset(0 0 -4px 0); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .draw { animation: none; }
+}
