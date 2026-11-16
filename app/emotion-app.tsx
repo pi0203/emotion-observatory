@@ -1,6 +1,6 @@
 "use client";
 
-import { createContext, useContext, useEffect, useReducer, useRef, useState, type CSSProperties } from "react";
+import { createContext, Fragment, useContext, useEffect, useReducer, useRef, useState, type CSSProperties } from "react";
 import { canGoBack, createSession, sessionReducer, understandRoute } from "../lib/session-types";
 import { appraisalEscapes, coachEscapes, coachResult, coachSetFor, getCoachSets } from "../lib/coach";
 import type { AffectPoint, BodyObservation, DeepReflection, EmotionSelection, EmotionSession, QuickNonSelection, SynthesisFit, TalkToSomeone, UnderlyingFeeling, VoiceStep } from "../lib/session-types";
@@ -29,6 +29,7 @@ import type { Translate } from "../lib/i18n/t";
 import { toneOf } from "../lib/tones";
 import { enOnly } from "../lib/i18n/messages.en";
 import { SiteLogo } from "./site-logo";
+import { FIRST_OPEN_INIT, firstOpenPending, introPhrases, markFirstOpenPlayed } from "./first-open";
 import { GroundPick } from "./ground-pick";
 import { SaveIsland } from "./save-island";
 import { VoiceNote, VoicePlayback } from "./voice-note";
@@ -172,8 +173,9 @@ function App() {
     // the homepage frame (header, menu, footer) on the landing and record screens only;
     // the steps keep their minimal top bar so nothing pushes the task down (docs/DESIGN_ALIGNMENT.md §5)
     return <div className="app-shell site-frame">
+      {firstOpenPending() && <script dangerouslySetInnerHTML={{ __html: FIRST_OPEN_INIT }} />}
       <a className="skip-link" href="#main">{t("shell.skipToContent")}</a>
-      <SiteHeader onHelp={() => setHelpOpen(true)} />
+      <SiteHeader onHelp={() => setHelpOpen(true)} bloom />
       <main id="main" tabIndex={-1} className="site-main">
       {openRecord
         ? <RecordDetail session={openRecord} previous={previousRecord(openRecord, records ?? loadCompleted())} onHelp={() => setHelpOpen(true)} onFollowUp={(followUp) => saveFollowUp(openRecord, followUp)} onAddLabel={(label) => addLabelLater(openRecord, label)} onRemoveVoice={(step) => removeVoiceLater(openRecord, step)} onBack={() => setOpenRecord(null)} />
@@ -279,10 +281,10 @@ function koreanLink(locale: string) {
  * and the same help button the steps carry, so the helplines are one tap away
  * before anything is started too (SAFETY.md).
  */
-function SiteHeader({ onHelp }: { onHelp: () => void }) {
+function SiteHeader({ onHelp, bloom = false }: { onHelp: () => void; bloom?: boolean }) {
   const t = useT();
   return <header className="site-header">
-    <a className="site-logo" href={`${HOMEPAGE}/`} {...koreanLink(t.locale)}><SiteLogo /><span className="site-logo-text">Eunchan Joe</span><KoreanMark /></a>
+    <a className="site-logo" href={`${HOMEPAGE}/`} {...koreanLink(t.locale)}><SiteLogo bloom={bloom} /><span className="site-logo-text">Eunchan Joe</span><KoreanMark /></a>
     <nav className="site-nav" aria-label={t("shell.siteNav")}>
       <ul>{HOMEPAGE_NAV.map((item) => {
         const toKorean = t.locale === "en" && !item.en;
@@ -295,6 +297,12 @@ function SiteHeader({ onHelp }: { onHelp: () => void }) {
     {/* the visitor's paper colour, beside the language link (2026-11-13, app/ground-pick.tsx) */}
     <GroundPick />
   </header>;
+}
+
+/** The intro sentence in three phrases, each sharpening from a blur in turn; one whole sentence to a screen reader. */
+function IntroPhrases({ text }: { text: string }) {
+  const phrases = introPhrases(text);
+  return <>{phrases.map((phrase, index) => <Fragment key={index}>{index > 0 && " "}<span className="intro-phrase" style={{ "--i": index } as CSSProperties}>{phrase}</span></Fragment>)}</>;
 }
 
 /** A small footer: the app, its maker, the way back, the terms and the privacy policy. No mail address, no licence line. */
@@ -441,6 +449,9 @@ function LandingScreen({ onStart, draft, onResume, onRecords, onManage, pendingS
   const confirmTitle = useRef<HTMLParagraphElement>(null);
   // the question takes the focus, so it is read before the choice is made
   useEffect(() => { if (pendingStart) confirmTitle.current?.focus(); }, [pendingStart]);
+  // the intro sentence sharpens phrase by phrase on the first open of a visit only (app/first-open.ts)
+  const [sharpen] = useState(firstOpenPending);
+  useEffect(() => { markFirstOpenPlayed(); }, []);
   return <Screen className="entry-screen">
     <section className="card hero-card single-entry">
       {/* a drawing of the pad used in the steps: four quiet colours and one dot (decoration only) */}
@@ -449,7 +460,7 @@ function LandingScreen({ onStart, draft, onResume, onRecords, onManage, pendingS
           the nickname 이쯤 sits under it, Korean only; the old title sentence follows as the hero's line */}
       <h1 className="hero-name">{t("common.appName")}</h1>
       {t.locale === "ko" && <p className="hero-alias">{koOnly.alias}</p>}
-      <p className="hero-title">{renderRich(t("landing.title"))}</p>
+      <p className="hero-title">{sharpen ? <IntroPhrases text={t("landing.title")} /> : renderRich(t("landing.title"))}</p>
       <p className="lede">{renderRich(t("landing.lede"))}</p>
       {pendingStart
         ? <div className="draft-confirm" role="group" aria-labelledby="draft-confirm-title">

@@ -298,6 +298,21 @@ p, .lede, .hint, .step-note, .small-note, .summary-footnote { text-wrap: pretty;
 /* the homepage's plum-blossom mark (2026-11-05): 1.45 x the text height, 0.4em from it, as on the homepage; negative block margins keep the row height */
 .site-logo-mark { flex: none; display: block; width: 1.45em; height: 1.45em; margin-right: .4em; margin-block: -.3em; }
 .site-logo-mark img { display: block; width: 100%; height: 100%; }
+.site-logo-mark svg { display: block; width: 100%; height: 100%; }
+
+/* First open of the landing, once per visit (2026-11-16, owner's decision 「셋 다」; docs/design.md §7).
+   The intro sentence sharpens phrase by phrase (0.55 s each, 0.45 s apart: done at 1.45 s), and the
+   plum petals open from the middle, 0.11 s apart, 0.9 s each, easing out with no overshoot. Both
+   end where the page already is, so nothing is left running. Reduced motion: no animation at all. */
+.intro-phrase { animation: intro-sharpen .55s cubic-bezier(.22, .61, .36, 1) backwards; animation-delay: calc(var(--i) * .45s); }
+@keyframes intro-sharpen { from { filter: blur(6px); opacity: .3; } to { filter: blur(0); opacity: 1; } }
+.site-logo-mark .plum-dark { display: none; }
+@media (prefers-color-scheme: dark) { .site-logo-mark .plum-light { display: none; } .site-logo-mark .plum-dark { display: block; } }
+.plum-petal { transform-origin: 0 0; animation: plum-open .9s cubic-bezier(.22, .61, .36, 1) backwards; animation-delay: calc(var(--i) * .11s); }
+@keyframes plum-open { from { transform: scale(.05); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+@media (prefers-reduced-motion: reduce) { .intro-phrase, .plum-petal { animation: none; } }
+/* a page load reached from this site is the same visit (app/first-open.ts) */
+html[data-first-open-done] .intro-phrase, html[data-first-open-done] .plum-petal { animation: none; }
 /* the words, not the mark, give the header its baseline, so the menu lines up with them as before.
    The words are in the homepage wordmark's face, Instrument Serif 400 (homepage .wordmark: var(--serif), 1.3rem, .01em,
    read from eunchanjoe.vercel.app on 2026-11-13); size and spacing come from .site-logo above */
