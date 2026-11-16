@@ -201,7 +201,19 @@ export type EmotionSession = {
    * edits one. Optional, so no stored record needs migrating.
    */
   labelsLater?: { label: string; at: string }[];
+  /**
+   * A voice note under 무슨 일이 있었나요 (owner's decision 2026-11-16: recording
+   * only). The sound itself is in this browser's IndexedDB (lib/voice-store.ts);
+   * the record says only that there is one, in which format and how long. Nothing
+   * reads, transcribes or sends the sound. One per step; recording again replaces
+   * it. Optional, so no stored record needs migrating.
+   */
+  voiceNotes?: VoiceNote[];
 };
+
+/** The steps where a person writes what happened in their own words. */
+export type VoiceStep = "quick-context" | "context";
+export type VoiceNote = { step: VoiceStep; mimeType: string; seconds: number; at: string };
 
 export type SessionDepth = "quick" | "quick+deep" | "deep";
 
@@ -259,7 +271,9 @@ export type SessionAction =
   | { type: "CLOSE_COACH" }
   | { type: "BACK" }
   | { type: "STOP"; reason: "user" | "entry" }
-  | { type: "ADD_LABEL_LATER"; id: string; label: string };
+  | { type: "ADD_LABEL_LATER"; id: string; label: string }
+  | { type: "SET_VOICE_NOTE"; id: string; note: VoiceNote }
+  | { type: "REMOVE_VOICE_NOTE"; id: string; step: VoiceStep };
 
 export const createSession = (entry: SessionEntry = "quick", locale: Locale = DEFAULT_LOCALE): EmotionSession => ({
   id: crypto.randomUUID(),
@@ -320,6 +334,7 @@ const NOT_A_STEP = new Set<SessionAction["type"]>([
   "SET_SYNTHESIS_FEEDBACK", "SET_TALK_TO_SOMEONE", "SET_UNDERLYING_FEELING", "SET_UNDERLYING_NOTE", "CHOOSE_NEED", "TOGGLE_RESPONSE",
   "TOGGLE_COACH_WORD", "SET_COACH_OWN_WORD", "TOGGLE_APPRAISAL", "SET_OWN_APPRAISAL",
   "SET_PERSONAL_MEANING", "REVEAL_QUICK_WORDS", "SET_QUICK_CONTEXT", "REVEAL_DEEP_WORDS", "ADD_LABEL_LATER", "RESUME", "BACK",
+  "SET_VOICE_NOTE", "REMOVE_VOICE_NOTE",
 ]);
 
 const reduce = (state: EmotionSession, action: SessionAction): EmotionSession => {
@@ -501,6 +516,16 @@ const reduce = (state: EmotionSession, action: SessionAction): EmotionSession =>
       const label = action.label.trim().slice(0, INPUT_LIMITS.word);
       if (state.id !== action.id || (state.status !== "completed" && state.status !== "stopped") || !label) return state;
       return { ...state, labelsLater: [...(state.labelsLater ?? []), { label, at: new Date().toISOString() }] };
+    }
+    case "SET_VOICE_NOTE": {
+      // only onto the record the recording was made for; a later screen may already be showing
+      if (state.id !== action.id) return state;
+      return { ...state, voiceNotes: [...(state.voiceNotes ?? []).filter((note) => note.step !== action.note.step), action.note] };
+    }
+    case "REMOVE_VOICE_NOTE": {
+      if (state.id !== action.id || !state.voiceNotes?.some((note) => note.step === action.step)) return state;
+      const voiceNotes = state.voiceNotes.filter((note) => note.step !== action.step);
+      return { ...state, voiceNotes: voiceNotes.length ? voiceNotes : undefined };
     }
     default:
       return state;

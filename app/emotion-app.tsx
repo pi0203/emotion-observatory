@@ -3,7 +3,7 @@
 import { createContext, useContext, useEffect, useReducer, useRef, useState, type CSSProperties } from "react";
 import { canGoBack, createSession, sessionReducer, understandRoute } from "../lib/session-types";
 import { appraisalEscapes, coachEscapes, coachResult, coachSetFor, getCoachSets } from "../lib/coach";
-import type { AffectPoint, BodyObservation, DeepReflection, EmotionSelection, EmotionSession, QuickNonSelection, SynthesisFit, TalkToSomeone, UnderlyingFeeling } from "../lib/session-types";
+import type { AffectPoint, BodyObservation, DeepReflection, EmotionSelection, EmotionSession, QuickNonSelection, SynthesisFit, TalkToSomeone, UnderlyingFeeling, VoiceStep } from "../lib/session-types";
 
 type DeepContext = NonNullable<DeepReflection["context"]>;
 type DeepOutcome = NonNullable<DeepReflection["outcome"]>;
@@ -31,6 +31,8 @@ import { enOnly } from "../lib/i18n/messages.en";
 import { SiteLogo } from "./site-logo";
 import { GroundPick } from "./ground-pick";
 import { SaveIsland } from "./save-island";
+import { VoiceNote, VoicePlayback } from "./voice-note";
+import { getVoiceStore } from "../lib/voice-store";
 
 // Every read and write of a record goes through the one storage seam. It is
 // synchronous, like the localStorage calls it wraps, so no call site changes.
@@ -84,6 +86,14 @@ function App() {
   // a name given later is added through the reducer, which only ever appends it, and saved like the follow-up
   const addLabelLater = (session: EmotionSession, label: string) => {
     const next = sessionReducer(session, { type: "ADD_LABEL_LATER", id: session.id, label });
+    if (next === session) return;
+    saveCompleted(next);
+    setOpenRecord(next);
+    setRecords(loadCompleted());
+  };
+  // 이 녹음 지우기 on a past record: the sound is already gone from IndexedDB, so the record's mark goes too
+  const removeVoiceLater = (session: EmotionSession, step: VoiceStep) => {
+    const next = sessionReducer(session, { type: "REMOVE_VOICE_NOTE", id: session.id, step });
     if (next === session) return;
     saveCompleted(next);
     setOpenRecord(next);
@@ -150,6 +160,8 @@ function App() {
   const askToStart = (kind: "quick" | "deep") => draft ? setPendingStart(kind) : begin(kind);
   const discardAndStart = () => {
     if (!pendingStart) return;
+    // the draft's voice notes go with it (lib/voice-store.ts)
+    if (draft) void getVoiceStore().removeSession(draft.id).catch(() => undefined);
     removeDraft();
     setDraft(null);
     setPendingStart(null);
@@ -164,7 +176,7 @@ function App() {
       <SiteHeader onHelp={() => setHelpOpen(true)} />
       <main id="main" tabIndex={-1} className="site-main">
       {openRecord
-        ? <RecordDetail session={openRecord} previous={previousRecord(openRecord, records ?? loadCompleted())} onHelp={() => setHelpOpen(true)} onFollowUp={(followUp) => saveFollowUp(openRecord, followUp)} onAddLabel={(label) => addLabelLater(openRecord, label)} onBack={() => setOpenRecord(null)} />
+        ? <RecordDetail session={openRecord} previous={previousRecord(openRecord, records ?? loadCompleted())} onHelp={() => setHelpOpen(true)} onFollowUp={(followUp) => saveFollowUp(openRecord, followUp)} onAddLabel={(label) => addLabelLater(openRecord, label)} onRemoveVoice={(step) => removeVoiceLater(openRecord, step)} onBack={() => setOpenRecord(null)} />
         : records
           ? <RecordsScreen records={records} manageOpen={manageOpen} onHelp={() => setHelpOpen(true)} onOpen={setOpenRecord} onBack={() => setRecords(null)} onChanged={() => { setRecords(loadCompleted()); setDraft(loadDraft()); }} />
           : <LandingScreen onStart={() => askToStart("quick")} draft={draft} onResume={resume} onRecords={() => showRecords()} onManage={() => showRecords(true)} pendingStart={pendingStart} onDiscardAndStart={discardAndStart} onCancelStart={() => setPendingStart(null)} />}
@@ -178,6 +190,10 @@ function App() {
     dispatch({ type: "STOP", reason: "user" });
     setStopConfirm(false);
   };
+
+  // 말로 남기기 under a 무슨 일이 있었나요 field (2026-11-16): optional, the step is the same without it
+  const voiceFor = (step: VoiceStep) => <VoiceNote sessionId={session.id} step={step} note={session.voiceNotes?.find((note) => note.step === step)}
+    onSaved={(note) => dispatch({ type: "SET_VOICE_NOTE", id: session.id, note })} onRemoved={() => dispatch({ type: "REMOVE_VOICE_NOTE", id: session.id, step })} />;
 
   return (
     <main className="app-shell" ref={shell}>
@@ -207,7 +223,7 @@ function App() {
       )}
 
       {session.stage === "quick-affect" && <QuickAffectScreen onNext={(affect) => { dispatch({ type: "SET_QUICK_AFFECT", affect }); dispatch({ type: "SET_QUICK_CANDIDATES", candidatePool: filterQuickCandidates({ x: affect.valence ?? 0.5, y: affect.activation ?? 0.5 }, undefined, t.locale) }); }} onUnknown={() => dispatch({ type: "SET_QUICK_UNKNOWN" })} />}
-      {session.stage === "quick-candidates" && <QuickCandidatesScreen pool={session.quickCheck?.candidatePool ?? []} selected={session.quickCheck?.selected ?? []} response={session.quickCheck?.candidateResponse} revealed={Boolean(session.quickCheck?.wordsRevealed)} onReveal={() => dispatch({ type: "REVEAL_QUICK_WORDS" })} onToggle={(label) => dispatch({ type: "TOGGLE_QUICK_CANDIDATE", label })} onRespond={(response) => dispatch({ type: "SET_QUICK_CANDIDATE_RESPONSE", response })} onAddCustom={(label) => dispatch({ type: "ADD_QUICK_CUSTOM", label })} onMeaning={(label, meaning) => dispatch({ type: "SET_PERSONAL_MEANING", label, meaning })} eventText={session.quickCheck?.context?.eventText ?? ""} onEventText={(eventText) => dispatch({ type: "SET_QUICK_CONTEXT", eventText })} onFinish={() => dispatch({ type: "COMPLETE_QUICK" })} onCoach={() => dispatch({ type: "OPEN_GRANULARITY" })} onDeep={() => { dispatch({ type: "COMPLETE_QUICK" }); dispatch({ type: "ENTER_DEEP" }); }} />}
+      {session.stage === "quick-candidates" && <QuickCandidatesScreen pool={session.quickCheck?.candidatePool ?? []} selected={session.quickCheck?.selected ?? []} response={session.quickCheck?.candidateResponse} revealed={Boolean(session.quickCheck?.wordsRevealed)} onReveal={() => dispatch({ type: "REVEAL_QUICK_WORDS" })} onToggle={(label) => dispatch({ type: "TOGGLE_QUICK_CANDIDATE", label })} onRespond={(response) => dispatch({ type: "SET_QUICK_CANDIDATE_RESPONSE", response })} onAddCustom={(label) => dispatch({ type: "ADD_QUICK_CUSTOM", label })} onMeaning={(label, meaning) => dispatch({ type: "SET_PERSONAL_MEANING", label, meaning })} eventText={session.quickCheck?.context?.eventText ?? ""} onEventText={(eventText) => dispatch({ type: "SET_QUICK_CONTEXT", eventText })} onFinish={() => dispatch({ type: "COMPLETE_QUICK" })} onCoach={() => dispatch({ type: "OPEN_GRANULARITY" })} onDeep={() => { dispatch({ type: "COMPLETE_QUICK" }); dispatch({ type: "ENTER_DEEP" }); }} voice={voiceFor("quick-context")} />}
       {session.stage === "coach-appraisal" && <CoachAppraisalScreen session={session} onToggle={(id) => dispatch({ type: "TOGGLE_APPRAISAL", id })} onOwn={(label) => dispatch({ type: "SET_OWN_APPRAISAL", label })} onNext={() => dispatch({ type: "GO_TO_COACH_WORDS" })} onLeave={() => dispatch({ type: "CLOSE_COACH" })} />}
       {session.stage === "coach-words" && <CoachWordsScreen session={session} onToggle={(label) => dispatch({ type: "TOGGLE_COACH_WORD", label })} onOwnWord={(label) => dispatch({ type: "SET_COACH_OWN_WORD", label })} onNext={() => dispatch({ type: "FINISH_COACH" })} onLeave={() => dispatch({ type: "CLOSE_COACH" })} />}
       {session.stage === "coach-note" && <CoachNoteScreen session={session} onDone={() => dispatch({ type: "CLOSE_COACH" })} />}
@@ -218,7 +234,7 @@ function App() {
       {session.stage === "entry-mini" && <EntryMini onAnswer={(helpful) => dispatch({ type: "SET_ENTRY_MINI", helpful })} />}
       {session.stage === "body" && <BodyScreen initial={session.deepReflection?.body ?? []} onNext={(body) => dispatch({ type: "SET_BODY", body })} />}
       {session.stage === "affect" && <AffectScreen initial={session.deepReflection?.affect ?? quickAffectSuggestion(session)} fromQuick={!session.deepReflection?.affect && Boolean(quickAffectSuggestion(session))} onNext={(affect) => dispatch({ type: "SET_AFFECT", affect })} />}
-      {session.stage === "context" && <ContextScreen initial={session.deepReflection?.context} onNext={(context) => dispatch({ type: "SET_CONTEXT", context })} />}
+      {session.stage === "context" && <ContextScreen initial={session.deepReflection?.context} onNext={(context) => dispatch({ type: "SET_CONTEXT", context })} voice={voiceFor("context")} />}
       {session.stage === "meaning" && <MeaningScreen initial={session.deepReflection?.concerns ?? []} onNext={(selected) => dispatch({ type: "SET_CONCERNS", concerns: selected })} />}
       {session.stage === "emotion" && <EmotionScreen initial={session.deepReflection?.emotionCandidates ?? []} affect={session.deepReflection?.affect} revealed={Boolean(session.deepReflection?.wordsRevealed)} onReveal={() => dispatch({ type: "REVEAL_DEEP_WORDS" })} onNext={(selected) => dispatch({ type: "SET_EMOTIONS", emotionCandidates: selected })} />}
       {session.stage === "outcome" && <OutcomeScreen onNext={(outcome) => dispatch({ type: "SET_OUTCOME", outcome })} />}
@@ -790,7 +806,7 @@ function TieredWords({ pool, selectedLabels, ownWords, onToggle, onAddCustom, me
   </>;
 }
 
-function QuickCandidatesScreen({ pool, selected, response, revealed, onReveal, onToggle, onRespond, onAddCustom, onMeaning, eventText, onEventText, onFinish, onCoach, onDeep }: { pool: EmotionSelection[]; selected: EmotionSelection[]; response?: QuickNonSelection; revealed: boolean; onReveal: () => void; onToggle: (label: string) => void; onRespond: (response: QuickNonSelection) => void; onAddCustom: (label: string) => void; onMeaning: (label: string, meaning: string) => void; eventText: string; onEventText: (eventText: string) => void; onFinish: () => void; onCoach: () => void; onDeep: () => void }) {
+function QuickCandidatesScreen({ pool, selected, response, revealed, onReveal, onToggle, onRespond, onAddCustom, onMeaning, eventText, onEventText, onFinish, onCoach, onDeep, voice }: { pool: EmotionSelection[]; selected: EmotionSelection[]; response?: QuickNonSelection; revealed: boolean; onReveal: () => void; onToggle: (label: string) => void; onRespond: (response: QuickNonSelection) => void; onAddCustom: (label: string) => void; onMeaning: (label: string, meaning: string) => void; eventText: string; onEventText: (eventText: string) => void; onFinish: () => void; onCoach: () => void; onDeep: () => void; voice?: React.ReactNode }) {
   const t = useT();
   const canCoach = getCoachSets(t.locale).some((set) => selected.some((item) => set.words.includes(item.label)));
   return <Screen>
@@ -806,6 +822,7 @@ function QuickCandidatesScreen({ pool, selected, response, revealed, onReveal, o
       <label className="field-label" htmlFor="quick-event">{t("quickCandidates.context.label")} <em>{t("words.optional")}</em></label>
       <input id="quick-event" className="text-input" maxLength={INPUT_LIMITS.text} defaultValue={eventText} onChange={(event) => onEventText(event.target.value)} />
       <p className="small-note">{t("quickCandidates.context.hint")}</p>
+      {voice}
     </div>
 
     <div className="quick-bottom-actions">
@@ -1028,12 +1045,12 @@ function AffectScreen({ initial, fromQuick, onNext }: { initial?: AffectPoint; f
   </Screen>;
 }
 
-function ContextScreen({ initial, onNext }: { initial?: DeepContext; onNext: (context: DeepContext) => void }) {
+function ContextScreen({ initial, onNext, voice }: { initial?: DeepContext; onNext: (context: DeepContext) => void; voice?: React.ReactNode }) {
   const t = useT();
   const { stepNotes } = useContent();
   const [text, setText] = useState(initial?.eventText ?? "");
   const [source, setSource] = useState<DeepContext["source"]>(initial?.source ?? "event");
-  return <Screen><StepHeading step={t("context.step")} title={t("context.title")} hint={t("context.hint")} basis={t("context.basis")} /><textarea className="text-area" maxLength={INPUT_LIMITS.text} value={text} onChange={(event) => setText(event.target.value)} placeholder={t("context.placeholder")} /><p className="small-note">{t("context.privacyHint")}</p><div className="segmented"><span>{t("context.sourceQuestion")}</span>{(["event", "memory", "anticipation", "thought"] as const).map((value) => <button className={source === value ? "selected" : ""} aria-pressed={source === value} key={value} onClick={() => setSource(value)}><Mark on={source === value} />{t(`contextSource.${value}`)}</button>)}</div><Navigation note={stepNote(stepNotes, "context", text.trim().length > 0)} onNext={() => onNext({ eventText: text, source })} /></Screen>;
+  return <Screen><StepHeading step={t("context.step")} title={t("context.title")} hint={t("context.hint")} basis={t("context.basis")} /><textarea className="text-area" maxLength={INPUT_LIMITS.text} value={text} onChange={(event) => setText(event.target.value)} placeholder={t("context.placeholder")} /><p className="small-note">{t("context.privacyHint")}</p>{voice}<div className="segmented"><span>{t("context.sourceQuestion")}</span>{(["event", "memory", "anticipation", "thought"] as const).map((value) => <button className={source === value ? "selected" : ""} aria-pressed={source === value} key={value} onClick={() => setSource(value)}><Mark on={source === value} />{t(`contextSource.${value}`)}</button>)}</div><Navigation note={stepNote(stepNotes, "context", text.trim().length > 0)} onNext={() => onNext({ eventText: text, source })} /></Screen>;
 }
 
 function MeaningScreen({ initial, onNext }: { initial: string[]; onNext: (selected: string[]) => void }) {
@@ -1600,7 +1617,7 @@ function RecordTransfer({ count, onChanged }: { count: number; onChanged: () => 
  * from (owner's decision 2026-10-30): what the person pressed or wrote, what the
  * app worked out from it, and what was added later. Colour is never the only sign.
  */
-function RecordDetail({ session, previous, onHelp, onFollowUp, onAddLabel, onBack }: { session: EmotionSession; previous?: EmotionSession; onHelp: () => void; onFollowUp: (followUp: { tried?: "yes" | "partly" | "no"; helped?: "yes" | "somewhat" | "no" | "unsure" }) => void; onAddLabel: (label: string) => void; onBack: () => void }) {
+function RecordDetail({ session, previous, onHelp, onFollowUp, onAddLabel, onRemoveVoice, onBack }: { session: EmotionSession; previous?: EmotionSession; onHelp: () => void; onFollowUp: (followUp: { tried?: "yes" | "partly" | "no"; helped?: "yes" | "somewhat" | "no" | "unsure" }) => void; onAddLabel: (label: string) => void; onRemoveVoice: (step: VoiceStep) => void; onBack: () => void }) {
   const t = useT();
   const item = summarise(session, t.locale);
   const followUp = session.support?.followUp;
@@ -1648,6 +1665,9 @@ function RecordDetail({ session, previous, onHelp, onFollowUp, onAddLabel, onBac
       </>}
       {item.responseLabels.length > 0 && <SummaryRow label={t("recordDetail.responses")} value={item.responseLabels.join(" / ")} source={mine("pressed")} />}
     </div>
+    {/* voice notes, played back from this browser only; under the name of the step they were made in */}
+    {session.voiceNotes?.map((note) => <VoicePlayback key={note.step} sessionId={session.id} step={note.step} at={note.at}
+      label={note.step === "context" ? t("recordDetail.context") : t("recordDetail.quickContext")} onDelete={() => onRemoveVoice(note.step)} />)}
 
     <NamesLayer
       day={formatDay(item.at, t.locale)}
@@ -1717,7 +1737,7 @@ function NamesLayer({ day, first, later, onAdd, previous }: { day: string; first
   </section>;
 }
 
-function StoppedScreen({ session }: { session: EmotionSession }) { const t = useT(); return <Screen className="entry-screen"><p className="eyebrow">{t("stopped.eyebrow")}</p><h1>{renderRich(t("stopped.title"))}</h1><p className="lede">{t("stopped.lede")}</p><div className="stack-actions"><a className="primary-button centered" href="/">{t("stopped.home")}</a><button className="quiet-button" onClick={() => { removeDraft(); dropCompleted(session.id); window.location.reload(); }}>{t("stopped.delete")}</button></div><HelpReveal /></Screen>; }
+function StoppedScreen({ session }: { session: EmotionSession }) { const t = useT(); return <Screen className="entry-screen"><p className="eyebrow">{t("stopped.eyebrow")}</p><h1>{renderRich(t("stopped.title"))}</h1><p className="lede">{t("stopped.lede")}</p><div className="stack-actions"><a className="primary-button centered" href="/">{t("stopped.home")}</a><button className="quiet-button" onClick={async () => { removeDraft(); dropCompleted(session.id); await getVoiceStore().removeSession(session.id).catch(() => undefined); window.location.reload(); }}>{t("stopped.delete")}</button></div><HelpReveal /></Screen>; }
 
 /**
  * After 더 불편해짐 the summary, its questions and the need screen are left out:

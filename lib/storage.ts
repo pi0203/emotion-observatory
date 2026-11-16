@@ -1,4 +1,5 @@
 import type { EmotionSession } from "./session-types";
+import { getVoiceStore } from "./voice-store";
 
 const DRAFT_KEY = "emotion-lab:draft:v4";
 const COMPLETED_KEY = "emotion-lab:completed:v4";
@@ -73,11 +74,16 @@ export const persistSession = (session: EmotionSession): boolean => {
  * Removes both keys outright rather than reading and rewriting them, so a
  * stored value that no longer parses is cleared too. The keys themselves stay
  * the same; the next save writes them again in the same format.
+ *
+ * The voice notes' sound is in IndexedDB (lib/voice-store.ts), so it is cleared
+ * too. That store is asynchronous and this call is not; the promise is returned
+ * for anyone who wants to wait, and a refusal never throws.
  */
-export const clearAllRecords = () => {
-  if (typeof window === "undefined") return;
+export const clearAllRecords = (): Promise<void> => {
+  if (typeof window === "undefined") return Promise.resolve();
   window.localStorage.removeItem(COMPLETED_KEY);
   window.localStorage.removeItem(DRAFT_KEY);
+  return getVoiceStore().clear().catch(() => undefined);
 };
 
 export const getStorageKeys = () => ({ DRAFT_KEY, COMPLETED_KEY });

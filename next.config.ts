@@ -18,6 +18,8 @@ const isDev = process.env.NODE_ENV === "development";
  * - script-src keeps 'unsafe-inline' because Next.js hydrates with inline
  *   scripts; 'unsafe-eval' and the ws: connection are for development only.
  * - img-src allows data: and blob: for the export download and inline icons.
+ * - media-src allows blob: so a voice note recorded here plays back from this
+ *   browser's own storage (2026-11-16). No outside address is added.
  */
 const contentSecurityPolicy = [
   "default-src 'self'",
@@ -25,6 +27,7 @@ const contentSecurityPolicy = [
   "style-src 'self' 'unsafe-inline'",
   "img-src 'self' data: blob:",
   "font-src 'self'",
+  "media-src 'self' blob:",
   `connect-src 'self'${isDev ? " ws: wss:" : ""}`,
   "object-src 'none'",
   "base-uri 'self'",
@@ -39,8 +42,9 @@ const securityHeaders = [
   { key: "X-Content-Type-Options", value: "nosniff" },
   // outbound links (DOI, helplines) learn only the origin, never the path
   { key: "Referrer-Policy", value: "strict-origin-when-cross-origin" },
-  // the app uses none of these device features; say so explicitly
-  { key: "Permissions-Policy", value: "camera=(), microphone=(), geolocation=(), payment=(), usb=()" },
+  // the app uses none of these device features but the microphone, and that only on this site,
+  // for a voice note kept in the browser (2026-11-16); say so explicitly
+  { key: "Permissions-Policy", value: "camera=(), microphone=(self), geolocation=(), payment=(), usb=()" },
   // belt and braces for browsers that ignore frame-ancestors (same-origin only)
   { key: "X-Frame-Options", value: "SAMEORIGIN" },
 ];

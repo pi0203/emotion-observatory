@@ -242,7 +242,7 @@ export const en: Messages = {
       storage: {
         q: "Where are my entries saved?",
         // the Safari sentences were added 2026-11-01. Owner's approval of the English: 2026-11-01 ("OK") (docs/TERMS.md)
-        a: "Only in the browser you are using. What you write is not sent to a server. Clearing your browser data removes your entries, and the storage is not encrypted. On the past entries screen, you can export them to a file (locked with a passphrase if you like) or delete them all. Safari may delete your entries if you don’t use this site for more than 7 days (only days you use Safari count). To keep them, export a file now and then.",
+        a: "Only in the browser you are using. What you write is not sent to a server. Clearing your browser data removes your entries, and the storage is not encrypted. On the past entries screen, you can export them to a file (locked with a passphrase if you like) or delete them all. Safari may delete your entries if you don’t use this site for more than 7 days (only days you use Safari count). To keep them, export a file now and then. Voice recordings can be removed the same way.",
       },
       maker: {
         q: "Can the maker see my entries?",
@@ -445,6 +445,18 @@ export const en: Messages = {
     placeholder: "Write what comes to mind",
     privacyHint: "You can write “a friend” or “my manager” instead of someone’s name. The entry stays on this device, and if you export it, the file contains it exactly as written.",
     sourceQuestion: "Which is this closest to?",
+  },
+  // the voice note (2026-11-16): new keys only, not yet reviewed with the owner
+  voice: {
+    open: "Record a voice note",
+    notice: "Your voice stays in this browser and is never sent anywhere. Anyone using this device can play it. You can use everything without recording, and you can delete it any time.",
+    start: "Start recording",
+    writeOnly: "I’ll just write",
+    recording: "Recording",
+    stop: "Stop",
+    limit: "Saved up to 3 minutes.",
+    unavailable: "The microphone isn’t available, so nothing was recorded. Writing works just as well.",
+    delete: "Delete this recording",
   },
   meaning: {
     basis: "As of the moment it happened",

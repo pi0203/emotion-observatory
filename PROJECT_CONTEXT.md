@@ -368,6 +368,7 @@ Response를 고른 기록에만 "해봤나요 / 도움이 됐나요"를 묻고, 
 
 - AI / LLM synthesis
 - 얼굴·음성 감정 인식, automatic emotion diagnosis
+- 녹음은 다시 듣기만 하고 소리에서 감정을 읽지 않는다(본인 결정 2026-11-16)
 - third affect axis
 - personality / attachment 해석
 - mDES 요인구조를 taxonomy로 고정

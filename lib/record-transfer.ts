@@ -33,11 +33,18 @@ export const localDate = (now: Date = new Date()) => {
 
 export const exportFileName = (now: Date = new Date()) => `emotion-observatory-records-${localDate(now)}.json`;
 
+/**
+ * A voice note's sound stays in this browser (2026-11-16): the file says only at
+ * which step there was a recording, without its format, length or sound.
+ */
+const markVoiceNotes = (record: EmotionSession): EmotionSession =>
+  record.voiceNotes ? { ...record, voiceNotes: record.voiceNotes.map(({ step }) => ({ step })) as EmotionSession["voiceNotes"] } : record;
+
 export const buildExport = (records: EmotionSession[], now: Date = new Date()): ExportFile => ({
   format: EXPORT_FORMAT,
   formatVersion: EXPORT_FORMAT_VERSION,
   exportedDate: localDate(now),
-  records,
+  records: records.map(markVoiceNotes),
 });
 
 export const serializeExport = (file: ExportFile) => JSON.stringify(file, null, 2);
@@ -90,7 +97,8 @@ export const parseImport = (text: string): ParsedImport => {
   if (!isObject(data) || data.format !== EXPORT_FORMAT) return { ok: false, error: "unknown-format" };
   if (data.formatVersion !== EXPORT_FORMAT_VERSION) return { ok: false, error: "unsupported-version" };
   if (!Array.isArray(data.records)) return { ok: false, error: "no-records" };
-  const records = data.records.filter(isSessionShape);
+  // the voice-note mark is dropped whatever its shape: the sound never travels with the file
+  const records = data.records.filter(isSessionShape).map(({ voiceNotes: _mark, ...record }) => record as EmotionSession);
   return { ok: true, records, invalid: data.records.length - records.length };
 };
 
