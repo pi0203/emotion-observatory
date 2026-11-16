@@ -55,11 +55,11 @@ describe("PUBLISHING_CHECKLIST §10: storage, transmission, and sharing copy ali
     });
 
     it("Korean FAQ ends the storage answer with Safari's seven days and the advice to export (이용약관 제6조 ③④)", () => {
-      expect(ko.about.faq.storage.a.endsWith(" Safari에서는 이 사이트를 7일 넘게 쓰지 않으면(Safari를 쓴 날만 셉니다) 브라우저가 기록을 지울 수 있습니다. 오래 두려면 가끔 파일로 내보내 주세요.")).toBe(true);
+      expect(ko.about.faq.storage.a.endsWith(" Safari에서는 이 사이트를 7일 넘게 쓰지 않으면(Safari를 쓴 날만 셉니다) 브라우저가 기록을 지울 수 있습니다. 오래 두려면 가끔 파일로 내보내 주세요. 녹음한 소리도 같은 규칙으로 지워질 수 있어요.")).toBe(true);
     });
 
     it("English FAQ ends the storage answer with Safari's seven days and the advice to export", () => {
-      expect(en.about.faq.storage.a.endsWith(" Safari may delete your entries if you don’t use this site for more than 7 days (only days you use Safari count). To keep them, export a file now and then.")).toBe(true);
+      expect(en.about.faq.storage.a.endsWith(" Safari may delete your entries if you don’t use this site for more than 7 days (only days you use Safari count). To keep them, export a file now and then. Voice recordings can be removed the same way.")).toBe(true);
     });
 
     it("English FAQ confirms serverless storage, maker invisibility, and no AI transmission", () => {
