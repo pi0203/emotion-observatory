@@ -32,6 +32,7 @@ import { SiteLogo } from "./site-logo";
 import { FIRST_OPEN_INIT, firstOpenPending, introPhrases, markFirstOpenPlayed } from "./first-open";
 import { GroundPick } from "./ground-pick";
 import { PickUnderline, pickHost } from "./pick-underline";
+import { LimitField } from "./limit-ring";
 import { tagEnter, tagLeave, useTagMotion } from "./tag-motion";
 import { SaveIsland } from "./save-island";
 import { VoiceNote, VoicePlayback } from "./voice-note";
@@ -780,7 +781,7 @@ function TieredWords({ pool, selectedLabels, ownWords, onToggle, onAddCustom, me
     </div>)}
   </>;
   const ownRow = <div className="own-word-row">
-    <input className="text-input" maxLength={INPUT_LIMITS.word} value={custom} onChange={(event) => setCustom(event.target.value)} onKeyDown={(event) => { if (event.key === "Enter") addCustom(); }} placeholder={t("common.ownWordsPlaceholder")} aria-label={t("common.ownWordsPlaceholder")} />
+    <LimitField length={custom.length} max={INPUT_LIMITS.word}><input className="text-input" maxLength={INPUT_LIMITS.word} value={custom} onChange={(event) => setCustom(event.target.value)} onKeyDown={(event) => { if (event.key === "Enter") addCustom(); }} placeholder={t("common.ownWordsPlaceholder")} aria-label={t("common.ownWordsPlaceholder")} /></LimitField>
     <button className="small-button" disabled={!custom.trim()} onClick={addCustom}>{t("words.add")}</button>
   </div>;
 
@@ -822,6 +823,7 @@ function TieredWords({ pool, selectedLabels, ownWords, onToggle, onAddCustom, me
 
 function QuickCandidatesScreen({ pool, selected, response, revealed, onReveal, onToggle, onRespond, onAddCustom, onMeaning, eventText, onEventText, onFinish, onCoach, onDeep, voice }: { pool: EmotionSelection[]; selected: EmotionSelection[]; response?: QuickNonSelection; revealed: boolean; onReveal: () => void; onToggle: (label: string) => void; onRespond: (response: QuickNonSelection) => void; onAddCustom: (label: string) => void; onMeaning: (label: string, meaning: string) => void; eventText: string; onEventText: (eventText: string) => void; onFinish: () => void; onCoach: () => void; onDeep: () => void; voice?: React.ReactNode }) {
   const t = useT();
+  const [eventLength, setEventLength] = useState(eventText.length);
   const canCoach = getCoachSets(t.locale).some((set) => selected.some((item) => set.words.includes(item.label)));
   return <Screen>
     <StepHeading step={t("quickCandidates.step")} title={revealed ? t("quickCandidates.title") : t("words.beforeTitle")} hint={revealed ? t("quickCandidates.hint") : t("words.beforeHint")} basis={t("quickCandidates.basis")} />
@@ -834,7 +836,7 @@ function QuickCandidatesScreen({ pool, selected, response, revealed, onReveal, o
     {/* what happened, one optional line (owner's decision 2026-10-30): no source choice and no split into parts, so the quick look stays short */}
     <div className="quick-context">
       <label className="field-label" htmlFor="quick-event">{t("quickCandidates.context.label")} <em>{t("words.optional")}</em></label>
-      <input id="quick-event" className="text-input" maxLength={INPUT_LIMITS.text} defaultValue={eventText} onChange={(event) => onEventText(event.target.value)} />
+      <LimitField length={eventLength} max={INPUT_LIMITS.text}><input id="quick-event" className="text-input" maxLength={INPUT_LIMITS.text} defaultValue={eventText} onChange={(event) => { setEventLength(event.target.value.length); onEventText(event.target.value); }} /></LimitField>
       <p className="small-note">{t("quickCandidates.context.hint")}</p>
       {voice}
     </div>
@@ -1064,7 +1066,7 @@ function ContextScreen({ initial, onNext, voice }: { initial?: DeepContext; onNe
   const { stepNotes } = useContent();
   const [text, setText] = useState(initial?.eventText ?? "");
   const [source, setSource] = useState<DeepContext["source"]>(initial?.source ?? "event");
-  return <Screen><StepHeading step={t("context.step")} title={t("context.title")} hint={t("context.hint")} basis={t("context.basis")} /><textarea className="text-area" maxLength={INPUT_LIMITS.text} value={text} onChange={(event) => setText(event.target.value)} placeholder={t("context.placeholder")} /><p className="small-note">{t("context.privacyHint")}</p>{voice}<div className="segmented"><span>{t("context.sourceQuestion")}</span>{(["event", "memory", "anticipation", "thought"] as const).map((value) => <button className={source === value ? "selected" : ""} aria-pressed={source === value} key={value} onClick={() => setSource(value)}><Mark on={source === value} />{t(`contextSource.${value}`)}</button>)}</div><Navigation note={stepNote(stepNotes, "context", text.trim().length > 0)} onNext={() => onNext({ eventText: text, source })} /></Screen>;
+  return <Screen><StepHeading step={t("context.step")} title={t("context.title")} hint={t("context.hint")} basis={t("context.basis")} /><LimitField length={text.length} max={INPUT_LIMITS.text} textarea><textarea className="text-area" maxLength={INPUT_LIMITS.text} value={text} onChange={(event) => setText(event.target.value)} placeholder={t("context.placeholder")} /></LimitField><p className="small-note">{t("context.privacyHint")}</p>{voice}<div className="segmented"><span>{t("context.sourceQuestion")}</span>{(["event", "memory", "anticipation", "thought"] as const).map((value) => <button className={source === value ? "selected" : ""} aria-pressed={source === value} key={value} onClick={() => setSource(value)}><Mark on={source === value} />{t(`contextSource.${value}`)}</button>)}</div><Navigation note={stepNote(stepNotes, "context", text.trim().length > 0)} onNext={() => onNext({ eventText: text, source })} /></Screen>;
 }
 
 function MeaningScreen({ initial, onNext }: { initial: string[]; onNext: (selected: string[]) => void }) {
