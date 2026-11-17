@@ -60,7 +60,7 @@ describe("crisis card wording (owner, 2026-10-13)", () => {
   afterEach(cleanup);
 
   it("puts the emergency line first, then the intro, then the three lines, in Korean", () => {
-    expect(ko.crisis.emergency).toBe("몸을 다쳤거나 지금 당장 위험하다면 <b>119</b>(구급) 또는 <b>112</b>(경찰)에 바로 연락하세요.");
+    expect(ko.crisis.emergency).toBe("몸을 다쳤거나 지금 당장 위험하다면, 또는 누군가 다칠 것 같다면 <b>119</b>(구급)나 <b>112</b>(경찰)에 바로 전화하세요.");
     expect(ko.crisis.intro).toBe("이야기를 나눌 사람이 필요하다면, 24시간 열려 있는 상담 전화가 있습니다.");
     expect([ko.crisis.lifeline109, ko.crisis.mental1577, ko.crisis.youth1388]).toEqual([
       "자살예방상담전화 (24시간)", "정신건강 위기상담전화 (24시간)", "청소년상담전화 (9~24세)",
@@ -68,7 +68,7 @@ describe("crisis card wording (owner, 2026-10-13)", () => {
     render(<Home />);
     const card = screen.getByRole("complementary", { name: ko.crisis.title });
     const [emergency, intro] = Array.from(card.children);
-    expect(emergency.textContent).toBe("몸을 다쳤거나 지금 당장 위험하다면 119(구급) 또는 112(경찰)에 바로 연락하세요.");
+    expect(emergency.textContent).toBe("몸을 다쳤거나 지금 당장 위험하다면, 또는 누군가 다칠 것 같다면 119(구급)나 112(경찰)에 바로 전화하세요.");
     expect(Array.from(emergency.querySelectorAll("strong")).map((node) => node.textContent)).toEqual(["119", "112"]);
     expect(intro.textContent).toBe(ko.crisis.intro);
   });
@@ -86,7 +86,12 @@ describe("crisis card wording (owner, 2026-10-13)", () => {
 
   it("names 1577-0199 as the ministry does (mohw.go.kr, 2026-11-10), in both languages", () => {
     expect(ko.crisis.mental1577).toBe("정신건강 위기상담전화 (24시간)");
-    expect(en.crisis.mental1577).toBe("Mental Health Crisis Counseling Line (24 hours)");
+    expect(en.crisis.mental1577).toBe("Mental Health Crisis Counseling Line (Korea) (24 hours)");
+  });
+
+  it("English names the two crisis lines as Korean ones (2026-11-17)", () => {
+    expect(en.crisis.lifeline109).toBe("Suicide Prevention Counseling Line (Korea) (24 hours)");
+    expect(en.crisis.mental1577).toMatch(/^Mental Health Crisis Counseling Line \(Korea\)/);
   });
 
   it("English keeps the meaning of (24시간) and (9~24세)", () => {
@@ -96,8 +101,8 @@ describe("crisis card wording (owner, 2026-10-13)", () => {
   });
 
   it("opens English only with nothing left pending", () => {
-    // reviewed by the owner with the rest of the English on 2026-10-19
-    expect(en.crisis.emergency).toBe("If you are physically hurt or in immediate danger, call <b>119</b> (ambulance) or <b>112</b> (police) right away.");
+    // reviewed by the owner on 2026-10-19; changed with the Korean on 2026-11-17 and a draft again (docs/EN_REVIEW.md)
+    expect(en.crisis.emergency).toBe("If you are physically hurt or in danger right now, or someone may get hurt, call <b>119</b> (ambulance) or <b>112</b> (police) right away.");
     // English cannot be marked reviewed while a sentence is still waiting for the owner.
     if (reviewStatus === "reviewed") expect(pendingReview.keys).toEqual([]);
   });
