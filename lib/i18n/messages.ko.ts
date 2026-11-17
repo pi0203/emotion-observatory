@@ -67,7 +67,7 @@ export const ko = {
       tiredNeed: "쉬는 게 필요할 때",
       stuck: "할 말이 막혀 답답함",
       stuckNeed: "말을 정리하는 게 필요할 때",
-      line: "좋은지 싫은지 잘 몰라도 괜찮아요. 이쯤이라고 눌러 두면, 쌓인 점들이 내 쪽을 보여 줘요.",
+      line: "좋은지 싫은지 잘 몰라도 괜찮아요. 이쯤이라고 눌러 둔 점들은 나중에 다시 볼 수 있어요.",
     },
     // the one-way-in title and subtitle (owner kept the proposed wording, 2026-10-30)
     title: "이름 붙이기 전에, 지금 느껴지는 것을 그대로 남겨 둡니다.",

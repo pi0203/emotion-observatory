@@ -126,7 +126,7 @@ export const en: Messages = {
       tiredNeed: "When rest is what’s needed",
       stuck: "Stuck because the words won’t come",
       stuckNeed: "When sorting out what to say is what’s needed",
-      line: "It’s fine not to know whether it feels good or bad. Tap roughly where it is, and the dots that gather show you your own side.",
+      line: "It’s fine not to know whether it feels good or bad. The spots you mark can be looked at again later.",
     },
     // same meaning as the Korean (owner kept the proposed wording, 2026-10-30)
     title: "Before you name it, keep what you feel just as it is.",
