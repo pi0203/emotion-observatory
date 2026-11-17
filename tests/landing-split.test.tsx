@@ -22,7 +22,7 @@ describe("the split drawing on the landing", () => {
     expect(figure.querySelector(".split-word")!.textContent).toBe(ko.landing.split.word);
     const branches = [...figure.querySelectorAll(".split-branch")].map((item) => item.textContent);
     expect(branches).toEqual([ko.landing.split.tired + ko.landing.split.tiredNeed, ko.landing.split.stuck + ko.landing.split.stuckNeed]);
-    expect(figure.querySelector("figcaption")!.textContent).toBe("좋은지 싫은지 잘 몰라도 괜찮아요. 이쯤이라고 눌러 두면, 쌓인 점들이 내 쪽을 보여 줘요.");
+    expect(figure.querySelector("figcaption")!.textContent).toBe("좋은지 싫은지 잘 몰라도 괜찮아요. 이쯤이라고 눌러 둔 점들은 나중에 다시 볼 수 있어요.");
     // the lines are decoration only
     for (const svg of figure.querySelectorAll("svg")) expect(svg.getAttribute("aria-hidden")).toBe("true");
   });
@@ -60,5 +60,27 @@ describe("in English", () => {
   it("has the drawing's words and no nickname", () => {
     expect(Object.keys(en.landing.split)).toEqual(Object.keys(ko.landing.split));
     expect(JSON.stringify(en.landing)).not.toMatch(/이쯤|Ijjeum/);
+  });
+});
+
+/**
+ * 2026-11-17: the line under the drawing used to promise that the dots, once
+ * gathered, would show you yourself. Looking back is the person's to do, not the
+ * app's, so the first screen keeps no such promise in either language.
+ */
+describe("the first screen promises no reading of you", () => {
+  it("has no 「보여 줘」 or 「쌓인」 in Korean", () => {
+    const text = JSON.stringify(ko.landing);
+    expect(text).not.toMatch(/보여\s*줘|보여\s*드려|쌓인/);
+  });
+
+  it("has no 'show you' or dots that gather in English", () => {
+    const text = JSON.stringify(en.landing);
+    expect(text).not.toMatch(/show(s)? you|dots that gather|gather(ed)? dots/i);
+  });
+
+  it("says only that the marked spots can be seen again later", () => {
+    expect(ko.landing.split.line).toBe("좋은지 싫은지 잘 몰라도 괜찮아요. 이쯤이라고 눌러 둔 점들은 나중에 다시 볼 수 있어요.");
+    expect(en.landing.split.line).toBe("It’s fine not to know whether it feels good or bad. The spots you mark can be looked at again later.");
   });
 });
