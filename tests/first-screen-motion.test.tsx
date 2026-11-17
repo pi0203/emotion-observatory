@@ -56,6 +56,29 @@ describe("first screen motion", () => {
     document.documentElement.removeAttribute("data-first-open-done");
   });
 
+  it("a reload is a new visit even when the page before it was on this site", () => {
+    const original = performance.getEntriesByType;
+    const run = (referrer: string, type?: string) => {
+      document.documentElement.removeAttribute("data-first-open-done");
+      Object.defineProperty(document, "referrer", { value: referrer, configurable: true });
+      performance.getEntriesByType = ((kind: string) => kind === "navigation" && type ? [{ type }] : []) as unknown as typeof performance.getEntriesByType;
+      new Function(FIRST_OPEN_INIT)();
+      return document.documentElement.hasAttribute("data-first-open-done");
+    };
+    try {
+      // back on the landing through 「처음으로 돌아가기」, then reloaded: the referrer is still this site
+      expect(run(`${location.origin}/`, "reload")).toBe(false);
+      // the plain ways back (a link, 「←」, the language links) stay the same visit
+      expect(run(`${location.origin}/`, "navigate")).toBe(true);
+      expect(run(`${location.origin}/`, "back_forward")).toBe(true);
+      expect(run(`${location.origin}/`)).toBe(true);
+      expect(run("", "reload")).toBe(false);
+    } finally {
+      performance.getEntriesByType = original;
+      document.documentElement.removeAttribute("data-first-open-done");
+    }
+  });
+
   it("the title, the nickname, the lede and the buttons are not animated", () => {
     render(<Home />);
     const moving = [...document.querySelectorAll(".intro-phrase, .plum-petal")];
