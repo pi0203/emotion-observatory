@@ -90,8 +90,8 @@ describe("the helplines in 제8조", () => {
   it("keep the card's names and hours beside each number", () => {
     render(<Terms />);
     const text = article("article-8").textContent!;
-    // 119 and 112 exactly as the card's first line puts them: <b>119</b>(구급) 또는 <b>112</b>(경찰)
-    const [, num119, what119, num112, what112] = ko.crisis.emergency.match(/<b>(\d+)<\/b>(\([^)]+\)) 또는 <b>(\d+)<\/b>(\([^)]+\))/)!;
+    // 119 and 112 with the names the card's first line gives them: <b>119</b>(구급)나 <b>112</b>(경찰)
+    const [, num119, what119, num112, what112] = ko.crisis.emergency.match(/<b>(\d+)<\/b>(\([^)]+\))(?:나| 또는) <b>(\d+)<\/b>(\([^)]+\))/)!;
     expect([num119, num112]).toEqual([ko.crisis.num119, ko.crisis.num112]);
     expect(text).toContain(`${num119}${what119} 또는 ${num112}${what112}`);
     // 「자살예방상담전화 (24시간)」 on the card reads 「109(자살예방상담전화, 24시간)」 here

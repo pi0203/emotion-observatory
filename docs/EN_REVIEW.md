@@ -52,3 +52,17 @@
 | 13 | 지난 기록 상담자 한 줄 | `records.withCounselorWord` | 상담자 | a counselor | 검토 전 |
 
 - 12: 지시문 영어 문장의 「records」를 「entries」로 바꿨다. 영어 화면은 기록을 모두 entries로 부르고, `tests/i18n-en-review.test.ts`가 records를 막는다. 「You’ve」의 따옴표는 다른 영어 문장처럼 굽은 따옴표다.
+
+## 2026-11-17 · 시연 전 위기 카드 · 바닥글 (초안)
+
+11/18 시연 전 점검(임상심리학자 관점)에 따라 한국어와 함께 바꾸거나 더했다. 영어 위기 카드는 끝에, 바닥글은 새 줄 바로 뒤에 `enOnly.draftNote`가 붙는다.
+
+| # | 칸 | 키 | 한국어 | 영어 초안 | 상태 |
+|---|---|---|---|---|---|
+| 14 | 위기 카드 | `crisis.emergency` | 몸을 다쳤거나 지금 당장 위험하다면, 또는 누군가 다칠 것 같다면 <b>119</b>(구급)나 <b>112</b>(경찰)에 바로 전화하세요. | If you are physically hurt or in danger right now, or someone may get hurt, call <b>119</b> (ambulance) or <b>112</b> (police) right away. | 검토 전 |
+| 15 | 위기 카드 | `crisis.lifeline109` | 자살예방상담전화 (24시간) | Suicide Prevention Counseling Line (Korea) (24 hours) | 검토 전 |
+| 16 | 위기 카드 | `crisis.mental1577` | 정신건강 위기상담전화 (24시간) | Mental Health Crisis Counseling Line (Korea) (24 hours) | 검토 전 |
+| 17 | 바닥글 | `shell.aiNote` | 화면의 글은 AI(Claude)와 함께 썼고, 만든 사람이 확인합니다. | The text on these screens was written with AI (Claude) and checked by the maker. | 검토 전 |
+
+- 14: 지시문 영어는 「If you are hurt」였지만, 2026-10-19 검토에서 「몸을 다쳤거나」를 마음의 상처와 구별하려고 넣은 physically를 그대로 두었다.
+- 15–16: 한국어 이름은 바꾸지 않았다. (24 hours)는 한국어 (24시간)에 맞춰 그대로 두고 그 앞에 (Korea)를 더했다.

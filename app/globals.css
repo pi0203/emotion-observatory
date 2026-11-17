@@ -322,6 +322,7 @@ html[data-first-open-done] .intro-phrase, html[data-first-open-done] .plum-petal
 .site-logo:hover, .site-nav a:hover, .site-footer a:hover { color: var(--site-hover); }
 .site-footer { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 10px; margin-top: 64px; padding: 24px 0 8px; border-top: 1px solid var(--site-line); color: var(--site-muted); font-size: var(--t-small); }
 .site-footer a { display: inline-flex; align-items: center; min-height: 24px; color: var(--site-ink); text-decoration: underline; text-underline-offset: .2em; text-decoration-color: var(--site-muted); }
+.site-footer-ai, .site-footer .draft-note { flex-basis: 100%; margin: 0; }
 .skip-link { position: absolute; left: 16px; top: -100px; z-index: 10; padding: 10px 14px; color: var(--ink); background: var(--card); border: 1px solid var(--line-strong); border-radius: 3px; font-size: var(--t-small); text-decoration: none; }
 .skip-link:focus { top: 12px; }
 @media (max-width: 560px) { .site-header { padding-top: 20px; } .site-main .entry-screen { padding-top: 24px; } .site-main .screen { padding-top: 28px; } }

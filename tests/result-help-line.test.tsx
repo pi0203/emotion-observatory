@@ -64,7 +64,7 @@ describe("the help sentence under the summary on the closing screens", () => {
     render(<Home />);
     const screenEl = quickSummaryWith(ko, "죽고 싶어");
     const line = screenEl.querySelector(".result-help")!;
-    expect(line.textContent).toBe("지금 많이 힘드시다면 혼자 견디지 않아도 돼요. 자살예방상담전화 109, 정신건강 위기상담전화 1577-0199(24시간). 청소년은 1388.");
+    expect(line.textContent).toBe("지금 많이 힘드시다면 혼자 견디지 않아도 돼요. 자살예방상담전화 109(24시간), 정신건강 위기상담전화 1577-0199(24시간). 청소년은 1388.");
     expect(dialled(line)).toEqual(NUMBERS);
     expectRightUnderCard(screenEl, line);
   });

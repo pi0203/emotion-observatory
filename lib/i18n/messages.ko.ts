@@ -23,6 +23,8 @@ export const ko = {
     skipToContent: "본문으로 건너뛰기",
     siteNav: "홈페이지 메뉴",
     owner: "조은찬",
+    /** A line of its own at the foot of the footer (2026-11-17). */
+    aiNote: "화면의 글은 AI(Claude)와 함께 썼고, 만든 사람이 확인합니다.",
     otherLanguage: "English",
     /** The paper colour picker beside the language link (2026-11-13). */
     ground: "바탕색",
@@ -53,7 +55,7 @@ export const ko = {
      * Nothing reads the entry for risk (SAFETY.md). {num109} and the like are drawn as tel: links from the
      * crisis card's own numbers, as the terms do; tests/result-help-line.test.tsx keeps the numbers.
      */
-    resultHelp: "지금 많이 힘드시다면 혼자 견디지 않아도 돼요. 자살예방상담전화 {num109}, 정신건강 위기상담전화 {num1577}(24시간). 청소년은 {num1388}.",
+    resultHelp: "지금 많이 힘드시다면 혼자 견디지 않아도 돼요. 자살예방상담전화 {num109}(24시간), 정신건강 위기상담전화 {num1577}(24시간). 청소년은 {num1388}.",
     close: "닫기",
     saveFailed: "이 브라우저에 기록을 저장하지 못하고 있습니다. 저장 공간이 가득 찼거나 브라우저가 저장을 막고 있을 수 있습니다. 계속할 수는 있지만, 이 화면을 닫으면 지금 기록은 남지 않습니다. 지난 기록 화면에서 오래된 기록을 파일로 내보내고 지우면 공간이 생깁니다.",
     quoted: "“{value}”",
@@ -88,8 +90,8 @@ export const ko = {
   },
   crisis: {
     title: "긴급 지원 및 위기 상담 안내",
-    /** First line of the card: emergency numbers in bold, no warning colour or icon (owner, 2026-10-13). */
-    emergency: "몸을 다쳤거나 지금 당장 위험하다면 <b>119</b>(구급) 또는 <b>112</b>(경찰)에 바로 연락하세요.",
+    /** First line of the card: emergency numbers in bold, no warning colour or icon (owner, 2026-10-13). 「또는 누군가 다칠 것 같다면」 added before the demo (2026-11-17). */
+    emergency: "몸을 다쳤거나 지금 당장 위험하다면, 또는 누군가 다칠 것 같다면 <b>119</b>(구급)나 <b>112</b>(경찰)에 바로 전화하세요.",
     intro: "이야기를 나눌 사람이 필요하다면, 24시간 열려 있는 상담 전화가 있습니다.",
     lifeline109: "자살예방상담전화 (24시간)",
     num109: "109",

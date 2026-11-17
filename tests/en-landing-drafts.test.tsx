@@ -39,7 +39,11 @@ describe("the English landing's three draft blocks", () => {
   });
 
   it("shows three draft lines in English and none in Korean", () => {
-    expect(english().querySelectorAll(".draft-note")).toHaveLength(3);
+    // plus, since 2026-11-17, one at the end of the crisis card and one in the footer
+    const page = english();
+    const outside = [...page.querySelectorAll(".draft-note")].filter((note) => !note.closest(".crisis-card, .site-footer"));
+    expect(outside).toHaveLength(3);
+    expect(page.querySelectorAll(".draft-note")).toHaveLength(5);
     cleanup();
     const { container } = render(<EmotionApp locale="ko" />);
     expect(container.querySelectorAll(".draft-note")).toHaveLength(0);

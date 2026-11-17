@@ -308,7 +308,7 @@ function IntroPhrases({ text }: { text: string }) {
   return <>{phrases.map((phrase, index) => <Fragment key={index}>{index > 0 && " "}<span className="intro-phrase" style={{ "--i": index } as CSSProperties}>{phrase}</span></Fragment>)}</>;
 }
 
-/** A small footer: the app, its maker, the way back, the terms and the privacy policy. No mail address, no licence line. */
+/** A small footer: the app, its maker, the way back, the terms and the privacy policy, then one line on how the text was written. No mail address, no licence line. */
 function SiteFooter() {
   const t = useT();
   return <footer className="site-footer">
@@ -321,6 +321,9 @@ function SiteFooter() {
     {t.locale === "ko"
       ? <><span aria-hidden="true">·</span><a href={TERMS_PATH}>{koOnly.termsLink}</a><span aria-hidden="true">·</span><a href={PRIVACY_PATH}>{koOnly.privacyLink}</a></>
       : <><span aria-hidden="true">·</span><a href={TERMS_PATH} hrefLang="ko">{enOnly.termsLink}<KoreanMark /></a><span aria-hidden="true">·</span><a href={PRIVACY_PATH} hrefLang="ko">{enOnly.privacyLink}<KoreanMark /></a></>}
+    {/* on a line of its own (2026-11-17); the English is a draft */}
+    <span className="site-footer-ai">{t("shell.aiNote")}</span>
+    {t.locale === "en" && <span className="draft-note">{enOnly.draftNote}</span>}
   </footer>;
 }
 
@@ -650,6 +653,8 @@ function CrisisCard() {
           <strong>{t("crisis.num1388")}</strong>
         </a>
       </div>
+      {/* the English emergency line and the two (Korea) names are drafts since 2026-11-17 (docs/EN_REVIEW.md) */}
+      {t.locale === "en" && <p className="draft-note">{enOnly.draftNote}</p>}
     </aside>
   );
 }
@@ -1753,12 +1758,13 @@ function NamesLayer({ day, first, later, onAdd, previous }: { day: string; first
   </section>;
 }
 
-function StoppedScreen({ session }: { session: EmotionSession }) { const t = useT(); return <Screen className="entry-screen"><p className="eyebrow">{t("stopped.eyebrow")}</p><h1>{renderRich(t("stopped.title"))}</h1><p className="lede">{t("stopped.lede")}</p><div className="stack-actions"><a className="primary-button centered" href="/">{t("stopped.home")}</a><button className="quiet-button" onClick={async () => { removeDraft(); dropCompleted(session.id); await getVoiceStore().removeSession(session.id).catch(() => undefined); window.location.reload(); }}>{t("stopped.delete")}</button></div><HelpReveal /></Screen>; }
+function StoppedScreen({ session }: { session: EmotionSession }) { const t = useT(); return <Screen className="entry-screen"><p className="eyebrow">{t("stopped.eyebrow")}</p><h1>{renderRich(t("stopped.title"))}</h1><p className="lede">{t("stopped.lede")}</p><div className="stack-actions"><a className="primary-button centered" href="/">{t("stopped.home")}</a><button className="quiet-button" onClick={async () => { removeDraft(); dropCompleted(session.id); await getVoiceStore().removeSession(session.id).catch(() => undefined); window.location.reload(); }}>{t("stopped.delete")}</button></div><ResultHelpLine /><HelpReveal /></Screen>; }
 
 /**
  * After 더 불편해짐 the summary, its questions and the need screen are left out:
- * nothing more is asked. Ending is the first action; the helplines are one
- * optional tap away. This is not a risk check and judges nothing.
+ * nothing more is asked. Ending is the first action; the help line with 109,
+ * 1577-0199 and 1388 is always shown under it (2026-11-17), and the full card
+ * stays one optional tap away. This is not a risk check and judges nothing.
  */
 function WorsenedScreen() {
   const t = useT();
@@ -1768,6 +1774,7 @@ function WorsenedScreen() {
     <p className="lede">{t("worsened.lede")}</p>
     <div className="stack-actions"><a className="primary-button centered" href="/">{t("worsened.finish")}</a></div>
     <p className="small-note">{t("worsened.kept")}</p>
+    <ResultHelpLine />
     <HelpReveal />
   </Screen>;
 }
@@ -1780,7 +1787,8 @@ function WorsenedScreen() {
 /**
  * The last line of both closing screens (2026-11-12, check H1): 109, 1577-0199
  * and 1388 in one small sentence, each a tel: link drawn from the crisis card's
- * own numbers. Always there and never animated, whatever the entry says;
+ * own numbers. Since 2026-11-17 also on the 그만하기 and 더 불편해졌어요 screens,
+ * shown as it is above the folded help. Always there and never animated, whatever the entry says;
  * nothing reads the entry for risk (SAFETY.md). The English is a draft.
  */
 function ResultHelpLine({ style }: { style?: CSSProperties }) {

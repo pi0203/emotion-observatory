@@ -18,7 +18,8 @@ const all = values({ ...en, about: aboutWithoutRefs } as unknown as Tree);
 
 describe("English review decisions (2026-10-19)", () => {
   it("keeps the crisis card as strong as the Korean, and says the numbers are Korean", () => {
-    expect(en.crisis.emergency).toMatch(/^If you are physically hurt or in immediate danger/);
+    // 「physically」 stays from the 2026-10-19 review; 「or someone may get hurt」 came with the Korean on 2026-11-17
+    expect(en.crisis.emergency).toMatch(/^If you are physically hurt or in danger right now, or someone may get hurt/);
     expect(en.crisis.intro).toMatch(/in South Korea/);
     expect(enOnly.outsideKorea).toBe("All numbers on this card are for South Korea. If you are outside Korea, call your local emergency number.");
   });
