@@ -8,13 +8,18 @@
  * Some ways back to the landing load the page again (the plain link 「기록실로 돌아가기」
  * after a record). That page was reached from this site, so it is the same visit: the
  * small script below, run before the page is painted, sets data-first-open-done on <html>
- * and the CSS turns the two motions off. Nothing is stored, only document.referrer is read.
+ * and the CSS turns the two motions off. A reload keeps the referrer of the page before it,
+ * so the script first asks the browser how this page was reached: a reload is a new visit
+ * and the motions play. Nothing is stored, only the navigation type and document.referrer
+ * are read.
  */
 let played = false;
 
 export const FIRST_OPEN_INIT = `
 try {
-  if (document.referrer && new URL(document.referrer).origin === location.origin) document.documentElement.setAttribute("data-first-open-done", "");
+  var nav = performance.getEntriesByType && performance.getEntriesByType("navigation")[0];
+  var reload = !!nav && nav.type === "reload";
+  if (!reload && document.referrer && new URL(document.referrer).origin === location.origin) document.documentElement.setAttribute("data-first-open-done", "");
 } catch (e) {}
 `;
 
