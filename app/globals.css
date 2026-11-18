@@ -658,7 +658,7 @@ html, body { transition: background-color .5s ease; }
 .day-cells { list-style: none; margin: 10px 0 0; padding: 0; display: grid; grid-template-columns: repeat(14, minmax(0, 1fr)); gap: 2px; }
 .day-cells li { display: flex; }
 .day-cell { flex: 1; min-width: 0; height: 40px; display: flex; align-items: center; justify-content: center; border-radius: 8px; }
-.day-cell.is-open { border: 1px dashed var(--line-strong); background: transparent; height: 38px; }
+.day-cell.is-open { border: 1px dashed var(--line); background: transparent; height: 38px; }
 .day-cell.has-record { border: 1px solid var(--line); background: var(--card); padding: 0; cursor: pointer; }
 .day-cell.has-record:hover { border-color: var(--accent-ink); }
 .day-dot { width: 10px; height: 10px; border-radius: 50%; background: var(--accent-ink); }
