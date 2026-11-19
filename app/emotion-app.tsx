@@ -36,6 +36,7 @@ import { LimitField } from "./limit-ring";
 import { tagEnter, tagLeave, useTagMotion } from "./tag-motion";
 import { SaveIsland } from "./save-island";
 import { VoiceNote, VoicePlayback } from "./voice-note";
+import { SayIt } from "./say-it";
 import { getVoiceStore } from "../lib/voice-store";
 
 // Every read and write of a record goes through the one storage seam. It is
@@ -1285,6 +1286,9 @@ function SynthesisSection({ session, onFeedback }: { session: EmotionSession; on
   </section>;
 }
 
+/** The direction and the choice under which the three-lines area opens (data/needs.*.json). */
+const SAY_NEED = "express";
+const SAY_CHOICE = "three-parts";
 type NeedEntry = { id: string; label: string; group?: string; because?: string; route?: boolean; exit?: boolean; responses?: { id: string; label: string }[] };
 
 /**
@@ -1299,6 +1303,18 @@ function NeedScreen({ session, onNeed, onResponse, onDeep, onCoach, onBack }: { 
   const need = list.find((item) => item.id === session.support?.need);
   const picked = session.support?.choicesByNeed?.[need?.id ?? ""] ?? [];
   const route = understandRoute(session);
+  // The three-lines area (app/say-it.tsx) opens under its choice and closes when another choice of this direction is pressed.
+  // It holds nothing of its own in the record: the choice stays picked as before, and what is typed there is not stored.
+  const sayPicked = need?.id === SAY_NEED && picked.includes(SAY_CHOICE);
+  const [sayOpen, setSayOpen] = useState<false | "shown" | "opened">(sayPicked ? "shown" : false);
+  const pressResponse = (id: string) => {
+    if (need?.id !== SAY_NEED) return onResponse(id);
+    if (id !== SAY_CHOICE) { setSayOpen(false); return onResponse(id); }
+    // still picked but closed by another choice: pressing it brings the area back and leaves the pick as it is
+    if (sayPicked && !sayOpen) return setSayOpen("opened");
+    setSayOpen(sayPicked ? false : "opened");
+    onResponse(id);
+  };
   return <Screen>
     <StepHeading step={t("need.step")} title={t("need.title")} hint={t("need.hint")} />
     {needsData.groups.map((group) => <div key={group}>
@@ -1309,7 +1325,8 @@ function NeedScreen({ session, onNeed, onResponse, onDeep, onCoach, onBack }: { 
     {need?.responses && <div className="response-block">
       <p className="tier-label">{need.label}</p>
       {need.because && <p className="step-note">{need.because}</p>}
-      <div className="choice-list">{need.responses.map((option) => <button className={picked.includes(option.id) ? "selected" : ""} aria-pressed={picked.includes(option.id)} key={option.id} onClick={() => onResponse(option.id)}><Mark on={picked.includes(option.id)} />{option.label}</button>)}</div>
+      <div className="choice-list">{need.responses.map((option) => <button className={picked.includes(option.id) ? "selected" : ""} aria-pressed={picked.includes(option.id)} key={option.id} onClick={() => pressResponse(option.id)}><Mark on={picked.includes(option.id)} />{option.label}</button>)}</div>
+      {sayPicked && sayOpen && <SayIt session={session} label={need.responses.find((option) => option.id === SAY_CHOICE)!.label} play={sayOpen === "opened"} />}
     </div>}
 
     {need?.route && <div className="response-block">

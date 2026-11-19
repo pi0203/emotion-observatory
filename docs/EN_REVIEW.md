@@ -75,3 +75,34 @@
 |---|---|---|---|---|---|
 | 18 | 6단계 도움 여부 | `outcome.pickBelowToo` | 아래 질문도 하나 골라 주세요. 건너뛰어도 됩니다. | Please choose one answer below as well. You can also skip. | 검토 전 |
 | 19 | 6단계 도움 여부 | `outcome.pickAboveToo` | 위 질문도 하나 골라 주세요. 건너뛰어도 됩니다. | Please choose one answer above as well. You can also skip. | 검토 전 |
+
+## 2026-11-19 · 「나눠 적기」 아래 세 줄과 이어 본 문장 (초안)
+
+「누군가에게 표현할 준비하기」에서 「사실 / 내 느낌 / 원하는 것을 나눠 적기」를 고르면 그 아래에 열리는 영역이다(app/say-it.tsx). 한국어도 모두 임시 문구이고, 영어는 영역 맨 끝에 `enOnly.draftNote`가 붙는다. 영어 화면에는 말투 단추가 없다. 영어에는 반말과 높임말의 끝맺음 차이가 없어서다. 그래서 22–24는 화면에 나오지 않고, `sayIt.said.polite.*` 네 줄은 `sayIt.said.casual.*`과 같은 문장이다.
+
+| # | 화면 | 키 | 한국어 | 영어 초안 | 상태 |
+|---|---|---|---|---|---|
+| 20 | 세 줄 영역 | `sayIt.hint` | 이 기록에 적어 둔 말을 먼저 넣어 두었어요. 고쳐도, 지워도 돼요. | The words from this entry are filled in to start with. You can change them or clear them. | 검토 전 |
+| 21 | 세 줄 이름 | `sayIt.fact` · `sayIt.feel` · `sayIt.want` | 사실 · 내 느낌 · 원하는 것 | What happened · How I felt · What I wanted | 검토 전 |
+| 22 | 말투 단추 이름 | `sayIt.tone` | 말투 | Tone | 검토 전 (화면에 없음) |
+| 23 | 말투 단추 | `sayIt.casual` | 편하게 | Plain | 검토 전 (화면에 없음) |
+| 24 | 말투 단추 | `sayIt.polite` | 높여서 | Polite | 검토 전 (화면에 없음) |
+| 25 | 빈 줄 안내 | `sayIt.factPlaceholder` | 있었던 일을 한 줄로. 비워 둬도 돼요. | What happened, in one line. Leaving it empty is fine. | 검토 전 |
+| 26 | 빈 줄 안내 | `sayIt.feelPlaceholder` | 그때 마음에 가까운 말. 비워 둬도 돼요. | A word close to how it felt. Leaving it empty is fine. | 검토 전 |
+| 27 | 빈 줄 안내 | `sayIt.wantPlaceholder` | 바랐던 것이나 중요했던 것. 비워 둬도 돼요. | What you hoped for, or what mattered. Leaving it empty is fine. | 검토 전 |
+| 28 | 가져온 곳 | `sayIt.fromRecord` | 기록의 「{name}」에서 | From “{name}” in this entry | 검토 전 |
+| 29 | 가져온 곳 | `sayIt.typed` | 직접 적음 | Written here | 검토 전 |
+| 30 | 말풍선 이름 | `sayIt.saidName` | 이어 본 문장 | Put together | 검토 전 |
+| 31 | 말풍선(세 줄이 모두 빔) | `sayIt.saidEmpty` | 세 줄 가운데 적은 것만 여기에 이어져요. | Only the lines with something in them are put together here. | 검토 전 |
+| 32 | 문장 틀 | `sayIt.said.casual.fact` | 있었던 일은 “{fact}”. | “{fact}” is what happened. | 검토 전 |
+| 33 | 문장 틀 | `sayIt.said.casual.feelThen` | 그때 내 마음은 “{feel}”에 가까웠고, | Back then, “{feel}” was close to how I felt, and | 검토 전 |
+| 34 | 문장 틀 | `sayIt.said.casual.feelLast` | 그때 내 마음은 “{feel}”에 가까웠어. | Back then, “{feel}” was close to how I felt. | 검토 전 |
+| 35 | 문장 틀 | `sayIt.said.casual.want` | 나한테 중요했던 건 “{want}”이었어/였어. | “{want}” was what mattered to me. | 검토 전 |
+| 36 | 단추 위 한 줄 | `sayIt.notSent` | 이 문장은 어디에도 보내지지 않아요. 보낼지, 누구에게 보낼지는 직접 정해요. | This sentence is not sent anywhere. Whether to send it, and to whom, is yours to decide. | 검토 전 |
+| 37 | 단추 | `sayIt.copy` · `sayIt.copied` | 복사 · 복사됨 | Copy · Copied | 검토 전 |
+| 38 | 복사가 안 될 때 | `sayIt.copyFailed` | 복사하지 못했어요. 문장을 길게 눌러 직접 복사할 수 있어요. | It could not be copied. You can select the sentence and copy it yourself. | 검토 전 |
+| 39 | 단추 | `sayIt.hold` | 지금은 말하지 않기 | Not saying it for now | 검토 전 |
+| 40 | 단추 뒤 한 줄 | `sayIt.held` | 괜찮아요. 여기 적은 것은 남지 않아요. | That’s fine. What you wrote here is not kept. | 검토 전 |
+
+- 32–35: 영어 틀은 닫는 따옴표 바로 뒤에 쉼표나 마침표가 오지 않게 짰다. 미국식 표기는 그 부호를 따옴표 안에 넣는데(`tests/i18n-en-draft.test.ts`), 그러면 사용자가 적은 말 안에 부호가 들어가기 때문이다. 주어는 사용자가 적은 말에 두었다(design.md §9).
+- 28: `{name}`에는 화면이 이미 쓰는 이름이 들어간다. `summary.context`(Situation), `summary.words`(Words that came close), `summary.concerns`(What mattered), 빠르게 살펴보기만 한 기록은 `recordDetail.quickContext`(What happened then).
