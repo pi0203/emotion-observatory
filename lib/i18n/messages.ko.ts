@@ -540,6 +540,50 @@ export const ko = {
     backToSummary: "← 요약으로 돌아가기",
     finish: "여기까지",
   },
+  /**
+   * The area that opens under 「사실 / 내 느낌 / 원하는 것을 나눠 적기」 on the need screen (2026-11-19, app/say-it.tsx):
+   * three lines filled in from the record, joined by a fixed frame into one sentence (lib/say-it.ts).
+   * What the person wrote goes inside the quotation marks as written. Nothing typed here is stored.
+   * Every line below is provisional wording (임시 문구) until the owner settles it.
+   */
+  sayIt: {
+    hint: "이 기록에 적어 둔 말을 먼저 넣어 두었어요. 고쳐도, 지워도 돼요.",
+    fact: "사실",
+    feel: "내 느낌",
+    want: "원하는 것",
+    factPlaceholder: "있었던 일을 한 줄로. 비워 둬도 돼요.",
+    feelPlaceholder: "그때 마음에 가까운 말. 비워 둬도 돼요.",
+    wantPlaceholder: "바랐던 것이나 중요했던 것. 비워 둬도 돼요.",
+    /** Under a line that still holds what the record had; `name` is the record's own label for it. */
+    fromRecord: "기록의 「{name}」에서",
+    typed: "직접 적음",
+    saidName: "이어 본 문장",
+    saidEmpty: "세 줄 가운데 적은 것만 여기에 이어져요.",
+    tone: "말투",
+    casual: "편하게",
+    polite: "높여서",
+    /** The frame. `wantEnd` is the line without closing punctuation, for the particle only. */
+    said: {
+      casual: {
+        fact: "있었던 일은 “{fact}”.",
+        feelThen: "그때 내 마음은 “{feel}”에 가까웠고,",
+        feelLast: "그때 내 마음은 “{feel}”에 가까웠어.",
+        want: "나한테 중요했던 건 “{want}”{~wantEnd|이었어/였어}.",
+      },
+      polite: {
+        fact: "있었던 일은 “{fact}”.",
+        feelThen: "그때 제 마음은 “{feel}”에 가까웠고,",
+        feelLast: "그때 제 마음은 “{feel}”에 가까웠어요.",
+        want: "저한테 중요했던 건 “{want}”{~wantEnd|이었어요/였어요}.",
+      },
+    },
+    notSent: "이 문장은 어디에도 보내지지 않아요. 보낼지, 누구에게 보낼지는 직접 정해요.",
+    copy: "복사",
+    copied: "복사됨",
+    copyFailed: "복사하지 못했어요. 문장을 길게 눌러 직접 복사할 수 있어요.",
+    hold: "지금은 말하지 않기",
+    held: "괜찮아요. 여기 적은 것은 남지 않아요.",
+  },
   talkToSomeone: {
     question: "이 경험을 사람에게 말해 볼 생각이 있나요?",
     hint: "답하지 않아도 됩니다. 어느 답이든 괜찮고, 나중에 바꿔도 됩니다.",
