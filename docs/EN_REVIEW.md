@@ -66,3 +66,12 @@
 
 - 14: 지시문 영어는 「If you are hurt」였지만, 2026-10-19 검토에서 「몸을 다쳤거나」를 마음의 상처와 구별하려고 넣은 physically를 그대로 두었다.
 - 15–16: 한국어 이름은 바꾸지 않았다. (24 hours)는 한국어 (24시간)에 맞춰 그대로 두고 그 앞에 (Korea)를 더했다.
+
+## 2026-11-19 · 6단계 「다음」 옆 안내 한 줄 (초안)
+
+11/25 시연 전 390px 점검에서, 6단계에서 위 질문만 고르면 「다음」이 꺼진 이유가 보이지 않았다. 두 질문 중 하나만 고른 동안 「다음」 바로 위에 한 줄이 나오고, 영어는 그 뒤에 `enOnly.draftNote`가 붙는다.
+
+| # | 화면 | 키 | 한국어 | 영어 초안 | 상태 |
+|---|---|---|---|---|---|
+| 18 | 6단계 도움 여부 | `outcome.pickBelowToo` | 아래 질문도 하나 골라 주세요. 건너뛰어도 됩니다. | Please choose one answer below as well. You can also skip. | 검토 전 |
+| 19 | 6단계 도움 여부 | `outcome.pickAboveToo` | 위 질문도 하나 골라 주세요. 건너뛰어도 됩니다. | Please choose one answer above as well. You can also skip. | 검토 전 |

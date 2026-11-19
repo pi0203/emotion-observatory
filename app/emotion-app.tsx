@@ -1,6 +1,6 @@
 "use client";
 
-import { createContext, Fragment, useContext, useEffect, useReducer, useRef, useState, type CSSProperties } from "react";
+import { createContext, Fragment, useContext, useEffect, useId, useReducer, useRef, useState, type CSSProperties } from "react";
 import { canGoBack, createSession, sessionReducer, understandRoute } from "../lib/session-types";
 import { appraisalEscapes, coachEscapes, coachResult, coachSetFor, getCoachSets } from "../lib/coach";
 import type { AffectPoint, BodyObservation, DeepReflection, EmotionSelection, EmotionSession, QuickNonSelection, SynthesisFit, TalkToSomeone, UnderlyingFeeling, VoiceStep } from "../lib/session-types";
@@ -1106,12 +1106,13 @@ function EmotionScreen({ initial, affect, revealed, onReveal, onNext }: { initia
   </Screen>;
 }
 
+/** Both questions need an answer for 「다음」 (DeepOutcome keeps both); with one answered, a line under them says so. 「건너뛰기」 stays open. */
 function OutcomeScreen({ onNext }: { onNext: (outcome: DeepOutcome) => void }) {
   const t = useT();
   const [clarity, setClarity] = useState<DeepOutcome["clarity"]>();
   const [usefulness, setUsefulness] = useState<DeepOutcome["usefulness"]>();
   const [note, setNote] = useState("");
-  return <Screen><StepHeading step={t("outcome.step")} title={t("outcome.title")} hint={t("outcome.hint")} basis={t("outcome.basis")} /><div className="choice-list compact">{(["much_clearer", "clearer", "same", "more_complex", "more_distressed"] as const).map((value) => <button className={clarity === value ? "selected" : ""} aria-pressed={clarity === value} key={value} onClick={() => setClarity(value)}><Mark on={clarity === value} />{t(`outcome.clarity.${value}`)}</button>)}</div><h2 className="subquestion">{t("outcome.usefulnessQuestion")}</h2><div className="inline-choices">{(["helpful", "unsure", "unhelpful"] as const).map((value) => <button className={usefulness === value ? "selected" : ""} aria-pressed={usefulness === value} key={value} onClick={() => setUsefulness(value)}><Mark on={usefulness === value} />{t(`outcome.usefulness.${value}`)}</button>)}</div><input className="text-input" maxLength={INPUT_LIMITS.line} value={note} onChange={(event) => setNote(event.target.value)} placeholder={t("outcome.notePlaceholder")} /><Navigation disabled={!clarity || !usefulness} onNext={() => onNext({ clarity: clarity!, usefulness: usefulness!, note })} /></Screen>;
+  return <Screen><StepHeading step={t("outcome.step")} title={t("outcome.title")} hint={t("outcome.hint")} basis={t("outcome.basis")} /><div className="choice-list compact">{(["much_clearer", "clearer", "same", "more_complex", "more_distressed"] as const).map((value) => <button className={clarity === value ? "selected" : ""} aria-pressed={clarity === value} key={value} onClick={() => setClarity(value)}><Mark on={clarity === value} />{t(`outcome.clarity.${value}`)}</button>)}</div><h2 className="subquestion">{t("outcome.usefulnessQuestion")}</h2><div className="inline-choices">{(["helpful", "unsure", "unhelpful"] as const).map((value) => <button className={usefulness === value ? "selected" : ""} aria-pressed={usefulness === value} key={value} onClick={() => setUsefulness(value)}><Mark on={usefulness === value} />{t(`outcome.usefulness.${value}`)}</button>)}</div><input className="text-input" maxLength={INPUT_LIMITS.line} value={note} onChange={(event) => setNote(event.target.value)} placeholder={t("outcome.notePlaceholder")} /><Navigation disabled={!clarity || !usefulness} disabledReason={clarity && !usefulness ? t("outcome.pickBelowToo") : usefulness && !clarity ? t("outcome.pickAboveToo") : undefined} reasonDraft onNext={() => onNext({ clarity: clarity!, usefulness: usefulness!, note })} /></Screen>;
 }
 
 function SummaryScreen({ session, onFeedback, onTalk, onUnderlying, onUnderlyingNote, onSupport }: { session: EmotionSession; onFeedback: (feedback: { fit?: SynthesisFit; correction?: string }) => void; onTalk: (answer: TalkToSomeone) => void; onUnderlying: (answer: UnderlyingFeeling) => void; onUnderlyingNote: (note: string) => void; onSupport: () => void }) {
@@ -1853,9 +1854,16 @@ function Screen({ children, className = "" }: { children: React.ReactNode; class
 /** The basis band, when given, says which moment the question is about, before the question itself. */
 /** `pause`, when given, sits right under the title: that stopping here is fine (the body step, 2026-10-30). */
 function StepHeading({ step, title, hint, basis, pause }: { step: string; title: string; hint: string; basis?: string; pause?: string }) { return <><p className="eyebrow">{step}</p>{basis && <p className="step-basis">{basis}</p>}<h1>{title}</h1>{pause && <p className="pause-line">{pause}</p>}<p className="hint">{hint}</p></>; }
-function Navigation({ onNext, onSkip = onNext, disabled = false, note }: { onNext: () => void; onSkip?: () => void; disabled?: boolean; note?: string }) {
+/**
+ * `disabledReason` is shown next to 「다음」 only while it is off, and the button
+ * points to it (aria-describedby); role="status" lets a screen reader say it when
+ * it appears (2026-11-19). `reasonDraft` puts the English draft note after it.
+ */
+function Navigation({ onNext, onSkip = onNext, disabled = false, note, disabledReason, reasonDraft = false }: { onNext: () => void; onSkip?: () => void; disabled?: boolean; note?: string; disabledReason?: string; reasonDraft?: boolean }) {
   const t = useT();
-  return <><StepNote note={note} /><div className="navigation"><button className="skip-button" onClick={onSkip}>{t("common.skip")}</button><button className="primary-button" disabled={disabled} onClick={onNext}>{t("common.next")} <span>→</span></button></div></>;
+  const reasonId = useId();
+  const reason = disabled ? disabledReason : undefined;
+  return <><StepNote note={note} />{reason && <><p className="step-note" role="status" id={reasonId}>{reason}</p>{reasonDraft && t.locale === "en" && <p className="draft-note">{enOnly.draftNote}</p>}</>}<div className="navigation"><button className="skip-button" onClick={onSkip}>{t("common.skip")}</button><button className="primary-button" disabled={disabled} aria-describedby={reason ? reasonId : undefined} onClick={onNext}>{t("common.next")} <span>→</span></button></div></>;
 }
 function StepNote({ note }: { note?: string }) { return note ? <p className="step-note" role="note">{note}</p> : null; }
 /** A row whose value may be a skipped step: shown quietly as 비워 둠. */

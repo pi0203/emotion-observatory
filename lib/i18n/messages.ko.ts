@@ -454,6 +454,9 @@ export const ko = {
       unhelpful: "도움되지 않음",
     },
     notePlaceholder: "덧붙이고 싶은 한 줄 (선택)",
+    /** Next to 「다음」 while it is off because only one of the two questions has an answer (2026-11-19). */
+    pickBelowToo: "아래 질문도 하나 골라 주세요. 건너뛰어도 됩니다.",
+    pickAboveToo: "위 질문도 하나 골라 주세요. 건너뛰어도 됩니다.",
   },
   summary: {
     eyebrow: "이번 기록에서",
@@ -493,7 +496,7 @@ export const ko = {
       quickAffect: "빠른 확인에서 전체적인 느낌을 {text}{~text|으로/로} 표시했습니다.",
       body: "몸에서는 {list}{~last|을/를} 알아차렸다고 적었습니다.",
       deepAffect: "전체적인 느낌은 {text} 쪽으로 표시했습니다.",
-      context: "상황으로는 “{event}”라고 적었고, 이것은 {source}에 가깝다고 표시했습니다.",
+      context: "상황으로는 “{event}”{~event|이라고/라고} 적었고, 이것은 {source}에 가깝다고 표시했습니다.",
       concerns: "그때 중요했던 것으로는 {list}{~last|을/를} 골랐습니다.",
       emotion: "지금 경험에 가까운 말로는 {list}{~last|을/를} 골랐습니다.",
       quickEmotion: "가까운 말로는 {list}{~last|을/를} 골랐습니다.",
