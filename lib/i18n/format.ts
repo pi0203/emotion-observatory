@@ -21,12 +21,15 @@ const PLACEHOLDER = /\{(~?)([A-Za-z][A-Za-z0-9]*)(?:\|([^/{}]*)\/([^{}]*))?\}/g;
  * One exception to the final-consonant rule: 「으로/로」 takes 「로」 after ㄹ too
  * (「말로」, 「물로」, not 「말으로」), as Korean grammar has it (2026-11-10);
  * so do 으로서/로서 and 으로써/로써, which share the shape.
+ * A pair whose consonant form is 이 + its vowel form (이라고/라고) keeps the vowel
+ * form after Latin, a digit or a symbol, as the message read before it took the
+ * pair (「“OK”라고」, 2026-11-19).
  */
 export const particleFor = (word: string, afterConsonant: string, afterVowel: string) => {
   const last = word.normalize("NFC").trim().at(-1) ?? "";
   const code = last.charCodeAt(0);
   const isHangulSyllable = code >= 0xac00 && code <= 0xd7a3;
-  if (!isHangulSyllable) return `${afterConsonant}(${afterVowel})`;
+  if (!isHangulSyllable) return afterConsonant === I + afterVowel ? afterVowel : `${afterConsonant}(${afterVowel})`;
   const final = (code - 0xac00) % 28;
   if (final === 0) return afterVowel;
   if (final === FINAL_RIEUL && afterConsonant === EU + afterVowel) return afterVowel;
@@ -42,6 +45,8 @@ const FINAL_RIEUL = 8;
  * 으로써/로써) takes the vowel form after ㄹ.
  */
 const EU = String.fromCharCode(0xc73c);
+/** The syllable 이 (U+C774), the same way: 이라고/라고 is 이 + 라고. */
+const I = String.fromCharCode(0xc774);
 
 /** Every parameter a message refers to, particles included. */
 export const placeholdersOf = (template: string): string[] =>

@@ -495,6 +495,10 @@ export const en: Messages = {
       unhelpful: "Not helpful",
     },
     notePlaceholder: "Anything to add, in one line (optional)",
+    /** DRAFT, not reviewed by the owner (2026-11-19). Listed in docs/EN_REVIEW.md as 검토 전; the line is followed by `enOnly.draftNote`. */
+    pickBelowToo: "Please choose one answer below as well. You can also skip.",
+    /** DRAFT, not reviewed by the owner (2026-11-19). Listed in docs/EN_REVIEW.md as 검토 전; the line is followed by `enOnly.draftNote`. */
+    pickAboveToo: "Please choose one answer above as well. You can also skip.",
   },
   summary: {
     eyebrow: "In this entry",
