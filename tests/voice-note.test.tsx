@@ -245,7 +245,9 @@ describe("deleting takes the sound too", () => {
     fireEvent.click(screen.getByRole("button", { name: "그만하기" }));
     fireEvent.click(screen.getByRole("button", { name: "여기서 그만하기" }));
     fireEvent.click(screen.getByRole("button", { name: ko.stopped.delete }));
-    await waitFor(() => expect(reload).toHaveBeenCalled());
+    // back on the first screen without a reload (2026-11-20)
+    await waitFor(() => expect(screen.getByRole("heading", { level: 1 }).textContent).toBe(ko.common.appName));
+    expect(reload).not.toHaveBeenCalled();
     expect(store.clips.size).toBe(0);
   });
 
