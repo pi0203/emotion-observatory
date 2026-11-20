@@ -38,7 +38,18 @@ describe("first screen motion", () => {
     expect(document.querySelectorAll(".intro-phrase")).toHaveLength(0);
     expect(document.querySelectorAll(".plum-petal")).toHaveLength(0);
     expect(document.querySelector(".hero-title")!.textContent).toBe(ko.landing.title);
-    expect(document.querySelector(".site-logo-mark img")).toBeTruthy();
+    // the mark is the same drawing, still and inline: no image file is fetched (2026-11-20)
+    expect(document.querySelector(".site-logo-mark img")).toBeNull();
+    expect(document.querySelector(".site-logo-mark.plum-bloom")).toBeNull();
+    for (const name of ["light", "dark"]) {
+      const file = readFileSync(`public/logo/plum-header-${name}.svg`, "utf8").trim();
+      const drawn = document.querySelector(`.site-logo-mark svg.plum-${name}`)!;
+      const original = document.createElement("div");
+      original.innerHTML = file;
+      expect(drawn.getAttribute("viewBox")).toBe(original.querySelector("svg")!.getAttribute("viewBox"));
+      expect(drawn.innerHTML).toBe(original.querySelector("svg")!.innerHTML);
+    }
+    expect(document.querySelector(".site-logo-mark")!.getAttribute("aria-hidden")).toBe("true");
     expect(screen.getByRole("heading", { level: 1 }).textContent).toBe(ko.common.appName);
   });
 
