@@ -148,13 +148,26 @@ const migrateV1Shape = (legacy: LegacySession): V2Session => {
 /** v1 -> v3, chaining both steps so callers only ever see the current shape. */
 export const migrateSession = (legacy: LegacySession): EmotionSession => migrateV3Session(migrateV2Session(migrateV1Shape(legacy)));
 
+/**
+ * A browser that blocks storage altogether throws on the first touch of localStorage. Every
+ * read, write and removal here is inside a try, so the first screen opens either way; with
+ * storage refused there is nothing old to bring over.
+ */
+const readRaw = (key: string): string | null => {
+  try {
+    return window.localStorage.getItem(key);
+  } catch {
+    return null;
+  }
+};
+
 export const hasLegacyStorage = () => {
   if (typeof window === "undefined") return false;
-  return [V1_COMPLETED_KEY, V1_DRAFT_KEY, V2_COMPLETED_KEY, V2_DRAFT_KEY, V3_COMPLETED_KEY, V3_DRAFT_KEY].some((key) => window.localStorage.getItem(key) !== null);
+  return [V1_COMPLETED_KEY, V1_DRAFT_KEY, V2_COMPLETED_KEY, V2_DRAFT_KEY, V3_COMPLETED_KEY, V3_DRAFT_KEY].some((key) => readRaw(key) !== null);
 };
 
 const readArray = <T>(key: string): T[] => {
-  const raw = window.localStorage.getItem(key);
+  const raw = readRaw(key);
   if (!raw) return [];
   try {
     const parsed = JSON.parse(raw) as T[];
@@ -181,12 +194,18 @@ export const migrateLegacyStorage = (): number => {
   // older records go after whatever is already here, since the list is newest-first
   const migrated = [...fromV3, ...fromV2, ...fromV1];
   if (migrated.length) {
-    window.localStorage.setItem(COMPLETED_KEY, JSON.stringify([...loadCompleted(), ...migrated]));
+    try {
+      window.localStorage.setItem(COMPLETED_KEY, JSON.stringify([...loadCompleted(), ...migrated]));
+    } catch {
+      // the write was refused (quota full, storage blocked): the old keys are left as they
+      // are, so nothing is lost and the next open tries again
+      return 0;
+    }
   }
 
   let movedDraft = 0;
-  const v2Draft = window.localStorage.getItem(V2_DRAFT_KEY);
-  const v3Draft = window.localStorage.getItem(V3_DRAFT_KEY);
+  const v2Draft = readRaw(V2_DRAFT_KEY);
+  const v3Draft = readRaw(V3_DRAFT_KEY);
   if ((v2Draft || v3Draft) && !loadDraft()) {
     try {
       saveDraft(v3Draft
@@ -199,7 +218,11 @@ export const migrateLegacyStorage = (): number => {
   }
 
   for (const key of [V1_COMPLETED_KEY, V1_DRAFT_KEY, V2_COMPLETED_KEY, V2_DRAFT_KEY, V3_COMPLETED_KEY, V3_DRAFT_KEY]) {
-    window.localStorage.removeItem(key);
+    try {
+      window.localStorage.removeItem(key);
+    } catch {
+      // refused: left for the next open
+    }
   }
   return migrated.length + movedDraft;
 };

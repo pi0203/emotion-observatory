@@ -49,11 +49,12 @@ describe("homepage frame on the landing and record screens", () => {
     render(<Home />);
     const logo = within(screen.getByRole("banner")).getByRole("link", { name: "Eunchan Joe" });
     const mark = logo.firstElementChild!;
-    expect(mark.tagName.toLowerCase()).toBe("picture");
+    // drawn inline, never fetched as an image file (2026-11-20): both colour sets are in the
+    // page and app/globals.css shows the one for the page's scheme
+    expect(mark.className).toMatch(/^site-logo-mark( plum-bloom)?$/);
     expect(mark.getAttribute("aria-hidden")).toBe("true");
-    expect(mark.querySelector("img")?.getAttribute("alt")).toBe("");
-    expect(mark.querySelector("img")?.getAttribute("src")).toBe("/logo/plum-header-light.svg");
-    expect(mark.querySelector("source")?.getAttribute("media")).toBe("(prefers-color-scheme: dark)");
+    expect(mark.querySelector("img")).toBeNull();
+    expect([...mark.querySelectorAll("svg")].map((svg) => svg.getAttribute("class"))).toEqual(["plum-light", "plum-dark"]);
     expect(logo.textContent).toBe("Eunchan Joe");
   });
 

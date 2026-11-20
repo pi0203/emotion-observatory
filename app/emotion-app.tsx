@@ -1,6 +1,6 @@
 "use client";
 
-import { createContext, Fragment, useContext, useEffect, useId, useReducer, useRef, useState, type CSSProperties } from "react";
+import { createContext, Fragment, useCallback, useContext, useEffect, useId, useReducer, useRef, useState, type CSSProperties, type MouseEvent as ReactMouseEvent } from "react";
 import { canGoBack, createSession, sessionReducer, understandRoute } from "../lib/session-types";
 import { appraisalEscapes, coachEscapes, coachResult, coachSetFor, getCoachSets } from "../lib/coach";
 import type { AffectPoint, BodyObservation, DeepReflection, EmotionSelection, EmotionSession, QuickNonSelection, SynthesisFit, TalkToSomeone, UnderlyingFeeling, VoiceStep } from "../lib/session-types";
@@ -29,7 +29,7 @@ import type { Translate } from "../lib/i18n/t";
 import { toneOf } from "../lib/tones";
 import { enOnly } from "../lib/i18n/messages.en";
 import { SiteLogo } from "./site-logo";
-import { FIRST_OPEN_INIT, firstOpenPending, introPhrases, markFirstOpenPlayed } from "./first-open";
+import { FIRST_OPEN_INIT, firstOpenPending, introPhrases, markFirstOpenPlayed, startNewVisit } from "./first-open";
 import { GroundPick } from "./ground-pick";
 import { PickUnderline, pickHost } from "./pick-underline";
 import { LimitField } from "./limit-ring";
@@ -61,11 +61,41 @@ const useContent = (): LocaleContent => requireContent(useT().locale);
  * (lib/content.ts), so another language can be added without touching them.
  */
 export default function EmotionApp({ locale = DEFAULT_LOCALE }: { locale?: Locale }) {
-  return <I18nProvider locale={locale}><App /></I18nProvider>;
+  // Back to the first screen without asking the server for the page (2026-11-20): the app is
+  // mounted again under a new key, so every piece of state starts as it does on a page load
+  // (the landing, the draft and the records read from storage again, nothing of the step left).
+  // With no connection the old ways (a plain link to "/", a reload of the page) ended on
+  // the browser's error page. `newVisit` is for the two places that used to reload: a reload
+  // is a new visit, so the first-open motions play again there (app/first-open.ts).
+  const [mount, setMount] = useState(0);
+  const goHome = useCallback((newVisit = false) => {
+    if (newVisit) startNewVisit();
+    setMount((count) => count + 1);
+  }, []);
+  return <I18nProvider locale={locale}><HomeContext.Provider value={goHome}><App key={mount} returned={mount > 0} /></HomeContext.Provider></I18nProvider>;
 }
 
-function App() {
+/** Takes the app back to its first screen in place; `newVisit` also lets the first-open motions play again. */
+const HomeContext = createContext<((newVisit?: boolean) => void) | null>(null);
+
+/**
+ * For the links that end a record (each a link to "/"): a plain click goes back to the first screen
+ * inside the app, so no page is requested. The element stays the same link, with the same
+ * name, look and place in the tab order; a click with a modifier key or another mouse button
+ * is left to the browser (a new tab still opens "/").
+ */
+function useHomeLink() {
+  const goHome = useContext(HomeContext);
+  return (event: ReactMouseEvent<HTMLAnchorElement>) => {
+    if (!goHome || event.defaultPrevented || event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
+    event.preventDefault();
+    goHome();
+  };
+}
+
+function App({ returned = false }: { returned?: boolean }) {
   const t = useT();
+  const goHome = useContext(HomeContext);
   const [session, dispatch] = useReducer(sessionReducer, undefined, createSession);
   const [hydrated, setHydrated] = useState(false);
   const [draft, setDraft] = useState<EmotionSession | null>(null);
@@ -155,6 +185,21 @@ function App() {
     document.documentElement.dataset.tone = tone;
   }, [tone]);
 
+  // back on the first screen in place (see EmotionApp): as after a page load, the page is at
+  // its top, nothing holds the focus, and Tab starts from the first link. Focusing the frame
+  // and letting go at once moves the browser's starting point for Tab without showing a ring.
+  const frame = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    if (!returned) return;
+    window.scrollTo({ top: 0, left: 0, behavior: "instant" });
+    const root = frame.current;
+    if (!root) return;
+    root.tabIndex = -1;
+    root.focus({ preventScroll: true });
+    root.blur();
+    root.removeAttribute("tabindex");
+  }, [returned]);
+
   const resume = () => {
     if (draft) dispatch({ type: "RESUME", session: draft });
   };
@@ -176,7 +221,7 @@ function App() {
   if (session.stage === "landing") {
     // the homepage frame (header, menu, footer) on the landing and record screens only;
     // the steps keep their minimal top bar so nothing pushes the task down (docs/DESIGN_ALIGNMENT.md §5)
-    return <div className="app-shell site-frame">
+    return <div className="app-shell site-frame" ref={frame}>
       {firstOpenPending() && <script dangerouslySetInnerHTML={{ __html: FIRST_OPEN_INIT }} />}
       <a className="skip-link" href="#main">{t("shell.skipToContent")}</a>
       <SiteHeader onHelp={() => setHelpOpen(true)} bloom />
@@ -204,7 +249,7 @@ function App() {
   return (
     <main className="app-shell" ref={shell}>
       <header className="topbar">
-        <a className="wordmark" href="#" onClick={() => window.location.reload()}>
+        <a className="wordmark" href="#" onClick={(event) => { event.preventDefault(); goHome?.(true); }}>
           {t("common.appName")}
         </a>
         <div className="topbar-actions">
@@ -990,6 +1035,7 @@ function CoachNoteScreen({ session, onDone }: { session: EmotionSession; onDone:
 
 function QuickSummaryScreen({ session, onDeep, onFeedback, onSupport }: { session: EmotionSession; onDeep: () => void; onFeedback: (feedback: { fit?: SynthesisFit; correction?: string }) => void; onSupport: () => void }) {
   const t = useT();
+  const toHome = useHomeLink();
   const quick = session.quickCheck;
   const affect = quickAffectValue(t, quick?.affect);
   const words = (quick?.selected ?? []).map((item) => item.label).join(" · ") || quickResponseLabel(t, quick?.candidateResponse) || t("common.notChosen");
@@ -1009,7 +1055,7 @@ function QuickSummaryScreen({ session, onDeep, onFeedback, onSupport }: { sessio
     <p className="summary-footnote reveal-step" style={delay(d.rest)}>{t("quickSummary.footnote")}</p>
     <div className="reveal-rest reveal-step" style={delay(d.rest)}>
       <SynthesisSection session={session} onFeedback={onFeedback} />
-      <div className="stack-actions"><button className="primary-button centered" onClick={onDeep}>{t("quickSummary.deep")} <span>→</span></button><button className="secondary-button" onClick={onSupport}>{t("quickSummary.support")}</button><a className="secondary-button centered" href="/">{t("common.backToStart")}</a></div>
+      <div className="stack-actions"><button className="primary-button centered" onClick={onDeep}>{t("quickSummary.deep")} <span>→</span></button><button className="secondary-button" onClick={onSupport}>{t("quickSummary.support")}</button><a className="secondary-button centered" href="/" onClick={toHome}>{t("common.backToStart")}</a></div>
     </div>
   </Screen>;
 }
@@ -1118,6 +1164,7 @@ function OutcomeScreen({ onNext }: { onNext: (outcome: DeepOutcome) => void }) {
 
 function SummaryScreen({ session, onFeedback, onTalk, onUnderlying, onUnderlyingNote, onSupport }: { session: EmotionSession; onFeedback: (feedback: { fit?: SynthesisFit; correction?: string }) => void; onTalk: (answer: TalkToSomeone) => void; onUnderlying: (answer: UnderlyingFeeling) => void; onUnderlyingNote: (note: string) => void; onSupport: () => void }) {
   const t = useT();
+  const toHome = useHomeLink();
   const deep = session.deepReflection;
   const play = useFirstReveal(`${session.id}:summary`);
   if (deep?.outcome?.clarity === "more_distressed") return <WorsenedScreen />;
@@ -1146,7 +1193,7 @@ function SummaryScreen({ session, onFeedback, onTalk, onUnderlying, onUnderlying
       <SynthesisSection session={session} onFeedback={onFeedback} />
       <TalkToSomeoneQuestion answer={session.talkToSomeone?.answer} onAnswer={onTalk} />
       <UnderlyingFeelingQuestion answer={session.underlyingFeeling?.answer} note={session.underlyingFeeling?.note ?? ""} onAnswer={onUnderlying} onNote={onUnderlyingNote} />
-      <div className="stack-actions"><button className="primary-button centered" onClick={onSupport}>{t("summary.support")} <span>→</span></button><a className="secondary-button centered" href="/">{t("common.backToStart")}</a></div>
+      <div className="stack-actions"><button className="primary-button centered" onClick={onSupport}>{t("summary.support")} <span>→</span></button><a className="secondary-button centered" href="/" onClick={toHome}>{t("common.backToStart")}</a></div>
     </div>
   </Screen>;
 }
@@ -1298,6 +1345,7 @@ type NeedEntry = { id: string; label: string; group?: string; because?: string; 
  */
 function NeedScreen({ session, onNeed, onResponse, onDeep, onCoach, onBack }: { session: EmotionSession; onNeed: (id: string) => void; onResponse: (id: string) => void; onDeep: () => void; onCoach: () => void; onBack: () => void }) {
   const t = useT();
+  const toHome = useHomeLink();
   const { needs: needsData } = useContent();
   const list = needsData.needs as NeedEntry[];
   const need = list.find((item) => item.id === session.support?.need);
@@ -1340,7 +1388,7 @@ function NeedScreen({ session, onNeed, onResponse, onDeep, onCoach, onBack }: { 
     {need?.exit && <p className="small-note">{t("need.exit")}</p>}
 
     <p className="small-note">{t("need.varies")}</p>
-    <div className="navigation"><button className="quiet-button" onClick={onBack}>{t("need.backToSummary")}</button><a className="primary-button" href="/">{t("need.finish")} <span>→</span></a></div>
+    <div className="navigation"><button className="quiet-button" onClick={onBack}>{t("need.backToSummary")}</button><a className="primary-button" href="/" onClick={toHome}>{t("need.finish")} <span>→</span></a></div>
   </Screen>;
 }
 
@@ -1658,6 +1706,7 @@ function RecordTransfer({ count, onChanged }: { count: number; onChanged: () => 
  */
 function RecordDetail({ session, previous, onHelp, onFollowUp, onAddLabel, onRemoveVoice, onBack }: { session: EmotionSession; previous?: EmotionSession; onHelp: () => void; onFollowUp: (followUp: { tried?: "yes" | "partly" | "no"; helped?: "yes" | "somewhat" | "no" | "unsure" }) => void; onAddLabel: (label: string) => void; onRemoveVoice: (step: VoiceStep) => void; onBack: () => void }) {
   const t = useT();
+  const toHome = useHomeLink();
   const item = summarise(session, t.locale);
   const followUp = session.support?.followUp;
   const deep = session.deepReflection;
@@ -1731,7 +1780,7 @@ function RecordDetail({ session, previous, onHelp, onFollowUp, onAddLabel, onRem
     </section>}
 
     <button className="inline-link sources-toggle" aria-expanded={sourcesShown} onClick={() => setSourcesShown((shown) => !shown)}>{sourcesShown ? t("recordDetail.sourcesHide") : t("recordDetail.sourcesShow")}</button>
-    <div className="navigation"><button className="quiet-button" onClick={onBack}>{t("recordDetail.backToList")}</button><a className="primary-button" href="/">{t("recordDetail.toStart")} <span>→</span></a></div>
+    <div className="navigation"><button className="quiet-button" onClick={onBack}>{t("recordDetail.backToList")}</button><a className="primary-button" href="/" onClick={toHome}>{t("recordDetail.toStart")} <span>→</span></a></div>
     <HelpLine onHelp={onHelp} />
   </Screen></SourcesShown.Provider>;
 }
@@ -1776,7 +1825,7 @@ function NamesLayer({ day, first, later, onAdd, previous }: { day: string; first
   </section>;
 }
 
-function StoppedScreen({ session }: { session: EmotionSession }) { const t = useT(); return <Screen className="entry-screen"><p className="eyebrow">{t("stopped.eyebrow")}</p><h1>{renderRich(t("stopped.title"))}</h1><p className="lede">{t("stopped.lede")}</p><div className="stack-actions"><a className="primary-button centered" href="/">{t("stopped.home")}</a><button className="quiet-button" onClick={async () => { removeDraft(); dropCompleted(session.id); await getVoiceStore().removeSession(session.id).catch(() => undefined); window.location.reload(); }}>{t("stopped.delete")}</button></div><ResultHelpLine /><HelpReveal /></Screen>; }
+function StoppedScreen({ session }: { session: EmotionSession }) { const t = useT(); const toHome = useHomeLink(); const goHome = useContext(HomeContext); return <Screen className="entry-screen"><p className="eyebrow">{t("stopped.eyebrow")}</p><h1>{renderRich(t("stopped.title"))}</h1><p className="lede">{t("stopped.lede")}</p><div className="stack-actions"><a className="primary-button centered" href="/" onClick={toHome}>{t("stopped.home")}</a><button className="quiet-button" onClick={async () => { removeDraft(); dropCompleted(session.id); await getVoiceStore().removeSession(session.id).catch(() => undefined); goHome?.(true); }}>{t("stopped.delete")}</button></div><ResultHelpLine /><HelpReveal /></Screen>; }
 
 /**
  * After 더 불편해짐 the summary, its questions and the need screen are left out:
@@ -1786,11 +1835,12 @@ function StoppedScreen({ session }: { session: EmotionSession }) { const t = use
  */
 function WorsenedScreen() {
   const t = useT();
+  const toHome = useHomeLink();
   return <Screen className="entry-screen">
     <p className="eyebrow">{t("worsened.eyebrow")}</p>
     <h1>{renderRich(t("worsened.title"))}</h1>
     <p className="lede">{t("worsened.lede")}</p>
-    <div className="stack-actions"><a className="primary-button centered" href="/">{t("worsened.finish")}</a></div>
+    <div className="stack-actions"><a className="primary-button centered" href="/" onClick={toHome}>{t("worsened.finish")}</a></div>
     <p className="small-note">{t("worsened.kept")}</p>
     <ResultHelpLine />
     <HelpReveal />
