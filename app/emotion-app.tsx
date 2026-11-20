@@ -269,7 +269,7 @@ function App({ returned = false }: { returned?: boolean }) {
       {session.stage === "quick-candidates" && showsPauseLine(session.quickCheck?.affect) && <p className="pause-line pause-line-banner">{t("quickCandidates.pause")}</p>}
 
       {progress[session.stage] && (
-        <div className="progress-row" aria-label={t("common.progress", { step: progress[session.stage] })}>
+        <div className="progress-row" role="img" aria-label={t("common.progress", { step: progress[session.stage] })}>
           <span>{progress[session.stage]}</span>
           <div className="progress-track"><div className="progress-fill" style={{ width: `${(Object.keys(progress).indexOf(session.stage) + 1) * 16.66}%` }} /></div>
         </div>
