@@ -100,6 +100,8 @@ function App({ returned = false }: { returned?: boolean }) {
   const [hydrated, setHydrated] = useState(false);
   const [draft, setDraft] = useState<EmotionSession | null>(null);
   const [stopConfirm, setStopConfirm] = useState(false);
+  // 그만하기 in the top bar: focus returns here when the confirm window closes without stopping
+  const stopButton = useRef<HTMLButtonElement>(null);
   const [records, setRecords] = useState<EmotionSession[] | null>(null);
   const [openRecord, setOpenRecord] = useState<EmotionSession | null>(null);
   // true after the browser refused a write (quota full, storage blocked): the steps still work, the record is just not kept
@@ -257,7 +259,7 @@ function App({ returned = false }: { returned?: boolean }) {
           {/* the helplines, one tap away on every step and always in view (SAFETY.md; owner's choice 2026-10-19) */}
           <button className="text-button help-button" aria-label={t("common.helpLink")} onClick={() => setHelpOpen(true)}><span className="label-wide">{t("common.helpLink")}</span><span className="label-narrow" aria-hidden="true">{t("common.helpShort")}</span></button>
           {session.stage !== "entry" && session.stage !== "stopped" && session.stage !== "summary" && session.stage !== "quick-summary" && session.stage !== "support" && (
-            <button className="text-button" onClick={() => setStopConfirm(true)}>{t("common.stop")}</button>
+            <button ref={stopButton} className="text-button" onClick={() => setStopConfirm(true)}>{t("common.stop")}</button>
           )}
         </div>
       </header>
@@ -267,7 +269,7 @@ function App({ returned = false }: { returned?: boolean }) {
       {session.stage === "quick-candidates" && showsPauseLine(session.quickCheck?.affect) && <p className="pause-line pause-line-banner">{t("quickCandidates.pause")}</p>}
 
       {progress[session.stage] && (
-        <div className="progress-row" aria-label={t("common.progress", { step: progress[session.stage] })}>
+        <div className="progress-row" role="img" aria-label={t("common.progress", { step: progress[session.stage] })}>
           <span>{progress[session.stage]}</span>
           <div className="progress-track"><div className="progress-fill" style={{ width: `${(Object.keys(progress).indexOf(session.stage) + 1) * 16.66}%` }} /></div>
         </div>
@@ -293,7 +295,7 @@ function App({ returned = false }: { returned?: boolean }) {
       {session.stage === "support" && <NeedScreen session={session} onNeed={(id) => dispatch({ type: "CHOOSE_NEED", id })} onResponse={(id) => dispatch({ type: "TOGGLE_RESPONSE", id })} onDeep={() => dispatch({ type: "ENTER_DEEP" })} onCoach={() => dispatch({ type: "OPEN_COACH" })} onBack={() => dispatch({ type: "BACK" })} />}
       {session.stage === "stopped" && <StoppedScreen session={session} />}
 
-      {stopConfirm && <StopModal onClose={() => setStopConfirm(false)} onStop={stop} />}
+      {stopConfirm && <StopModal onClose={() => { setStopConfirm(false); stopButton.current?.focus(); }} onStop={stop} />}
       {helpOpen && <HelpDialog onClose={() => setHelpOpen(false)} />}
     </main>
   );
@@ -1127,7 +1129,7 @@ function MeaningScreen({ initial, onNext }: { initial: string[]; onNext: (select
   const [selected, setSelected] = useState(initial);
   const [custom, setCustom] = useState("");
   const toggle = (item: string) => setSelected((current) => current.includes(item) ? current.filter((value) => value !== item) : [...current, item]);
-  return <Screen><StepHeading step={t("meaning.step")} title={t("meaning.title")} hint={t("meaning.hint")} basis={t("meaning.basis")} /><div className="choice-list compact">{concerns.map((item) => <button className={selected.includes(item) ? "selected" : ""} aria-pressed={selected.includes(item)} key={item} onClick={() => toggle(item)}><Mark on={selected.includes(item)} />{item}</button>)}</div><input className="text-input" maxLength={INPUT_LIMITS.word} value={custom} onChange={(event) => setCustom(event.target.value)} placeholder={t("common.ownWordsPlaceholder")} /><Navigation note={stepNote(stepNotes, "meaning", selected.length > 0 || custom.trim().length > 0)} onNext={() => onNext([...selected, ...(custom ? [custom] : [])])} /></Screen>;
+  return <Screen><StepHeading step={t("meaning.step")} title={t("meaning.title")} hint={t("meaning.hint")} basis={t("meaning.basis")} /><div className="choice-list compact">{concerns.map((item) => <button className={selected.includes(item) ? "selected" : ""} aria-pressed={selected.includes(item)} key={item} onClick={() => toggle(item)}><Mark on={selected.includes(item)} />{item}</button>)}</div><input className="text-input" maxLength={INPUT_LIMITS.word} value={custom} onChange={(event) => setCustom(event.target.value)} placeholder={t("common.ownWordsPlaceholder")} /><Navigation note={stepNote(stepNotes, "meaning", selected.length > 0 || custom.trim().length > 0)} onNext={() => onNext([...selected, ...(custom.trim() ? [custom.trim()] : [])])} /></Screen>;
 }
 
 function EmotionScreen({ initial, affect, revealed, onReveal, onNext }: { initial: EmotionSelection[]; affect?: AffectPoint; revealed: boolean; onReveal: () => void; onNext: (selected: EmotionSelection[]) => void }) {
@@ -1915,7 +1917,23 @@ function HelpDialog({ onClose }: { onClose: () => void }) {
   </div>;
 }
 
-function StopModal({ onClose, onStop }: { onClose: () => void; onStop: () => void }) { const t = useT(); return <div className="modal-backdrop"><div className="modal" role="dialog" aria-modal="true"><p className="eyebrow">{t("stopModal.eyebrow")}</p><h2>{renderRich(t("stopModal.title"))}</h2><p>{t("stopModal.body")}</p><div className="modal-actions"><button className="secondary-button" onClick={onClose}>{t("stopModal.keepGoing")}</button><button className="primary-button" onClick={onStop}>{t("stopModal.stop")}</button></div></div></div>; }
+/**
+ * Asked after 그만하기. Named by its own title, focus starts on the button that keeps the
+ * record going, and Escape takes that same side: it closes the window and stops nothing.
+ */
+function StopModal({ onClose, onStop }: { onClose: () => void; onStop: () => void }) {
+  const t = useT();
+  const keepGoing = useRef<HTMLButtonElement>(null);
+  const close = useRef(onClose);
+  useEffect(() => { close.current = onClose; }, [onClose]);
+  useEffect(() => {
+    keepGoing.current?.focus();
+    const onKey = (event: KeyboardEvent) => { if (event.key === "Escape") close.current(); };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, []);
+  return <div className="modal-backdrop"><div className="modal" role="dialog" aria-modal="true" aria-labelledby="stop-dialog-title"><p className="eyebrow">{t("stopModal.eyebrow")}</p><h2 id="stop-dialog-title">{renderRich(t("stopModal.title"))}</h2><p>{t("stopModal.body")}</p><div className="modal-actions"><button ref={keepGoing} className="secondary-button" onClick={onClose}>{t("stopModal.keepGoing")}</button><button className="primary-button" onClick={onStop}>{t("stopModal.stop")}</button></div></div></div>;
+}
 
 function Screen({ children, className = "" }: { children: React.ReactNode; className?: string }) { return <section className={`screen ${className}`}>{children}</section>; }
 /** The basis band, when given, says which moment the question is about, before the question itself. */

@@ -14,7 +14,7 @@ import { WORDS_PATH } from "../lib/words";
  * Change the date here when that text changes.
  * / and /en carry the same ko·en·x-default pairs as their <link rel="alternate"> (lib/i18n/metadata.ts).
  */
-export const LAST_MODIFIED = { landing: "2026-11-12", terms: "2026-11-10", privacy: "2026-11-10", words: "2026-11-12" } as const;
+export const LAST_MODIFIED = { landing: "2026-11-20", terms: "2026-11-10", privacy: "2026-11-10", words: "2026-11-12" } as const;
 
 export default function sitemap(): MetadataRoute.Sitemap {
   const en = englishAvailable();
