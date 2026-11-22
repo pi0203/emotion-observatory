@@ -58,8 +58,11 @@ let clientFactory: () => Promise<SupabaseLike> = async () => {
   const { createClient } = await import("@supabase/supabase-js");
   // the return from signing in is read by resumeAccount, not by the library: the
   // library clears the address with location.hash = "", a navigation Next.js did
-  // not make, and the page lost its place (2026-11-02, the first link login)
-  return createClient(config.url, config.key, { auth: { detectSessionInUrl: false } }) as unknown as SupabaseLike;
+  // not make, and the page lost its place (2026-11-02, the first link login).
+  // PKCE: the return carries a one-time ?code= instead of tokens after #, so no
+  // token reaches the browser history; the code works only in the browser that
+  // started the sign-in, which keeps its code_verifier in localStorage (2026-11-22)
+  return createClient(config.url, config.key, { auth: { detectSessionInUrl: false, flowType: "pkce" } }) as unknown as SupabaseLike;
 };
 let clientPromise: Promise<SupabaseLike> | null = null;
 const client = () => (clientPromise ??= clientFactory());
@@ -256,6 +259,7 @@ export const resumeAccount = async () => {
     }
     const auth = loaded.auth;
     if (back && !back.failed) {
+      // # tokens come only from the implicit flow, which the client no longer asks for (flowType "pkce"); kept for an old link
       const result = back.access && back.refresh ? await auth.setSession({ access_token: back.access, refresh_token: back.refresh })
         : back.code ? await auth.exchangeCodeForSession(back.code) : null;
       if (result && !result.error && result.data.session) { await signedIn(result.data.session.user, true); return; }
