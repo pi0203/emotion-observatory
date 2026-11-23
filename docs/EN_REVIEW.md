@@ -3,7 +3,7 @@
 본인이 읽고 정할 영어 문장을 한 줄씩 올린다. 상태는 「검토 전」 → 「확인」(그대로) 또는 「고침」(바꾼 문장을 옆에 적음).
 2026-10-19의 전체 검토는 [EN_REVIEW_2026_10_19.md](EN_REVIEW_2026_10_19.md)에 따로 있다.
 
-- 화면에서는 검토 전 문장이 있는 칸 끝에 작은 한 줄 「Draft, not yet reviewed by the author.」가 붙는다(`enOnly.draftNote`, `.draft-note`). 영어 화면에만 나온다.
+- 화면에서는 검토 전 문장이 있는 칸 끝에 작은 한 줄 「Draft, not yet reviewed by the maker.」가 붙는다(`enOnly.draftNote`, `.draft-note`). 영어 화면에만 나온다.
 - 한 칸의 문장을 모두 확인하면, 그 칸의 `draftNote`를 빼고 이 표의 상태를 바꾼다. 시험 `tests/en-landing-drafts.test.tsx`가 표와 화면을 함께 본다.
 
 ## 2026-11-10 · 영어 첫 화면에 새로 둔 세 칸 (초안)
@@ -12,9 +12,9 @@
 
 | # | 칸 | 키 | 한국어 | 영어 초안 | 상태 |
 |---|---|---|---|---|---|
-| 1 | 공통 | `enOnly.draftNote` | (없음, 영어에만) | Draft, not yet reviewed by the author. | 검토 전 |
+| 1 | 공통 | `enOnly.draftNote` | (없음, 영어에만) | Draft, not yet reviewed by the maker. | 검토 전 |
 | 2 | 상담·수련 칸 | `enOnly.practitioner.summary` | 상담·수련 현장에서 보시는 분께 | For those using this in counseling or clinical training | 검토 전 |
-| 3 | 상담·수련 칸 | `enOnly.practitioner.lines[0]` | 이 도구는 성인이 스스로 쓰는 자기관찰 도구입니다. 상담에서 함께 쓰신다면, 내담자가 자기 기기에서 직접 고르고 적게 해 주세요. 기록을 대신 적거나 평가 자료로 쓰도록 만들지 않았습니다. | This is a self-observation tool for adults to use on their own. If you use it in counseling, please have the client choose and write on their own device. It was not made for someone else to fill in an entry for them or to be used as assessment material. | 검토 전 |
+| 3 | 상담·수련 칸 | `enOnly.practitioner.lines[0]` | 이 도구는 성인이 스스로 쓰는 자기관찰 도구입니다. 상담에서 함께 쓰신다면, 내담자가 자기 기기에서 직접 고르고 적게 해 주세요. 기록을 대신 적거나 평가 자료로 쓰도록 만들지 않았습니다. | This is a self-observation tool for adults to use on their own. If you use it in counseling, please have the client choose and write on their own device. It was not made for someone else to fill in entries on the client’s behalf or to be used as assessment material. | 검토 전 |
 | 4 | 상담·수련 칸 | `enOnly.practitioner.lines[1]` | 적은 내용은 이 기기 밖 어디로도 보내지지 않습니다. 기관의 공용 기기에서 썼다면 마친 뒤 「지난 기록」에서 「이 기기의 기록 모두 지우기」를 눌러 주세요. | Nothing written here is sent anywhere off this device. If it was used on a shared device at an institution, please go to “Past entries” afterward and press “Delete all entries on this device.” | 검토 전 |
 | 5 | 상담·수련 칸 | `enOnly.practitioner.lines[2]` | 두 사람 이상이 함께 쓸 때는 한 사람에 기기 하나를 권합니다. 한 화면에서 함께 고르면, 내 느낌보다 옆 사람의 반응에 맞춰 고르게 되기 쉽습니다. | When two or more people use it together, one device per person is recommended. When people choose together on one screen, it is easy to end up choosing by the other person’s reaction rather than their own feeling. | 검토 전 |
 | 6 | 상담·수련 칸 | `enOnly.practitioner.mailBefore` | 단어 목록, 문장, 안전 안내에서 개선이 필요한 곳이 있으면 (메일 주소) | If the word list, the wording or the safety information needs improving anywhere, please write to (mail address) | 검토 전 |
@@ -48,11 +48,18 @@
 
 | # | 칸 | 키 | 한국어 | 영어 초안 | 상태 |
 |---|---|---|---|---|---|
-| 12 | 지난 기록 상담자 한 줄 | `records.withCounselor` | 기록이 몇 번 쌓였어요. 비슷한 날이 이어지거나 혼자 보기 버겁다면, 이 기록을 내려받아 {counselor}와 함께 보는 방법도 있어요. | You’ve saved a few entries. If similar days keep coming or they feel heavy to look at alone, you can download them and go over them with {counselor}. | 검토 전 |
+| 12 | 지난 기록 상담자 한 줄 | `records.withCounselor` | 기록이 몇 번 쌓였어요. 비슷한 날이 이어지거나 혼자 보기 버겁다면, 이 기록을 내려받아 {counselor}와 함께 보는 방법도 있어요. | You’ve saved a few entries. If similar days keep coming or they feel heavy to look at alone, you can export them to a file and go over them with {counselor}. | 검토 전 |
 | 13 | 지난 기록 상담자 한 줄 | `records.withCounselorWord` | 상담자 | a counselor | 검토 전 |
 
 - 12: 지시문 영어 문장의 「records」를 「entries」로 바꿨다. 영어 화면은 기록을 모두 entries로 부르고, `tests/i18n-en-review.test.ts`가 records를 막는다. 「You’ve」의 따옴표는 다른 영어 문장처럼 굽은 따옴표다.
 
+## 2026-11-17 · 야간 정리(검토 전 문장의 문법·용어)
+
+상태는 모두 「검토 전」 그대로다. 위 표의 영어 초안 칸을 바꾼 문장으로 고쳐 두었다.
+
+- 1: 「the author」를 「the maker」로. 영어 화면은 만든 사람을 모두 maker로 부른다(FAQ 「Can the maker see my entries?」, 잠금 경고, 9번 atlasLead). author는 연구 설명(about.refs)의 논문 저자에 쓰여 헷갈릴 수 있다.
+- 3: 「fill in an entry for them」의 them이 같은 문장 안에 가리킬 말이 없어 「fill in entries on the client’s behalf」로. 뜻(대신 적기)은 같다.
+- 12: 「download them」을 「export them to a file」로. 영어 화면의 단추는 「Export to a file」이고, 저장 안내·FAQ도 export로 쓴다. 한국어 「내려받아」의 뜻은 같다.
 ## 2026-11-17 · 시연 전 위기 카드 · 바닥글 (초안)
 
 11/18 시연 전 점검(임상심리학자 관점)에 따라 한국어와 함께 바꾸거나 더했다. 영어 위기 카드는 끝에, 바닥글은 새 줄 바로 뒤에 `enOnly.draftNote`가 붙는다.

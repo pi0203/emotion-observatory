@@ -54,11 +54,11 @@ export const enOnly = {
    * with `draftNote` until the owner has read it. Same meaning as the Korean
    * (koOnly.practitioner), with nothing added except where a page is in Korean.
    */
-  draftNote: "Draft, not yet reviewed by the author.",
+  draftNote: "Draft, not yet reviewed by the maker.",
   practitioner: {
     summary: "For those using this in counseling or clinical training",
     lines: [
-      "This is a self-observation tool for adults to use on their own. If you use it in counseling, please have the client choose and write on their own device. It was not made for someone else to fill in an entry for them or to be used as assessment material.",
+      "This is a self-observation tool for adults to use on their own. If you use it in counseling, please have the client choose and write on their own device. It was not made for someone else to fill in entries on the client’s behalf or to be used as assessment material.",
       "Nothing written here is sent anywhere off this device. If it was used on a shared device at an institution, please go to “Past entries” afterward and press “Delete all entries on this device.”",
       "When two or more people use it together, one device per person is recommended. When people choose together on one screen, it is easy to end up choosing by the other person’s reaction rather than their own feeling.",
     ],
@@ -676,7 +676,7 @@ export const en: Messages = {
     when: "{year}-{month}-{day}  {hour}:{minute}",
     day: "{month}/{day}",
     /** DRAFT, not reviewed by the owner (2026-11-15). Listed in docs/EN_REVIEW.md as 검토 전; the line is followed by `enOnly.draftNote`. */
-    withCounselor: "You’ve saved a few entries. If similar days keep coming or they feel heavy to look at alone, you can download them and go over them with {counselor}.",
+    withCounselor: "You’ve saved a few entries. If similar days keep coming or they feel heavy to look at alone, you can export them to a file and go over them with {counselor}.",
     withCounselorWord: "a counselor",
   },
   recordTransfer: {
