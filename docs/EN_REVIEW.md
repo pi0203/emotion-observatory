@@ -16,11 +16,11 @@
 | 2 | 상담·수련 칸 | `enOnly.practitioner.summary` | 상담·수련 현장에서 보시는 분께 | For those using this in counseling or clinical training | 검토 전 |
 | 3 | 상담·수련 칸 | `enOnly.practitioner.lines[0]` | 이 도구는 성인이 스스로 쓰는 자기관찰 도구입니다. 상담에서 함께 쓰신다면, 내담자가 자기 기기에서 직접 고르고 적게 해 주세요. 기록을 대신 적거나 평가 자료로 쓰도록 만들지 않았습니다. | This is a self-observation tool for adults to use on their own. If you use it in counseling, please have the client choose and write on their own device. It was not made for someone else to fill in entries on the client’s behalf or to be used as assessment material. | 검토 전 |
 | 4 | 상담·수련 칸 | `enOnly.practitioner.lines[1]` | 적은 내용은 이 기기 밖 어디로도 보내지지 않습니다. 기관의 공용 기기에서 썼다면 마친 뒤 「지난 기록」에서 「이 기기의 기록 모두 지우기」를 눌러 주세요. | Nothing written here is sent anywhere off this device. If it was used on a shared device at an institution, please go to “Past entries” afterward and press “Delete all entries on this device.” | 검토 전 |
-| 5 | 상담·수련 칸 | `enOnly.practitioner.lines[2]` | 두 사람 이상이 함께 쓸 때는 한 사람에 기기 하나를 권합니다. 한 화면에서 함께 고르면, 내 느낌보다 옆 사람의 반응에 맞춰 고르게 되기 쉽습니다. | When two or more people use it together, one device per person is recommended. When people choose together on one screen, it is easy to end up choosing by the other person’s reaction rather than their own feeling. | 검토 전 |
+| 5 | 상담·수련 칸 | `enOnly.practitioner.lines[2]` | 두 사람 이상이 함께 쓸 때는 한 사람에 기기 하나를 권합니다. 한 화면에서 함께 고르면, 내 느낌보다 옆 사람의 반응에 맞춰 고르게 되기 쉽습니다. | When two or more people use it together, one device per person is recommended. When people choose together on one screen, it is easy to end up choosing based on the other person’s reaction rather than their own feeling. | 검토 전 |
 | 6 | 상담·수련 칸 | `enOnly.practitioner.mailBefore` | 단어 목록, 문장, 안전 안내에서 개선이 필요한 곳이 있으면 (메일 주소) | If the word list, the wording or the safety information needs improving anywhere, please write to (mail address) | 검토 전 |
 | 7 | 상담·수련 칸 | `enOnly.practitioner.mailAfter` | 으로 알려 주세요. 내담자 정보나 사례는 적지 말아 주세요. | . Please do not include client information or case details. | 검토 전 |
 | 8 | 단어 목록 링크 | `enOnly.practitioner.wordsLink` | 단어 목록 보기 → | See the word list (in Korean) → | 검토 전 |
-| 9 | 뇌 지도 줄 | `about.atlasLead` | 몸과 뇌가 감정과 어떻게 이어지는지, 교과서와 연구가 어디까지 말하고 어디서 의견이 갈리는지는 만든 사람의 홈페이지에 따로 모으고 있습니다(작업 중). | How the body and brain relate to emotion, what textbooks and studies say and where they disagree, is collected on the maker’s homepage (in Korean, a work in progress). | 검토 전 |
+| 9 | 뇌 지도 줄 | `about.atlasLead` | 몸과 뇌가 감정과 어떻게 이어지는지, 교과서와 연구가 어디까지 말하고 어디서 의견이 갈리는지는 만든 사람의 홈페이지에 따로 모으고 있습니다(작업 중). | Material on how the body and brain relate to emotion, including what textbooks and studies say and where they disagree, is being collected on the maker’s homepage (in Korean, a work in progress). | 검토 전 |
 | 10 | 뇌 지도 줄 | `about.atlasLink` | 뇌 지도 | Brain map | 검토 전 |
 
 ### 고를 때 본 것
@@ -48,7 +48,7 @@
 
 | # | 칸 | 키 | 한국어 | 영어 초안 | 상태 |
 |---|---|---|---|---|---|
-| 12 | 지난 기록 상담자 한 줄 | `records.withCounselor` | 기록이 몇 번 쌓였어요. 비슷한 날이 이어지거나 혼자 보기 버겁다면, 이 기록을 내려받아 {counselor}와 함께 보는 방법도 있어요. | You’ve saved a few entries. If similar days keep coming or they feel heavy to look at alone, you can export them to a file and go over them with {counselor}. | 검토 전 |
+| 12 | 지난 기록 상담자 한 줄 | `records.withCounselor` | 기록이 몇 번 쌓였어요. 비슷한 날이 이어지거나 혼자 보기 버겁다면, 이 기록을 내려받아 {counselor}와 함께 보는 방법도 있어요. | You’ve saved a few entries. If similar days keep coming, or the entries feel heavy to look at alone, you can export them to a file and go over them with {counselor}. | 검토 전 |
 | 13 | 지난 기록 상담자 한 줄 | `records.withCounselorWord` | 상담자 | a counselor | 검토 전 |
 
 - 12: 지시문 영어 문장의 「records」를 「entries」로 바꿨다. 영어 화면은 기록을 모두 entries로 부르고, `tests/i18n-en-review.test.ts`가 records를 막는다. 「You’ve」의 따옴표는 다른 영어 문장처럼 굽은 따옴표다.
@@ -80,8 +80,8 @@
 
 | # | 화면 | 키 | 한국어 | 영어 초안 | 상태 |
 |---|---|---|---|---|---|
-| 18 | 6단계 도움 여부 | `outcome.pickBelowToo` | 아래 질문도 하나 골라 주세요. 건너뛰어도 됩니다. | Please choose one answer below as well. You can also skip. | 검토 전 |
-| 19 | 6단계 도움 여부 | `outcome.pickAboveToo` | 위 질문도 하나 골라 주세요. 건너뛰어도 됩니다. | Please choose one answer above as well. You can also skip. | 검토 전 |
+| 18 | 6단계 도움 여부 | `outcome.pickBelowToo` | 아래 질문도 하나 골라 주세요. 건너뛰어도 됩니다. | Please choose one answer below as well. You can also skip this step. | 검토 전 |
+| 19 | 6단계 도움 여부 | `outcome.pickAboveToo` | 위 질문도 하나 골라 주세요. 건너뛰어도 됩니다. | Please choose one answer above as well. You can also skip this step. | 검토 전 |
 
 ## 2026-11-19 · 「나눠 적기」 아래 세 줄과 이어 본 문장 (초안)
 
@@ -102,8 +102,8 @@
 | 30 | 말풍선 이름 | `sayIt.saidName` | 이어 본 문장 | Put together | 검토 전 |
 | 31 | 말풍선(세 줄이 모두 빔) | `sayIt.saidEmpty` | 세 줄 가운데 적은 것만 여기에 이어져요. | Only the lines with something in them are put together here. | 검토 전 |
 | 32 | 문장 틀 | `sayIt.said.casual.fact` | 있었던 일은 “{fact}”. | “{fact}” is what happened. | 검토 전 |
-| 33 | 문장 틀 | `sayIt.said.casual.feelThen` | 그때 내 마음은 “{feel}”에 가까웠고, | Back then, “{feel}” was close to how I felt, and | 검토 전 |
-| 34 | 문장 틀 | `sayIt.said.casual.feelLast` | 그때 내 마음은 “{feel}”에 가까웠어. | Back then, “{feel}” was close to how I felt. | 검토 전 |
+| 33 | 문장 틀 | `sayIt.said.casual.feelThen` | 그때 내 마음은 “{feel}”에 가까웠고, | At the time, “{feel}” was close to how I felt, and | 검토 전 |
+| 34 | 문장 틀 | `sayIt.said.casual.feelLast` | 그때 내 마음은 “{feel}”에 가까웠어. | At the time, “{feel}” was close to how I felt. | 검토 전 |
 | 35 | 문장 틀 | `sayIt.said.casual.want` | 나한테 중요했던 건 “{want}”이었어/였어. | “{want}” was what mattered to me. | 검토 전 |
 | 36 | 단추 위 한 줄 | `sayIt.notSent` | 이 문장은 어디에도 보내지지 않아요. 보낼지, 누구에게 보낼지는 직접 정해요. | This sentence is not sent anywhere. Whether to send it, and to whom, is yours to decide. | 검토 전 |
 | 37 | 단추 | `sayIt.copy` · `sayIt.copied` | 복사 · 복사됨 | Copy · Copied | 검토 전 |
@@ -113,3 +113,13 @@
 
 - 32–35: 영어 틀은 닫는 따옴표 바로 뒤에 쉼표나 마침표가 오지 않게 짰다. 미국식 표기는 그 부호를 따옴표 안에 넣는데(`tests/i18n-en-draft.test.ts`), 그러면 사용자가 적은 말 안에 부호가 들어가기 때문이다. 주어는 사용자가 적은 말에 두었다(design.md §9).
 - 28: `{name}`에는 화면이 이미 쓰는 이름이 들어간다. `summary.context`(Situation), `summary.words`(Words that came close), `summary.concerns`(What mattered), 빠르게 살펴보기만 한 기록은 `recordDetail.quickContext`(What happened then).
+
+## 2026-11-24 · 야간 정리(검토 전 문장의 문법·용어)
+
+상태는 모두 「검토 전」 그대로다. 위 표의 영어 초안 칸을 바꾼 문장으로 고쳐 두었다. 한국어와 뜻은 같다.
+
+- 5: 「choosing by the other person’s reaction」을 「choosing based on …」으로. by만으로는 「기준으로」가 잘 읽히지 않는다.
+- 9: 주어가 두 개의 how·what 절이 쉼표로만 이어져 있어 단수 is와 맞지 않았다. 「Material on how …, including what … and where they disagree, is being collected」로. 「모으고 있습니다(작업 중)」에 맞춰 진행형으로 했다.
+- 12: 「or they feel heavy」의 they가 days인지 entries인지 헷갈려서 「or the entries feel heavy」로.
+- 18–19: 「You can also skip.」은 무엇을 건너뛰는지 없어서 「You can also skip this step.」으로. 한국어 「건너뛰어도 됩니다」는 이 단계를 건너뛰는 「Skip」 단추를 가리킨다.
+- 33–34: 「Back then」은 오래전 일로 읽히기 쉬워 한국어 「그때」에 가까운 「At the time」으로.

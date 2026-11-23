@@ -239,7 +239,7 @@ describe("the three-lines area (app/say-it.tsx)", () => {
     session.deepReflection = { ...session.deepReflection!, context: { eventText: "The slides are behind" }, concerns: ["I wanted to do well"], emotionCandidates: [{ label: "worried", source: "suggested" }] };
     show(session, "en");
     expect(line(en.sayIt.fact).value).toBe("The slides are behind");
-    expect(said()).toBe("“The slides are behind” is what happened. Back then, “worried” was close to how I felt, and “I wanted to do well” was what mattered to me.");
+    expect(said()).toBe("“The slides are behind” is what happened. At the time, “worried” was close to how I felt, and “I wanted to do well” was what mattered to me.");
     expect(screen.queryByRole("group")).not.toBeInTheDocument();
     expect(screen.getByText(enOnly.draftNote)).toBeInTheDocument();
     expect(screen.getByRole("button", { name: en.sayIt.copy })).toBeInTheDocument();
