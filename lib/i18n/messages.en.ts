@@ -89,6 +89,8 @@ export const en: Messages = {
     skipToContent: "Skip to content",
     siteNav: "Homepage menu",
     owner: "Eunchan Joe",
+    /** DRAFT, not reviewed by the owner (2026-11-17). Listed in docs/EN_REVIEW.md as 검토 전; followed by `enOnly.draftNote` in the footer. */
+    aiNote: "The text on these screens was written with AI (Claude) and checked by the maker.",
     otherLanguage: "한국어",
     ground: "Background",
     groundNow: "Background: {name}",
@@ -126,7 +128,7 @@ export const en: Messages = {
       tiredNeed: "When rest is what’s needed",
       stuck: "Stuck because the words won’t come",
       stuckNeed: "When sorting out what to say is what’s needed",
-      line: "It’s fine not to know whether it feels good or bad. Tap roughly where it is, and the dots that gather show you your own side.",
+      line: "It’s fine not to know whether it feels good or bad. The spots you mark can be looked at again later.",
     },
     // same meaning as the Korean (owner kept the proposed wording, 2026-10-30)
     title: "Before you name it, keep what you feel just as it is.",
@@ -146,12 +148,12 @@ export const en: Messages = {
   },
   crisis: {
     title: "Emergency help and crisis lines",
-    /** Reviewed by the owner with the rest of the English, 2026-10-19. */
-    emergency: "If you are physically hurt or in immediate danger, call <b>119</b> (ambulance) or <b>112</b> (police) right away.",
+    /** Reviewed by the owner with the rest of the English, 2026-10-19. Changed with the Korean on 2026-11-17 (「또는 누군가 다칠 것 같다면」): DRAFT again, listed in docs/EN_REVIEW.md as 검토 전, and the English card ends with `enOnly.draftNote`. */
+    emergency: "If you are physically hurt or in danger right now, or someone may get hurt, call <b>119</b> (ambulance) or <b>112</b> (police) right away.",
     intro: "If you need someone to talk to, there are counseling lines in South Korea open 24 hours.",
-    lifeline109: "Suicide Prevention Counseling Line (24 hours)",
+    lifeline109: "Suicide Prevention Counseling Line (Korea) (24 hours)",
     num109: "109",
-    mental1577: "Mental Health Crisis Counseling Line (24 hours)",
+    mental1577: "Mental Health Crisis Counseling Line (Korea) (24 hours)",
     num1577: "1577-0199",
     youth1388: "Youth Counseling Line (ages 9 to 24)",
     num1388: "1388",
@@ -493,6 +495,10 @@ export const en: Messages = {
       unhelpful: "Not helpful",
     },
     notePlaceholder: "Anything to add, in one line (optional)",
+    /** DRAFT, not reviewed by the owner (2026-11-19). Listed in docs/EN_REVIEW.md as 검토 전; the line is followed by `enOnly.draftNote`. */
+    pickBelowToo: "Please choose one answer below as well. You can also skip.",
+    /** DRAFT, not reviewed by the owner (2026-11-19). Listed in docs/EN_REVIEW.md as 검토 전; the line is followed by `enOnly.draftNote`. */
+    pickAboveToo: "Please choose one answer above as well. You can also skip.",
   },
   summary: {
     eyebrow: "In this entry",
@@ -574,6 +580,49 @@ export const en: Messages = {
     varies: "Even with the same experience, what you need can change from time to time. If the experience feels comfortable or deeply moving, staying with it may suit you better than solving something.",
     backToSummary: "← Back to the summary",
     finish: "Finish here",
+  },
+  /**
+   * DRAFT, not reviewed by the owner (2026-11-19). The whole block is listed in docs/EN_REVIEW.md as 검토 전;
+   * the area ends with `enOnly.draftNote`. English has no plain and polite endings, so the English screen
+   * shows no 말투 switch: `tone`, `casual` and `polite` are never drawn, and `said.polite` repeats `said.casual`.
+   * No closing quotation mark is followed by a comma or a full stop, so nothing is added inside the
+   * person's own words.
+   */
+  sayIt: {
+    hint: "The words from this entry are filled in to start with. You can change them or clear them.",
+    fact: "What happened",
+    feel: "How I felt",
+    want: "What I wanted",
+    factPlaceholder: "What happened, in one line. Leaving it empty is fine.",
+    feelPlaceholder: "A word close to how it felt. Leaving it empty is fine.",
+    wantPlaceholder: "What you hoped for, or what mattered. Leaving it empty is fine.",
+    fromRecord: "From “{name}” in this entry",
+    typed: "Written here",
+    saidName: "Put together",
+    saidEmpty: "Only the lines with something in them are put together here.",
+    tone: "Tone",
+    casual: "Plain",
+    polite: "Polite",
+    said: {
+      casual: {
+        fact: "“{fact}” is what happened.",
+        feelThen: "Back then, “{feel}” was close to how I felt, and",
+        feelLast: "Back then, “{feel}” was close to how I felt.",
+        want: "“{want}” was what mattered to me.",
+      },
+      polite: {
+        fact: "“{fact}” is what happened.",
+        feelThen: "Back then, “{feel}” was close to how I felt, and",
+        feelLast: "Back then, “{feel}” was close to how I felt.",
+        want: "“{want}” was what mattered to me.",
+      },
+    },
+    notSent: "This sentence is not sent anywhere. Whether to send it, and to whom, is yours to decide.",
+    copy: "Copy",
+    copied: "Copied",
+    copyFailed: "It could not be copied. You can select the sentence and copy it yourself.",
+    hold: "Not saying it for now",
+    held: "That’s fine. What you wrote here is not kept.",
   },
   talkToSomeone: {
     question: "Are you thinking of telling someone about this?",

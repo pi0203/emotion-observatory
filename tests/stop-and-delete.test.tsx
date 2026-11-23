@@ -42,8 +42,10 @@ describe("deleting a stopped record", () => {
     fireEvent.click(screen.getByRole("button", { name: "이 기록을 지우기" }));
     expect(loadCompleted()).toEqual([]);
     expect(loadDraft()).toBeNull();
-    // the page reloads once the record's voice notes are gone too (2026-11-16)
-    await waitFor(() => expect(reload).toHaveBeenCalled());
+    // back on the first screen once the record's voice notes are gone too (2026-11-16),
+    // inside the app and without reloading the page (2026-11-20, tests/offline-home.test.tsx)
+    await waitFor(() => expect(screen.getByRole("heading", { level: 1 }).textContent).toBe("감정 관찰실"));
+    expect(reload).not.toHaveBeenCalled();
   });
 
   it("deletes only that record, leaving every other one alone", () => {

@@ -1,0 +1,54 @@
+/* The small ring in a limited field (app/limit-ring.tsx). Tokens only, and no red:
+   the site has no warning colour (docs/design.md §3), so near the limit the ring turns
+   from the accent to the body ink. */
+.field {
+  position: relative;
+  flex: 1;
+  min-width: 0;
+}
+
+.field > :global(.text-input),
+.field > :global(.text-area) {
+  padding-right: 44px;
+}
+
+.ring {
+  position: absolute;
+  right: 14px;
+  top: 50%;
+  width: 20px;
+  height: 20px;
+  margin-top: -10px;
+  transform: rotate(-90deg);
+  pointer-events: none;
+}
+
+.area > :global(.text-area) {
+  padding-right: 56px;
+}
+
+.area .ring {
+  top: auto;
+  right: 28px; /* clear of the textarea's resize handle */
+  bottom: 14px;
+  margin-top: 0;
+}
+
+.ring circle {
+  fill: none;
+  stroke-width: 2.6;
+}
+
+.track {
+  stroke: var(--line);
+}
+
+.fill {
+  stroke: var(--accent-ink);
+  stroke-linecap: round;
+  transition: stroke-dashoffset 0.32s cubic-bezier(0.3, 1, 0.5, 1), stroke 0.2s ease;
+}
+
+.near .fill {
+  stroke: var(--ink);
+}

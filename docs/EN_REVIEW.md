@@ -60,3 +60,56 @@
 - 1: 「the author」를 「the maker」로. 영어 화면은 만든 사람을 모두 maker로 부른다(FAQ 「Can the maker see my entries?」, 잠금 경고, 9번 atlasLead). author는 연구 설명(about.refs)의 논문 저자에 쓰여 헷갈릴 수 있다.
 - 3: 「fill in an entry for them」의 them이 같은 문장 안에 가리킬 말이 없어 「fill in entries on the client’s behalf」로. 뜻(대신 적기)은 같다.
 - 12: 「download them」을 「export them to a file」로. 영어 화면의 단추는 「Export to a file」이고, 저장 안내·FAQ도 export로 쓴다. 한국어 「내려받아」의 뜻은 같다.
+## 2026-11-17 · 시연 전 위기 카드 · 바닥글 (초안)
+
+11/18 시연 전 점검(임상심리학자 관점)에 따라 한국어와 함께 바꾸거나 더했다. 영어 위기 카드는 끝에, 바닥글은 새 줄 바로 뒤에 `enOnly.draftNote`가 붙는다.
+
+| # | 칸 | 키 | 한국어 | 영어 초안 | 상태 |
+|---|---|---|---|---|---|
+| 14 | 위기 카드 | `crisis.emergency` | 몸을 다쳤거나 지금 당장 위험하다면, 또는 누군가 다칠 것 같다면 <b>119</b>(구급)나 <b>112</b>(경찰)에 바로 전화하세요. | If you are physically hurt or in danger right now, or someone may get hurt, call <b>119</b> (ambulance) or <b>112</b> (police) right away. | 검토 전 |
+| 15 | 위기 카드 | `crisis.lifeline109` | 자살예방상담전화 (24시간) | Suicide Prevention Counseling Line (Korea) (24 hours) | 검토 전 |
+| 16 | 위기 카드 | `crisis.mental1577` | 정신건강 위기상담전화 (24시간) | Mental Health Crisis Counseling Line (Korea) (24 hours) | 검토 전 |
+| 17 | 바닥글 | `shell.aiNote` | 화면의 글은 AI(Claude)와 함께 썼고, 만든 사람이 확인합니다. | The text on these screens was written with AI (Claude) and checked by the maker. | 검토 전 |
+
+- 14: 지시문 영어는 「If you are hurt」였지만, 2026-10-19 검토에서 「몸을 다쳤거나」를 마음의 상처와 구별하려고 넣은 physically를 그대로 두었다.
+- 15–16: 한국어 이름은 바꾸지 않았다. (24 hours)는 한국어 (24시간)에 맞춰 그대로 두고 그 앞에 (Korea)를 더했다.
+
+## 2026-11-19 · 6단계 「다음」 옆 안내 한 줄 (초안)
+
+11/25 시연 전 390px 점검에서, 6단계에서 위 질문만 고르면 「다음」이 꺼진 이유가 보이지 않았다. 두 질문 중 하나만 고른 동안 「다음」 바로 위에 한 줄이 나오고, 영어는 그 뒤에 `enOnly.draftNote`가 붙는다.
+
+| # | 화면 | 키 | 한국어 | 영어 초안 | 상태 |
+|---|---|---|---|---|---|
+| 18 | 6단계 도움 여부 | `outcome.pickBelowToo` | 아래 질문도 하나 골라 주세요. 건너뛰어도 됩니다. | Please choose one answer below as well. You can also skip. | 검토 전 |
+| 19 | 6단계 도움 여부 | `outcome.pickAboveToo` | 위 질문도 하나 골라 주세요. 건너뛰어도 됩니다. | Please choose one answer above as well. You can also skip. | 검토 전 |
+
+## 2026-11-19 · 「나눠 적기」 아래 세 줄과 이어 본 문장 (초안)
+
+「누군가에게 표현할 준비하기」에서 「사실 / 내 느낌 / 원하는 것을 나눠 적기」를 고르면 그 아래에 열리는 영역이다(app/say-it.tsx). 한국어도 모두 임시 문구이고, 영어는 영역 맨 끝에 `enOnly.draftNote`가 붙는다. 영어 화면에는 말투 단추가 없다. 영어에는 반말과 높임말의 끝맺음 차이가 없어서다. 그래서 22–24는 화면에 나오지 않고, `sayIt.said.polite.*` 네 줄은 `sayIt.said.casual.*`과 같은 문장이다.
+
+| # | 화면 | 키 | 한국어 | 영어 초안 | 상태 |
+|---|---|---|---|---|---|
+| 20 | 세 줄 영역 | `sayIt.hint` | 이 기록에 적어 둔 말을 먼저 넣어 두었어요. 고쳐도, 지워도 돼요. | The words from this entry are filled in to start with. You can change them or clear them. | 검토 전 |
+| 21 | 세 줄 이름 | `sayIt.fact` · `sayIt.feel` · `sayIt.want` | 사실 · 내 느낌 · 원하는 것 | What happened · How I felt · What I wanted | 검토 전 |
+| 22 | 말투 단추 이름 | `sayIt.tone` | 말투 | Tone | 검토 전 (화면에 없음) |
+| 23 | 말투 단추 | `sayIt.casual` | 편하게 | Plain | 검토 전 (화면에 없음) |
+| 24 | 말투 단추 | `sayIt.polite` | 높여서 | Polite | 검토 전 (화면에 없음) |
+| 25 | 빈 줄 안내 | `sayIt.factPlaceholder` | 있었던 일을 한 줄로. 비워 둬도 돼요. | What happened, in one line. Leaving it empty is fine. | 검토 전 |
+| 26 | 빈 줄 안내 | `sayIt.feelPlaceholder` | 그때 마음에 가까운 말. 비워 둬도 돼요. | A word close to how it felt. Leaving it empty is fine. | 검토 전 |
+| 27 | 빈 줄 안내 | `sayIt.wantPlaceholder` | 바랐던 것이나 중요했던 것. 비워 둬도 돼요. | What you hoped for, or what mattered. Leaving it empty is fine. | 검토 전 |
+| 28 | 가져온 곳 | `sayIt.fromRecord` | 기록의 「{name}」에서 | From “{name}” in this entry | 검토 전 |
+| 29 | 가져온 곳 | `sayIt.typed` | 직접 적음 | Written here | 검토 전 |
+| 30 | 말풍선 이름 | `sayIt.saidName` | 이어 본 문장 | Put together | 검토 전 |
+| 31 | 말풍선(세 줄이 모두 빔) | `sayIt.saidEmpty` | 세 줄 가운데 적은 것만 여기에 이어져요. | Only the lines with something in them are put together here. | 검토 전 |
+| 32 | 문장 틀 | `sayIt.said.casual.fact` | 있었던 일은 “{fact}”. | “{fact}” is what happened. | 검토 전 |
+| 33 | 문장 틀 | `sayIt.said.casual.feelThen` | 그때 내 마음은 “{feel}”에 가까웠고, | Back then, “{feel}” was close to how I felt, and | 검토 전 |
+| 34 | 문장 틀 | `sayIt.said.casual.feelLast` | 그때 내 마음은 “{feel}”에 가까웠어. | Back then, “{feel}” was close to how I felt. | 검토 전 |
+| 35 | 문장 틀 | `sayIt.said.casual.want` | 나한테 중요했던 건 “{want}”이었어/였어. | “{want}” was what mattered to me. | 검토 전 |
+| 36 | 단추 위 한 줄 | `sayIt.notSent` | 이 문장은 어디에도 보내지지 않아요. 보낼지, 누구에게 보낼지는 직접 정해요. | This sentence is not sent anywhere. Whether to send it, and to whom, is yours to decide. | 검토 전 |
+| 37 | 단추 | `sayIt.copy` · `sayIt.copied` | 복사 · 복사됨 | Copy · Copied | 검토 전 |
+| 38 | 복사가 안 될 때 | `sayIt.copyFailed` | 복사하지 못했어요. 문장을 길게 눌러 직접 복사할 수 있어요. | It could not be copied. You can select the sentence and copy it yourself. | 검토 전 |
+| 39 | 단추 | `sayIt.hold` | 지금은 말하지 않기 | Not saying it for now | 검토 전 |
+| 40 | 단추 뒤 한 줄 | `sayIt.held` | 괜찮아요. 여기 적은 것은 남지 않아요. | That’s fine. What you wrote here is not kept. | 검토 전 |
+
+- 32–35: 영어 틀은 닫는 따옴표 바로 뒤에 쉼표나 마침표가 오지 않게 짰다. 미국식 표기는 그 부호를 따옴표 안에 넣는데(`tests/i18n-en-draft.test.ts`), 그러면 사용자가 적은 말 안에 부호가 들어가기 때문이다. 주어는 사용자가 적은 말에 두었다(design.md §9).
+- 28: `{name}`에는 화면이 이미 쓰는 이름이 들어간다. `summary.context`(Situation), `summary.words`(Words that came close), `summary.concerns`(What mattered), 빠르게 살펴보기만 한 기록은 `recordDetail.quickContext`(What happened then).

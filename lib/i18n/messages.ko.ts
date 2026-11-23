@@ -23,6 +23,8 @@ export const ko = {
     skipToContent: "본문으로 건너뛰기",
     siteNav: "홈페이지 메뉴",
     owner: "조은찬",
+    /** A line of its own at the foot of the footer (2026-11-17). */
+    aiNote: "화면의 글은 AI(Claude)와 함께 썼고, 만든 사람이 확인합니다.",
     otherLanguage: "English",
     /** The paper colour picker beside the language link (2026-11-13). */
     ground: "바탕색",
@@ -53,7 +55,7 @@ export const ko = {
      * Nothing reads the entry for risk (SAFETY.md). {num109} and the like are drawn as tel: links from the
      * crisis card's own numbers, as the terms do; tests/result-help-line.test.tsx keeps the numbers.
      */
-    resultHelp: "지금 많이 힘드시다면 혼자 견디지 않아도 돼요. 자살예방상담전화 {num109}, 정신건강 위기상담전화 {num1577}(24시간). 청소년은 {num1388}.",
+    resultHelp: "지금 많이 힘드시다면 혼자 견디지 않아도 돼요. 자살예방상담전화 {num109}(24시간), 정신건강 위기상담전화 {num1577}(24시간). 청소년은 {num1388}.",
     close: "닫기",
     saveFailed: "이 브라우저에 기록을 저장하지 못하고 있습니다. 저장 공간이 가득 찼거나 브라우저가 저장을 막고 있을 수 있습니다. 계속할 수는 있지만, 이 화면을 닫으면 지금 기록은 남지 않습니다. 지난 기록 화면에서 오래된 기록을 파일로 내보내고 지우면 공간이 생깁니다.",
     quoted: "“{value}”",
@@ -67,7 +69,7 @@ export const ko = {
       tiredNeed: "쉬는 게 필요할 때",
       stuck: "할 말이 막혀 답답함",
       stuckNeed: "말을 정리하는 게 필요할 때",
-      line: "좋은지 싫은지 잘 몰라도 괜찮아요. 이쯤이라고 눌러 두면, 쌓인 점들이 내 쪽을 보여 줘요.",
+      line: "좋은지 싫은지 잘 몰라도 괜찮아요. 이쯤이라고 눌러 둔 점들은 나중에 다시 볼 수 있어요.",
     },
     // the one-way-in title and subtitle (owner kept the proposed wording, 2026-10-30)
     title: "이름 붙이기 전에, 지금 느껴지는 것을 그대로 남겨 둡니다.",
@@ -88,8 +90,8 @@ export const ko = {
   },
   crisis: {
     title: "긴급 지원 및 위기 상담 안내",
-    /** First line of the card: emergency numbers in bold, no warning colour or icon (owner, 2026-10-13). */
-    emergency: "몸을 다쳤거나 지금 당장 위험하다면 <b>119</b>(구급) 또는 <b>112</b>(경찰)에 바로 연락하세요.",
+    /** First line of the card: emergency numbers in bold, no warning colour or icon (owner, 2026-10-13). 「또는 누군가 다칠 것 같다면」 added before the demo (2026-11-17). */
+    emergency: "몸을 다쳤거나 지금 당장 위험하다면, 또는 누군가 다칠 것 같다면 <b>119</b>(구급)나 <b>112</b>(경찰)에 바로 전화하세요.",
     intro: "이야기를 나눌 사람이 필요하다면, 24시간 열려 있는 상담 전화가 있습니다.",
     lifeline109: "자살예방상담전화 (24시간)",
     num109: "109",
@@ -225,7 +227,7 @@ export const ko = {
     summary: "감정 이름에도 하나의 정답이 있을까요?",
     shaped: "우리가 감정을 표현하는 방식은 몸의 느낌과 상황뿐 아니라, 살아온 경험과 언어, 관계와 문화의 영향을 받습니다. 같은 경험도 사람이나 공동체에 따라 조금 다르게 나누고 부를 수 있어요.",
     notJudging: "그래서 이 앱은 당신의 ‘진짜 감정’을 찾아내려 하지 않습니다. 대신 지금 경험을 이해하는 데 도움이 되는 말을 함께 찾아봅니다. 여기 있는 단어들은 완전한 목록이 아니라 <b>출발점</b>이고, <b>내 말로 적는 것도 예외가 아니라 똑같이 고를 수 있는 길</b>입니다.",
-    principle: "언어를 가로질러 비교적 널리 통하는 것은 <b>불쾌함–유쾌함</b>과 <b>가라앉음–활성됨</b> 같은 넓은 방향입니다. 반면 그 안을 어떤 단어로 나누는지는 언어와 문화에 따라 달라질 수 있습니다. 그래서 이 앱은 방향은 함께 짚어보고, <b>이름은 당신이 고릅니다.</b>",
+    principle: "언어를 가로질러 비교적 널리 통하는 것은 <b>불쾌함–유쾌함</b>과 <b>가라앉음–활성됨</b> 같은 넓은 방향입니다. 반면 그 안을 어떤 단어로 나누는지는 언어와 문화에 따라 달라질 수 있습니다. 그래서 이 앱은 방향은 함께 살펴보고, <b>이름은 당신이 고릅니다.</b>",
     deeperSummary: "조금 더: 감정이 사회적으로 만들어진다는 말",
     deeperReal: "감정이 사회적으로 구성된다는 것은 감정이 가짜라는 뜻이 아닙니다. 한 과학적 관점에서는 몸과 뇌의 변화가 실제로 존재하면서도, 사람들이 공유하고 배운 감정 개념이 그 경험에 의미와 기능을 부여한다고 봅니다.",
     deeperMoney: "화폐의 가치가 종이의 물리적 성질만으로 설명되지 않지만 실제로 우리 삶에서 작동하는 것과 비슷한 비유를 생각해볼 수 있습니다.",
@@ -452,6 +454,9 @@ export const ko = {
       unhelpful: "도움되지 않음",
     },
     notePlaceholder: "덧붙이고 싶은 한 줄 (선택)",
+    /** Next to 「다음」 while it is off because only one of the two questions has an answer (2026-11-19). */
+    pickBelowToo: "아래 질문도 하나 골라 주세요. 건너뛰어도 됩니다.",
+    pickAboveToo: "위 질문도 하나 골라 주세요. 건너뛰어도 됩니다.",
   },
   summary: {
     eyebrow: "이번 기록에서",
@@ -462,7 +467,7 @@ export const ko = {
     context: "상황",
     concerns: "중요했던 것",
     words: "가까웠던 말",
-    footnote: "감정의 정답을 찾은 것이 아니라, 지금 경험을 표현할 수 있는 몇 가지 단서를 남겼습니다.",
+    footnote: "감정의 정답을 찾은 것이 아니라, 지금 경험을 표현할 수 있는 몇 가지 단서를 기록했습니다.",
     support: "그래서 지금 무엇이 필요할까요?",
   },
   synthesisSection: {
@@ -491,7 +496,7 @@ export const ko = {
       quickAffect: "빠른 확인에서 전체적인 느낌을 {text}{~text|으로/로} 표시했습니다.",
       body: "몸에서는 {list}{~last|을/를} 알아차렸다고 적었습니다.",
       deepAffect: "전체적인 느낌은 {text} 쪽으로 표시했습니다.",
-      context: "상황으로는 “{event}”라고 적었고, 이것은 {source}에 가깝다고 표시했습니다.",
+      context: "상황으로는 “{event}”{~event|이라고/라고} 적었고, 이것은 {source}에 가깝다고 표시했습니다.",
       concerns: "그때 중요했던 것으로는 {list}{~last|을/를} 골랐습니다.",
       emotion: "지금 경험에 가까운 말로는 {list}{~last|을/를} 골랐습니다.",
       quickEmotion: "가까운 말로는 {list}{~last|을/를} 골랐습니다.",
@@ -504,7 +509,7 @@ export const ko = {
     meaning: {
       concernOverlap: "고른 표현과 그때 중요했다고 한 것이 모두 ‘{tags}’ 쪽을 가리킵니다. 같은 곳을 두 번 짚은 셈입니다.",
       wordsShifted: "빠르게 봤을 때는 {quick}, 자세히 본 뒤에는 {deep}{~deepLast|을/를} 골랐습니다. 같은 순간을 두 번 다르게 표현해본 셈입니다.",
-      severalKinds: "{words}처럼 한 갈래로 묶이지 않는 표현을 함께 골랐습니다. 여러 결이 같이 있는 경험일 수 있습니다.",
+      severalKinds: "{words}처럼 한 갈래로 묶이지 않는 표현을 함께 골랐습니다. 여러 느낌이 같이 있는 경험일 수 있습니다.",
       notHappeningNow: "이 기록은 지금 벌어지고 있는 일이 아니라 {source}에 대한 것이라고 표시했습니다.",
     },
     unknown: {
@@ -534,6 +539,50 @@ export const ko = {
     varies: "같은 경험이라도 필요한 것은 그때그때 다를 수 있습니다. 편안하거나 벅찬 경험이라면 문제를 풀기보다 머물러 느끼는 쪽이 맞을 수도 있습니다.",
     backToSummary: "← 요약으로 돌아가기",
     finish: "여기까지",
+  },
+  /**
+   * The area that opens under 「사실 / 내 느낌 / 원하는 것을 나눠 적기」 on the need screen (2026-11-19, app/say-it.tsx):
+   * three lines filled in from the record, joined by a fixed frame into one sentence (lib/say-it.ts).
+   * What the person wrote goes inside the quotation marks as written. Nothing typed here is stored.
+   * Every line below is provisional wording (임시 문구) until the owner settles it.
+   */
+  sayIt: {
+    hint: "이 기록에 적어 둔 말을 먼저 넣어 두었어요. 고쳐도, 지워도 돼요.",
+    fact: "사실",
+    feel: "내 느낌",
+    want: "원하는 것",
+    factPlaceholder: "있었던 일을 한 줄로. 비워 둬도 돼요.",
+    feelPlaceholder: "그때 마음에 가까운 말. 비워 둬도 돼요.",
+    wantPlaceholder: "바랐던 것이나 중요했던 것. 비워 둬도 돼요.",
+    /** Under a line that still holds what the record had; `name` is the record's own label for it. */
+    fromRecord: "기록의 「{name}」에서",
+    typed: "직접 적음",
+    saidName: "이어 본 문장",
+    saidEmpty: "세 줄 가운데 적은 것만 여기에 이어져요.",
+    tone: "말투",
+    casual: "편하게",
+    polite: "높여서",
+    /** The frame. `wantEnd` is the line without closing punctuation, for the particle only. */
+    said: {
+      casual: {
+        fact: "있었던 일은 “{fact}”.",
+        feelThen: "그때 내 마음은 “{feel}”에 가까웠고,",
+        feelLast: "그때 내 마음은 “{feel}”에 가까웠어.",
+        want: "나한테 중요했던 건 “{want}”{~wantEnd|이었어/였어}.",
+      },
+      polite: {
+        fact: "있었던 일은 “{fact}”.",
+        feelThen: "그때 제 마음은 “{feel}”에 가까웠고,",
+        feelLast: "그때 제 마음은 “{feel}”에 가까웠어요.",
+        want: "저한테 중요했던 건 “{want}”{~wantEnd|이었어요/였어요}.",
+      },
+    },
+    notSent: "이 문장은 어디에도 보내지지 않아요. 보낼지, 누구에게 보낼지는 직접 정해요.",
+    copy: "복사",
+    copied: "복사됨",
+    copyFailed: "복사하지 못했어요. 문장을 길게 눌러 직접 복사할 수 있어요.",
+    hold: "지금은 말하지 않기",
+    held: "괜찮아요. 여기 적은 것은 남지 않아요.",
   },
   talkToSomeone: {
     question: "이 경험을 사람에게 말해 볼 생각이 있나요?",

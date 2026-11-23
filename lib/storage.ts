@@ -4,14 +4,32 @@ import { getVoiceStore } from "./voice-store";
 const DRAFT_KEY = "emotion-lab:draft:v4";
 const COMPLETED_KEY = "emotion-lab:completed:v4";
 
+/**
+ * Reads one key. A browser that blocks storage altogether (all cookies and site data off,
+ * some embedded contexts) throws on the first touch of localStorage, before any value is
+ * read, so the touch is inside the try as well: the first screen must open either way.
+ * Nothing stored and storage refused read the same here, as the fallback. The person is
+ * told at the first write, which fails too (writeJson below, 「common.saveFailed」).
+ */
 const readJson = <T>(key: string, fallback: T): T => {
   if (typeof window === "undefined") return fallback;
-  const raw = window.localStorage.getItem(key);
-  if (!raw) return fallback;
   try {
+    const raw = window.localStorage.getItem(key);
+    if (!raw) return fallback;
     return JSON.parse(raw) as T;
   } catch {
     return fallback;
+  }
+};
+
+/** Removes one key; false when the browser refused. Never throws, like the write. */
+const removeKey = (key: string): boolean => {
+  if (typeof window === "undefined") return false;
+  try {
+    window.localStorage.removeItem(key);
+    return true;
+  } catch {
+    return false;
   }
 };
 
@@ -38,8 +56,7 @@ export const loadCompleted = (): EmotionSession[] => readJson<EmotionSession[]>(
 export const saveDraft = (session: EmotionSession): boolean => writeJson(DRAFT_KEY, session);
 
 export const removeDraft = () => {
-  if (typeof window === "undefined") return;
-  window.localStorage.removeItem(DRAFT_KEY);
+  removeKey(DRAFT_KEY);
 };
 
 /** Upsert by id: a reopened session finishes as the same record, not a second one. */
@@ -81,8 +98,8 @@ export const persistSession = (session: EmotionSession): boolean => {
  */
 export const clearAllRecords = (): Promise<void> => {
   if (typeof window === "undefined") return Promise.resolve();
-  window.localStorage.removeItem(COMPLETED_KEY);
-  window.localStorage.removeItem(DRAFT_KEY);
+  removeKey(COMPLETED_KEY);
+  removeKey(DRAFT_KEY);
   return getVoiceStore().clear().catch(() => undefined);
 };
 

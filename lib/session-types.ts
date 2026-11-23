@@ -507,7 +507,15 @@ const reduce = (state: EmotionSession, action: SessionAction): EmotionSession =>
     case "BACK": {
       const history = state.history ?? [];
       if (!history.length) return state;
-      return { ...state, stage: history[history.length - 1], history: history.slice(0, -1) };
+      const back = { ...state, stage: history[history.length - 1], history: history.slice(0, -1) };
+      // Leaving a reopened gate backwards returns to the finished quick look (2026-11-16):
+      // left a draft, it dropped out of 지난 기록 and 새로 시작 could delete it. It is finished
+      // again as of when the quick look ended, and the unfinished slower look is not kept
+      // (owner's decision 2026-11-16).
+      if (state.stage === "entry" && state.quickCheck?.endedAt) {
+        return { ...back, status: "completed", completedAt: state.quickCheck.endedAt, deepReflection: undefined };
+      }
+      return back;
     }
     case "STOP":
       return { ...state, stage: "stopped", status: "stopped", stopReason: action.reason };

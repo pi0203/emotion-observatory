@@ -41,7 +41,9 @@ const EN_PERSONA = /\b(I notice (?:that )?you|It sounds like (?:you|that)|I[’'
 
 describe("the app does not speak as a person", () => {
   it("no Korean message or content file uses the speaker's first person", () => {
-    const hits = [...strings(ko as unknown as Tree), ...dataStrings()].filter(([, text]) => KO_SPEAKER.test(text)).map(([path, text]) => `${path}: ${text}`);
+    // sayIt.said.* is the frame of the sentence the person may say to someone (2026-11-19): 「저한테」 there is the
+    // person's own polite first person, in their own sentence, not the app speaking.
+    const hits = [...strings(ko as unknown as Tree), ...dataStrings()].filter(([path, text]) => !path.startsWith("sayIt.said.") && KO_SPEAKER.test(text)).map(([path, text]) => `${path}: ${text}`);
     expect(hits).toEqual([]);
   });
 

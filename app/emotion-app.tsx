@@ -1,6 +1,6 @@
 "use client";
 
-import { createContext, useContext, useEffect, useReducer, useRef, useState, type CSSProperties } from "react";
+import { createContext, Fragment, useCallback, useContext, useEffect, useId, useReducer, useRef, useState, type CSSProperties, type MouseEvent as ReactMouseEvent } from "react";
 import { canGoBack, createSession, sessionReducer, understandRoute } from "../lib/session-types";
 import { appraisalEscapes, coachEscapes, coachResult, coachSetFor, getCoachSets } from "../lib/coach";
 import type { AffectPoint, BodyObservation, DeepReflection, EmotionSelection, EmotionSession, QuickNonSelection, SynthesisFit, TalkToSomeone, UnderlyingFeeling, VoiceStep } from "../lib/session-types";
@@ -29,9 +29,14 @@ import type { Translate } from "../lib/i18n/t";
 import { toneOf } from "../lib/tones";
 import { enOnly } from "../lib/i18n/messages.en";
 import { SiteLogo } from "./site-logo";
+import { FIRST_OPEN_INIT, firstOpenPending, introPhrases, markFirstOpenPlayed, startNewVisit } from "./first-open";
 import { GroundPick } from "./ground-pick";
+import { PickUnderline, pickHost } from "./pick-underline";
+import { LimitField } from "./limit-ring";
+import { tagEnter, tagLeave, useTagMotion } from "./tag-motion";
 import { SaveIsland } from "./save-island";
 import { VoiceNote, VoicePlayback } from "./voice-note";
+import { SayIt } from "./say-it";
 import { getVoiceStore } from "../lib/voice-store";
 
 // Every read and write of a record goes through the one storage seam. It is
@@ -56,15 +61,47 @@ const useContent = (): LocaleContent => requireContent(useT().locale);
  * (lib/content.ts), so another language can be added without touching them.
  */
 export default function EmotionApp({ locale = DEFAULT_LOCALE }: { locale?: Locale }) {
-  return <I18nProvider locale={locale}><App /></I18nProvider>;
+  // Back to the first screen without asking the server for the page (2026-11-20): the app is
+  // mounted again under a new key, so every piece of state starts as it does on a page load
+  // (the landing, the draft and the records read from storage again, nothing of the step left).
+  // With no connection the old ways (a plain link to "/", a reload of the page) ended on
+  // the browser's error page. `newVisit` is for the two places that used to reload: a reload
+  // is a new visit, so the first-open motions play again there (app/first-open.ts).
+  const [mount, setMount] = useState(0);
+  const goHome = useCallback((newVisit = false) => {
+    if (newVisit) startNewVisit();
+    setMount((count) => count + 1);
+  }, []);
+  return <I18nProvider locale={locale}><HomeContext.Provider value={goHome}><App key={mount} returned={mount > 0} /></HomeContext.Provider></I18nProvider>;
 }
 
-function App() {
+/** Takes the app back to its first screen in place; `newVisit` also lets the first-open motions play again. */
+const HomeContext = createContext<((newVisit?: boolean) => void) | null>(null);
+
+/**
+ * For the links that end a record (each a link to "/"): a plain click goes back to the first screen
+ * inside the app, so no page is requested. The element stays the same link, with the same
+ * name, look and place in the tab order; a click with a modifier key or another mouse button
+ * is left to the browser (a new tab still opens "/").
+ */
+function useHomeLink() {
+  const goHome = useContext(HomeContext);
+  return (event: ReactMouseEvent<HTMLAnchorElement>) => {
+    if (!goHome || event.defaultPrevented || event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
+    event.preventDefault();
+    goHome();
+  };
+}
+
+function App({ returned = false }: { returned?: boolean }) {
   const t = useT();
+  const goHome = useContext(HomeContext);
   const [session, dispatch] = useReducer(sessionReducer, undefined, createSession);
   const [hydrated, setHydrated] = useState(false);
   const [draft, setDraft] = useState<EmotionSession | null>(null);
   const [stopConfirm, setStopConfirm] = useState(false);
+  // 그만하기 in the top bar: focus returns here when the confirm window closes without stopping
+  const stopButton = useRef<HTMLButtonElement>(null);
   const [records, setRecords] = useState<EmotionSession[] | null>(null);
   const [openRecord, setOpenRecord] = useState<EmotionSession | null>(null);
   // true after the browser refused a write (quota full, storage blocked): the steps still work, the record is just not kept
@@ -150,6 +187,21 @@ function App() {
     document.documentElement.dataset.tone = tone;
   }, [tone]);
 
+  // back on the first screen in place (see EmotionApp): as after a page load, the page is at
+  // its top, nothing holds the focus, and Tab starts from the first link. Focusing the frame
+  // and letting go at once moves the browser's starting point for Tab without showing a ring.
+  const frame = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    if (!returned) return;
+    window.scrollTo({ top: 0, left: 0, behavior: "instant" });
+    const root = frame.current;
+    if (!root) return;
+    root.tabIndex = -1;
+    root.focus({ preventScroll: true });
+    root.blur();
+    root.removeAttribute("tabindex");
+  }, [returned]);
+
   const resume = () => {
     if (draft) dispatch({ type: "RESUME", session: draft });
   };
@@ -171,9 +223,10 @@ function App() {
   if (session.stage === "landing") {
     // the homepage frame (header, menu, footer) on the landing and record screens only;
     // the steps keep their minimal top bar so nothing pushes the task down (docs/DESIGN_ALIGNMENT.md §5)
-    return <div className="app-shell site-frame">
+    return <div className="app-shell site-frame" ref={frame}>
+      {firstOpenPending() && <script dangerouslySetInnerHTML={{ __html: FIRST_OPEN_INIT }} />}
       <a className="skip-link" href="#main">{t("shell.skipToContent")}</a>
-      <SiteHeader onHelp={() => setHelpOpen(true)} />
+      <SiteHeader onHelp={() => setHelpOpen(true)} bloom />
       <main id="main" tabIndex={-1} className="site-main">
       {openRecord
         ? <RecordDetail session={openRecord} previous={previousRecord(openRecord, records ?? loadCompleted())} onHelp={() => setHelpOpen(true)} onFollowUp={(followUp) => saveFollowUp(openRecord, followUp)} onAddLabel={(label) => addLabelLater(openRecord, label)} onRemoveVoice={(step) => removeVoiceLater(openRecord, step)} onBack={() => setOpenRecord(null)} />
@@ -198,7 +251,7 @@ function App() {
   return (
     <main className="app-shell" ref={shell}>
       <header className="topbar">
-        <a className="wordmark" href="#" onClick={() => window.location.reload()}>
+        <a className="wordmark" href="#" onClick={(event) => { event.preventDefault(); goHome?.(true); }}>
           {t("common.appName")}
         </a>
         <div className="topbar-actions">
@@ -206,7 +259,7 @@ function App() {
           {/* the helplines, one tap away on every step and always in view (SAFETY.md; owner's choice 2026-10-19) */}
           <button className="text-button help-button" aria-label={t("common.helpLink")} onClick={() => setHelpOpen(true)}><span className="label-wide">{t("common.helpLink")}</span><span className="label-narrow" aria-hidden="true">{t("common.helpShort")}</span></button>
           {session.stage !== "entry" && session.stage !== "stopped" && session.stage !== "summary" && session.stage !== "quick-summary" && session.stage !== "support" && (
-            <button className="text-button" onClick={() => setStopConfirm(true)}>{t("common.stop")}</button>
+            <button ref={stopButton} className="text-button" onClick={() => setStopConfirm(true)}>{t("common.stop")}</button>
           )}
         </div>
       </header>
@@ -216,7 +269,7 @@ function App() {
       {session.stage === "quick-candidates" && showsPauseLine(session.quickCheck?.affect) && <p className="pause-line pause-line-banner">{t("quickCandidates.pause")}</p>}
 
       {progress[session.stage] && (
-        <div className="progress-row" aria-label={t("common.progress", { step: progress[session.stage] })}>
+        <div className="progress-row" role="img" aria-label={t("common.progress", { step: progress[session.stage] })}>
           <span>{progress[session.stage]}</span>
           <div className="progress-track"><div className="progress-fill" style={{ width: `${(Object.keys(progress).indexOf(session.stage) + 1) * 16.66}%` }} /></div>
         </div>
@@ -242,7 +295,7 @@ function App() {
       {session.stage === "support" && <NeedScreen session={session} onNeed={(id) => dispatch({ type: "CHOOSE_NEED", id })} onResponse={(id) => dispatch({ type: "TOGGLE_RESPONSE", id })} onDeep={() => dispatch({ type: "ENTER_DEEP" })} onCoach={() => dispatch({ type: "OPEN_COACH" })} onBack={() => dispatch({ type: "BACK" })} />}
       {session.stage === "stopped" && <StoppedScreen session={session} />}
 
-      {stopConfirm && <StopModal onClose={() => setStopConfirm(false)} onStop={stop} />}
+      {stopConfirm && <StopModal onClose={() => { setStopConfirm(false); stopButton.current?.focus(); }} onStop={stop} />}
       {helpOpen && <HelpDialog onClose={() => setHelpOpen(false)} />}
     </main>
   );
@@ -279,10 +332,10 @@ function koreanLink(locale: string) {
  * and the same help button the steps carry, so the helplines are one tap away
  * before anything is started too (SAFETY.md).
  */
-function SiteHeader({ onHelp }: { onHelp: () => void }) {
+function SiteHeader({ onHelp, bloom = false }: { onHelp: () => void; bloom?: boolean }) {
   const t = useT();
   return <header className="site-header">
-    <a className="site-logo" href={`${HOMEPAGE}/`} {...koreanLink(t.locale)}><SiteLogo /><span className="site-logo-text">Eunchan Joe</span><KoreanMark /></a>
+    <a className="site-logo" href={`${HOMEPAGE}/`} {...koreanLink(t.locale)}><SiteLogo bloom={bloom} /><span className="site-logo-text">Eunchan Joe</span><KoreanMark /></a>
     <nav className="site-nav" aria-label={t("shell.siteNav")}>
       <ul>{HOMEPAGE_NAV.map((item) => {
         const toKorean = t.locale === "en" && !item.en;
@@ -297,7 +350,13 @@ function SiteHeader({ onHelp }: { onHelp: () => void }) {
   </header>;
 }
 
-/** A small footer: the app, its maker, the way back, the terms and the privacy policy. No mail address, no licence line. */
+/** The intro sentence in three phrases, each sharpening from a blur in turn; one whole sentence to a screen reader. */
+function IntroPhrases({ text }: { text: string }) {
+  const phrases = introPhrases(text);
+  return <>{phrases.map((phrase, index) => <Fragment key={index}>{index > 0 && " "}<span className="intro-phrase" style={{ "--i": index } as CSSProperties}>{phrase}</span></Fragment>)}</>;
+}
+
+/** A small footer: the app, its maker, the way back, the terms and the privacy policy, then one line on how the text was written. No mail address, no licence line. */
 function SiteFooter() {
   const t = useT();
   return <footer className="site-footer">
@@ -310,6 +369,9 @@ function SiteFooter() {
     {t.locale === "ko"
       ? <><span aria-hidden="true">·</span><a href={TERMS_PATH}>{koOnly.termsLink}</a><span aria-hidden="true">·</span><a href={PRIVACY_PATH}>{koOnly.privacyLink}</a></>
       : <><span aria-hidden="true">·</span><a href={TERMS_PATH} hrefLang="ko">{enOnly.termsLink}<KoreanMark /></a><span aria-hidden="true">·</span><a href={PRIVACY_PATH} hrefLang="ko">{enOnly.privacyLink}<KoreanMark /></a></>}
+    {/* on a line of its own (2026-11-17); the English is a draft */}
+    <span className="site-footer-ai">{t("shell.aiNote")}</span>
+    {t.locale === "en" && <span className="draft-note">{enOnly.draftNote}</span>}
   </footer>;
 }
 
@@ -441,6 +503,9 @@ function LandingScreen({ onStart, draft, onResume, onRecords, onManage, pendingS
   const confirmTitle = useRef<HTMLParagraphElement>(null);
   // the question takes the focus, so it is read before the choice is made
   useEffect(() => { if (pendingStart) confirmTitle.current?.focus(); }, [pendingStart]);
+  // the intro sentence sharpens phrase by phrase on the first open of a visit only (app/first-open.ts)
+  const [sharpen] = useState(firstOpenPending);
+  useEffect(() => { markFirstOpenPlayed(); }, []);
   return <Screen className="entry-screen">
     <section className="card hero-card single-entry">
       {/* a drawing of the pad used in the steps: four quiet colours and one dot (decoration only) */}
@@ -449,7 +514,7 @@ function LandingScreen({ onStart, draft, onResume, onRecords, onManage, pendingS
           the nickname 이쯤 sits under it, Korean only; the old title sentence follows as the hero's line */}
       <h1 className="hero-name">{t("common.appName")}</h1>
       {t.locale === "ko" && <p className="hero-alias">{koOnly.alias}</p>}
-      <p className="hero-title">{renderRich(t("landing.title"))}</p>
+      <p className="hero-title">{sharpen ? <IntroPhrases text={t("landing.title")} /> : renderRich(t("landing.title"))}</p>
       <p className="lede">{renderRich(t("landing.lede"))}</p>
       {pendingStart
         ? <div className="draft-confirm" role="group" aria-labelledby="draft-confirm-title">
@@ -636,6 +701,8 @@ function CrisisCard() {
           <strong>{t("crisis.num1388")}</strong>
         </a>
       </div>
+      {/* the English emergency line and the two (Korea) names are drafts since 2026-11-17 (docs/EN_REVIEW.md) */}
+      {t.locale === "en" && <p className="draft-note">{enOnly.draftNote}</p>}
     </aside>
   );
 }
@@ -754,19 +821,20 @@ function TieredWords({ pool, selectedLabels, ownWords, onToggle, onAddCustom, me
   const poolLabels = pool.map((item) => item.label);
   const selectedAsItems = selectedLabels.map((label) => ({ label, source: "suggested" as const }));
   const expanded = expandCandidates([...pool, ...selectedAsItems], undefined, t.locale).filter((item) => !poolLabels.includes(item.label));
-  const chip = (label: string) => <button className={`chip ${selectedLabels.includes(label) ? "selected" : ""}`} aria-pressed={selectedLabels.includes(label)} key={label} onClick={() => onToggle(label)}><Mark on={selectedLabels.includes(label)} />{label}</button>;
+  const motion = useTagMotion(ownWords);
+  const chip = (label: string, extra = "") => <button className={`chip ${pickHost} ${selectedLabels.includes(label) ? "selected" : ""} ${extra}`} aria-pressed={selectedLabels.includes(label)} key={label} onClick={() => onToggle(label)} onAnimationEnd={(event) => { if (event.target === event.currentTarget) motion.done(label); }}><Mark on={selectedLabels.includes(label)} />{label}<PickUnderline on={selectedLabels.includes(label)} /></button>;
   const addCustom = () => { onAddCustom(custom); setCustom(""); };
 
-  const mine = ownWords.length > 0 && <>
+  const mine = (ownWords.length > 0 || motion.leaving.length > 0) && <>
     <p className="tier-label">{t("words.mine")}</p>
-    <div className="chip-grid">{ownWords.map((label) => chip(label))}</div>
+    <div className="chip-grid">{ownWords.map((label) => chip(label, motion.entering.includes(label) ? tagEnter : ""))}{motion.leaving.map((item) => <span className={`chip ${tagLeave}`} aria-hidden="true" key={`leaving-${item.label}`}>{item.label}</span>)}</div>
     {onMeaning && ownWords.map((label) => <div className="own-meaning" key={label}>
       <label className="field-label" htmlFor={`meaning-${label}`}>{t("words.meaningLabel", { label })} <em>{t("words.optional")}</em></label>
       <input id={`meaning-${label}`} className="text-input" maxLength={INPUT_LIMITS.line} defaultValue={meanings?.[label] ?? ""} onChange={(event) => onMeaning(label, event.target.value)} placeholder={t("words.meaningPlaceholder")} />
     </div>)}
   </>;
   const ownRow = <div className="own-word-row">
-    <input className="text-input" maxLength={INPUT_LIMITS.word} value={custom} onChange={(event) => setCustom(event.target.value)} onKeyDown={(event) => { if (event.key === "Enter") addCustom(); }} placeholder={t("common.ownWordsPlaceholder")} aria-label={t("common.ownWordsPlaceholder")} />
+    <LimitField length={custom.length} max={INPUT_LIMITS.word}><input className="text-input" maxLength={INPUT_LIMITS.word} value={custom} onChange={(event) => setCustom(event.target.value)} onKeyDown={(event) => { if (event.key === "Enter") addCustom(); }} placeholder={t("common.ownWordsPlaceholder")} aria-label={t("common.ownWordsPlaceholder")} /></LimitField>
     <button className="small-button" disabled={!custom.trim()} onClick={addCustom}>{t("words.add")}</button>
   </div>;
 
@@ -808,6 +876,7 @@ function TieredWords({ pool, selectedLabels, ownWords, onToggle, onAddCustom, me
 
 function QuickCandidatesScreen({ pool, selected, response, revealed, onReveal, onToggle, onRespond, onAddCustom, onMeaning, eventText, onEventText, onFinish, onCoach, onDeep, voice }: { pool: EmotionSelection[]; selected: EmotionSelection[]; response?: QuickNonSelection; revealed: boolean; onReveal: () => void; onToggle: (label: string) => void; onRespond: (response: QuickNonSelection) => void; onAddCustom: (label: string) => void; onMeaning: (label: string, meaning: string) => void; eventText: string; onEventText: (eventText: string) => void; onFinish: () => void; onCoach: () => void; onDeep: () => void; voice?: React.ReactNode }) {
   const t = useT();
+  const [eventLength, setEventLength] = useState(eventText.length);
   const canCoach = getCoachSets(t.locale).some((set) => selected.some((item) => set.words.includes(item.label)));
   return <Screen>
     <StepHeading step={t("quickCandidates.step")} title={revealed ? t("quickCandidates.title") : t("words.beforeTitle")} hint={revealed ? t("quickCandidates.hint") : t("words.beforeHint")} basis={t("quickCandidates.basis")} />
@@ -820,7 +889,7 @@ function QuickCandidatesScreen({ pool, selected, response, revealed, onReveal, o
     {/* what happened, one optional line (owner's decision 2026-10-30): no source choice and no split into parts, so the quick look stays short */}
     <div className="quick-context">
       <label className="field-label" htmlFor="quick-event">{t("quickCandidates.context.label")} <em>{t("words.optional")}</em></label>
-      <input id="quick-event" className="text-input" maxLength={INPUT_LIMITS.text} defaultValue={eventText} onChange={(event) => onEventText(event.target.value)} />
+      <LimitField length={eventLength} max={INPUT_LIMITS.text}><input id="quick-event" className="text-input" maxLength={INPUT_LIMITS.text} defaultValue={eventText} onChange={(event) => { setEventLength(event.target.value.length); onEventText(event.target.value); }} /></LimitField>
       <p className="small-note">{t("quickCandidates.context.hint")}</p>
       {voice}
     </div>
@@ -930,7 +999,7 @@ function CoachWordsScreen({ session, onToggle, onOwnWord, onNext, onLeave }: { s
     {set && <ExampleZone label={t("coach.exampleZone")} id="coach-example-words">{set.event}</ExampleZone>}
     <MineZone>
     {observations.length > 0 && <p className="zone-recap">{t("coach.recap", { observations: observations.join(" ") })}</p>}
-    <div className="chip-grid" role="group" aria-label={t("coach.wordsGroup")}>{[...(set?.words ?? []), ...coachEscapes(t.locale)].map((label) => <button className={`chip ${picked.includes(label) ? "selected" : ""}`} aria-pressed={picked.includes(label)} key={label} onClick={() => onToggle(label)}><Mark on={picked.includes(label)} />{label}</button>)}</div>
+    <div className="chip-grid" role="group" aria-label={t("coach.wordsGroup")}>{[...(set?.words ?? []), ...coachEscapes(t.locale)].map((label) => <button className={`chip ${pickHost} ${picked.includes(label) ? "selected" : ""}`} aria-pressed={picked.includes(label)} key={label} onClick={() => onToggle(label)}><Mark on={picked.includes(label)} />{label}<PickUnderline on={picked.includes(label)} /></button>)}</div>
     <label className="field-label" htmlFor="coach-own">{t("coach.ownWordLabel")}</label>
     <input id="coach-own" className="text-input" maxLength={INPUT_LIMITS.word} value={own} onChange={(event) => { setOwn(event.target.value); onOwnWord(event.target.value); }} placeholder={t("coach.ownWordPlaceholder")} />
     <p className="small-note">{t("coach.wordsPickNote")}</p>
@@ -968,6 +1037,7 @@ function CoachNoteScreen({ session, onDone }: { session: EmotionSession; onDone:
 
 function QuickSummaryScreen({ session, onDeep, onFeedback, onSupport }: { session: EmotionSession; onDeep: () => void; onFeedback: (feedback: { fit?: SynthesisFit; correction?: string }) => void; onSupport: () => void }) {
   const t = useT();
+  const toHome = useHomeLink();
   const quick = session.quickCheck;
   const affect = quickAffectValue(t, quick?.affect);
   const words = (quick?.selected ?? []).map((item) => item.label).join(" · ") || quickResponseLabel(t, quick?.candidateResponse) || t("common.notChosen");
@@ -987,7 +1057,7 @@ function QuickSummaryScreen({ session, onDeep, onFeedback, onSupport }: { sessio
     <p className="summary-footnote reveal-step" style={delay(d.rest)}>{t("quickSummary.footnote")}</p>
     <div className="reveal-rest reveal-step" style={delay(d.rest)}>
       <SynthesisSection session={session} onFeedback={onFeedback} />
-      <div className="stack-actions"><button className="primary-button centered" onClick={onDeep}>{t("quickSummary.deep")} <span>→</span></button><button className="secondary-button" onClick={onSupport}>{t("quickSummary.support")}</button><a className="secondary-button centered" href="/">{t("common.backToStart")}</a></div>
+      <div className="stack-actions"><button className="primary-button centered" onClick={onDeep}>{t("quickSummary.deep")} <span>→</span></button><button className="secondary-button" onClick={onSupport}>{t("quickSummary.support")}</button><a className="secondary-button centered" href="/" onClick={toHome}>{t("common.backToStart")}</a></div>
     </div>
   </Screen>;
 }
@@ -1050,7 +1120,7 @@ function ContextScreen({ initial, onNext, voice }: { initial?: DeepContext; onNe
   const { stepNotes } = useContent();
   const [text, setText] = useState(initial?.eventText ?? "");
   const [source, setSource] = useState<DeepContext["source"]>(initial?.source ?? "event");
-  return <Screen><StepHeading step={t("context.step")} title={t("context.title")} hint={t("context.hint")} basis={t("context.basis")} /><textarea className="text-area" maxLength={INPUT_LIMITS.text} value={text} onChange={(event) => setText(event.target.value)} placeholder={t("context.placeholder")} /><p className="small-note">{t("context.privacyHint")}</p>{voice}<div className="segmented"><span>{t("context.sourceQuestion")}</span>{(["event", "memory", "anticipation", "thought"] as const).map((value) => <button className={source === value ? "selected" : ""} aria-pressed={source === value} key={value} onClick={() => setSource(value)}><Mark on={source === value} />{t(`contextSource.${value}`)}</button>)}</div><Navigation note={stepNote(stepNotes, "context", text.trim().length > 0)} onNext={() => onNext({ eventText: text, source })} /></Screen>;
+  return <Screen><StepHeading step={t("context.step")} title={t("context.title")} hint={t("context.hint")} basis={t("context.basis")} /><LimitField length={text.length} max={INPUT_LIMITS.text} textarea><textarea className="text-area" maxLength={INPUT_LIMITS.text} value={text} onChange={(event) => setText(event.target.value)} placeholder={t("context.placeholder")} /></LimitField><p className="small-note">{t("context.privacyHint")}</p>{voice}<div className="segmented"><span>{t("context.sourceQuestion")}</span>{(["event", "memory", "anticipation", "thought"] as const).map((value) => <button className={source === value ? "selected" : ""} aria-pressed={source === value} key={value} onClick={() => setSource(value)}><Mark on={source === value} />{t(`contextSource.${value}`)}</button>)}</div><Navigation note={stepNote(stepNotes, "context", text.trim().length > 0)} onNext={() => onNext({ eventText: text, source })} /></Screen>;
 }
 
 function MeaningScreen({ initial, onNext }: { initial: string[]; onNext: (selected: string[]) => void }) {
@@ -1059,7 +1129,7 @@ function MeaningScreen({ initial, onNext }: { initial: string[]; onNext: (select
   const [selected, setSelected] = useState(initial);
   const [custom, setCustom] = useState("");
   const toggle = (item: string) => setSelected((current) => current.includes(item) ? current.filter((value) => value !== item) : [...current, item]);
-  return <Screen><StepHeading step={t("meaning.step")} title={t("meaning.title")} hint={t("meaning.hint")} basis={t("meaning.basis")} /><div className="choice-list compact">{concerns.map((item) => <button className={selected.includes(item) ? "selected" : ""} aria-pressed={selected.includes(item)} key={item} onClick={() => toggle(item)}><Mark on={selected.includes(item)} />{item}</button>)}</div><input className="text-input" maxLength={INPUT_LIMITS.word} value={custom} onChange={(event) => setCustom(event.target.value)} placeholder={t("common.ownWordsPlaceholder")} /><Navigation note={stepNote(stepNotes, "meaning", selected.length > 0 || custom.trim().length > 0)} onNext={() => onNext([...selected, ...(custom ? [custom] : [])])} /></Screen>;
+  return <Screen><StepHeading step={t("meaning.step")} title={t("meaning.title")} hint={t("meaning.hint")} basis={t("meaning.basis")} /><div className="choice-list compact">{concerns.map((item) => <button className={selected.includes(item) ? "selected" : ""} aria-pressed={selected.includes(item)} key={item} onClick={() => toggle(item)}><Mark on={selected.includes(item)} />{item}</button>)}</div><input className="text-input" maxLength={INPUT_LIMITS.word} value={custom} onChange={(event) => setCustom(event.target.value)} placeholder={t("common.ownWordsPlaceholder")} /><Navigation note={stepNote(stepNotes, "meaning", selected.length > 0 || custom.trim().length > 0)} onNext={() => onNext([...selected, ...(custom.trim() ? [custom.trim()] : [])])} /></Screen>;
 }
 
 function EmotionScreen({ initial, affect, revealed, onReveal, onNext }: { initial: EmotionSelection[]; affect?: AffectPoint; revealed: boolean; onReveal: () => void; onNext: (selected: EmotionSelection[]) => void }) {
@@ -1085,16 +1155,18 @@ function EmotionScreen({ initial, affect, revealed, onReveal, onNext }: { initia
   </Screen>;
 }
 
+/** Both questions need an answer for 「다음」 (DeepOutcome keeps both); with one answered, a line under them says so. 「건너뛰기」 stays open. */
 function OutcomeScreen({ onNext }: { onNext: (outcome: DeepOutcome) => void }) {
   const t = useT();
   const [clarity, setClarity] = useState<DeepOutcome["clarity"]>();
   const [usefulness, setUsefulness] = useState<DeepOutcome["usefulness"]>();
   const [note, setNote] = useState("");
-  return <Screen><StepHeading step={t("outcome.step")} title={t("outcome.title")} hint={t("outcome.hint")} basis={t("outcome.basis")} /><div className="choice-list compact">{(["much_clearer", "clearer", "same", "more_complex", "more_distressed"] as const).map((value) => <button className={clarity === value ? "selected" : ""} aria-pressed={clarity === value} key={value} onClick={() => setClarity(value)}><Mark on={clarity === value} />{t(`outcome.clarity.${value}`)}</button>)}</div><h2 className="subquestion">{t("outcome.usefulnessQuestion")}</h2><div className="inline-choices">{(["helpful", "unsure", "unhelpful"] as const).map((value) => <button className={usefulness === value ? "selected" : ""} aria-pressed={usefulness === value} key={value} onClick={() => setUsefulness(value)}><Mark on={usefulness === value} />{t(`outcome.usefulness.${value}`)}</button>)}</div><input className="text-input" maxLength={INPUT_LIMITS.line} value={note} onChange={(event) => setNote(event.target.value)} placeholder={t("outcome.notePlaceholder")} /><Navigation disabled={!clarity || !usefulness} onNext={() => onNext({ clarity: clarity!, usefulness: usefulness!, note })} /></Screen>;
+  return <Screen><StepHeading step={t("outcome.step")} title={t("outcome.title")} hint={t("outcome.hint")} basis={t("outcome.basis")} /><div className="choice-list compact">{(["much_clearer", "clearer", "same", "more_complex", "more_distressed"] as const).map((value) => <button className={clarity === value ? "selected" : ""} aria-pressed={clarity === value} key={value} onClick={() => setClarity(value)}><Mark on={clarity === value} />{t(`outcome.clarity.${value}`)}</button>)}</div><h2 className="subquestion">{t("outcome.usefulnessQuestion")}</h2><div className="inline-choices">{(["helpful", "unsure", "unhelpful"] as const).map((value) => <button className={usefulness === value ? "selected" : ""} aria-pressed={usefulness === value} key={value} onClick={() => setUsefulness(value)}><Mark on={usefulness === value} />{t(`outcome.usefulness.${value}`)}</button>)}</div><input className="text-input" maxLength={INPUT_LIMITS.line} value={note} onChange={(event) => setNote(event.target.value)} placeholder={t("outcome.notePlaceholder")} /><Navigation disabled={!clarity || !usefulness} disabledReason={clarity && !usefulness ? t("outcome.pickBelowToo") : usefulness && !clarity ? t("outcome.pickAboveToo") : undefined} reasonDraft onNext={() => onNext({ clarity: clarity!, usefulness: usefulness!, note })} /></Screen>;
 }
 
 function SummaryScreen({ session, onFeedback, onTalk, onUnderlying, onUnderlyingNote, onSupport }: { session: EmotionSession; onFeedback: (feedback: { fit?: SynthesisFit; correction?: string }) => void; onTalk: (answer: TalkToSomeone) => void; onUnderlying: (answer: UnderlyingFeeling) => void; onUnderlyingNote: (note: string) => void; onSupport: () => void }) {
   const t = useT();
+  const toHome = useHomeLink();
   const deep = session.deepReflection;
   const play = useFirstReveal(`${session.id}:summary`);
   if (deep?.outcome?.clarity === "more_distressed") return <WorsenedScreen />;
@@ -1123,7 +1195,7 @@ function SummaryScreen({ session, onFeedback, onTalk, onUnderlying, onUnderlying
       <SynthesisSection session={session} onFeedback={onFeedback} />
       <TalkToSomeoneQuestion answer={session.talkToSomeone?.answer} onAnswer={onTalk} />
       <UnderlyingFeelingQuestion answer={session.underlyingFeeling?.answer} note={session.underlyingFeeling?.note ?? ""} onAnswer={onUnderlying} onNote={onUnderlyingNote} />
-      <div className="stack-actions"><button className="primary-button centered" onClick={onSupport}>{t("summary.support")} <span>→</span></button><a className="secondary-button centered" href="/">{t("common.backToStart")}</a></div>
+      <div className="stack-actions"><button className="primary-button centered" onClick={onSupport}>{t("summary.support")} <span>→</span></button><a className="secondary-button centered" href="/" onClick={toHome}>{t("common.backToStart")}</a></div>
     </div>
   </Screen>;
 }
@@ -1263,6 +1335,9 @@ function SynthesisSection({ session, onFeedback }: { session: EmotionSession; on
   </section>;
 }
 
+/** The direction and the choice under which the three-lines area opens (data/needs.*.json). */
+const SAY_NEED = "express";
+const SAY_CHOICE = "three-parts";
 type NeedEntry = { id: string; label: string; group?: string; because?: string; route?: boolean; exit?: boolean; responses?: { id: string; label: string }[] };
 
 /**
@@ -1272,11 +1347,24 @@ type NeedEntry = { id: string; label: string; group?: string; because?: string; 
  */
 function NeedScreen({ session, onNeed, onResponse, onDeep, onCoach, onBack }: { session: EmotionSession; onNeed: (id: string) => void; onResponse: (id: string) => void; onDeep: () => void; onCoach: () => void; onBack: () => void }) {
   const t = useT();
+  const toHome = useHomeLink();
   const { needs: needsData } = useContent();
   const list = needsData.needs as NeedEntry[];
   const need = list.find((item) => item.id === session.support?.need);
   const picked = session.support?.choicesByNeed?.[need?.id ?? ""] ?? [];
   const route = understandRoute(session);
+  // The three-lines area (app/say-it.tsx) opens under its choice and closes when another choice of this direction is pressed.
+  // It holds nothing of its own in the record: the choice stays picked as before, and what is typed there is not stored.
+  const sayPicked = need?.id === SAY_NEED && picked.includes(SAY_CHOICE);
+  const [sayOpen, setSayOpen] = useState<false | "shown" | "opened">(sayPicked ? "shown" : false);
+  const pressResponse = (id: string) => {
+    if (need?.id !== SAY_NEED) return onResponse(id);
+    if (id !== SAY_CHOICE) { setSayOpen(false); return onResponse(id); }
+    // still picked but closed by another choice: pressing it brings the area back and leaves the pick as it is
+    if (sayPicked && !sayOpen) return setSayOpen("opened");
+    setSayOpen(sayPicked ? false : "opened");
+    onResponse(id);
+  };
   return <Screen>
     <StepHeading step={t("need.step")} title={t("need.title")} hint={t("need.hint")} />
     {needsData.groups.map((group) => <div key={group}>
@@ -1287,7 +1375,8 @@ function NeedScreen({ session, onNeed, onResponse, onDeep, onCoach, onBack }: { 
     {need?.responses && <div className="response-block">
       <p className="tier-label">{need.label}</p>
       {need.because && <p className="step-note">{need.because}</p>}
-      <div className="choice-list">{need.responses.map((option) => <button className={picked.includes(option.id) ? "selected" : ""} aria-pressed={picked.includes(option.id)} key={option.id} onClick={() => onResponse(option.id)}><Mark on={picked.includes(option.id)} />{option.label}</button>)}</div>
+      <div className="choice-list">{need.responses.map((option) => <button className={picked.includes(option.id) ? "selected" : ""} aria-pressed={picked.includes(option.id)} key={option.id} onClick={() => pressResponse(option.id)}><Mark on={picked.includes(option.id)} />{option.label}</button>)}</div>
+      {sayPicked && sayOpen && <SayIt session={session} label={need.responses.find((option) => option.id === SAY_CHOICE)!.label} play={sayOpen === "opened"} />}
     </div>}
 
     {need?.route && <div className="response-block">
@@ -1301,7 +1390,7 @@ function NeedScreen({ session, onNeed, onResponse, onDeep, onCoach, onBack }: { 
     {need?.exit && <p className="small-note">{t("need.exit")}</p>}
 
     <p className="small-note">{t("need.varies")}</p>
-    <div className="navigation"><button className="quiet-button" onClick={onBack}>{t("need.backToSummary")}</button><a className="primary-button" href="/">{t("need.finish")} <span>→</span></a></div>
+    <div className="navigation"><button className="quiet-button" onClick={onBack}>{t("need.backToSummary")}</button><a className="primary-button" href="/" onClick={toHome}>{t("need.finish")} <span>→</span></a></div>
   </Screen>;
 }
 
@@ -1619,6 +1708,7 @@ function RecordTransfer({ count, onChanged }: { count: number; onChanged: () => 
  */
 function RecordDetail({ session, previous, onHelp, onFollowUp, onAddLabel, onRemoveVoice, onBack }: { session: EmotionSession; previous?: EmotionSession; onHelp: () => void; onFollowUp: (followUp: { tried?: "yes" | "partly" | "no"; helped?: "yes" | "somewhat" | "no" | "unsure" }) => void; onAddLabel: (label: string) => void; onRemoveVoice: (step: VoiceStep) => void; onBack: () => void }) {
   const t = useT();
+  const toHome = useHomeLink();
   const item = summarise(session, t.locale);
   const followUp = session.support?.followUp;
   const deep = session.deepReflection;
@@ -1692,7 +1782,7 @@ function RecordDetail({ session, previous, onHelp, onFollowUp, onAddLabel, onRem
     </section>}
 
     <button className="inline-link sources-toggle" aria-expanded={sourcesShown} onClick={() => setSourcesShown((shown) => !shown)}>{sourcesShown ? t("recordDetail.sourcesHide") : t("recordDetail.sourcesShow")}</button>
-    <div className="navigation"><button className="quiet-button" onClick={onBack}>{t("recordDetail.backToList")}</button><a className="primary-button" href="/">{t("recordDetail.toStart")} <span>→</span></a></div>
+    <div className="navigation"><button className="quiet-button" onClick={onBack}>{t("recordDetail.backToList")}</button><a className="primary-button" href="/" onClick={toHome}>{t("recordDetail.toStart")} <span>→</span></a></div>
     <HelpLine onHelp={onHelp} />
   </Screen></SourcesShown.Provider>;
 }
@@ -1737,21 +1827,24 @@ function NamesLayer({ day, first, later, onAdd, previous }: { day: string; first
   </section>;
 }
 
-function StoppedScreen({ session }: { session: EmotionSession }) { const t = useT(); return <Screen className="entry-screen"><p className="eyebrow">{t("stopped.eyebrow")}</p><h1>{renderRich(t("stopped.title"))}</h1><p className="lede">{t("stopped.lede")}</p><div className="stack-actions"><a className="primary-button centered" href="/">{t("stopped.home")}</a><button className="quiet-button" onClick={async () => { removeDraft(); dropCompleted(session.id); await getVoiceStore().removeSession(session.id).catch(() => undefined); window.location.reload(); }}>{t("stopped.delete")}</button></div><HelpReveal /></Screen>; }
+function StoppedScreen({ session }: { session: EmotionSession }) { const t = useT(); const toHome = useHomeLink(); const goHome = useContext(HomeContext); return <Screen className="entry-screen"><p className="eyebrow">{t("stopped.eyebrow")}</p><h1>{renderRich(t("stopped.title"))}</h1><p className="lede">{t("stopped.lede")}</p><div className="stack-actions"><a className="primary-button centered" href="/" onClick={toHome}>{t("stopped.home")}</a><button className="quiet-button" onClick={async () => { removeDraft(); dropCompleted(session.id); await getVoiceStore().removeSession(session.id).catch(() => undefined); goHome?.(true); }}>{t("stopped.delete")}</button></div><ResultHelpLine /><HelpReveal /></Screen>; }
 
 /**
  * After 더 불편해짐 the summary, its questions and the need screen are left out:
- * nothing more is asked. Ending is the first action; the helplines are one
- * optional tap away. This is not a risk check and judges nothing.
+ * nothing more is asked. Ending is the first action; the help line with 109,
+ * 1577-0199 and 1388 is always shown under it (2026-11-17), and the full card
+ * stays one optional tap away. This is not a risk check and judges nothing.
  */
 function WorsenedScreen() {
   const t = useT();
+  const toHome = useHomeLink();
   return <Screen className="entry-screen">
     <p className="eyebrow">{t("worsened.eyebrow")}</p>
     <h1>{renderRich(t("worsened.title"))}</h1>
     <p className="lede">{t("worsened.lede")}</p>
-    <div className="stack-actions"><a className="primary-button centered" href="/">{t("worsened.finish")}</a></div>
+    <div className="stack-actions"><a className="primary-button centered" href="/" onClick={toHome}>{t("worsened.finish")}</a></div>
     <p className="small-note">{t("worsened.kept")}</p>
+    <ResultHelpLine />
     <HelpReveal />
   </Screen>;
 }
@@ -1764,7 +1857,8 @@ function WorsenedScreen() {
 /**
  * The last line of both closing screens (2026-11-12, check H1): 109, 1577-0199
  * and 1388 in one small sentence, each a tel: link drawn from the crisis card's
- * own numbers. Always there and never animated, whatever the entry says;
+ * own numbers. Since 2026-11-17 also on the 그만하기 and 더 불편해졌어요 screens,
+ * shown as it is above the folded help. Always there and never animated, whatever the entry says;
  * nothing reads the entry for risk (SAFETY.md). The English is a draft.
  */
 function ResultHelpLine({ style }: { style?: CSSProperties }) {
@@ -1823,15 +1917,38 @@ function HelpDialog({ onClose }: { onClose: () => void }) {
   </div>;
 }
 
-function StopModal({ onClose, onStop }: { onClose: () => void; onStop: () => void }) { const t = useT(); return <div className="modal-backdrop"><div className="modal" role="dialog" aria-modal="true"><p className="eyebrow">{t("stopModal.eyebrow")}</p><h2>{renderRich(t("stopModal.title"))}</h2><p>{t("stopModal.body")}</p><div className="modal-actions"><button className="secondary-button" onClick={onClose}>{t("stopModal.keepGoing")}</button><button className="primary-button" onClick={onStop}>{t("stopModal.stop")}</button></div></div></div>; }
+/**
+ * Asked after 그만하기. Named by its own title, focus starts on the button that keeps the
+ * record going, and Escape takes that same side: it closes the window and stops nothing.
+ */
+function StopModal({ onClose, onStop }: { onClose: () => void; onStop: () => void }) {
+  const t = useT();
+  const keepGoing = useRef<HTMLButtonElement>(null);
+  const close = useRef(onClose);
+  useEffect(() => { close.current = onClose; }, [onClose]);
+  useEffect(() => {
+    keepGoing.current?.focus();
+    const onKey = (event: KeyboardEvent) => { if (event.key === "Escape") close.current(); };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, []);
+  return <div className="modal-backdrop"><div className="modal" role="dialog" aria-modal="true" aria-labelledby="stop-dialog-title"><p className="eyebrow">{t("stopModal.eyebrow")}</p><h2 id="stop-dialog-title">{renderRich(t("stopModal.title"))}</h2><p>{t("stopModal.body")}</p><div className="modal-actions"><button ref={keepGoing} className="secondary-button" onClick={onClose}>{t("stopModal.keepGoing")}</button><button className="primary-button" onClick={onStop}>{t("stopModal.stop")}</button></div></div></div>;
+}
 
 function Screen({ children, className = "" }: { children: React.ReactNode; className?: string }) { return <section className={`screen ${className}`}>{children}</section>; }
 /** The basis band, when given, says which moment the question is about, before the question itself. */
 /** `pause`, when given, sits right under the title: that stopping here is fine (the body step, 2026-10-30). */
 function StepHeading({ step, title, hint, basis, pause }: { step: string; title: string; hint: string; basis?: string; pause?: string }) { return <><p className="eyebrow">{step}</p>{basis && <p className="step-basis">{basis}</p>}<h1>{title}</h1>{pause && <p className="pause-line">{pause}</p>}<p className="hint">{hint}</p></>; }
-function Navigation({ onNext, onSkip = onNext, disabled = false, note }: { onNext: () => void; onSkip?: () => void; disabled?: boolean; note?: string }) {
+/**
+ * `disabledReason` is shown next to 「다음」 only while it is off, and the button
+ * points to it (aria-describedby); role="status" lets a screen reader say it when
+ * it appears (2026-11-19). `reasonDraft` puts the English draft note after it.
+ */
+function Navigation({ onNext, onSkip = onNext, disabled = false, note, disabledReason, reasonDraft = false }: { onNext: () => void; onSkip?: () => void; disabled?: boolean; note?: string; disabledReason?: string; reasonDraft?: boolean }) {
   const t = useT();
-  return <><StepNote note={note} /><div className="navigation"><button className="skip-button" onClick={onSkip}>{t("common.skip")}</button><button className="primary-button" disabled={disabled} onClick={onNext}>{t("common.next")} <span>→</span></button></div></>;
+  const reasonId = useId();
+  const reason = disabled ? disabledReason : undefined;
+  return <><StepNote note={note} />{reason && <><p className="step-note" role="status" id={reasonId}>{reason}</p>{reasonDraft && t.locale === "en" && <p className="draft-note">{enOnly.draftNote}</p>}</>}<div className="navigation"><button className="skip-button" onClick={onSkip}>{t("common.skip")}</button><button className="primary-button" disabled={disabled} aria-describedby={reason ? reasonId : undefined} onClick={onNext}>{t("common.next")} <span>→</span></button></div></>;
 }
 function StepNote({ note }: { note?: string }) { return note ? <p className="step-note" role="note">{note}</p> : null; }
 /** A row whose value may be a skipped step: shown quietly as 비워 둠. */
