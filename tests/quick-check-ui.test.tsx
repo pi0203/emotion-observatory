@@ -282,9 +282,10 @@ describe("quick check screens", () => {
     // nothing is preselected, nothing recommended, and no response is shown yet
     expect(document.querySelectorAll('[aria-pressed="true"]')).toHaveLength(0);
     expect(screen.queryByRole("button", { name: "긴장된 곳 한 군데를 조금 움직여보기" })).toBeNull();
-    expect(screen.getByRole("button", { name: "좋은 경험에 조금 더 머물기" })).toBeTruthy();
+    // the pad was tapped on the unpleasant side, so the two good-moment directions are not shown (2026-11-23)
+    expect(screen.queryByRole("button", { name: "좋은 경험에 조금 더 머물기" })).toBeNull();
     expect(screen.getByText("지금 이 순간에")).toBeTruthy();
-    expect(screen.getByRole("button", { name: "이 좋은 상태를 만든 조건 살펴보기" })).toBeTruthy();
+    expect(screen.queryByRole("button", { name: "이 좋은 상태를 만든 조건 살펴보기" })).toBeNull();
 
     // picking a direction opens its responses on the same screen
     fireEvent.click(screen.getByRole("button", { name: "몸과 마음의 속도를 조금 조절하기" }));

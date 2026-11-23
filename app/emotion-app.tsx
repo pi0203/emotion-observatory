@@ -14,7 +14,7 @@ import { concernLines, formatDay, formatWhen, helpedOptions, mapPoints, previous
 import { migrateLegacyStorage } from "../lib/migrations";
 import { flushSync } from "react-dom";
 import { expandCandidates, filterQuickCandidates, showsPauseLine } from "../lib/quick-check";
-import { activationLabel, hasAffectPoint, quickActivation, quickValence, scaleLabel } from "../lib/affect-labels";
+import { activationLabel, hasAffectPoint, onUnpleasantSide, quickActivation, quickValence, scaleLabel } from "../lib/affect-labels";
 import { buildSynthesis, hasSynthesis } from "../lib/synthesis";
 import { requireContent, type LocaleContent } from "../lib/content";
 import { INPUT_LIMITS } from "../lib/limits";
@@ -1339,6 +1339,14 @@ function SynthesisSection({ session, onFeedback }: { session: EmotionSession; on
 const SAY_NEED = "express";
 const SAY_CHOICE = "three-parts";
 type NeedEntry = { id: string; label: string; group?: string; because?: string; route?: boolean; exit?: boolean; responses?: { id: string; label: string }[] };
+/**
+ * Two directions speak of a good moment, so a record read as 불쾌함 쪽 does not
+ * show them (owner's decision 2026-11-23). The reading is the slower look's pad
+ * once that look was taken, else the quick one's. One already picked stays shown.
+ */
+const GOOD_MOMENT_NEEDS = ["savour", "conditions"];
+const hidesGoodMoment = (session: EmotionSession) =>
+  onUnpleasantSide(session.deepReflection ? session.deepReflection.affect : session.quickCheck?.affect);
 
 /**
  * One screen, two levels. Picking a direction opens the things that can be done
@@ -1351,6 +1359,7 @@ function NeedScreen({ session, onNeed, onResponse, onDeep, onCoach, onBack }: { 
   const { needs: needsData } = useContent();
   const list = needsData.needs as NeedEntry[];
   const need = list.find((item) => item.id === session.support?.need);
+  const shown = hidesGoodMoment(session) ? list.filter((item) => !GOOD_MOMENT_NEEDS.includes(item.id) || item.id === need?.id) : list;
   const picked = session.support?.choicesByNeed?.[need?.id ?? ""] ?? [];
   const route = understandRoute(session);
   // The three-lines area (app/say-it.tsx) opens under its choice and closes when another choice of this direction is pressed.
@@ -1369,7 +1378,7 @@ function NeedScreen({ session, onNeed, onResponse, onDeep, onCoach, onBack }: { 
     <StepHeading step={t("need.step")} title={t("need.title")} hint={t("need.hint")} />
     {needsData.groups.map((group) => <div key={group}>
       <p className="tier-label">{group}</p>
-      <div className="choice-list compact">{list.filter((item) => item.group === group).map((item) => <button className={need?.id === item.id ? "selected" : ""} aria-pressed={need?.id === item.id} key={item.id} onClick={() => onNeed(item.id)}><Mark on={need?.id === item.id} />{item.label}</button>)}</div>
+      <div className="choice-list compact">{shown.filter((item) => item.group === group).map((item) => <button className={need?.id === item.id ? "selected" : ""} aria-pressed={need?.id === item.id} key={item.id} onClick={() => onNeed(item.id)}><Mark on={need?.id === item.id} />{item.label}</button>)}</div>
     </div>)}
 
     {need?.responses && <div className="response-block">

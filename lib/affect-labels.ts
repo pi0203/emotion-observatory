@@ -10,11 +10,11 @@ import { getT } from "./i18n/t";
  * of a finer value, and the number itself is never shown. The words themselves
  * live in the messages (`affectBands`).
  */
-const band = (value: number | undefined, words: readonly string[]) => {
-  if (value === undefined || Number.isNaN(value)) return words[Math.floor(words.length / 2)];
-  const index = Math.round(Math.max(0, Math.min(1, value)) * (words.length - 1));
-  return words[index];
+const bandIndex = (value: number | undefined, count: number) => {
+  if (value === undefined || Number.isNaN(value)) return Math.floor(count / 2);
+  return Math.round(Math.max(0, Math.min(1, value)) * (count - 1));
 };
+const band = (value: number | undefined, words: readonly string[]) => words[bandIndex(value, words.length)];
 
 export const quickValence = (value?: number, locale: Locale = DEFAULT_LOCALE) =>
   band(value, getT(locale).list("affectBands.quickValence"));
@@ -34,6 +34,16 @@ export const activationLabel = (value?: number, locale: Locale = DEFAULT_LOCALE)
  */
 export const hasAffectPoint = (affect?: { valence?: number; activation?: number; unknown?: boolean }) =>
   Boolean(affect && !affect.unknown && typeof affect.valence === "number" && typeof affect.activation === "number");
+
+/**
+ * True when the spot reads as 불쾌함 쪽 or 조금 불쾌함 쪽 on the summary: the same
+ * bands, not a new line. An unmarked or 아직 모르겠다 pad is never on either side.
+ */
+export const onUnpleasantSide = (affect?: { valence?: number; activation?: number; unknown?: boolean }) => {
+  if (!hasAffectPoint(affect)) return false;
+  const count = getT(DEFAULT_LOCALE).list("affectBands.quickValence").length;
+  return bandIndex(affect!.valence, count) < Math.floor(count / 2);
+};
 
 export const contextSourceLabel =(source?: "event" | "memory" | "anticipation" | "thought", locale: Locale = DEFAULT_LOCALE) =>
   getT(locale)(`contextSource.${source ?? "event"}`);
