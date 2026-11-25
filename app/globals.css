@@ -433,6 +433,45 @@ html[data-first-open-done] .intro-phrase, html[data-first-open-done] .plum-petal
 .draft-confirm .small-note { margin: 8px 0 18px; }
 .about-cite a, .about-mail a { color: var(--accent-ink); text-underline-offset: .2em; }
 .about-checked { margin-top: 4px; font: 400 var(--t-aside) var(--font-sans) !important; font-variant-numeric: tabular-nums; }
+/* 「참고한 연구 6편」 on the Korean screen (2026-11-24, 시안 3): the chosen sentence and picture, one line
+   per study with a square per day, and the picked study below. Nothing moves; the picked line gets a
+   background and a 3px bar at its left edge (coral stays only under picked words). No scores, bars or totals. */
+.research-sheet { padding: 0 20px 4px; }
+.research-sheet [hidden] { display: none !important; }
+.research-lead { display: flex; gap: 16px; align-items: center; margin: 0 0 18px; }
+.research-lead img { flex: none; width: 132px; height: 110px; object-fit: cover; border-radius: 12px; }
+.research-lead p { margin: 0; color: var(--ink); font-family: var(--font-serif), serif; font-size: var(--t-lead); font-weight: 400; line-height: 1.4; text-wrap: balance; }
+.research-lead p span { display: block; color: var(--accent-ink); }
+.research-rows { border-bottom: 1px solid var(--line); }
+.research-row { display: grid; grid-template-columns: minmax(120px, 190px) 1fr auto; gap: 12px; align-items: center; width: 100%; min-height: 52px; padding: 10px 8px; border: 0; border-top: 1px solid var(--line); border-radius: 0; background: none; color: var(--ink); font: inherit; text-align: left; cursor: pointer; }
+.research-row:hover { background: var(--accent-subtle); }
+.research-row[aria-pressed="true"] { background: var(--paper); box-shadow: inset 3px 0 0 var(--accent-ink); }
+.research-row:focus-visible { outline-offset: -2px; }
+.research-name { font-size: var(--t-small); line-height: 1.45; }
+.research-name small { display: block; color: var(--muted); font-size: var(--t-aside); }
+.research-days { display: flex; flex-wrap: wrap; gap: 2px; }
+.research-days i { width: 9px; height: 9px; border-radius: 2px; background: var(--accent-ink); }
+.research-row-app .research-days i { position: relative; box-sizing: border-box; border: 1px dashed var(--line-strong); background: none; }
+.research-row-app .research-days i.is-dot { border-color: transparent; }
+.research-days i.is-dot::after { content: ""; position: absolute; inset: 2px; border-radius: 50%; background: var(--accent-ink); }
+.research-result { font: 600 var(--t-aside) var(--font-sans); text-align: right; white-space: nowrap; }
+.research-result.is-up { color: var(--ink); }
+.research-result.is-none { color: var(--muted); }
+.research-result.is-unknown { color: var(--accent-ink); }
+.research-more { margin: 10px 0 0; font-size: var(--t-small); }
+.research-more[aria-pressed="true"] { text-decoration-thickness: 2px; }
+.research-panel { margin: 12px 0 0; }
+.research-panel .about-list { padding: 0; }
+.research-panel .about-list > * { animation: none !important; }
+.research-app-note { margin: 0 0 12px; padding: 14px 16px; border-radius: 10px; background: var(--paper); color: var(--muted); font-size: var(--t-small); line-height: 1.7; }
+.research-app-note strong, .research-app-note b { color: var(--ink); font-weight: 700; }
+.research-legend { margin: 0 0 6px; color: var(--muted); font-size: var(--t-aside); line-height: 1.7; }
+.research-sheet + .about-intro { margin-top: 12px; }
+@media (max-width: 560px) {
+  .research-lead { flex-direction: column; align-items: flex-start; }
+  .research-row { grid-template-columns: minmax(0, 1fr) auto; }
+  .research-days { grid-column: 1 / -1; grid-row: 2; }
+}
 .help-reveal { margin-top: 32px; }
 .help-reveal .crisis-card { margin: 0 0 16px; }
 

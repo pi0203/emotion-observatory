@@ -808,6 +808,31 @@ export const koOnly = {
   /** After the answer to 「기록은 어디에 저장되나요?」. */
   termsStorageLink: "자세히: 이용약관 제6조",
   /**
+   * 「참고한 연구 6편」을 펼쳤을 때의 한 장 (2026-11-24, 시안 3).
+   * `lead`는 본인이 고른 문장(「좋다」)이라 한 글자도 바꾸지 않는다. 나머지는 Aside 초안이고 본인 확인 전이다.
+   * 연구 글(나온 것 · 한계 · 원문 · 확인 날짜)은 `about.refs`를 그대로 쓴다. 영어 화면에는 이 한 장이 없다.
+   * `appNote`는 `about.refsClosing`에서 끝 문장 「위 연구들은 …보여 줄 뿐입니다.」를 뺀 것이다(큰 문장과 겹쳐서, Aside가 정함).
+   */
+  research: {
+    lead: ["아래 연구들은 가능성을 시사할 뿐입니다.", "이 앱의 효과를 보여 주는 것은 아닙니다."],
+    imageAlt: "감정의 원을 망원경으로 들여다보는 작은 관찰자",
+    rowsLabel: "연구와 이 앱, 하루를 네모 하나로 그린 줄",
+    rows: {
+      vedernikova: { name: "5일 · 하루 15분쯤 읽기", who: "Vedernikova 외 2021 · 120명", days: 5 },
+      widdershoven: { name: "6주 · 하루 10번 기록", who: "Widdershoven 외 2019 · 79명", days: 42 },
+      hoemann: { name: "2주쯤 · 하루 9번 가까이 기록", who: "Hoemann 외 2021 · 50명 · 비교 집단 없음", days: 14 },
+      fugate: { name: "14일 · 하루 한 단어 배우기", who: "Fugate 외 2026 · 95명 · 심사 전", days: 14 },
+    },
+    app: { name: "이 앱 · 가끔, 10~30초", who: "직접 시험한 연구 없음", days: 42, dots: [3, 17, 30] },
+    resultUp: "↑ 늘었다",
+    resultNone: "변화 없음",
+    resultUnknown: "? 아직 모름",
+    appNote: "<b>이 앱을 직접 시험한 연구는 아직 없습니다.</b> 이 앱처럼 가끔, 10~30초씩 쓰는 방식은 위 어느 연구보다도 훨씬 적게 쓰는 것입니다.",
+    measureMore: "재는 방법에 대한 주의 2편 보기",
+    legend: "네모 하나 = 하루. 「이 앱」 줄의 점 개수는 「가끔」을 보여 주려고 그린 것이고 실제 기록이 아닙니다.",
+    imageCredit: "그림: AI(Gemini)로 그리고 만든 사람이 고름.",
+  },
+  /**
    * 「이 도구에 대하여」 안, 「참고한 연구」 다음 접힌 칸 (2026-11-02, 작성자 확인 전 문구).
    * 근거: docs/FIELD_NOTES_2026-11-02.md. 영어는 따로 쓴다(docs/I18N_PLAN.md).
    * 마지막 줄의 메일 주소는 `mailBefore` 와 `mailAfter` 사이에 링크로 들어간다.

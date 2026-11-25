@@ -607,6 +607,68 @@ const REFERENCE_CHECKED_ON: Record<(typeof REFERENCES)[number], string> = {
 const dayParts = (iso: string) => { const [year, month, day] = iso.split("-"); return { year, month, day }; };
 const LAST_CHECKED = Object.values(REFERENCE_CHECKED_ON).sort().at(-1) ?? "";
 
+/** One study as the list has always shown it: citation and link, design, checked day, what it found, its limit. */
+function ReferenceCard({ id }: { id: (typeof REFERENCES)[number] }) {
+  const t = useT();
+  return <>
+    <p className="about-cite">{t(`about.refs.${id}.cite`)} <a href={`https://doi.org/${REFERENCE_DOI[id]}`} target="_blank" rel="noopener noreferrer">{t("about.doiLink")}</a></p>
+    <p className="about-kind">{t(`about.refs.${id}.kind`)}</p>
+    <p className="about-checked">{t("about.checkedOn", dayParts(REFERENCE_CHECKED_ON[id]))}</p>
+    <p><strong>{t("about.found")}</strong> {t(`about.refs.${id}.found`)}</p>
+    <p><strong>{t("about.limit")}</strong> {t(`about.refs.${id}.limit`)}</p>
+  </>;
+}
+
+const SHEET_ROWS = ["vedernikova", "widdershoven", "hoemann", "fugate"] as const;
+const MEASURE_REFS: readonly string[] = ["dejonckheere", "thompson"];
+type SheetPick = (typeof SHEET_ROWS)[number] | "app" | "measure";
+type SheetResult = { text: string; tone: "up" | "none" | "unknown" };
+
+/**
+ * 「참고한 연구 6편」 on the Korean screen (2026-11-24, the owner's 시안 3): the sentence the
+ * owner chose and the picture first, then one line per study with a square for each day, and
+ * below them the study the reader picked, word for word as the list had it. 「이 앱」 is picked
+ * when the fold opens. Nothing moves: only the picked line's background and its left bar change.
+ * All six cards stay in the page and the ones not picked are hidden, so text search and the
+ * reference tests still find them.
+ */
+function ResearchSheet() {
+  const t = useT();
+  const sheet = koOnly.research;
+  const [pick, setPick] = useState<SheetPick>("app");
+  const panelId = useId();
+  const squares = (count: number, dots?: readonly number[]) =>
+    Array.from({ length: count }, (_, day) => <i key={day} className={dots ? (dots.includes(day) ? "is-dot" : "is-empty") : undefined} />);
+  const row = (id: SheetPick, name: string, who: string, days: number, result: SheetResult, dots?: readonly number[]) =>
+    <button key={id} type="button" className={`research-row${id === "app" ? " research-row-app" : ""}`} aria-pressed={pick === id} aria-controls={panelId} onClick={() => setPick(id)}>
+      <span className="research-name">{name}<small>{who}</small></span>
+      <span className="research-days" aria-hidden="true">{squares(days, dots)}</span>
+      <span className={`research-result is-${result.tone}`}>{result.text}</span>
+    </button>;
+  const shown = (id: (typeof REFERENCES)[number]) => pick === id || (pick === "measure" && MEASURE_REFS.includes(id));
+  return <div className="research-sheet">
+    <div className="research-lead">
+      <img src="/illustrations/research-observer.jpg" width={480} height={400} alt={sheet.imageAlt} />
+      <p>{sheet.lead[0]}<span>{sheet.lead[1]}</span></p>
+    </div>
+    <div className="research-rows" role="group" aria-label={sheet.rowsLabel}>
+      {SHEET_ROWS.map((id) => row(id, sheet.rows[id].name, sheet.rows[id].who, sheet.rows[id].days,
+        id === "fugate" ? { text: sheet.resultNone, tone: "none" } : { text: sheet.resultUp, tone: "up" }))}
+      {row("app", sheet.app.name, sheet.app.who, sheet.app.days, { text: sheet.resultUnknown, tone: "unknown" }, sheet.app.dots)}
+    </div>
+    <button type="button" className="inline-link research-more" aria-pressed={pick === "measure"} aria-controls={panelId} onClick={() => setPick("measure")}>{sheet.measureMore}</button>
+    <div className="research-panel" id={panelId}>
+      <p className="research-app-note" hidden={pick !== "app"}>{renderRich(sheet.appNote)}</p>
+      <ol className="about-list">
+        {REFERENCES.map((id) => <li key={id} hidden={!shown(id)}><ReferenceCard id={id} /></li>)}
+      </ol>
+    </div>
+    <p className="research-legend">{sheet.legend}</p>
+    <p className="research-legend about-checked-all">{t("about.refsChecked", dayParts(LAST_CHECKED))}</p>
+    <p className="research-legend">{sheet.imageCredit}</p>
+  </div>;
+}
+
 /**
  * Below the "why" folds and above the crisis card: what the tool is, the studies
  * behind it with their limits (docs/EVIDENCE_CHAIN.md), and common questions.
@@ -635,18 +697,14 @@ function AboutTool() {
     </details>
     <details className="about-fold">
       <summary>{t("about.refsSummary")}</summary>
-      <p className="about-intro">{t("about.refsIntro")}</p>
-      <p className="about-intro about-checked-all">{t("about.refsChecked", dayParts(LAST_CHECKED))}</p>
-      <ol className="about-list">
-        {REFERENCES.map((id, index) => <li key={id} style={{ "--rise-order": index } as CSSProperties}>
-          <p className="about-cite">{t(`about.refs.${id}.cite`)} <a href={`https://doi.org/${REFERENCE_DOI[id]}`} target="_blank" rel="noopener noreferrer">{t("about.doiLink")}</a></p>
-          <p className="about-kind">{t(`about.refs.${id}.kind`)}</p>
-          <p className="about-checked">{t("about.checkedOn", dayParts(REFERENCE_CHECKED_ON[id]))}</p>
-          <p><strong>{t("about.found")}</strong> {t(`about.refs.${id}.found`)}</p>
-          <p><strong>{t("about.limit")}</strong> {t(`about.refs.${id}.limit`)}</p>
-        </li>)}
-      </ol>
-      <p className="why-principle">{renderRich(t("about.refsClosing"))}</p>
+      {t.locale === "ko" ? <ResearchSheet /> : <>
+        <p className="about-intro">{t("about.refsIntro")}</p>
+        <p className="about-intro about-checked-all">{t("about.refsChecked", dayParts(LAST_CHECKED))}</p>
+        <ol className="about-list">
+          {REFERENCES.map((id, index) => <li key={id} style={{ "--rise-order": index } as CSSProperties}><ReferenceCard id={id} /></li>)}
+        </ol>
+        <p className="why-principle">{renderRich(t("about.refsClosing"))}</p>
+      </>}
       {/* the homepage brain map links back here; the map is in Korean, and the English line says so (draft, 2026-11-10) */}
       <p className="about-intro">{t("about.atlasLead")} <a href={`${HOMEPAGE}/map/brain/`} {...koreanLink(t.locale)}>{t("about.atlasLink")}<KoreanMark /> →</a></p>
       {draftNote}
