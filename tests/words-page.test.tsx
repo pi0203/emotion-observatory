@@ -6,6 +6,7 @@ import Words from "../app/(ko)/words/page";
 import Home from "../app/(ko)/page";
 import sitemap from "../app/sitemap";
 import emotions from "../data/emotions.ko.json";
+import wordSources from "../data/word-sources.ko.json";
 import { ko, koOnly } from "../lib/i18n/messages.ko";
 import { WORDS_PATH, wordCards, wordId } from "../lib/words";
 import { revealWords, startQuick } from "./helpers/start";
@@ -37,10 +38,51 @@ describe("/words", () => {
     const hidden = new Set(items.flatMap((item) => [item.family, item.valence, item.activation, item.normStatus]));
     for (const value of hidden) expect(text).not.toContain(value);
     // a context tag may also be an ordinary word in a hint; only tags that no drawn field uses must be absent
-    const drawn = JSON.stringify(wordCards(emotions.items));
+    const drawn = JSON.stringify(wordCards(emotions.items, wordSources));
     for (const tag of new Set(items.flatMap((item) => item.contextTags))) if (!drawn.includes(tag)) expect(text).not.toContain(tag);
-    expect(text).not.toMatch(/\d|%/);
+    // the only digits are the study years in each source line (2026-11-26); no value, rank or share
+    const withoutSources = [...list().querySelectorAll(":scope > li.word-card")].map((card) =>
+      [...card.childNodes].filter((node) => !(node instanceof HTMLElement && node.classList.contains("word-norm"))).map((node) => node.textContent).join("")).join("");
+    expect(withoutSources).not.toMatch(/\d|%/);
+    for (const line of list().querySelectorAll(".word-norm")) expect(line.textContent!.replace(/\((2005|2016|2013|2012)\)/g, "")).not.toMatch(/\d|%/);
     expect(list().innerHTML).not.toMatch(/style=/);
+  });
+
+  it("gives each of the 73 words one source line, as written in data/word-sources.ko.json", () => {
+    render(<Words />);
+    const sources = wordSources.words as Record<string, { kind: string; text: string }>;
+    for (const card of cards()) {
+      const lines = card.querySelectorAll(".word-norm");
+      expect(lines).toHaveLength(1);
+      expect(lines[0].textContent).toBe(sources[card.querySelector("h2")!.textContent!].text);
+    }
+    const kinds = { same: 0, near: 0, none: 0 } as Record<string, number>;
+    for (const value of Object.values(sources)) kinds[value.kind] += 1;
+    expect(kinds).toEqual({ same: 56, near: 7, none: 10 });
+    const shown = cards().map((card) => card.querySelector(".word-norm")!.textContent!);
+    expect(shown.filter((line) => line.startsWith("한국어 감정단어 연구에 있음: "))).toHaveLength(56);
+    expect(shown.filter((line) => line.startsWith("한국어 감정단어 연구에 가까운 말로 있음: "))).toHaveLength(7);
+    expect(shown.filter((line) => line === "한국어 감정단어 연구 목록에서 아직 찾지 못함")).toHaveLength(10);
+  });
+
+  it("names the four studies once, under the list, and keeps the intro's last sentence", () => {
+    render(<Words />);
+    const studies = document.querySelectorAll(".words-studies");
+    expect(studies).toHaveLength(1);
+    expect(list().compareDocumentPosition(studies[0]) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
+    expect(studies[0].querySelector("h2")!.textContent).toBe("근거로 본 연구");
+    expect([...studies[0].querySelectorAll("li")].map((li) => li.textContent)).toEqual([...koOnly.words.studies]);
+    expect(koOnly.words.studies).toHaveLength(4);
+    expect(document.querySelector(".terms-intro")!.textContent).toContain("이 목록은 아직 연구와 검토를 거치는 중입니다.");
+  });
+
+  it("prints the source lines and the studies", () => {
+    const css = readFileSync(join(process.cwd(), "app/globals.css"), "utf8");
+    const print = css.slice(css.indexOf("@media print {", css.indexOf("Printing /words")));
+    const printBlock = print.slice(0, print.indexOf("\n}\n"));
+    expect(printBlock).not.toMatch(/\.word-norm[^{]*\{[^}]*display:\s*none/);
+    expect(printBlock).not.toMatch(/\.words-studies[^{]*\{[^}]*display:\s*none/);
+    expect(css).toMatch(/\.terms \.word-card \.word-norm \{[^}]*color: var\(--muted\); font-size: var\(--t-aside\)/);
   });
 
   it("links every word to compare to a card on this page", () => {

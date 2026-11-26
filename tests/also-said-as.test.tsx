@@ -21,7 +21,7 @@ const lineOf = (label: string) => {
 const block = () => document.querySelector(".also-said");
 const pick = (label: string) => fireEvent.click(screen.getByRole("button", { name: label }));
 
-/** The quick look's word step; the keyboard puts the spot in the middle, where 답답함, 걱정 and 서운함 are offered. */
+/** The quick look's word step; the keyboard puts the spot in the middle, where 못마땅함, 감동 and 자책 are offered (the Korean study order, 2026-11-26). */
 const toQuickWords = () => {
   render(<Home />);
   startQuick();
@@ -40,14 +40,14 @@ describe("이렇게도 말해요 under the picked words", () => {
     expect(screen.queryByText(ko.words.expressionSource)).toBeNull();
   });
 
-  it("shows 답답함's expressions and the source once 답답함 is picked, as plain text", () => {
+  it("shows 못마땅함's expressions and the source once 못마땅함 is picked, as plain text", () => {
     toQuickWords();
     revealWords();
-    pick("답답함");
-    expect(lineOf("답답함")).toBe("답답함 · 이렇게도 말해요: 속이 터지다, 복장이 터지다, 숨이 막히다");
-    expect(screen.getByText(lineOf("답답함"))).toBeTruthy();
-    expect(block()!.textContent).toContain("속이 터지다");
-    expect(block()!.textContent).toContain("복장이 터지다");
+    pick("못마땅함");
+    expect(lineOf("못마땅함")).toBe("못마땅함 · 이렇게도 말해요: 눈이 시다, 배알이 꼴리다, 비위가 사납다");
+    expect(screen.getByText(lineOf("못마땅함"))).toBeTruthy();
+    expect(block()!.textContent).toContain("눈이 시다");
+    expect(block()!.textContent).toContain("배알이 꼴리다");
     expect(screen.getAllByText(ko.words.expressionSource)).toHaveLength(1);
     // nothing to press or follow
     expect(block()!.querySelectorAll("button, a, input, [role=button], [tabindex]")).toHaveLength(0);
@@ -56,27 +56,27 @@ describe("이렇게도 말해요 under the picked words", () => {
   it("puts one line per word in the order picked, with the source said once under them", () => {
     toQuickWords();
     revealWords();
-    pick("걱정");
-    pick("답답함");
+    pick("감동");
+    pick("못마땅함");
     const lines = [...block()!.querySelectorAll("p")].map((p) => p.textContent);
-    expect(lines).toEqual([lineOf("걱정"), lineOf("답답함"), ko.words.expressionSource]);
+    expect(lines).toEqual([lineOf("감동"), lineOf("못마땅함"), ko.words.expressionSource]);
   });
 
   it("takes the line away when the word is unpicked", () => {
     toQuickWords();
     revealWords();
-    pick("답답함");
+    pick("못마땅함");
     expect(block()).not.toBeNull();
-    pick("답답함");
+    pick("못마땅함");
     expect(block()).toBeNull();
     expect(screen.queryByText(ko.words.expressionSource)).toBeNull();
   });
 
-  it("shows neither a line nor the source for a word without expressions (서운함)", () => {
-    expect((emotions.items as { label: string; expressions?: unknown }[]).find((item) => item.label === "서운함")!.expressions).toBeUndefined();
+  it("shows neither a line nor the source for a word without expressions (자책)", () => {
+    expect((emotions.items as { label: string; expressions?: unknown }[]).find((item) => item.label === "자책")!.expressions).toBeUndefined();
     toQuickWords();
     revealWords();
-    pick("서운함");
+    pick("자책");
     expect(block()).toBeNull();
     expect(screen.queryByText(new RegExp(ko.words.alsoSaidAs))).toBeNull();
     expect(screen.queryByText(ko.words.expressionSource)).toBeNull();
@@ -98,10 +98,10 @@ describe("이렇게도 말해요 under the picked words", () => {
     for (let step = 0; step < 4; step += 1) fireEvent.click(screen.getAllByRole("button", { name: ko.common.skip })[0]); // body, affect, context, meaning
     expect(block()).toBeNull();
     revealWords();
-    pick("답답함");
-    expect(screen.getByText(lineOf("답답함"))).toBeTruthy();
+    pick("못마땅함");
+    expect(screen.getByText(lineOf("못마땅함"))).toBeTruthy();
     expect(screen.getAllByText(ko.words.expressionSource)).toHaveLength(1);
-    pick("답답함");
+    pick("못마땅함");
     expect(block()).toBeNull();
   });
 
@@ -123,11 +123,11 @@ describe("이렇게도 말해요 under the picked words", () => {
   it("keeps no expression in the saved record, in storage or in the export file", () => {
     toQuickWords();
     revealWords();
-    pick("걱정");
-    pick("답답함");
+    pick("감동");
+    pick("못마땅함");
     fireEvent.click(screen.getByRole("button", { name: new RegExp(`^${ko.quickCandidates.finish}`) }));
     const [saved] = getStorageAdapter().loadCompleted();
-    expect(saved.quickCheck?.selected).toEqual([{ label: "걱정", source: "suggested" }, { label: "답답함", source: "suggested" }]);
+    expect(saved.quickCheck?.selected).toEqual([{ label: "감동", source: "suggested" }, { label: "못마땅함", source: "suggested" }]);
 
     const allExpressions = (emotions.items as { expressions?: { text: string; dict: string }[] }[]).flatMap((item) => item.expressions ?? []);
     const stored = Object.keys(window.localStorage).map((key) => window.localStorage.getItem(key) ?? "").join("\n");

@@ -712,7 +712,7 @@
       ],
       "family": "friction",
       "valence": "negative",
-      "activation": "medium",
+      "activation": "high",
       "neighbors": [
         "못마땅함",
         "짜증"
@@ -944,7 +944,7 @@
       "label": "후회",
       "family": "self-evaluation",
       "valence": "negative",
-      "activation": "low",
+      "activation": "medium",
       "neighbors": [
         "죄책감",
         "아쉬움",
@@ -1100,7 +1100,7 @@
       ],
       "family": "joy",
       "valence": "positive",
-      "activation": "medium",
+      "activation": "high",
       "neighbors": [
         "기쁨",
         "흥미",
@@ -1228,7 +1228,7 @@
       ],
       "family": "connection",
       "valence": "positive",
-      "activation": "medium",
+      "activation": "low",
       "neighbors": [
         "감동",
         "만족",
@@ -1539,7 +1539,7 @@
       "label": "감탄",
       "family": "self-transcendent",
       "valence": "positive",
-      "activation": "medium",
+      "activation": "high",
       "neighbors": [
         "경외감",
         "존경",

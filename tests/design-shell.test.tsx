@@ -177,6 +177,7 @@ describe("no homepage frame while working through the steps", () => {
     }
     click("다음");
     click(ko.words.reveal);
+    click(ko.words.more); // 짜증 is a word to compare with 화남 since the study order (2026-11-26)
     const coachWord = [...document.querySelectorAll(".chip")].find((chip) => ["짜증", "억울함", "답답함"].includes(chip.textContent ?? ""));
     expect(coachWord).toBeDefined();
     fireEvent.click(coachWord!);

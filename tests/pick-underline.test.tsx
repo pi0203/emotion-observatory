@@ -23,19 +23,19 @@ describe("line under a picked emotion word", () => {
 
   it("has no line before a pick, draws it on the pick, and keeps the word's text as it was", () => {
     toQuickWords();
-    expect(lineIn("답답함")).toBeNull();
-    fireEvent.click(chip("답답함"));
-    expect(lineIn("답답함")!.getAttribute("data-pick-line")).toBe("draw");
-    expect(lineIn("답답함")!.getAttribute("aria-hidden")).toBe("true");
-    expect(chip("답답함").textContent).toBe("✓ 답답함");
-    fireEvent.animationEnd(lineIn("답답함")!);
-    expect(lineIn("답답함")!.getAttribute("data-pick-line")).toBe("still");
-    fireEvent.click(chip("답답함"));
-    expect(lineIn("답답함")).toBeNull();
+    expect(lineIn("못마땅함")).toBeNull();
+    fireEvent.click(chip("못마땅함"));
+    expect(lineIn("못마땅함")!.getAttribute("data-pick-line")).toBe("draw");
+    expect(lineIn("못마땅함")!.getAttribute("aria-hidden")).toBe("true");
+    expect(chip("못마땅함").textContent).toBe("✓ 못마땅함");
+    fireEvent.animationEnd(lineIn("못마땅함")!);
+    expect(lineIn("못마땅함")!.getAttribute("data-pick-line")).toBe("still");
+    fireEvent.click(chip("못마땅함"));
+    expect(lineIn("못마땅함")).toBeNull();
   });
 
   it("does not draw for a word already picked when the screen opens", () => {
-    render(<button className="chip selected">답답함<PickUnderline on /></button>);
+    render(<button className="chip selected">못마땅함<PickUnderline on /></button>);
     expect(document.querySelector("[data-pick-line]")!.getAttribute("data-pick-line")).toBe("still");
   });
 
