@@ -446,8 +446,13 @@ function WordsFrame({ cards }: { cards: WordCard[] }) {
               <p>{card.expressions.join(", ")}</p>
               <p className="word-source">{t("words.expressionSource")}</p>
             </>}
+            {card.source && <p className="word-norm">{card.source}</p>}
           </li>)}
         </ul>
+        <section className="words-studies" aria-labelledby="words-studies-title">
+          <h2 id="words-studies-title">{w.studiesTitle}</h2>
+          <ul>{w.studies.map((study) => <li key={study}>{study}</li>)}</ul>
+        </section>
       </article>
       <CrisisCard />
     </main>

@@ -391,6 +391,11 @@ html[data-first-open-done] .intro-phrase, html[data-first-open-done] .plum-petal
 .terms .word-card li { margin: 0; }
 .terms .word-card .word-aliases { margin-top: 2px; color: var(--muted); font-size: var(--t-aside); }
 .terms .word-card .word-source { margin-top: 4px; color: var(--muted); font-size: var(--t-aside); }
+.terms .word-card .word-norm { margin-top: 14px; color: var(--muted); font-size: var(--t-aside); }
+.words-studies { margin: 32px 0 0; max-width: 640px; }
+.terms .words-studies h2 { margin: 0 0 6px; color: var(--muted); font: 600 var(--t-aside) var(--font-sans); }
+.terms .words-studies ul { margin: 0; padding-left: 1.2em; }
+.terms .words-studies li { margin: 0 0 4px; color: var(--muted); font-size: var(--t-aside); line-height: 1.6; }
 .about-words { margin: 12px 0 0; font-size: var(--t-small); }
 .about-words a { color: var(--accent-ink); text-underline-offset: .2em; }
 /* English only (2026-11-10): the small line closing a block whose English the owner has not reviewed yet */
@@ -410,6 +415,8 @@ html[data-first-open-done] .intro-phrase, html[data-first-open-done] .plum-petal
   .terms .word-card h2 { font-size: var(--t-body); }
   .terms .word-card p, .terms .word-card li { line-height: 1.5; }
   .word-card h3 { margin-top: 6px; }
+  .terms .word-card .word-norm { margin-top: 6px; }
+  .words-studies { max-width: none; margin-top: 8mm; break-inside: avoid; }
 }
 .terms strong { font-weight: 700; }
 .terms-tel { text-wrap: nowrap; } /* a number is never split across lines (1577-0199 broke at 390px), as on the crisis card */

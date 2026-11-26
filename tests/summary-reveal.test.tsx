@@ -20,6 +20,7 @@ const toQuickSummary = (unsure = false) => {
     fireEvent(screen.getByRole("application", { name: /불쾌함과 유쾌함/ }), new MouseEvent("pointerdown", { bubbles: true, clientX: 40, clientY: 30 }));
     fireEvent.click(screen.getByRole("button", { name: /다음/ }));
     revealWords();
+    fireEvent.click(screen.getByRole("button", { name: "비슷한 표현 더 보기" })); // 짜증 is a word to compare with 화남 since the study order (2026-11-26)
     fireEvent.click(screen.getByRole("button", { name: "짜증" }));
     fireEvent.click(screen.getByRole("button", { name: /^여기까지$/ }));
   }

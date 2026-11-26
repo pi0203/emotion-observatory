@@ -43,6 +43,7 @@ describe("quick check screens", () => {
     openQuickCheck();
     tapUnpleasantActivated();
     revealWords();
+    fireEvent.click(screen.getByRole("button", { name: "비슷한 표현 더 보기" })); // 짜증 is a word to compare with 화남 since the study order (2026-11-26)
     fireEvent.click(screen.getByRole("button", { name: "짜증" }));
     fireEvent.click(screen.getByRole("button", { name: /표현 사이의 차이 살펴보기/ }));
     // the coach asks what mattered before it shows a single word
@@ -206,6 +207,7 @@ describe("quick check screens", () => {
     openQuickCheck();
     tapUnpleasantActivated();
     revealWords();
+    fireEvent.click(screen.getByRole("button", { name: "비슷한 표현 더 보기" })); // 짜증 is a word to compare with 화남 since the study order (2026-11-26)
     fireEvent.click(screen.getByRole("button", { name: "짜증" }));
     fireEvent.click(screen.getByRole("button", { name: /여기까지/ }));
     fireEvent.click(screen.getByRole("button", { name: /무엇이 필요할지 살펴보기/ }));

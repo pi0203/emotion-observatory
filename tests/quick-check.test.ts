@@ -10,8 +10,9 @@ describe("quick candidate narrowing", () => {
   });
 
   it("includes positive vocabulary for pleasant, activated states", () => {
+    // the words follow the Korean study order since 2026-11-26 (tests/norm-order.test.ts)
     const labels = filterQuickCandidates({ x: 0.9, y: 0.9 }).map((item) => item.label);
-    expect(labels.some((label) => ["활기", "즐거움", "흥미", "뿌듯함"].includes(label))).toBe(true);
+    expect(labels.some((label) => ["신남", "감탄", "설렘", "기대", "기쁨"].includes(label))).toBe(true);
   });
 });
 

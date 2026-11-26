@@ -1,6 +1,7 @@
 import { requireContent } from "./content";
 import { DEFAULT_LOCALE, type Locale } from "./i18n/locale";
 import type { EmotionSelection } from "./session-types";
+import quickOrderKo from "../data/quick-order.ko.json";
 
 export type QuickPoint = { x: number; y: number };
 
@@ -23,9 +24,14 @@ const asSelections = (labels: string[]): EmotionSelection[] =>
  * draws from both sides and the candidate list changes as the finger moves.
  *
  * These centres describe the bands, not the words. Nothing here asserts where a
- * feeling "is", how far apart two words are, or what the user is feeling. It is
- * a stopgap until empirical Korean valence/arousal norms are connected, and it
- * must stay replaceable: see PROJECT_CONTEXT.md, Decision B.
+ * feeling "is", how far apart two words are, or what the user is feeling.
+ *
+ * State on 2026-11-26 (docs/NORMS.md, 「2026-11-26 대조와 결정」): the bands are
+ * still categorical values, and no study value is in this repository. What the
+ * Korean studies changed is only the order: five words moved band, and inside a
+ * band the Korean words follow the studies' activation ranks
+ * (data/quick-order.ko.json, names only). This is still a stopgap and must stay
+ * replaceable: see PROJECT_CONTEXT.md, Decision B.
  */
 const BAND_CENTRE = { negative: 1 / 6, neutral: 0.5, positive: 5 / 6, low: 1 / 6, medium: 0.5, high: 5 / 6 } as const;
 const BAND_REACH = 0.5;
@@ -34,14 +40,39 @@ const bandWeight = (position: number, band: keyof typeof BAND_CENTRE) =>
   Math.max(0, 1 - Math.abs(position - BAND_CENTRE[band]) / BAND_REACH);
 
 /**
- * A word flagged `contextDependent` is offered from either side, because its
- * valence depends on the situation and the app should not fix it to one.
+ * The order inside a band, by name only, and the side a few context-dependent
+ * words lean to in the studies. Korean only; any other language keeps the order
+ * of its data file.
  */
-const rankWithin = (items: VocabularyItem[], valence: string, y: number) =>
+type QuickOrder = { order: Record<string, readonly string[]>; leanSide: Record<string, string> };
+const QUICK_ORDER: Partial<Record<Locale, QuickOrder>> = { ko: quickOrderKo };
+const UNRANKED = Number.MAX_SAFE_INTEGER;
+
+/**
+ * A word flagged `contextDependent` is offered from either side, because its
+ * valence depends on the situation and the app should not fix it to one. Where
+ * the studies put it clearly on one side (`leanSide`), on the other side it comes
+ * after that side's own words of the same band.
+ *
+ * Order within a side: band weight, then that lean, then the study order of the
+ * band, then the data file. A word the study order does not list comes after the
+ * listed words of its band, in data file order.
+ */
+const rankWithin = (items: VocabularyItem[], valence: string, y: number, quickOrder?: QuickOrder) =>
   items
-    .map((item, index) => ({ item, index, fit: bandWeight(y, item.activation as keyof typeof BAND_CENTRE) }))
+    .map((item, index) => {
+      const lean = quickOrder?.leanSide[item.label];
+      const rank = quickOrder?.order[item.activation]?.indexOf(item.label) ?? -1;
+      return {
+        item,
+        index,
+        fit: bandWeight(y, item.activation as keyof typeof BAND_CENTRE),
+        away: item.contextDependent && lean !== undefined && lean !== valence ? 1 : 0,
+        rank: rank < 0 ? UNRANKED : rank,
+      };
+    })
     .filter((entry) => entry.item.valence === valence || entry.item.contextDependent)
-    .sort((a, b) => b.fit - a.fit || a.index - b.index)
+    .sort((a, b) => b.fit - a.fit || a.away - b.away || a.rank - b.rank || a.index - b.index)
     .map((entry) => entry.item);
 
 /**
@@ -58,18 +89,26 @@ export const filterQuickCandidates = (point: QuickPoint, limit = 5, locale: Loca
   const total = unpleasant + pleasant;
 
   const unpleasantShare = total === 0 ? 0.5 : unpleasant / total;
-  const ranked = { negative: rankWithin(items, "negative", y), positive: rankWithin(items, "positive", y) };
+  const ranked = { negative: rankWithin(items, "negative", y, QUICK_ORDER[locale]), positive: rankWithin(items, "positive", y, QUICK_ORDER[locale]) };
+  // A word offered from both sides is shown once: the unpleasant side is filled
+  // first, and the pleasant side skips what it already took.
+  const pleasantAfter = (taken: number) => {
+    const chosen = new Set(ranked.negative.slice(0, taken));
+    return ranked.positive.filter((item) => !chosen.has(item));
+  };
   let unpleasantSlots = Math.min(ranked.negative.length, Math.round(limit * unpleasantShare));
-  let pleasantSlots = Math.min(ranked.positive.length, limit - unpleasantSlots);
+  let pleasantRanked = pleasantAfter(unpleasantSlots);
+  let pleasantSlots = Math.min(pleasantRanked.length, limit - unpleasantSlots);
   // whichever side runs out lends its slots to the other
   unpleasantSlots = Math.min(ranked.negative.length, unpleasantSlots + (limit - unpleasantSlots - pleasantSlots));
-  pleasantSlots = Math.min(ranked.positive.length, limit - unpleasantSlots);
+  pleasantRanked = pleasantAfter(unpleasantSlots);
+  pleasantSlots = Math.min(pleasantRanked.length, limit - unpleasantSlots);
 
-  const picked = [...ranked.negative.slice(0, unpleasantSlots), ...ranked.positive.slice(0, pleasantSlots)];
+  const left = ranked.negative.slice(0, unpleasantSlots);
+  const right = pleasantRanked.slice(0, pleasantSlots);
+  const picked = [...left, ...right];
   // alternate so neither side is simply listed first
   const mixed: VocabularyItem[] = [];
-  const left = ranked.negative.slice(0, unpleasantSlots);
-  const right = ranked.positive.slice(0, pleasantSlots);
   for (let index = 0; index < Math.max(left.length, right.length); index += 1) {
     if (unpleasantShare >= 0.5) {
       if (left[index]) mixed.push(left[index]);

@@ -4,7 +4,9 @@
  * first note). Korean only for now (docs/I18N_PLAN.md).
  *
  * Only what helps a reader tell words apart is drawn: the word, its other
- * names, the hints, the words to compare and the dictionary expressions.
+ * names, the hints, the words to compare, the dictionary expressions and one
+ * line naming which Korean emotion word studies list it (2026-11-26,
+ * data/word-sources.ko.json; names of studies only, never their values).
  * Family, valence, activation, context tags, norm status and how often a word
  * was met in the vocabulary sources stay out (docs/vocab-sources/
  * DECISIONS_2026_10_31.md §1-2), and no colour tells one feeling from another
@@ -19,7 +21,12 @@ export type WordCard = {
   hints: string[];
   neighbors: string[];
   expressions: string[];
+  /** Which Korean emotion word studies list the word, one line; empty when the source file has none. */
+  source: string;
 };
+
+/** data/word-sources.ko.json: per word, the kind of match and the line drawn. */
+export type WordSources = { words: Readonly<Record<string, { kind: string; text: string }>> };
 
 type Item = {
   label: string;
@@ -30,7 +37,7 @@ type Item = {
 };
 
 /** The words in 가나다 order, each with only the fields above. */
-export const wordCards = (items: readonly Item[]): WordCard[] =>
+export const wordCards = (items: readonly Item[], sources?: WordSources): WordCard[] =>
   items
     .map((item) => ({
       label: item.label,
@@ -38,6 +45,7 @@ export const wordCards = (items: readonly Item[]): WordCard[] =>
       hints: [...(item.appraisalHints ?? [])],
       neighbors: [...(item.neighbors ?? [])],
       expressions: (item.expressions ?? []).map((expression) => expression.text),
+      source: sources?.words[item.label]?.text ?? "",
     }))
     .sort((a, b) => a.label.localeCompare(b.label, "ko"));
 
