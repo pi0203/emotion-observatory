@@ -61,6 +61,7 @@ describe("fonts", () => {
     const rule = css.match(/\.ko-mark \{([^}]*)\}/)?.[1] ?? "";
     expect(rule).toMatch(/font: 600 var\(--t-aside\)/);
     expect(rule).not.toMatch(/font-size|[\d.]+em\//);
+    expect(rule).not.toMatch(/opacity/); // a fade lowered the hover colour to 4.21:1 (2026-11-25)
     expect(css).toMatch(/--t-aside: \.8125rem;/);
   });
 });
