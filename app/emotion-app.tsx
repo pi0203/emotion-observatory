@@ -136,6 +136,13 @@ function App({ returned = false }: { returned?: boolean }) {
     setOpenRecord(next);
     setRecords(loadCompleted());
   };
+  // one record, after its confirm: its voice notes go with it, then the list shows what is left
+  const deleteRecord = (session: EmotionSession) => {
+    dropCompleted(session.id);
+    void getVoiceStore().removeSession(session.id).catch(() => undefined);
+    setOpenRecord(null);
+    setRecords(loadCompleted());
+  };
 
   useEffect(() => {
     migrateLegacyStorage();
@@ -229,7 +236,7 @@ function App({ returned = false }: { returned?: boolean }) {
       <SiteHeader onHelp={() => setHelpOpen(true)} bloom />
       <main id="main" tabIndex={-1} className="site-main">
       {openRecord
-        ? <RecordDetail session={openRecord} previous={previousRecord(openRecord, records ?? loadCompleted())} onHelp={() => setHelpOpen(true)} onFollowUp={(followUp) => saveFollowUp(openRecord, followUp)} onAddLabel={(label) => addLabelLater(openRecord, label)} onRemoveVoice={(step) => removeVoiceLater(openRecord, step)} onBack={() => setOpenRecord(null)} />
+        ? <RecordDetail session={openRecord} previous={previousRecord(openRecord, records ?? loadCompleted())} onHelp={() => setHelpOpen(true)} onFollowUp={(followUp) => saveFollowUp(openRecord, followUp)} onAddLabel={(label) => addLabelLater(openRecord, label)} onRemoveVoice={(step) => removeVoiceLater(openRecord, step)} onDelete={() => deleteRecord(openRecord)} onBack={() => setOpenRecord(null)} />
         : records
           ? <RecordsScreen records={records} manageOpen={manageOpen} onHelp={() => setHelpOpen(true)} onOpen={setOpenRecord} onBack={() => setRecords(null)} onChanged={() => { setRecords(loadCompleted()); setDraft(loadDraft()); }} />
           : <LandingScreen onStart={() => askToStart("quick")} draft={draft} onResume={resume} onRecords={() => showRecords()} onManage={() => showRecords(true)} pendingStart={pendingStart} onDiscardAndStart={discardAndStart} onCancelStart={() => setPendingStart(null)} />}
@@ -1156,6 +1163,7 @@ function BodyScreen({ initial, onNext }: { initial: BodyObservation[]; onNext: (
     <input id="body-custom" className="text-input" maxLength={INPUT_LIMITS.word} value={custom} onChange={(event) => setCustom(event.target.value)} placeholder={t("body.customPlaceholder")} />
     <Navigation
       note={stepNote(stepNotes, "body", selected.length > 0 || custom.trim().length > 0)}
+      onSkip={() => onNext([])}
       onNext={() => onNext([...selected.filter((label) => label !== custom).map((label) => ({ label })), ...(custom.trim() ? [{ label: custom.trim(), custom: true }] : [])])}
     />
   </Screen>;
@@ -1183,7 +1191,7 @@ function ContextScreen({ initial, onNext, voice }: { initial?: DeepContext; onNe
   const { stepNotes } = useContent();
   const [text, setText] = useState(initial?.eventText ?? "");
   const [source, setSource] = useState<DeepContext["source"]>(initial?.source ?? "event");
-  return <Screen><StepHeading step={t("context.step")} title={t("context.title")} hint={t("context.hint")} basis={t("context.basis")} /><LimitField length={text.length} max={INPUT_LIMITS.text} textarea><textarea className="text-area" maxLength={INPUT_LIMITS.text} value={text} onChange={(event) => setText(event.target.value)} placeholder={t("context.placeholder")} /></LimitField><p className="small-note">{t("context.privacyHint")}</p>{voice}<div className="segmented"><span>{t("context.sourceQuestion")}</span>{(["event", "memory", "anticipation", "thought"] as const).map((value) => <button className={source === value ? "selected" : ""} aria-pressed={source === value} key={value} onClick={() => setSource(value)}><Mark on={source === value} />{t(`contextSource.${value}`)}</button>)}</div><Navigation note={stepNote(stepNotes, "context", text.trim().length > 0)} onNext={() => onNext({ eventText: text, source })} /></Screen>;
+  return <Screen><StepHeading step={t("context.step")} title={t("context.title")} hint={t("context.hint")} basis={t("context.basis")} /><LimitField length={text.length} max={INPUT_LIMITS.text} textarea><textarea className="text-area" maxLength={INPUT_LIMITS.text} value={text} onChange={(event) => setText(event.target.value)} placeholder={t("context.placeholder")} /></LimitField><p className="small-note">{t("context.privacyHint")}</p>{voice}<div className="segmented"><span>{t("context.sourceQuestion")}</span>{(["event", "memory", "anticipation", "thought"] as const).map((value) => <button className={source === value ? "selected" : ""} aria-pressed={source === value} key={value} onClick={() => setSource(value)}><Mark on={source === value} />{t(`contextSource.${value}`)}</button>)}</div><Navigation note={stepNote(stepNotes, "context", text.trim().length > 0)} onSkip={() => onNext({})} onNext={() => onNext({ eventText: text, source })} /></Screen>;
 }
 
 function MeaningScreen({ initial, onNext }: { initial: string[]; onNext: (selected: string[]) => void }) {
@@ -1192,7 +1200,7 @@ function MeaningScreen({ initial, onNext }: { initial: string[]; onNext: (select
   const [selected, setSelected] = useState(initial);
   const [custom, setCustom] = useState("");
   const toggle = (item: string) => setSelected((current) => current.includes(item) ? current.filter((value) => value !== item) : [...current, item]);
-  return <Screen><StepHeading step={t("meaning.step")} title={t("meaning.title")} hint={t("meaning.hint")} basis={t("meaning.basis")} /><div className="choice-list compact">{concerns.map((item) => <button className={selected.includes(item) ? "selected" : ""} aria-pressed={selected.includes(item)} key={item} onClick={() => toggle(item)}><Mark on={selected.includes(item)} />{item}</button>)}</div><input className="text-input" maxLength={INPUT_LIMITS.word} value={custom} onChange={(event) => setCustom(event.target.value)} placeholder={t("common.ownWordsPlaceholder")} /><Navigation note={stepNote(stepNotes, "meaning", selected.length > 0 || custom.trim().length > 0)} onNext={() => onNext([...selected, ...(custom.trim() ? [custom.trim()] : [])])} /></Screen>;
+  return <Screen><StepHeading step={t("meaning.step")} title={t("meaning.title")} hint={t("meaning.hint")} basis={t("meaning.basis")} /><div className="choice-list compact">{concerns.map((item) => <button className={selected.includes(item) ? "selected" : ""} aria-pressed={selected.includes(item)} key={item} onClick={() => toggle(item)}><Mark on={selected.includes(item)} />{item}</button>)}</div><input className="text-input" maxLength={INPUT_LIMITS.word} value={custom} onChange={(event) => setCustom(event.target.value)} placeholder={t("common.ownWordsPlaceholder")} /><Navigation note={stepNote(stepNotes, "meaning", selected.length > 0 || custom.trim().length > 0)} onSkip={() => onNext([])} onNext={() => onNext([...selected, ...(custom.trim() ? [custom.trim()] : [])])} /></Screen>;
 }
 
 function EmotionScreen({ initial, affect, revealed, onReveal, onNext }: { initial: EmotionSelection[]; affect?: AffectPoint; revealed: boolean; onReveal: () => void; onNext: (selected: EmotionSelection[]) => void }) {
@@ -1214,17 +1222,17 @@ function EmotionScreen({ initial, affect, revealed, onReveal, onNext }: { initia
     {revealed && <div className="provisional-note">{t("common.provisionalNote")}</div>}
     <TieredWords revealed={revealed} onReveal={onReveal} pool={pool} selectedLabels={selected} ownWords={ownWords} onToggle={toggle} onAddCustom={addOwnWord} />
     <div className="quick-option-row">{[t("emotion.escapes.several"), t("emotion.escapes.unsure")].map((label) => <button className={`secondary-button ${selected.includes(label) ? "selected" : ""}`} aria-pressed={selected.includes(label)} key={label} onClick={() => toggle(label)}><Mark on={selected.includes(label)} />{label}</button>)}</div>
-    <Navigation note={stepNote(stepNotes, "emotion", selected.length > 0)} onNext={() => onNext(selected.map((label) => ({ label, source: ownWords.includes(label) ? "custom" as const : "suggested" as const })))} />
+    <Navigation note={stepNote(stepNotes, "emotion", selected.length > 0)} onSkip={() => onNext([])} onNext={() => onNext(selected.map((label) => ({ label, source: ownWords.includes(label) ? "custom" as const : "suggested" as const })))} />
   </Screen>;
 }
 
-/** Both questions need an answer for 「다음」 (DeepOutcome keeps both); with one answered, a line under them says so. 「건너뛰기」 stays open. */
-function OutcomeScreen({ onNext }: { onNext: (outcome: DeepOutcome) => void }) {
+/** Both questions need an answer for 「다음」 (DeepOutcome keeps both); with one answered, a line under them says so. 「건너뛰기」 stays open and keeps neither. */
+function OutcomeScreen({ onNext }: { onNext: (outcome?: DeepOutcome) => void }) {
   const t = useT();
   const [clarity, setClarity] = useState<DeepOutcome["clarity"]>();
   const [usefulness, setUsefulness] = useState<DeepOutcome["usefulness"]>();
   const [note, setNote] = useState("");
-  return <Screen><StepHeading step={t("outcome.step")} title={t("outcome.title")} hint={t("outcome.hint")} basis={t("outcome.basis")} /><div className="choice-list compact">{(["much_clearer", "clearer", "same", "more_complex", "more_distressed"] as const).map((value) => <button className={clarity === value ? "selected" : ""} aria-pressed={clarity === value} key={value} onClick={() => setClarity(value)}><Mark on={clarity === value} />{t(`outcome.clarity.${value}`)}</button>)}</div><h2 className="subquestion">{t("outcome.usefulnessQuestion")}</h2><div className="inline-choices">{(["helpful", "unsure", "unhelpful"] as const).map((value) => <button className={usefulness === value ? "selected" : ""} aria-pressed={usefulness === value} key={value} onClick={() => setUsefulness(value)}><Mark on={usefulness === value} />{t(`outcome.usefulness.${value}`)}</button>)}</div><input className="text-input" maxLength={INPUT_LIMITS.line} value={note} onChange={(event) => setNote(event.target.value)} placeholder={t("outcome.notePlaceholder")} /><Navigation disabled={!clarity || !usefulness} disabledReason={clarity && !usefulness ? t("outcome.pickBelowToo") : usefulness && !clarity ? t("outcome.pickAboveToo") : undefined} reasonDraft onNext={() => onNext({ clarity: clarity!, usefulness: usefulness!, note })} /></Screen>;
+  return <Screen><StepHeading step={t("outcome.step")} title={t("outcome.title")} hint={t("outcome.hint")} basis={t("outcome.basis")} /><div className="choice-list compact">{(["much_clearer", "clearer", "same", "more_complex", "more_distressed"] as const).map((value) => <button className={clarity === value ? "selected" : ""} aria-pressed={clarity === value} key={value} onClick={() => setClarity(value)}><Mark on={clarity === value} />{t(`outcome.clarity.${value}`)}</button>)}</div><h2 className="subquestion">{t("outcome.usefulnessQuestion")}</h2><div className="inline-choices">{(["helpful", "unsure", "unhelpful"] as const).map((value) => <button className={usefulness === value ? "selected" : ""} aria-pressed={usefulness === value} key={value} onClick={() => setUsefulness(value)}><Mark on={usefulness === value} />{t(`outcome.usefulness.${value}`)}</button>)}</div><input className="text-input" maxLength={INPUT_LIMITS.line} value={note} onChange={(event) => setNote(event.target.value)} placeholder={t("outcome.notePlaceholder")} /><Navigation disabled={!clarity || !usefulness} disabledReason={clarity && !usefulness ? t("outcome.pickBelowToo") : usefulness && !clarity ? t("outcome.pickAboveToo") : undefined} reasonDraft onSkip={() => onNext(undefined)} onNext={() => onNext({ clarity: clarity!, usefulness: usefulness!, note })} /></Screen>;
 }
 
 function SummaryScreen({ session, onFeedback, onTalk, onUnderlying, onUnderlyingNote, onSupport }: { session: EmotionSession; onFeedback: (feedback: { fit?: SynthesisFit; correction?: string }) => void; onTalk: (answer: TalkToSomeone) => void; onUnderlying: (answer: UnderlyingFeeling) => void; onUnderlyingNote: (note: string) => void; onSupport: () => void }) {
@@ -1401,6 +1409,22 @@ function SynthesisSection({ session, onFeedback }: { session: EmotionSession; on
 /** The direction and the choice under which the three-lines area opens (data/needs.*.json). */
 const SAY_NEED = "express";
 const SAY_CHOICE = "three-parts";
+/** Choices that ask for one sentence (「… 한 문장으로 적기」): each opens a field under the list while picked (2026-11-27). */
+const ONE_SENTENCE_CHOICES = ["one-sentence", "what", "say-it"];
+
+/**
+ * The field under a 「한 문장으로 적기」 choice. Like the three-lines area, what is typed
+ * lives in this component's state only: it is not stored or sent, and unpicking the
+ * choice or leaving the screen clears it. `label` is the choice, for screen readers.
+ */
+function OneSentence({ label }: { label: string }) {
+  const t = useT();
+  const [text, setText] = useState("");
+  return <div className="own-word-block">
+    <LimitField length={text.length} max={INPUT_LIMITS.line} textarea><textarea className="text-area" maxLength={INPUT_LIMITS.line} value={text} onChange={(event) => setText(event.target.value)} placeholder={t("common.ownWordsPlaceholder")} aria-label={label} /></LimitField>
+    <p className="small-note">{t("sayIt.notSent")}</p>
+  </div>;
+}
 type NeedEntry = { id: string; label: string; group?: string; because?: string; route?: boolean; exit?: boolean; responses?: { id: string; label: string }[] };
 /**
  * Two directions speak of a good moment, so a record read as 불쾌함 쪽 does not
@@ -1448,6 +1472,7 @@ function NeedScreen({ session, onNeed, onResponse, onDeep, onCoach, onBack }: { 
       <p className="tier-label">{need.label}</p>
       {need.because && <p className="step-note">{need.because}</p>}
       <div className="choice-list">{need.responses.map((option) => <button className={picked.includes(option.id) ? "selected" : ""} aria-pressed={picked.includes(option.id)} key={option.id} onClick={() => pressResponse(option.id)}><Mark on={picked.includes(option.id)} />{option.label}</button>)}</div>
+      {need.responses.filter((option) => ONE_SENTENCE_CHOICES.includes(option.id) && picked.includes(option.id)).map((option) => <OneSentence key={option.id} label={option.label} />)}
       {sayPicked && sayOpen && <SayIt session={session} label={need.responses.find((option) => option.id === SAY_CHOICE)!.label} play={sayOpen === "opened"} />}
     </div>}
 
@@ -1461,7 +1486,7 @@ function NeedScreen({ session, onNeed, onResponse, onDeep, onCoach, onBack }: { 
 
     {need?.exit && <p className="small-note">{t("need.exit")}</p>}
 
-    <p className="small-note">{t("need.varies")}</p>
+    <p className="small-note">{t("need.varies")}{!hidesGoodMoment(session) && ` ${t("need.variesGood")}`}</p>
     <div className="navigation"><button className="quiet-button" onClick={onBack}>{t("need.backToSummary")}</button><a className="primary-button" href="/" onClick={toHome}>{t("need.finish")} <span>→</span></a></div>
   </Screen>;
 }
@@ -1773,12 +1798,30 @@ function RecordTransfer({ count, onChanged }: { count: number; onChanged: () => 
   </section>;
 }
 
+/** Deleting the open record, asked once first in the same way as deleting them all (RecordTransfer). */
+function DeleteOne({ onDelete }: { onDelete: () => void }) {
+  const t = useT();
+  const [confirming, setConfirming] = useState(false);
+  const title = useRef<HTMLParagraphElement>(null);
+  useEffect(() => { if (confirming) title.current?.focus(); }, [confirming]);
+  return !confirming
+    ? <div className="quick-option-row"><button className="quiet-button" onClick={() => setConfirming(true)}>{t("recordDetail.deleteOne")}</button></div>
+    : <div role="group" aria-labelledby="record-delete-one-title">
+        <p className="synthesis-question" id="record-delete-one-title" ref={title} tabIndex={-1}>{t("recordDetail.deleteOneConfirmTitle")}</p>
+        <p className="small-note">{t("recordDetail.deleteOneConfirmBody")}</p>
+        <div className="quick-option-row">
+          <button className="secondary-button" onClick={onDelete}>{t("recordDetail.deleteOneConfirm")}</button>
+          <button className="quiet-button" onClick={() => setConfirming(false)}>{t("recordDetail.deleteOneCancel")}</button>
+        </div>
+      </div>;
+}
+
 /**
  * A past record, line by line, each with the band and label of where it came
  * from (owner's decision 2026-10-30): what the person pressed or wrote, what the
  * app worked out from it, and what was added later. Colour is never the only sign.
  */
-function RecordDetail({ session, previous, onHelp, onFollowUp, onAddLabel, onRemoveVoice, onBack }: { session: EmotionSession; previous?: EmotionSession; onHelp: () => void; onFollowUp: (followUp: { tried?: "yes" | "partly" | "no"; helped?: "yes" | "somewhat" | "no" | "unsure" }) => void; onAddLabel: (label: string) => void; onRemoveVoice: (step: VoiceStep) => void; onBack: () => void }) {
+function RecordDetail({ session, previous, onHelp, onFollowUp, onAddLabel, onRemoveVoice, onDelete, onBack }: { session: EmotionSession; previous?: EmotionSession; onHelp: () => void; onFollowUp: (followUp: { tried?: "yes" | "partly" | "no"; helped?: "yes" | "somewhat" | "no" | "unsure" }) => void; onAddLabel: (label: string) => void; onRemoveVoice: (step: VoiceStep) => void; onDelete: () => void; onBack: () => void }) {
   const t = useT();
   const toHome = useHomeLink();
   const item = summarise(session, t.locale);
@@ -1854,6 +1897,7 @@ function RecordDetail({ session, previous, onHelp, onFollowUp, onAddLabel, onRem
     </section>}
 
     <button className="inline-link sources-toggle" aria-expanded={sourcesShown} onClick={() => setSourcesShown((shown) => !shown)}>{sourcesShown ? t("recordDetail.sourcesHide") : t("recordDetail.sourcesShow")}</button>
+    <DeleteOne onDelete={onDelete} />
     <div className="navigation"><button className="quiet-button" onClick={onBack}>{t("recordDetail.backToList")}</button><a className="primary-button" href="/" onClick={toHome}>{t("recordDetail.toStart")} <span>→</span></a></div>
     <HelpLine onHelp={onHelp} />
   </Screen></SourcesShown.Provider>;
@@ -2015,8 +2059,9 @@ function StepHeading({ step, title, hint, basis, pause }: { step: string; title:
  * `disabledReason` is shown next to 「다음」 only while it is off, and the button
  * points to it (aria-describedby); role="status" lets a screen reader say it when
  * it appears (2026-11-19). `reasonDraft` puts the English draft note after it.
+ * `onSkip` keeps nothing picked on the step; what earlier steps kept stays (2026-11-27).
  */
-function Navigation({ onNext, onSkip = onNext, disabled = false, note, disabledReason, reasonDraft = false }: { onNext: () => void; onSkip?: () => void; disabled?: boolean; note?: string; disabledReason?: string; reasonDraft?: boolean }) {
+function Navigation({ onNext, onSkip, disabled = false, note, disabledReason, reasonDraft = false }: { onNext: () => void; onSkip: () => void; disabled?: boolean; note?: string; disabledReason?: string; reasonDraft?: boolean }) {
   const t = useT();
   const reasonId = useId();
   const reason = disabled ? disabledReason : undefined;

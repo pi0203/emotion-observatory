@@ -253,7 +253,7 @@ export type SessionAction =
   | { type: "SET_CONTEXT"; context: NonNullable<DeepReflection["context"]> }
   | { type: "SET_CONCERNS"; concerns: string[] }
   | { type: "SET_EMOTIONS"; emotionCandidates: EmotionSelection[] }
-  | { type: "SET_OUTCOME"; outcome: NonNullable<DeepReflection["outcome"]> }
+  | { type: "SET_OUTCOME"; outcome?: DeepReflection["outcome"] }
   | { type: "SET_SYNTHESIS_FEEDBACK"; fit?: SynthesisFit; correction?: string }
   | { type: "SET_TALK_TO_SOMEONE"; answer: TalkToSomeone }
   | { type: "SET_UNDERLYING_FEELING"; answer: UnderlyingFeeling }
