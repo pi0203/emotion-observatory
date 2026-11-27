@@ -536,7 +536,9 @@ export const ko = {
     routeCoach: "비슷한 표현의 차이를 살펴보기",
     routeNone: "고른 표현에 맞는 상황 비교가 아직 준비되지 않았습니다. 다른 방향을 눌러보셔도 됩니다.",
     exit: "그대로 두어도 됩니다. 여기서 마쳐도 기록은 남습니다.",
-    varies: "같은 경험이라도 필요한 것은 그때그때 다를 수 있습니다. 편안하거나 벅찬 경험이라면 문제를 풀기보다 머물러 느끼는 쪽이 맞을 수도 있습니다.",
+    varies: "같은 경험이라도 필요한 것은 그때그때 다를 수 있습니다.",
+    /** Said after `varies` except on a record read as 불쾌함 쪽, like the good-moment directions (2026-11-27). */
+    variesGood: "편안하거나 벅찬 경험이라면 문제를 풀기보다 머물러 느끼는 쪽이 맞을 수도 있습니다.",
     backToSummary: "← 요약으로 돌아가기",
     finish: "여기까지",
   },
@@ -752,6 +754,12 @@ export const ko = {
     helpedQuestion: "조금이라도 도움이 됐나요?",
     followUpCaveat: "평가가 아닙니다. “아니요”도 “예”와 똑같은 답입니다. 이 답으로 방법을 추천하거나 점수를 매기지 않습니다.",
     backToList: "← 목록으로",
+    /** Deleting this one record, asked once first; worded like 「이 기기의 기록 모두 지우기」 (2026-11-27). */
+    deleteOne: "이 기록을 지우기",
+    deleteOneConfirmTitle: "이 기록을 지울까요?",
+    deleteOneConfirmBody: "이 기록을 이 기기에서 지웁니다. 지운 기록은 되돌릴 수 없습니다.",
+    deleteOneConfirm: "지우기",
+    deleteOneCancel: "취소",
     toStart: "처음으로",
     tried: {
       yes: "해봤어요",
